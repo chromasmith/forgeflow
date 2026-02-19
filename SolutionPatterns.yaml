@@ -1,8 +1,553 @@
-# SolutionPatterns.yaml
+# SolutionPatterns.Diary.v1.yaml
 # Cross-project bug/solution reference for preventative best practices
 # Append-only — never delete entries
 # Audience: LLM_orchestrator
 schema_version: "1.0"
-last_updated: 2026-02-19
-entry_count: 0
-entries: []
+last_updated: 2025-12-27
+entry_count: 51
+entries:
+  - trigger: GitHub webhook connected to Vercel but created after commits pushed
+    symptom: Git pushes don't trigger Vercel builds despite webhook existing
+    fix: Use Vercel Deploy Hooks instead of relying on GitHub webhooks
+    tags: [vercel, github, webhook, deployment, builds]
+    details: |
+      Webhooks created after commits may not trigger properly.
+      Create Deploy Hook in Vercel project settings as backup trigger.
+      Deploy Hooks provide reliable manual/automated build triggers.
+
+  - trigger: Vercel deployment with modern repo using pnpm
+    symptom: ERR_PNPM_UNSUPPORTED_ENGINE, ERR_INVALID_THIS network errors
+    fix: Switch to npm - set packageManager field in root package.json
+    tags: [vercel, pnpm, npm, packageManager, deployment]
+    details: |
+      Vercel default pnpm 6.35.1 incompatible with modern repos.
+      PNPM_VERSION env var often ignored.
+      Fix: Add "packageManager": "npm@10.9.2" to root package.json.
+      Set explicitly before first Vercel deploy.
+
+  - trigger: Vercel project with turbo.json file present in repo
+    symptom: Root Directory setting ignored, build runs from repo root instead of specified app
+    fix: Delete turbo.json if not actively using Turborepo features
+    tags: [vercel, turborepo, turbo.json, monorepo, root-directory]
+    details: |
+      Presence of turbo.json triggers Turbo mode regardless of dependencies.
+      Vercel ignores Root Directory setting when Turbo detected.
+      Diagnostic: Use vercel_get_project MCP tool to see actual build config.
+      Don't create turbo.json unless actively using Turborepo.
+
+  - trigger: First Vercel deployment without pre-deploy dependency audit
+    symptom: 7+ build failures, each revealing 1-3 missing packages, 40+ minutes lost
+    fix: Audit ALL imports against package.json before first deploy
+    tags: [dependencies, deployment, vercel, imports, audit, package.json]
+    details: |
+      Pre-deploy checklist:
+      1. Scan all page/component imports
+      2. Verify each import exists in package.json
+      3. Run local build (npm run build) before pushing
+      4. Check template's original package.json for hidden deps
+
+  - trigger: Adding SaaS template without auditing its dependency requirements
+    symptom: Build fails on missing packages like tailwindcss-animate, class-variance-authority, clsx, tailwind-merge, @radix-ui/*, lucide-react
+    fix: Audit template's package.json and merge ALL dependencies immediately
+    tags: [template, dependencies, shadcn, radix, tailwind, package.json]
+    details: |
+      Common missing deps from templates:
+      tailwindcss-animate, class-variance-authority, clsx, tailwind-merge
+      @radix-ui/react-*, lucide-react
+      When adding any template, immediately copy ALL its dependencies.
+
+  - trigger: Running npx shadcn add in complex monorepo setup
+    symptom: CLI fails due to package manager or bun dependency issues
+    fix: Manually create components using shadcn patterns or have CDT generate them
+    tags: [shadcn, cli, monorepo, components, manual]
+    details: |
+      shadcn CLI has dependencies on specific package managers.
+      Don't rely on shadcn CLI in complex monorepo setups.
+      Alternative: CDT can generate shadcn-compatible components directly.
+
+  - trigger: Vercel deployment with Next.js 15.1.x or earlier vulnerable versions
+    symptom: Build succeeds but deployment blocked - "Vulnerable version of Next.js detected" CVE-2025-66478, site returns 404 DEPLOYMENT_NOT_FOUND
+    fix: Upgrade next and eslint-config-next to ^15.3.3+ in package.json
+    tags: [vercel, nextjs, cve, security, deployment-blocked, 404, CVE-2025-66478]
+    details: |
+      Vercel blocks deployment POST-build for known CVEs (build log shows success then error).
+      Fix in package.json dependencies:
+        "next": "^15.3.3"
+        "eslint-config-next": "^15.3.3"
+      Lesson: Pin to recent stable versions at project start; add CVE check to session init.
+
+  - trigger: First deploy of any SaaS template (Next.js + Supabase + Stripe pattern)
+    symptom: Cascade of build failures, runtime errors, missing tables, placeholder strings - each fix reveals next issue, 2+ hours lost
+    fix: Run comprehensive pre-flight audit BEFORE first deploy using checklist below
+    tags: [template, saas, preflight, checklist, dependencies, env-vars, migrations, supabase, stripe, onboarding]
+    details: |
+      PRE-FLIGHT CHECKLIST FOR SAAS TEMPLATES:
+
+      1. DEPENDENCIES AUDIT
+         - Compare template's package.json against codebase imports
+         - Check for: tailwindcss-animate, @react-email/*, resend, lucide-react, @radix-ui/*
+         - Run local build (npm run build) before pushing
+
+      2. ENV VARS AUDIT
+         - Search codebase for process.env and getEnvVar calls
+         - List ALL required vars, mark public vs secret
+         - Required minimums: NEXT_PUBLIC_SUPABASE_URL, NEXT_PUBLIC_SUPABASE_ANON_KEY, SUPABASE_SERVICE_ROLE_KEY
+         - Check for placeholder strings: "UPDATE_THIS_WITH_YOUR_APP_*"
+
+      3. DATABASE MIGRATIONS
+         - Locate migration files: supabase/migrations/, prisma/migrations/, *.sql
+         - Verify migrations applied to target Supabase project
+         - Check schema cache matches expected tables
+
+      4. FRAMEWORK VERSIONS
+         - Check Next.js version against Vercel CVE blocklist
+         - Minimum safe: next@15.3.3+, eslint-config-next@15.3.3+
+
+      5. UI PLACEHOLDERS
+         - Search for "UPDATE_THIS", "YOUR_APP", "CHANGE_ME" in codebase
+         - Check layout files for hardcoded template branding
+
+      SESSION COST OF SKIPPING: 8 bugs, 14 commits, 2+ hours debugging
+
+  - id: BUG-TPL-002
+    date: 2025-12-19
+    trigger: SaaS template onboarding — applying brand design tokens
+    symptom: Design tokens in tailwind.config.ts and globals.css have no visual effect; template UI still shows original colors/fonts/logos
+    fix: Templates require full UI replacement, not just config changes — components use hardcoded classes (bg-cyan-500) not semantic tokens (bg-primary)
+    tags: [template, design-tokens, tailwind, branding, onboarding, next-saas-starter]
+    details: |
+      Root cause: Template components hardcode Tailwind color classes directly
+      instead of using semantic tokens like bg-primary or text-accent.
+
+      What doesn't work:
+      - Updating tailwind.config.ts with new color palette
+      - Updating globals.css with CSS custom properties
+      - Expecting components to automatically adopt new brand
+
+      What works:
+      - Replace page.tsx, layout.tsx, logo.tsx with new components using semantic tokens
+      - Or: Find/replace all hardcoded colors across all component files
+
+      Prevention: Before adopting any SaaS template, search codebase for hardcoded
+      color classes (cyan, purple, fuchsia, etc.). If found extensively, budget
+      time for full UI replacement rather than config-only branding.
+
+      Time wasted this session: ~45 minutes debugging why tokens didn't apply
+
+  - id: BUG-014a
+    trigger: Next.js SaaS template ships with middleware route guards commented out
+    symptom: 500 error on protected routes after successful login
+    fix: Enable route guards in middleware.ts with configurable PROTECTED_ROUTES array
+    tags: [nextjs, middleware, auth, supabase, template, route-guards]
+    details: |
+      Template file: src/middleware.ts has route guard code commented out.
+      Uncomment and configure: PROTECTED_ROUTES = ['/dashboard', '/dashboard/*', ...]
+      Add redirect logic: if (!user && isProtectedRoute(pathname)) redirect('/login')
+      Also redirect authenticated users away from /login and /signup to /dashboard.
+
+  - id: BUG-014b
+    trigger: Auth helper throws AuthError on unauthenticated access
+    symptom: Server Component crashes with 500 instead of graceful redirect
+    fix: Replace throw AuthError with redirect('/login') from next/navigation
+    tags: [nextjs, auth, server-components, redirect, error-handling]
+    details: |
+      File: src/lib/auth/authorize.ts
+      Bad: if (!user) throw new AuthError('Authentication required')
+      Good: if (!user) redirect('/login')
+      Import redirect from 'next/navigation'. Never throw in Server Components for auth failures.
+
+  - id: BUG-014c
+    trigger: No error.tsx in (app) route group
+    symptom: Uncaught errors show raw 500 page or white screen
+    fix: Add error.tsx boundary in src/app/(app)/error.tsx
+    tags: [nextjs, error-boundary, app-router, ux]
+    details: |
+      Create src/app/(app)/error.tsx as Client Component ('use client').
+      Implement reset() callback and user-friendly error UI.
+      Log errors for monitoring. Show error details only in development.
+
+  - id: BUG-014d
+    trigger: Template callback checks subscriptions table before allowing access
+    symptom: User redirected to /pricing after login even with valid session
+    fix: Remove subscription check from auth/callback/route.ts for Phase 1
+    tags: [supabase, auth, callback, stripe, subscription, template]
+    details: |
+      File: src/app/(auth)/auth/callback/route.ts
+      Remove: const { data: subscription } = await supabase.from('subscriptions')...
+      Remove: if (!subscription) redirect('/pricing')
+      Replace with: redirect('/dashboard')
+      Comment out subscription logic with "Phase 2+" note for later enablement.
+
+  - id: BUG-014e
+    trigger: Login page calls getSubscription() which queries Stripe tables
+    symptom: Login page loads slowly or hangs
+    fix: Remove getSubscription() call from login page for Phase 1
+    tags: [nextjs, auth, login, stripe, performance, template]
+    details: |
+      File: src/app/(auth)/login/page.tsx
+      Remove: const subscription = await getSubscription()
+      Remove: if (session && subscription) redirect('/account')
+      Remove: if (session && !subscription) redirect('/pricing')
+      Replace with: if (session) redirect('/dashboard')
+
+  - id: BUG-014f
+    trigger: Template uses signInWithOtp (magic link) for email auth
+    symptom: Rate limits, email delays, error toast on successful send
+    fix: Replace with signInWithPassword for immediate login
+    tags: [supabase, auth, magic-link, password, ux]
+    details: |
+      Files: auth-actions.ts, auth-ui.tsx, login/page.tsx
+      Replace signInWithOtp with signInWithPassword.
+      Update AuthUI to include password field.
+      Pass signInWithPassword prop instead of signInWithEmail.
+      Create users in Supabase with password (Add user > Auto Confirm).
+
+  - id: BUG-014g
+    trigger: Trigger creates public.users row on auth.users insert
+    symptom: "violates foreign key constraint" when deleting user from dashboard
+    fix: Delete from public.users first, then auth.users via SQL
+    tags: [supabase, auth, foreign-key, trigger, user-management]
+    details: |
+      SQL order matters:
+      DELETE FROM public.users WHERE id = '<user-id>';
+      DELETE FROM auth.users WHERE id = '<user-id>';
+      Cannot delete from Supabase Dashboard UI due to FK constraint.
+
+  - id: BUG-014h
+    trigger: Template has both lib/ and libs/ directories with separate Supabase clients
+    symptom: Confusion about which client to import, potential inconsistent behavior
+    fix: Consolidate to single lib/ directory or document both clearly
+    tags: [supabase, architecture, template, code-organization]
+    details: |
+      lib/supabase/server-client.ts - used by authorize.ts
+      libs/supabase/supabase-server-client.ts - used by auth-actions.ts
+      libs/supabase/supabase-middleware-client.ts - used by middleware.ts
+      Recommend: Consolidate all to lib/supabase/ with consistent naming.
+
+  - id: CQA-001
+    trigger: Monorepo template missing CI/CD automation
+    symptom: All quality checks run manually only; no pre-deploy gates
+    fix: Add .github/workflows/quality-gate.yml with TypeScript, ESLint, build, audit, depcheck, secret scan gates
+    tags: [ci-cd, github-actions, quality-gate, monorepo, template]
+    details: |
+      Workflow must call existing scripts (pnpm lint, pnpm type-check, pnpm build:all).
+      Add Slack notifications with CDT-ready YAML format.
+
+  - id: CQA-002
+    trigger: Monorepo template missing dependency automation
+    symptom: No automated security alerts or dependency update PRs
+    fix: Add .github/dependabot.yml with weekly npm ecosystem updates
+    tags: [dependabot, dependencies, security, github, template]
+    details: |
+      version: 2
+      updates:
+        - package-ecosystem: "npm"
+          directory: "/"
+          schedule:
+            interval: "weekly"
+
+  - id: CQA-003
+    trigger: Supabase server client without cache bypass
+    symptom: Next.js returns stale data; mutations don't reflect immediately
+    fix: Create server client with global.fetch override using cache:'no-store'
+    tags: [supabase, nextjs, caching, stale-data, server-components]
+    details: |
+      Location: src/lib/supabase/server.ts
+      Wrap createServerClient with custom fetch using cache:'no-store'
+
+  - id: CQA-004
+    trigger: Webhook handler without idempotency
+    symptom: Duplicate webhook deliveries cause duplicate records/charges
+    fix: Add webhook_events table; check event_id before processing
+    tags: [webhooks, idempotency, stripe, supabase, duplicates]
+    details: |
+      Table: webhook_events (id, event_id UNIQUE, event_type, processed_at, payload JSONB)
+      Handler: Check event_id exists before processing; INSERT after success
+
+  - id: CQA-005
+    trigger: Monorepo scripts reference turbo without config
+    symptom: turbo run commands may fail or behave unexpectedly
+    fix: Add turbo.json to repository root with pipeline configuration
+    tags: [turborepo, monorepo, build, config, pnpm]
+    details: |
+      Location: /turbo.json
+      Define pipeline for: build, lint, type-check, dev
+
+  - id: CQA-006
+    trigger: ESLint security config incomplete
+    symptom: dangerouslySetInnerHTML usage not flagged as error
+    fix: Add "react/no-danger":"error" to eslint.config.mjs rules
+    tags: [eslint, security, xss, react, config]
+    details: |
+      Location: apps/admin/eslint.config.mjs
+      Add to rules object: "react/no-danger": "error"
+
+  - id: CQA-007
+    trigger: Dual ESLint configs in same directory
+    symptom: Unpredictable linting; legacy config may override flat config
+    fix: Delete .eslintrc.json; keep only eslint.config.mjs
+    tags: [eslint, config, cleanup, flat-config, legacy]
+    details: |
+      Delete: apps/admin/.eslintrc.json
+      Keep: apps/admin/eslint.config.mjs
+
+  - id: CQA-008
+    trigger: Template has duplicate Supabase server clients in lib/ and libs/
+    symptom: Confusion over which client to use; legacy client lacks cache bypass
+    fix: Delete legacy libs/supabase/supabase-server-client.ts; use only lib/supabase/server-client.ts with HL-02 cache bypass
+    tags: [supabase, duplicate-files, lib-libs, cleanup, template]
+    details: |
+      Legacy: libs/supabase/supabase-server-client.ts (no cache bypass)
+      Correct: lib/supabase/server-client.ts (has HL-02 cache bypass)
+      Before deletion, search for imports to confirm nothing uses legacy file.
+
+  - id: CQA-009
+    trigger: Turborepo 2.0+ with turbo.json using "pipeline" key
+    symptom: "Rename `pipeline` field to `tasks`" error during build
+    fix: Change "pipeline" to "tasks" in turbo.json root key
+    tags: [turborepo, turbo.json, breaking-change, monorepo, vercel]
+    details: |
+      Turborepo 2.0 renamed the root configuration key.
+      Old: { "pipeline": { "build": {...} } }
+      New: { "tasks": { "build": {...} } }
+
+  - id: CQA-010
+    trigger: Monorepo with pnpm-workspace.yaml but packageManager field set to npm
+    symptom: Vercel runs npm install, ignores pnpm workspaces, turbo executes 0 tasks
+    fix: Either set packageManager to pnpm OR remove pnpm-workspace.yaml and use npm workspaces
+    tags: [vercel, pnpm, npm, packageManager, monorepo, workspace]
+    details: |
+      Vercel reads packageManager field to determine install command.
+      If npm is declared but pnpm-workspace.yaml exists, workspaces won't resolve.
+      Pick one package manager and be consistent across all config files.
+
+  - id: CQA-011
+    trigger: Package.json with "workspace:*" dependency syntax deployed to npm-based environment
+    symptom: "EUNSUPPORTEDPROTOCOL Unsupported URL Type workspace:" during npm install
+    fix: Replace "workspace:*" with "*" in all package.json files
+    tags: [pnpm, npm, workspace-protocol, monorepo, dependencies]
+    details: |
+      "workspace:*" is pnpm-specific syntax for local package references.
+      npm uses "*" to reference workspace packages.
+      Search all package.json files: grep -r "workspace:" packages/ apps/
+
+  - id: CQA-012
+    trigger: Supabase SSR client with TypeScript strict mode and setAll callback
+    symptom: "Parameter 'cookiesToSet' implicitly has an 'any' type" in server-client.ts or middleware.ts
+    fix: Add explicit type to setAll parameter
+    tags: [supabase, typescript, strict-mode, ssr, cookies]
+    details: |
+      The @supabase/ssr cookie handlers need explicit types in strict mode.
+      Fix: setAll(cookiesToSet: { name: string; value: string; options?: Record<string, unknown> }[]) {
+      Check all files: server-client.ts, middleware-client.ts, middleware.ts
+
+  - id: CQA-013
+    trigger: Deleting duplicate/legacy file without updating imports
+    symptom: "Module not found: Can't resolve '@/path/to/deleted-file'" during build
+    fix: Search codebase for all imports before deleting files
+    tags: [imports, refactoring, file-deletion, typescript, build-error]
+    details: |
+      Before deleting any file, run: grep -r "from.*deleted-filename" apps/ packages/
+      In this case: libs/supabase/supabase-server-client was deleted but
+      multiple files still imported from @/libs/supabase/supabase-server-client.
+      All imports needed updating to @/lib/supabase/server-client.
+
+  - id: CQA-014
+    trigger: pnpm 8.x or 9.x on Vercel build environment
+    symptom: "ERR_INVALID_THIS" errors on all registry fetches during pnpm install
+    fix: Use npm instead of pnpm for Vercel deployments
+    tags: [vercel, pnpm, npm, build-error, compatibility]
+    details: |
+      pnpm has known compatibility issues with Vercel's build environment.
+      Symptoms: WARN GET https://registry.npmjs.org/... error (ERR_INVALID_THIS)
+      Solution: Switch to npm with workspaces in package.json.
+      Add "workspaces": ["apps/*", "packages/*"] to root package.json.
+
+  - id: CQA-015
+    trigger: GitHub Actions workflow using "npm ci" without package-lock.json in repo
+    symptom: "npm ci can only install with an existing package-lock.json"
+    fix: Use "npm install" instead of "npm ci" when no lockfile exists
+    tags: [github-actions, npm, ci, lockfile, workflow]
+    details: |
+      npm ci requires package-lock.json for deterministic installs.
+      If repo doesn't have lockfile, use "npm install" instead.
+      Alternative: commit package-lock.json to the repository.
+
+  - id: CQA-016
+    trigger: React 19 with packages expecting React 16-18 (e.g., lucide-react@0.263.1)
+    symptom: "ERESOLVE unable to resolve dependency tree" - peer dependency conflict
+    fix: Add --legacy-peer-deps flag to npm install
+    tags: [react, peer-dependencies, npm, lucide-react, compatibility]
+    details: |
+      React 19 breaks peer dependency checks for older packages.
+      Fix in workflow: npm install --legacy-peer-deps
+      Many icon/UI libraries haven't updated peer deps for React 19 yet.
+
+  - id: CQA-017
+    trigger: GitHub Actions workflow installs with npm but runs commands with pnpm
+    symptom: Gate steps fail silently with exit code 1, no error output captured
+    fix: Match command runner to installer (npm install → npm run, pnpm install → pnpm)
+    tags: [github-actions, npm, pnpm, workflow, quality-gates]
+    details: |
+      If workflow does: npm install --legacy-peer-deps
+      Then gate steps must use: npm run type-check, npm run lint, npm run build:all
+      NOT: pnpm type-check, pnpm lint, pnpm build:all
+      pnpm commands fail silently because pnpm isn't installed after npm install.
+
+  - id: CQA-018
+    trigger: Turbo build in CI without env vars declared in turbo.json
+    symptom: "Reference to undefined env var: STRIPE_SECRET_KEY" during build
+    fix: Add all required env vars to turbo.json build.env array
+    tags: [turborepo, turbo.json, environment-variables, vercel, ci]
+    details: |
+      Turborepo isolates builds and only passes declared env vars.
+      Add to turbo.json:
+      "build": {
+        "env": [
+          "STRIPE_SECRET_KEY",
+          "STRIPE_WEBHOOK_SECRET",
+          "SUPABASE_SERVICE_ROLE_KEY",
+          "SKIP_ENV_VALIDATION",
+          "NEXT_PUBLIC_SUPABASE_URL",
+          "NEXT_PUBLIC_SUPABASE_ANON_KEY",
+          "NEXT_PUBLIC_SITE_URL"
+        ]
+      }
+
+  - trigger: GitHub Actions workflow runs quality gates but errors not visible in logs
+    symptom: Gates fail with exit code 1 but no error details show; only "turbo not found" or similar buried in captured output
+    fix: Echo errors to stdout BEFORE capturing to GITHUB_OUTPUT; use ::group:: syntax for collapsible sections
+    tags: [github-actions, ci, observability, turbo, quality-gates, silent-failure]
+    details: |
+      Pattern: OUTPUT=$(command 2>&1); capture errors; exit
+      Missing: echo "$OUTPUT" before capture
+      Fix: Add display block before capture:
+        if [ $EXIT_CODE -ne 0 ]; then
+          echo "::group::Gate Name Errors"
+          echo "$OUTPUT"
+          echo "::endgroup::"
+        fi
+
+  - trigger: GitHub Actions Slack notification with dynamic content containing newlines
+    symptom: "Error: Need to provide valid JSON payload" in notify job
+    fix: Use comma-separated single-line format for dynamic lists instead of newline-separated
+    tags: [slack, github-actions, json, webhook, notifications]
+    details: |
+      Bad: FAILED="${FAILED}- typescript\n" then echo -e with heredoc
+      Good: FAILED="${FAILED}typescript, " then trim trailing comma
+      Newlines in YAML multiline strings break JSON when interpolated
+
+  - trigger: Fresh clone of monorepo template runs npm scripts that use turbo
+    symptom: "sh: 1: turbo: not found" when running type-check, lint, or build
+    fix: Add turbo to root package.json devDependencies
+    tags: [turbo, monorepo, npm, devDependencies, template]
+    details: |
+      Root package.json scripts reference turbo but turbo not in dependencies
+      Add to devDependencies: "turbo": "^2.0.0"
+      Template assumed global turbo install; CI doesn't have it
+
+  - trigger: Monorepo package references sibling package that has no tsconfig.json
+    symptom: "error TS6053: File 'packages/database' not found" during type-check
+    fix: Remove references array if target package is not a TS project, or add tsconfig to target
+    tags: [typescript, monorepo, tsconfig, project-references]
+    details: |
+      packages/jobs/tsconfig.json had: "references": [{ "path": "../database" }]
+      packages/database had no tsconfig.json
+      Fix: Remove references array entirely OR add tsconfig to database package
+
+  - trigger: Next.js build in CI without all required env vars
+    symptom: "ReferenceError: Reference to undefined env var: STRIPE_SECRET_KEY" during build
+    fix: Add placeholder env vars to CI workflow build step for all server-side env vars
+    tags: [nextjs, ci, env-vars, build, github-actions, stripe, supabase]
+    details: |
+      Required placeholders for CI build:
+        NEXT_PUBLIC_SUPABASE_URL: "https://placeholder.supabase.co"
+        NEXT_PUBLIC_SUPABASE_ANON_KEY: "placeholder-anon-key"
+        SUPABASE_SERVICE_ROLE_KEY: "placeholder-service-role-key"
+        STRIPE_SECRET_KEY: "sk_test_placeholder"
+        STRIPE_WEBHOOK_SECRET: "whsec_placeholder"
+        SKIP_ENV_VALIDATION: "true"
+
+  - trigger: depcheck reports eslint-config-next as unused in ESLint 9 flat config setup
+    symptom: "Unused devDependencies: eslint-config-next" but removing it breaks lint
+    fix: Add eslint-config-next to depcheck ignore list OR keep it despite warning
+    tags: [depcheck, eslint, eslint-config-next, false-positive, nextjs]
+    details: |
+      eslint.config.mjs extends "next/core-web-vitals" which requires eslint-config-next
+      depcheck doesn't detect this usage pattern
+      Add to depcheck ignore: --ignores="eslint-config-next"
+
+  - trigger: Template previously used bun, now uses npm
+    symptom: "Detected additional lockfiles: bun.lockb" warning during Next.js build
+    fix: Delete stale lockfile when switching package managers
+    tags: [bun, npm, lockfile, package-manager, template-hygiene]
+    details: |
+      Location: apps/admin/bun.lockb
+      Fix: rm apps/admin/bun.lockb
+      Prevention: Add bun.lockb to .gitignore if standardizing on npm
+
+  - trigger: Template contains apps/admin/bun.lockb but project uses npm (packageManager field)
+    symptom: Vercel detects "bun" from lockfile; deleting it causes fallback to npm instead of declared packageManager
+    fix: Delete bun.lockb from template; add *.lockb to .gitignore
+    tags: [vercel, package-manager, bun, npm, lockfile, template]
+    details: |
+      Template had orphaned bun.lockb from previous package manager experiment.
+      Vercel uses lockfile detection before packageManager field.
+      Deleting lockfile mid-project caused "Package Manager changed from bun to npm" warning.
+      Clean fix: remove from template source, prevent future commits via gitignore.
+
+  - trigger: Template has lucide-react@^0.263.1 with react@^19.0.0
+    symptom: npm ERESOLVE error — peer dependency conflict; lucide-react 0.263.1 only supports React 16/17/18
+    fix: Update lucide-react to ^0.468.0 in apps/admin/package.json
+    tags: [react-19, lucide-react, peer-dependency, npm, template, vercel-build]
+    details: |
+      Template was created with React 18, later bumped to React 19.
+      lucide-react version was not updated to match.
+      Version 0.460.0+ adds React 19 support; 0.468.0 is current stable.
+      Affects any project instantiated from template with React 19.
+
+  - trigger: shadcn/ui components in starter template use hardcoded Tailwind classes instead of CSS variables
+    symptom: Components display wrong colors (black inputs, dark buttons) despite correct CSS variables in globals.css; design tokens ignored
+    fix: Replace hardcoded classes (bg-black, bg-zinc-900, text-zinc-300) with CSS variable references (bg-input, bg-primary, text-foreground) in component files
+    tags: [shadcn, tailwind, design-tokens, css-variables, button, input, template]
+    details: |
+      Affected components in apps/admin/src/components/ui/:
+      - input.tsx: had bg-black → change to bg-input
+      - button.tsx: had bg-zinc-900, bg-black, bg-orange-500 → change to design token colors
+      - Custom variant names ('sexy', 'orange') referenced across codebase cause TypeScript errors when removed
+
+      Root cause: Template was customized with hardcoded colors that bypass the CSS variable system.
+
+      Fix pattern:
+      1. Audit all /components/ui/*.tsx files for hardcoded Tailwind color classes
+      2. Replace with semantic CSS variable references defined in globals.css
+      3. Search entire codebase for custom variant name usage before removing variants
+      4. Use TypeScript build errors to find remaining references
+
+      Prevention: When creating new projects from template, run design token audit before building features.
+
+  - trigger: Cincinnati template converted to monorepo; layout.tsx is client component with hardcoded nav
+    symptom: Navigation shows logged-out state when user is authenticated; dashboard page shows user email correctly
+    fix: Remove 'use client' from layout.tsx, import Navigation component instead of hardcoded Header()
+    tags: [cincinnati, template, auth, navigation, supabase, next-app-router, server-component, layout]
+    details: |
+      Two-part fix:
+      1. layout.tsx had 'use client' + inline Header() with static links - Navigation component wasn't used
+         - Remove 'use client' directive
+         - Remove hardcoded Header() function
+         - Import Navigation from './navigation'
+         - Render <Navigation /> inside header element
+      2. get-session.ts used getSession() which only reads cookies without JWT validation
+         - Change to getUser() first to validate with Supabase servers
+         - If user valid, then call getSession() to get session data
+      Template origin: Cincinnati (Supabase auth starter)
+      Affected files: apps/admin/src/app/layout.tsx, apps/admin/src/features/account/controllers/get-session.ts
+
+# Entry format:
+# - trigger: "When/where does this occur"
+#   symptom: "What it looks like when it happens"
+#   fix: "What to do instead (one line)"
+#   tags: [tag1, tag2, tag3]
+#   details: |
+#     Specific steps, commands, config snippets
+#     as needed for actionable resolution
