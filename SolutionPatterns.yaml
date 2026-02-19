@@ -1,0 +1,8 @@
+# SolutionPatterns.yaml
+# Cross-project bug/solution reference for preventative best practices
+# Append-only — never delete entries
+# Audience: LLM_orchestrator
+schema_version: "1.0"
+last_updated: 2026-02-19
+entry_count: 0
+entries: []
