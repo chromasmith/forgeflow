@@ -1,0 +1,8 @@
+# Session state — overwritten each session with current snapshot
+session_date: null
+project: null
+milestones: []
+decisions: []
+blockers: []
+next_steps: []
+context: ""

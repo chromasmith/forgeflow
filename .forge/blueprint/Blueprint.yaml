@@ -1,0 +1,7 @@
+# Blueprint — Full architecture specification
+# This file is large and should NEVER be auto-read by AI agents
+# The captain (Claude Web) extracts surgical sections for focused prompts
+project: null
+version: null
+created: null
+sections: []

@@ -1,0 +1,5 @@
+# Active bugs — overwritten each session with currently unresolved bugs only
+schema_version: "1.0"
+session_date: null
+project: null
+active_bugs: []

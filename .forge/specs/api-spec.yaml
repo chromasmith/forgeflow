@@ -1,0 +1,5 @@
+# API Specification
+# API routes, request/response schemas, auth patterns
+project: null
+base_path: /api
+routes: []

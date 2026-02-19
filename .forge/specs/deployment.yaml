@@ -1,0 +1,4 @@
+# Deployment Specification
+# Environments, hosting, CI/CD, infrastructure
+project: null
+environments: {}
