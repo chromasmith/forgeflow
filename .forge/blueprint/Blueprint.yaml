@@ -1,7 +1,442 @@
-# Blueprint — Full architecture specification
-# This file is large and should NEVER be auto-read by AI agents
-# The captain (Claude Web) extracts surgical sections for focused prompts
-project: null
-version: null
-created: null
-sections: []
+# =============================================================================
+# FORGE FLOW 10 BLUEPRINT
+# =============================================================================
+# The specification for AI-assisted software development using natural language.
+# This is not software — it's a folder convention, file schemas, and methodology.
+# =============================================================================
+
+meta:
+  name: Forge Flow
+  version: "10.0"
+  type: specification
+  owner: Chromasmith LLC
+  repo: chromasmith/forgeflow
+  created: 2026-02-19
+  status: active
+  license: proprietary
+
+# =============================================================================
+# PURPOSE
+# =============================================================================
+
+purpose:
+  problem: |
+    AI coding agents are stateless. Every session starts from zero. Without
+    structured project knowledge, the human must re-explain context, the agent
+    makes avoidable mistakes, and institutional knowledge is lost.
+  solution: |
+    A standardized folder convention and file schema system that carries
+    project state, architectural knowledge, and friction lessons between
+    sessions. Combined with a captain/agent workflow that controls what
+    information reaches the coding agent and when.
+  principles:
+    - Session continuity through structured files, not memory
+    - Information diet over information overload
+    - Convention over configuration
+    - Append-only institutional memory
+    - Specification, not software — zero runtime dependencies
+
+# =============================================================================
+# ARCHITECTURE
+# =============================================================================
+
+architecture:
+  overview: |
+    Forge Flow defines a two-location file system within any project repo.
+    Root-level files are public-facing or always-visible to agents.
+    The .forge/ directory contains session state, reference material, and
+    deep project knowledge organized into visibility tiers.
+
+  locations:
+    repo_root:
+      purpose: Public-facing artifacts and agent entry point
+      files:
+        - name: CLAUDE.md
+          role: Agent entry point — conventions, paths, build commands, .forge/ directory
+          format: markdown
+          write_mode: manual
+          visibility: tier_1
+
+        - name: CHANGELOG.yaml
+          role: Public-facing product wins and milestones
+          format: yaml
+          write_mode: prepend
+          visibility: tier_1
+          quality_gate: true
+
+    forge_directory:
+      path: .forge/
+      purpose: Session state, reference material, project knowledge
+
+      session_files:
+        purpose: Operational heartbeat — read at session start, written at session end
+        files:
+          - name: backlog.yaml
+            role: Prioritized work queue (in_progress + backlog)
+            write_mode: overwrite
+            visibility: tier_1
+            generated_by: captain
+
+          - name: session-state.yaml
+            role: Fresh snapshot of where the session ended
+            write_mode: overwrite
+            visibility: tier_1
+            generated_by: captain
+
+          - name: session-history.yaml
+            role: Permanent rolling log of all past sessions
+            write_mode: append
+            visibility: tier_1
+            generated_by: captain
+
+          - name: active-bugs.yaml
+            role: Currently unresolved bugs only
+            write_mode: overwrite
+            visibility: tier_1
+            generated_by: captain
+
+          - name: GOTCHAS.yaml
+            role: Friction lessons — institutional memory
+            write_mode: append
+            visibility: tier_1
+            generated_by: captain_or_agent
+            deletion_policy: rarely_if_ever
+
+      reference_files:
+        purpose: Deep project knowledge injected surgically by the captain
+        subdirectories:
+          blueprint:
+            path: .forge/blueprint/
+            files:
+              - name: Blueprint.yaml
+                role: Full architecture specification
+                write_mode: manual
+                visibility: tier_3_never_autoread
+                note: Often 2000+ lines. Captain extracts surgical sections.
+
+              - name: Blueprint-manifest.yaml
+                role: Implementation tracking against blueprint
+                write_mode: update
+                visibility: tier_2
+
+          specs:
+            path: .forge/specs/
+            standard_files:
+              - name: api-spec.yaml
+                role: API routes, request/response schemas, auth patterns
+              - name: deployment.yaml
+                role: Environments, hosting, CI/CD, infrastructure
+              - name: integrations.yaml
+                role: External services, credentials, SDK usage
+              - name: testing.yaml
+                role: Test strategy, coverage targets, QA patterns
+            extensible: true
+            note: Projects add domain-specific specs as needed
+            visibility: tier_2
+            write_mode: manual
+
+          style:
+            path: .forge/style/
+            files:
+              - name: tokens.yaml
+                role: Design system tokens (colors, typography, spacing, components)
+                visibility: tier_2
+                write_mode: manual
+
+      integration_files:
+        purpose: Touchpoints for external tools
+        optional: true
+        files:
+          - name: chromaswarm.yaml
+            role: Per-repo ChromaSwarm agent configuration
+            visibility: tier_2
+            condition: Only present in repos using ChromaSwarm
+
+# =============================================================================
+# VISIBILITY TIERS
+# =============================================================================
+
+visibility_tiers:
+  tier_1:
+    name: Always Visible
+    access: Read automatically at session start
+    consumer: Claude Code via CLAUDE.md guidance
+    budget: Under 500 lines combined for full situational awareness
+    files: [CLAUDE.md, backlog.yaml, session-state.yaml, active-bugs.yaml, GOTCHAS.yaml, CHANGELOG.yaml]
+    note: session-history.yaml is tier_1 but only recent entries needed
+
+  tier_2:
+    name: Read When Pointed
+    access: Read only when captain includes in focused prompt
+    consumer: Claude Code via surgical prompt references with file paths and line numbers
+    files: [specs/*, style/tokens.yaml, Blueprint-manifest.yaml, chromaswarm.yaml]
+
+  tier_3:
+    name: Never Auto-Read
+    access: Captain provides surgical excerpts only
+    consumer: Claude Web reads; Claude Code never loads directly
+    files: [Blueprint.yaml]
+    reason: Too large — consuming it degrades agent performance
+
+  tier_4:
+    name: System Output
+    access: Varies by tool
+    owner: External tools, not Forge Flow
+    examples: [.chromaqa/, chromaswarm-friction-journal.yaml, chromaqa-check.sh]
+
+# =============================================================================
+# SESSION LIFECYCLE
+# =============================================================================
+
+session_lifecycle:
+  participants:
+    user:
+      role: Describes tasks in plain English, routes friction, approves work
+    captain:
+      role: Claude Web — holds full context, generates focused prompts
+    agent:
+      role: Claude Code — executes with minimal context, reports friction
+
+  phase_1_start:
+    trigger: User uploads repo ZIP to Claude Web
+    steps:
+      - Captain extracts and indexes repo
+      - Captain reads .forge/ session files
+      - Captain provides Session Context Summary (5-8 lines max)
+      - Captain checks ChromaQA debt (threshold 25)
+      - Captain announces "Ready for tasks"
+
+  phase_2_build:
+    trigger: User describes task in plain English
+    steps:
+      - Captain reads relevant tier_2/tier_3 files
+      - Captain generates focused prompt containing only what agent needs
+      - User copies prompt to Claude Code
+      - Agent executes task
+      - Agent answers two reflection questions
+      - User decides whether to log GOTCHA
+    repeat: As many tasks as needed
+
+    focused_prompt_structure:
+      - override_preamble: Context mode, approval code, no auto-init, collaboration note
+      - repo_location: Clone or pull
+      - required_context: Specific files and line numbers only
+      - task: What, why, and proposed approach
+      - available_tools: MCP services relevant to the task
+      - output_format: Green completion message + reflection questions
+
+    reflection_questions:
+      - "What would have made this prompt better or more effective?"
+      - "Did you encounter anything that would cause a future session to fail or waste significant time?"
+
+  phase_3_end:
+    trigger: User says "end session" or similar
+    steps:
+      - Captain reads current .forge/ files
+      - Captain generates updated content for all session files
+      - Captain outputs single prompt for agent to write, commit, deploy
+      - Agent writes all files and pushes
+
+    file_updates:
+      - file: session-state.yaml
+        action: overwrite
+        content: Complete file (fresh snapshot)
+      - file: active-bugs.yaml
+        action: overwrite
+        content: Complete file (reconciled — fixed removed, new added)
+      - file: backlog.yaml
+        action: overwrite
+        content: Complete file (completed removed, new added, statuses updated)
+      - file: session-history.yaml
+        action: append
+        content: New entry only
+      - file: GOTCHAS.yaml
+        action: append_if_new
+        content: New entries only (omit if none)
+      - file: CHANGELOG.yaml
+        action: prepend_if_worthy
+        content: New entry only (omit if nothing passes quality gate)
+
+# =============================================================================
+# FILE SCHEMAS (SUMMARY)
+# =============================================================================
+# Full schemas with examples are in docs/FILE_SCHEMAS.md
+# This section defines the essential structure of each file.
+
+schemas:
+  changelog:
+    location: repo root
+    key_fields: [date, slug, title, summary, category, technical, tags, impact]
+    quality_gate:
+      - Would a potential customer care?
+      - Would a buyer see this as value?
+      - Is this a visible, tangible improvement?
+
+  backlog:
+    location: .forge/
+    sections: [in_progress, backlog]
+    key_fields: [id, name, priority, estimate, description, status]
+    id_format: "{PROJECT_PREFIX}-{NNN}"
+    priority_scale: [P0_critical, P1_important, P2_nice_to_have, P3_polish]
+    task_size_target: 30min to 4hr per Claude Code session
+
+  session_state:
+    location: .forge/
+    key_fields: [session_date, project, milestones, decisions, blockers, next_steps, context]
+    decision_fields: [decision, rationale, impact]
+
+  session_history:
+    location: .forge/
+    entry_fields: [date, duration, completed, commits, key_changes, files_modified, blockers_remaining]
+
+  active_bugs:
+    location: .forge/
+    key_fields: [id, summary, symptom, context, severity, notes]
+    id_format: "BUG-{NNN}"
+    severity_scale: [blocker, high, medium, low]
+
+  gotchas:
+    location: .forge/
+    key_fields: [id, date, problem, prevention]
+    optional_fields: [files, tags, area, severity, summary, detail, source, applies_to]
+    id_format: "GOTCHA-{NNN}"
+
+  blueprint:
+    location: .forge/blueprint/
+    structure: project-specific, no fixed schema
+    size: typically 2000+ lines
+    access: never auto-read
+
+  specs:
+    location: .forge/specs/
+    standard: [api-spec, deployment, integrations, testing]
+    extensible: true
+    structure: domain-specific, no fixed schema
+
+  tokens:
+    location: .forge/style/
+    key_sections: [meta, colors, typography, spacing, border_radius, shadows, motion, components, accessibility]
+
+# =============================================================================
+# INTEGRATION POINTS
+# =============================================================================
+
+integrations:
+  boundary_principle: |
+    Forge Flow defines the files. The tools define the behavior.
+    Integration happens at the file level — structured YAML with documented schemas.
+
+  chromaqa:
+    type: quality_gate_system
+    touchpoints:
+      - file: chromaqa-check.sh
+        direction: reads_codebase
+      - file: .chromaqa/CQA-debt.jsonl
+        direction: writes_output
+      - file: .chromaqa/CQA-debt.jsonl
+        direction: read_by_captain
+        threshold: 25
+
+  gotchas_system:
+    type: institutional_memory
+    touchpoints:
+      - file: .forge/GOTCHAS.yaml
+        direction: append_by_captain_or_agent
+      - file: .forge/GOTCHAS.yaml
+        direction: read_by_agent_at_session_start
+    input_source: Agent reflection questions
+    cross_project: SolutionPatterns.yaml in forgeflow repo
+
+  chromaswarm:
+    type: multi_agent_orchestration
+    status: beta
+    touchpoints:
+      - file: .forge/chromaswarm.yaml
+        direction: read_by_swarm_agents
+      - file: chromaswarm-friction-journal.yaml
+        direction: append_at_repo_root
+    agents: [prospector, blacksmith, crucible, hallmark]
+
+  prompt_library:
+    type: operational_layer
+    storage: user's prompt management system (not in repo)
+    key_prompts:
+      - name: Focused Build Protocol
+        touches: reads all .forge/ session files at start
+      - name: End Session
+        touches: writes/updates 6 files
+      - name: LOG_FRICTION
+        touches: appends to .forge/GOTCHAS.yaml
+      - name: FORGE_INIT
+        touches: creates all files with init templates
+      - name: Install & Repair
+        touches: audits, consolidates, and creates .forge/ structure
+
+# =============================================================================
+# TOOLING
+# =============================================================================
+
+tooling:
+  forge_init:
+    purpose: Scaffold .forge/ structure in any project repo
+    behavior: Non-destructive — skips existing files
+    location: prompts/FORGE_INIT.md in forgeflow repo
+    idempotent: true
+
+  install_repair:
+    purpose: Bring any repo into Forge Flow 10 compliance
+    behavior: Audits, consolidates duplicates, creates missing files
+    location: User's prompt library
+    phases: [target_repo, audit, consolidate, create, verify, commit, report]
+    idempotent: true
+
+  solution_patterns:
+    purpose: Cross-project friction diary
+    location: SolutionPatterns.yaml in forgeflow repo
+    entry_count: 51
+    schema: [trigger, symptom, fix, tags, details]
+    write_mode: append_only
+
+# =============================================================================
+# REPO CONTENTS
+# =============================================================================
+
+repo_contents:
+  forgeflow_repo:
+    purpose: Single source of truth for the Forge Flow specification
+    url: https://github.com/chromasmith/forgeflow
+    files:
+      - README.md — Entry point, what Forge Flow is and isn't
+      - SolutionPatterns.yaml — 51-entry cross-project friction diary
+      - docs/FOLDER_STRUCTURE.md — Every file, where it lives, and why
+      - docs/FILE_SCHEMAS.md — Complete schema and examples for every file
+      - docs/VISIBILITY_TIERS.md — Information diet system (tiers 1-4)
+      - docs/SESSION_LIFECYCLE.md — Start → Build → End workflow
+      - docs/INTEGRATION_POINTS.md — ChromaQA, GOTCHAS, ChromaSwarm touchpoints
+      - examples/README.md — Scaffolded project reference
+      - prompts/FORGE_INIT.md — Initialization prompt
+
+# =============================================================================
+# VERSION HISTORY
+# =============================================================================
+
+version_history:
+  v1_through_v8:
+    period: 2025
+    approach: Module-based build system with event buses, circuit breakers, process managers
+    outcome: Over-engineered. 13 modules, 6900 lines. Only .forge/ folder survived daily use.
+    lesson: Convention over code. Specification over software.
+
+  v10:
+    date: 2026-02-19
+    approach: Lean specification — folder convention, file schemas, operating methodology
+    outcome: Active. Used daily across Synclips, Ntarsia, Convergible.
+    what_changed: |
+      Stripped everything except what works:
+      - .forge/ folder structure
+      - File schemas with real-world examples
+      - Visibility tier system
+      - Captain/agent workflow documentation
+      - Integration points for external tools
+      Zero runtime code. Zero dependencies. Pure documentation and convention.
+
