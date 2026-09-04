@@ -26,6 +26,8 @@
 #   E-043 initialization_template_schema            E-044 initialization_template_relay
 #   E-045 compliance_canary_wrap (board pre-mortem 1 — every rendered protocol ends with one)
 #   E-046 cc_remainder_secrets_guard
+# ADDED v0.2.0-build (ChromaQA 7.0 master change, 2026-09-04):
+#   E-047 cc_remainder_push_gate (exit-code rule + post-push telemetry exception)
 # E-004 (database state invisible) also carries the STEP 0 database-state class, so
 # the index's "sub-blocks conditional" for E-005 resolves to E-004 + E-031..E-034.
 # Reader deviation from the index: E-001 is all, not cw — a cold runner must hold the
@@ -153,12 +155,17 @@ wrap_file_manifest_schema: |
 
 # >>> block E-036 | wrap_manifest_chromaqa_lines | reader: cw | render_when: subsystems.chromaqa
 wrap_file_manifest_chromaqa: |
-  Additional paths for this repo (ChromaQA present) — PASS-THROUGH only, never
-  generated or edited by anyone; committed by the local remainder only when
-  git status shows them modified:
-    .chromaqa/CQA-runs.jsonl
-    .chromaqa/CQA-debt.jsonl
-    .chromaqa/CQA-showstoppers.jsonl
+  Additional paths for this repo (ChromaQA present):
+    .chromaqa/profiles.json           PROTECTED CONFIG — committed; never generated,
+                                      edited, deleted or emptied by the wrap or any
+                                      prompt (a change is Matt's decision, by name)
+    .chromaqa/CQA-debt.jsonl          PASS-THROUGH — never generated or edited by
+    .chromaqa/CQA-showstoppers.jsonl  anyone; committed by the local remainder when
+                                      git status shows them modified, which is
+                                      expected right after any push (the gate
+                                      appends to them during the push)
+    .chromaqa/CQA-runs.jsonl          LOCAL ONLY — gitignored, never committed,
+                                      never on GitHub
 # <<< end E-036
 
 # >>> block E-004 | database_state_invisible_rule | reader: cw | render_when: subsystems.supabase
@@ -302,14 +309,17 @@ read_current_state: |
 
 # >>> block E-037 | read_state_chromaqa_telemetry | reader: cw | render_when: subsystems.chromaqa
 read_state_chromaqa_telemetry: |
-  Also read the ChromaQA telemetry files if they exist — for awareness only,
-  never to generate or edit them:
-      .chromaqa/CQA-runs.jsonl
+  Also read the committed ChromaQA files from GitHub if they exist — for
+  awareness only, never to generate or edit them:
       .chromaqa/CQA-debt.jsonl
       .chromaqa/CQA-showstoppers.jsonl
-  A debt count at or above {{thresholds.chromaqa_debt_alert}} is stated in
-  one line in the handoff status. Telemetry is never a wrap artifact; the
-  local remainder commits it only when git shows it modified.
+      .chromaqa/profiles.json   (its presence means the SEO/GEO gates are live)
+  .chromaqa/CQA-runs.jsonl is gitignored and per machine; it is not on GitHub
+  and is not read by the wrap. A debt count at or above
+  {{thresholds.chromaqa_debt_alert}} is stated in one line in the handoff
+  status, and a push refused by the gate this session (exit 1 or 2) is named
+  in the handoff's watch_out_for with its code. Telemetry is never a wrap
+  artifact; the local remainder commits it only when git shows it modified.
 # <<< end E-037
 
 # >>> block E-008 | verify_before_you_write_and_evidence | reader: cw | render_when: always
@@ -1017,14 +1027,49 @@ cc_local_remainder_prompt: |
 # >>> block E-040 | cc_remainder_chromaqa_lines | reader: cw+cc-local | render_when: execution.local and subsystems.chromaqa
 cc_remainder_chromaqa_lines: |
   Telemetry pass-through lines for the local remainder (this repo runs
-  ChromaQA). These files are written by ChromaQA during the session and are
-  NEVER generated or edited by the wrap; they are committed only if git
-  status shows them modified, added to the named-file list as:
-      .chromaqa/CQA-runs.jsonl          (pass-through, if modified)
+  ChromaQA). These files are written by the ChromaQA gate, NEVER generated or
+  edited by the wrap; they are committed only if git status shows them
+  modified, added to the named-file list as:
       .chromaqa/CQA-debt.jsonl          (pass-through, if modified)
       .chromaqa/CQA-showstoppers.jsonl  (pass-through, if modified)
+  .chromaqa/CQA-runs.jsonl is gitignored and is never staged.
+  .chromaqa/profiles.json is PROTECTED CONFIG: it is never on the staged list
+  and never edited; if it shows as modified or deleted, that is a STOP —
+  report it and wait.
   The report adds: "- ChromaQA telemetry: [committed — list / skipped]".
 # <<< end E-040
+
+# >>> block E-047 | cc_remainder_push_gate | reader: cw+cc-local | render_when: execution.local and subsystems.chromaqa
+cc_remainder_push_gate: |
+  PRE-PUSH GATE lines for the local remainder (this repo runs ChromaQA). The
+  git push in COMMIT AND PUSH runs ./chromaqa-check.sh first, and its exit
+  code decides what happens next:
+
+  - Exit 0 — the push went through; continue to VERIFY PUSH.
+  - Exit 1 — FAILED. Read the finding; every one names a code. If it is a
+    TypeScript, ESLint or build failure in a file on this task's authorized
+    list, fix it there, commit and push again. ANY other showstopper (a
+    secret scan, gitleaks missing, Row Level Security, a package manager
+    missing, a profiles.json that cannot be read) is a STOP: report the
+    finding as printed and wait for Matt.
+  - Exit 2 — CAPTAIN REVIEW. STOP. Do not push, do not "fix" it so it passes,
+    do not touch .chromaqa/profiles.json. Report the finding exactly as
+    printed and wait. It is not yours to resolve.
+  Never push with --no-verify. A wrap that cannot push is NOT done and must
+  not print the DONE banner.
+
+  TELEMETRY AFTER THE PUSH. The gate appends to .chromaqa/CQA-debt.jsonl and
+  .chromaqa/CQA-showstoppers.jsonl DURING the push, so a successful push can
+  leave exactly those two files modified. This is ChromaQA working, not a
+  scope breach. In this repo, WORKING TREE AUDIT and VERIFY PUSH check 1 treat
+  those two paths as ALWAYS PERMITTED to be modified. If either is modified
+  after the push: commit them by name with the message
+  "chore: chromaqa telemetry", push again (the gate re-runs and appends
+  nothing new when nothing changed), then run VERIFY PUSH.
+
+  The report adds: "- ChromaQA gate: [passed / refused, exit N, code — how
+  resolved / telemetry commit at [hash]]".
+# <<< end E-047
 
 # >>> block E-046 | cc_remainder_secrets_guard | reader: cw+cc-local | render_when: execution.local and protected.never_touch_paths non-empty
 cc_remainder_secrets_guard: |
@@ -1240,16 +1285,20 @@ file_behaviors_schema:
 
 # >>> block E-042 | file_behaviors_chromaqa | reader: cw | render_when: subsystems.chromaqa
 file_behaviors_chromaqa:
-  chromaqa_runs:
-    path: .chromaqa/CQA-runs.jsonl
-    action: PASS-THROUGH (committed by the local remainder only if modified; never generated or edited)
+  chromaqa_profiles:
+    path: .chromaqa/profiles.json
+    action: PROTECTED CONFIG (committed; never generated, edited, deleted or emptied by the wrap or any prompt; changes are Matt's, by name)
+    note: "present means the six SEO/GEO gates are live in this repo"
   chromaqa_debt:
     path: .chromaqa/CQA-debt.jsonl
-    action: PASS-THROUGH (committed by the local remainder only if modified; never generated or edited)
-    note: "read at session start; alert threshold {{thresholds.chromaqa_debt_alert}}"
+    action: PASS-THROUGH (committed by the local remainder when modified — expected right after any push; never generated or edited)
+    note: "read at session start from GitHub; alert threshold {{thresholds.chromaqa_debt_alert}}"
   chromaqa_showstoppers:
     path: .chromaqa/CQA-showstoppers.jsonl
-    action: PASS-THROUGH (committed by the local remainder only if modified; never generated or edited)
+    action: PASS-THROUGH (committed by the local remainder when modified — expected after a refused push; never generated or edited)
+  chromaqa_runs:
+    path: .chromaqa/CQA-runs.jsonl
+    action: LOCAL ONLY (gitignored, per machine; never committed, never on GitHub, not read by the wrap)
 # <<< end E-042
 
 # >>> block E-029 | initialization_templates | reader: cw | render_when: always
