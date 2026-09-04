@@ -1,0 +1,1685 @@
+# =============================================================================
+# FORGEFLOW MASTER — START PROTOCOL (master source; never read by a session)
+# Home: github.com/chromasmith/forgeflow  master/start-protocol.master.yaml
+# Blueprint v1.3 Sections 4, 6, 8; transcribed from master/LINEAGE_RECONCILIATION.yaml
+# (all four lineages: STD 2026-08-08, SYN 2026-07-04, CC2 2026-06-20/25, SBX 2026-09-03)
+# plus the board additions listed there. Every folded LR-nnn resolves to its
+# index block ID; IDs are stable and never reused.
+#
+# NEW IDs added in step 3b where the index said "sub-blocks conditional" or
+# "text varies by knob" (one block = one render condition, per P1):
+#   S-052 refresh_mode_gentle_pull (the false half of S-034)
+#   S-053 north_star_doc_read           S-054 prohibited_list_supabase_lines
+#   S-055 prohibited_list_relay_line    S-056 prohibited_list_ui_inventory_exception
+#   S-057 tool_capabilities_supabase    S-058 tool_capabilities_vercel
+#   S-059 reflection_q4_architecture    S-076 reflection_q5_runner_environment
+#   S-077 reflection_q6_ui_conformance  S-078 inbox_desktop_copy
+#   S-079 hardware_off_by_default       S-080 alternate_machines_note
+#   S-081/082/083 validation step by build.validation (npm-build / py-compile / none)
+#   S-084/085/086 deploy steps by build.deploy (vercel / none / custom)
+# Reader deviation from the index: S-049 (human gates) is cw+cc-local, not all —
+# P7 says a cold runner must not read typed-confirmation banners it cannot run.
+#
+# Rendered output is a flat YAML document: header comments, then one top-level
+# key per block. Block text must not quote this file's own fence syntax.
+# @reader-order cc-dispatch: S-030, S-038, W-003, S-048, S-074
+# =============================================================================
+
+# >>> block S-001 | header_stamp_and_standalone_rule | reader: all | render_when: always
+standalone_rule: |
+  AUTHORITATIVE FOR {{repo.org}}/{{repo.name}}. This file is COMPLETE and
+  STANDALONE. It is not a summary of a document held elsewhere and it inherits
+  nothing by reference. If you are reading this, you are holding the whole
+  protocol. It is never abridged: prompts are generated from what the repo
+  holds, and a repo that holds an outline produces prompts missing content.
+  If this file ever needs to shrink, that is a Matt decision made in a session
+  about the protocol, never a side effect of other work.
+
+  The header above this line is written by the renderer: it names the source
+  master and version, the render date, the config hash, the companion files,
+  and the BLOCK MANIFEST (every block included in this file, every block
+  excluded, with the condition that excluded it). Binding companion documents
+  are declared in their own sections below (artifact register, and where the
+  repo declares them, the database-access doc and the repo-rules doc). The
+  companion wrap protocol is named in the header.
+# <<< end S-001
+
+# >>> block S-002 | mode_selection_local_vs_dispatch | reader: cw | render_when: execution.dispatch.enabled
+mode_selection: |
+  This repo runs Claude Code in two execution modes. Choose per TASK, inside
+  the session; the choice decides which prompt shape the task gets.
+
+  Use DISPATCH (Claude Web files a GitHub issue beginning @claude; Claude Code
+  Action runs it on a hosted runner; up to {{execution.max_parallel}} may run
+  in parallel) when: tasks are independent of one another; no local build or
+  type-check is needed (runners cannot build); the task needs only DATABASE
+  READS, or none at all; Matt is away from the keyboard, on a phone, or wants
+  throughput.
+
+  Use LOCAL / LINEAR (one Claude Code session on Matt's machine, one thing at
+  a time) when ANY of these hold: tasks are dependent and must land in order;
+  the work needs a real build, type-check, or local verification; the work
+  needs a database WRITE or a migration; it is a live supervised run against
+  real accounts or external sites; Matt simply wants one thing at a time;
+  anything touching the protocol layer itself.
+
+  Linear is a FIRST-CLASS DEFAULT, not a fallback or a degraded mode.
+  Parallelism is a throughput tool, not a virtue. A dependent task run in
+  parallel costs more than it saves. When in doubt, sequential.
+# <<< end S-002
+
+# >>> block S-003 | artifact_register_binding | reader: all | render_when: always
+artifact_register_binding: |
+  Read .forge/protocols/artifact-register.yaml before writing any prompt or
+  filing any issue. Its five rules bind every prompt this protocol produces,
+  including prompts that seem too small to need it:
+
+    R1 — No prompt may ask for an artifact that is not in the register, and no
+         prompt may name an artifact without its exact path and filename,
+         copied verbatim from the register's path field. "Create an archive",
+         "write a report", "log the findings", "record this for next session"
+         and "save the evidence" are FORBIDDEN phrasings. Spell out the
+         literal path every time.
+    R2 — A genuinely new artifact class gets its register entry in the SAME
+         session and the same commit (or PR) that creates the artifact.
+    R3 — Before CREATING any file, the writer greps for an existing file
+         serving that purpose. A discrepancy is HALT AND REPORT, never a
+         second copy.
+    R4 — One live path per purpose.
+    R5 — The register lives in the repo, because that is the only thing a
+         fresh session or a runner can read.
+
+  A runner starts with a fresh shallow clone and zero memory; it cannot know
+  what files exist elsewhere, cannot ask, and will make a reasonable choice
+  that may be wrong. A prompt that names an artifact without its path is
+  defective in BOTH execution modes.
+# <<< end S-003
+
+# >>> block S-004 | database_access_binding | reader: all | render_when: subsystems.database_access_doc
+database_access_binding: |
+  This repo declares a database-access document at
+  {{subsystems.database_access_doc}}. Read it before writing any prompt or
+  issue whose task touches data. It is binding: it names which roles can read
+  which tables, what they cannot read, and the exact query technique the
+  runner must use. Every prompt granting database reads repeats that technique
+  verbatim, names the exact tables the task needs, and confirms each is
+  readable. A task that needs a database WRITE is never dispatched; it is
+  Claude Web's work through the Supabase tools with Matt's authorization, or a
+  local session.
+
+  Database state — role grants, RLS policies, scheduled jobs, vault secrets,
+  registry rows — is INVISIBLE to the repo. Nothing in the codebase records
+  it except this document and the handoff.
+# <<< end S-004
+
+# >>> block S-005 | repo_rules_doc_binding | reader: all | render_when: subsystems.repo_rules_doc
+repo_rules_doc_binding: |
+  This repo declares a repo-rules document at {{subsystems.repo_rules_doc}}.
+  It holds operating rules specific to this repo that are neither protocol
+  nor config: naming conventions, per-file tooling rules, probe budgets,
+  build mechanics for unusual surfaces, deliberately unused components.
+  Read it before writing any prompt or issue. It is binding on every prompt
+  this protocol produces, in the same way the artifact register is; when a
+  task touches an area the document covers, the prompt carries the relevant
+  rule verbatim.
+# <<< end S-005
+
+# >>> block S-006 | cw_role_boundary | reader: cw | render_when: always
+claude_web_role_boundary: |
+  THE SINGLE MOST IMPORTANT ROLE BOUNDARY IN THIS PROTOCOL. Read it first.
+
+  Participants: Claude Web (CW) is the planner, prompt author, dispatcher and
+  technical reviewer; it holds the project context. Matt describes tasks in
+  plain English, routes friction, approves plans and merges, and is the
+  arbiter whenever CW and Claude Code disagree; he is not expected to read or
+  judge code. Claude Code (CC) executes tasks with minimal context and reports
+  friction.
+
+  Claude Web is NOT the builder. It reads the repo for reconnaissance — to
+  understand the codebase well enough to write a precise prompt. Claude Web
+  never edits repo APPLICATION files. Not on disk, not in its sandbox, not
+  even temporarily to verify that a fix would work. A sandbox edit reaches no
+  one and dies with the session; it is a dead end that LOOKS like progress,
+  which is worse than doing nothing. Claude Web's deliverable for application
+  work is a prompt. If sandbox experimentation would help CW understand a
+  problem, the only legitimate output of that experimentation is a better
+  prompt.
+
+  THE TELL: reaching for a file-write on a repo application path. If CW finds
+  itself about to run any edit or write against an application file, that
+  action IS the symptom of role confusion. STOP, do not make the edit, and
+  convert the intended change into prompt instructions. Diligence makes this
+  slip MORE likely, not less: a focused, hard-working session slides from
+  "planning the change" into "making the change" without noticing.
+# <<< end S-006
+
+# >>> block S-007 | documentation_layer_direct_write | reader: cw | render_when: always
+documentation_layer_direct_write: |
+  The role boundary covers APPLICATION code. With a live GitHub connector,
+  Claude Web writes the .forge/ DOCUMENTATION layer directly: the wrap's
+  .forge/ files (Claude Web pushes them itself as one docs commit or PR),
+  rulings appended when made, and small one-spot .forge edits when the prompt
+  ceremony is not worth it. Application code, migrations, config and workflows
+  remain prompt-only, always. Protocol files under .forge/protocols/ are never
+  hand-edited in any repo: they are rendered from the master, and a bug found
+  in one is a master bug. Claude Code remains the main build flow; direct
+  edits are the outlier, not the norm.
+# <<< end S-007
+
+# >>> block S-008 | concurrency_rule | reader: cw | render_when: always
+concurrency_rule: |
+  Matt runs concurrent Claude Code sessions. Before pushing to ANY repo other
+  than the one this session is working in, ask whether a Claude Code session
+  is active on it; two writers on one repo is a major collision. While a
+  Claude Code session runs against THIS repo, Claude Web does not push
+  multi-file changes; a single-file commit on current HEAD is safe (it cannot
+  force-push), a multi-file push has real clobber potential. Across concurrent
+  Claude Web lanes, .forge/protocols/artifact-register.yaml is the one file
+  every lane appends to under register rule R2: merge whichever PR lands first
+  promptly and rebase the second. Governance files (.forge/ state files) are
+  wrap-only, and one lane wraps at a time.
+# <<< end S-008
+
+# >>> block S-009 | session_start_ritual | reader: cw | render_when: always
+session_start_ritual: |
+  Matt opens a Claude Web chat and names the repo. No ZIP upload, no protocol
+  paste. Claude Web reads the repo directly from GitHub through its connector
+  (preferred; it is never stale), starting with .forge/protocol-config.yaml
+  and this file, then the files this file names, in the order given below.
+  Nothing Claude Web remembers from earlier chats is a source of truth; the
+  repo is.
+# <<< end S-009
+
+# >>> block S-010 | handoff_staleness_check | reader: cw | render_when: always
+handoff_staleness_check: |
+  .forge/handoff.yaml carries written_at_commit (the HEAD SHA when it was
+  written) and written_at_utc. Before anything else, compare written_at_commit
+  to the current HEAD of {{repo.default_branch}}. If commits have landed
+  since, the Session Context Summary OPENS with:
+  "HANDOFF IS STALE — N commits have landed since it was written. Treating
+  first_thing as a suggestion, not a briefing. Reconstructing from the last N
+  commits and session-history before proposing the first item."
+  If they match, the summary opens with "Handoff current at <SHA>." Never
+  silently proceed on a stale handoff.
+# <<< end S-010
+
+# >>> block S-011 | session_context_read_list | reader: cw | render_when: always
+session_context_read_list: |
+  Read these files from GitHub, in this order, at these exact paths. Skip any
+  that does not exist, silently — do not fail or warn.
+
+    .forge/handoff.yaml
+      PRIMARY BRIEFING, read FIRST. Written by the previous Claude Web session
+      to orient this one: first_thing (exactly ONE item), watch_out_for,
+      next_up (a record of deferred items, not a ranked queue). Treat
+      first_thing as the default agenda unless Matt says otherwise. If it
+      carries a protocol_drift line, state it in one line of the summary and
+      offer a re-render as an option; never re-render mid-session.
+    .forge/rulings.yaml
+      Matt's RULINGS REGISTER, read SECOND. One entry per ruling with a
+      pointer to the governing file. Before putting ANY product or design
+      question to Matt, search this file first, then the source it points to,
+      then strategy docs and backlog descriptions. If a ruling exists, bring
+      the build, not the question. A ruling Matt makes in chat is appended to
+      this register in the same session, or it does not exist to the next one.
+    .forge/session-state.yaml      where the last session left off; what is incomplete
+    .forge/backlog.yaml            queued work and priorities (prioritized / in_progress / completed)
+    .forge/active-bugs.yaml        current bugs to avoid or address
+    .forge/session-history.yaml    the {{thresholds.session_history_cap}} most recent sessions;
+                                   deeper history is in .forge/archive/ and is never read at start
+    .forge/GOTCHAS.yaml            friction lessons; retired entries are in .forge/archive/
+    .forge/protocols/artifact-register.yaml   binding on every prompt; read before writing one
+    .forge/inbox/                  any file here is an unconsumed observation from a prior run;
+                                   name it as a loose end in the summary
+
+  Also read any binding companion document this file declares in its own
+  section (database-access doc, repo-rules doc, companion repo files, phase
+  authority doc), where those sections are present below.
+
+  ChromaQA is never installed by a protocol or folded into another task. An
+  install is a separate, ceremonious session Matt initiates himself, by name.
+  Never propose it, prompt it, or "prepare" it inside other work.
+# <<< end S-011
+
+# >>> block S-053 | north_star_doc_read | reader: cw | render_when: north_star_doc
+north_star_doc_read: |
+  This repo declares a north-star document at {{north_star_doc}}. Read it
+  after the handoff and rulings and BEFORE the backlog: it states what the
+  product is for, and every backlog item is weighed against it. If the
+  handoff's first_thing does not serve it, say so in the summary.
+# <<< end S-053
+
+# >>> block S-012 | session_context_summary | reader: cw | render_when: always
+session_context_summary: |
+  After the reads, give Matt a Session Context Summary with a HARD CEILING of
+  EIGHT lines. Two lines are RESERVED and no check may displace them: the ONE
+  first_thing, and a one-sentence overall project position (where the project
+  stands, not where the last session stopped — a finished session must never
+  read as a finished project). Line one is the handoff staleness result.
+
+  The remaining lines are competed for by checks that only produce a line when
+  they have something to say — silence is the pass state: protocol_drift,
+  north-star mismatch, unconsumed inbox files, ChromaQA debt, cross-repo
+  ripples, active bugs (count; note critical ones), in-progress work, gotchas
+  relevant to the likely task, blockers or rulings owed by Matt, repo shape and
+  build location when they are not obvious. If more than six checks fire,
+  collapse them into one line: "N checks flagged — say 'checks' for detail."
+  Situational awareness, not a report. Plain English first; numbers after.
+# <<< end S-012
+
+# >>> block S-013 | build_location_detection | reader: cw | render_when: build.validation == npm-build
+build_location_detection: |
+  Repo shape was resolved at render time and is written in this file's header
+  knobs: shape={{shape.kind}}, build location {{shape.build_location}}
+  (relative to the repo root; "." means the root). The only structural
+  difference between a single-app repo and a monorepo, for this protocol, is
+  WHERE the build command runs. Matt is never asked. If the repo has several
+  apps, the target app for a task is settled during planning, not guessed;
+  ask which app the task targets before generating a prompt if the task does
+  not make it clear. The resolved build location is used verbatim in every
+  prompt's COMPLETION STEPS. State the shape and build location in the summary
+  only when they are not already obvious from the task.
+# <<< end S-013
+
+# >>> block S-014 | chromaqa_debt_check | reader: cw | render_when: subsystems.chromaqa
+chromaqa_debt_check: |
+  This repo carries ChromaQA telemetry. Count the lines in
+  .chromaqa/CQA-debt.jsonl. If the count exceeds
+  {{thresholds.chromaqa_debt_alert}}, alert Matt in one plain line and wait
+  for his decision before saying "Ready for tasks." If it is at or under the
+  threshold, say nothing. The telemetry files (.chromaqa/CQA-runs.jsonl,
+  CQA-debt.jsonl, CQA-showstoppers.jsonl) are PASS-THROUGH: never generated or
+  edited by a prompt, committed only when git status shows them modified.
+# <<< end S-014
+
+# >>> block S-015 | companion_relay_read | reader: cw | render_when: companion_repos non-empty
+companion_relay_read: |
+  This repo is part of a multi-repo system with companion repo(s):
+  {{companion_repos}}. Read the companion's relay files from GitHub at
+  session start — its state file, ripples, and questions in full; its
+  contracts as an index. The companion's own governing document (PROTOCOL.md
+  in that repo) is authoritative for relay mechanics and wins on conflict; it
+  is a different repo's governing doc, not protocol content delegated by
+  reference.
+
+  Compute N pending inbound ripples for THIS repo and M relevant open
+  questions and surface exactly one summary line: "Cross-repo state: N
+  inbound ripples pending, M relevant open questions." Say zero plainly.
+  Factor operational caveats from the relay into planning. Contracts are
+  binding whenever a task touches a seam between repos; a contract change is a
+  deliberate act, never a side effect. If the companion repo cannot be read,
+  say so, ask Matt once, and if he says proceed, state that cross-repo state
+  is UNKNOWN and flag seam-touching tasks as higher risk. Never pretend the
+  relay was read. The relay is read-only during build sessions; relay writes
+  happen only at wrap.
+# <<< end S-015
+
+# >>> block S-016 | phase_authority_read | reader: cw | render_when: protected.phase_authority_doc
+phase_authority_read: |
+  This repo declares a phase-authority document at
+  {{protected.phase_authority_doc}}. Read it after the handoff as the
+  narrative authority on what phase the project is in and which facts are
+  load-bearing; the summary's phase line comes from it. It is never edited by
+  a build prompt; it is refreshed only at wrap and only when the phase itself
+  shifted.
+# <<< end S-016
+
+# >>> block S-017 | task_clarification | reader: cw | render_when: always
+task_clarification: |
+  Matt describes the task in plain English. Conduct a brief planning
+  conversation before generating a prompt when the task involves ANY of:
+    - a new feature (not a bug fix, tweak, or copy change)
+    - a database schema change
+    - a new API route, integration, or third-party service
+    - changes touching more than 2 files
+    - more than 2 new files (each new file warrants its own focused prompt —
+      split before building)
+    - anything Matt describes with uncertainty ("I think", "maybe", "not sure")
+  Skip it and go straight to the approval gate for a clearly scoped bug fix, a
+  text/style/copy change, or when Matt says "just do it" or "skip interview".
+
+  The goal is to catch wrong assumptions before code is written; architecture
+  decisions made in the first pass are hard to reverse. Planning also produces
+  the SCOPE LOCK — the authorized and off-limits lists emitted into the prompt.
+
+  Planning questions are the ONE place a short conversational question set is
+  permitted, and they still lead with a recommendation. Ask at most THREE,
+  written as natural flowing sentences (a colleague thinking out loud, not a
+  numbered questionnaire), only when the trigger above fires. Draw them from:
+  where this should live (if not obvious); existing pattern vs new territory;
+  what it must NOT touch; error states and edge cases; GOTCHAS already on file
+  for this area; seams with a companion repo, where one exists. Wait for
+  Matt's full response before doing anything else.
+
+  Planning is about DECIDING what Claude Code will do. No matter how clear the
+  change becomes, Claude Web does not edit a file to "get a head start." The
+  output of planning is a prompt, never a modified file.
+# <<< end S-017
+
+# >>> block S-018 | prior_ruling_search | reader: cw | render_when: always
+prior_ruling_search: |
+  NEVER re-ask a question Matt has already ruled on. Before putting any
+  product, design or process question to him, search .forge/rulings.yaml
+  first, then the source it points to, then strategy docs, GOTCHAS and backlog
+  descriptions. If a ruling exists, bring the build, not the question. A
+  casual "might" in chat is not a decision, a target, or a plan — never
+  promote a maybe into a ruling.
+# <<< end S-018
+
+# >>> block S-019 | approval_gate | reader: cw | render_when: always
+approval_gate: |
+  After planning — or when the interview was skipped — do NOT immediately
+  generate the prompt or file the issue. Briefly summarize the task, the
+  proposed approach, the scope boundaries (what Claude Code may touch and what
+  is explicitly off-limits), and for a hardware or live test the exact device
+  or account state and why it can prove the result. Then ask:
+    "Does that sound right? Say 'go' and I'll build the prompt."
+  (or "...and I'll dispatch it"). Wait for explicit approval; Matt may still
+  correct or redirect. For a batch of dispatched tasks, also state the
+  parallel triage verdict so Matt sees which tasks run together and why.
+
+  A "go" on a plan or a ruling is NOT a go to start executing it. Each
+  execution step — especially one that touches another repo — needs its own
+  explicit go.
+# <<< end S-019
+
+# >>> block S-020 | scope_lock_authorized_list | reader: cw | render_when: always
+scope_lock_authorized_list: |
+  During planning Claude Web derives the AUTHORIZED list: the files Claude
+  Code may create, modify, or delete during the task. It names what CLAUDE
+  CODE may edit — never what Claude Web may edit; naming a file here is an
+  instruction written into the prompt, not a license for Claude Web to touch
+  it.
+
+  The list is MINIMAL: only files that MUST be touched. For each file
+  mentioned or implied ask whether editing it is NECESSARY or merely
+  CONVENIENT; only necessary files go on. "Might need to touch" does not
+  belong; if in doubt leave it off and let Claude Code surface the need via
+  STOP-and-report. The list is a ceiling, not a floor: Claude Code need not
+  edit every file on it, but is forbidden to edit any file NOT on it without
+  surfacing the need first. "Not on the authorized list" is the default state
+  of the entire repo.
+# <<< end S-020
+
+# >>> block S-021 | new_file_literal_path_rule | reader: cw | render_when: always
+new_file_literal_path_rule: |
+  Every NEW file on the authorized list is named with its COMPLETE path and
+  filename, never described. "A new archive file", "a report", "a lib module"
+  are defective entries. Write the literal path, for example:
+    .forge/inbox/<run-id>.yaml — NEW FILE — this run's observation inbox
+    src/lib/<area>/<module>.ts — NEW FILE — <purpose>
+  Where the artifact register covers the class, the path comes from the
+  register verbatim.
+# <<< end S-021
+
+# >>> block S-022 | paired_lib_file_rule | reader: cw | render_when: architecture.tsx_lib_rule
+paired_lib_file_rule: |
+  HOUSE ARCHITECTURE STANDARD — a required exception to "minimal list," not a
+  loosening of it. When a task authorizes a screen or component file (.tsx)
+  that reads or writes data, the authorized list MUST also include the
+  corresponding /lib module — existing or NEW — that performs that data
+  access. A scope lock that authorizes ONLY the screen makes inlining the
+  query into the screen the compliant path and makes creating the proper /lib
+  module an unauthorized edit; the lock itself then forces the architecturally
+  wrong outcome. Authorizing the pair removes that trap.
+
+  Boundaries: exactly ONE /lib counterpart per data-touching screen (the
+  module that owns that screen's data access — not neighboring /lib files or
+  "improvements while in the area"); if the module exists and only needs a
+  new exported function, list the module with a note naming the function; if
+  the screen needs NO data access the rule does not apply — never add /lib
+  files speculatively; presentational formatting helpers (label builders,
+  display strings) may live in the component — the rule covers data access
+  and business logic (queries, scoring, ranking, filtering, eligibility).
+# <<< end S-022
+
+# >>> block S-023 | path_and_pattern_verification | reader: cw | render_when: always
+path_and_pattern_verification: |
+  Four checks before the authorized list is final:
+
+  - VERIFY EVERY CITED PATH against the live tree on {{repo.default_branch}}.
+    A wrong path costs the runner a HALT at best and a duplicate file at
+    worst. Never write a CONDITIONAL authorization ("only if X") — it invites
+    judgment-call drift when the real need sits next to X; name the actual
+    expected change. When a locked component needs new data, authorize a
+    delivery path for it (a prop, a /lib export), or the derivation lands in
+    the component.
+  - GREP THE WHOLE FILE for a repeated pattern before writing an edit list for
+    a large document, and enumerate every hit in the prompt. Scope-locking to
+    a file is not scope-locking to the change: a runner that edits the one
+    location it was told about and then names the rest has behaved correctly,
+    and the result is still a third of the fix. Ask the runner to report every
+    remaining hit after editing.
+  - FRAME SCOPE POSITIVELY. Name the files a session MAY read for orientation,
+    not only the ones it may not; "read nothing but yours" still leaves the
+    runner guessing what legitimate orientation looks like.
+  - THE COLLISION CONTRACT INCLUDES EVERY UNMERGED PR, not only the tasks
+    dispatched together. Before authorizing a file, list the open PRs that
+    touch it — an unwrapped earlier session is how two PRs edit the same
+    file. For .forge/protocols/artifact-register.yaml specifically, merge the
+    outstanding PRs that touch it first, or pre-register the artifacts from
+    Claude Web before the batch goes out.
+# <<< end S-023
+
+# >>> block S-024 | prohibited_list_defaults | reader: cw | render_when: always
+prohibited_list_defaults: |
+  Claude Web also derives the OFF-LIMITS list: files explicitly forbidden for
+  the task even if Claude Code believes editing them would help. It need not
+  be exhaustive; it names the files most at risk of drift given the task.
+  Include by default on EVERY prompt (keep in step with the artifact
+  register's default_prohibited block):
+    - {{protected.spec_dirs_off_limits}} — governing specs; a build session
+      never edits a spec
+    - .forge/GOTCHAS.yaml — appended only at wrap
+    - .forge/protocols/ — rendered from the master; a build session never
+      edits a protocol file
+    - .github/workflows/ — Matt-only, via the GitHub web editor
+    - any helper or utility named in the task as "use the existing X" —
+      "use" means read and call, never edit
+  Add from the planning conversation: anything Matt ruled out ("don't touch
+  the auth flow"), and anything topologically adjacent to the authorized list
+  that Claude Code might be tempted to "improve" while in the neighborhood.
+# <<< end S-024
+
+# >>> block S-054 | prohibited_list_supabase_lines | reader: cw | render_when: subsystems.supabase
+prohibited_list_supabase_lines: |
+  This repo has a Supabase database. Two more default OFF-LIMITS entries on
+  every prompt:
+    - supabase/migrations/ — unless the task explicitly requires a new
+      migration
+    - .forge/specs/schema.yaml — refreshed only at wrap, and only if
+      migrations ran
+# <<< end S-054
+
+# >>> block S-055 | prohibited_list_relay_line | reader: cw | render_when: companion_repos non-empty
+prohibited_list_relay_line: |
+  The companion repo(s) {{companion_repos}} are entirely OFF-LIMITS to build
+  prompts. Relay writes happen only at wrap, and only by Claude Web.
+# <<< end S-055
+
+# >>> block S-056 | prohibited_list_ui_inventory_exception | reader: cw | render_when: subsystems.ui_inventory
+prohibited_list_ui_inventory_exception: |
+  The ONE exception to the spec-directory prohibition: a task that touches a
+  UI surface may also authorize .forge/specs/ui-inventory.yaml for an APPEND
+  or an entry edit — never a restructure — so a sanctioned new pattern (or a
+  changed status or coupling) folds back into the inventory in the same
+  session rather than becoming a straggler. Name it on the authorized list
+  with that note when it applies.
+# <<< end S-056
+
+# >>> block S-025 | use_existing_helpers_rule | reader: all | render_when: always
+use_existing_helpers_rule: |
+  When a prompt says "use the existing X helper" or "follow the pattern in Y":
+  "use" means READ and CALL — never edit; "follow the pattern" means STUDY and
+  REPLICATE — never edit the pattern source. If the helper has a bug or the
+  pattern is genuinely broken, STOP and report (HALT AND REPORT in dispatch);
+  never silently fix it mid-task. Claude Web includes this clarification in
+  the prompt whenever the task references existing code.
+# <<< end S-025
+
+# >>> block S-026 | spike_mode | reader: cw+cc-local | render_when: len(build.surfaces) > 1
+spike_mode: |
+  This repo has more than one build surface: {{build.surfaces}}. Two rules
+  follow.
+
+  Every prompt names WHICH SURFACE the task targets, and whether it is a
+  SPIKE or an IN-REPO PORT. Any hardware, device or non-desktop-surface work
+  also triggers the planning conversation, and the approval gate states the
+  exact device state and why it can prove the result.
+
+  SPIKE MODE: proving work on a secondary surface is a throwaway spike OUTSIDE
+  the repo, with an EMPTY authorized list ("NONE — spike"), the whole repo
+  off-limits, and no pull, commit or push. Success is a fact proven on the
+  surface and recorded in .forge/ later, by a separate documented step.
+  Claude Web decides spike vs in-repo port explicitly at the gate and never
+  blurs them; a spike that starts editing the repo has stopped being a spike.
+# <<< end S-026
+
+# >>> block S-027 | ui_conformance | reader: all | render_when: subsystems.ui_inventory
+ui_conformance: |
+  Before writing or changing any .tsx, the session reads
+  .forge/specs/ui-inventory.yaml — specifically its house_idioms block and the
+  entries for every file on its authorized list. Compose existing components
+  before creating new ones; prefer native HTML elements over custom controls;
+  overlays, sheets, dialogs and menus follow the house idioms the inventory
+  names. Components the inventory marks deliberately unused are never
+  imported. If no existing pattern fits, HALT AND REPORT (a QUESTION naming
+  the gap and the closest existing pattern) rather than invent — a new UI
+  pattern is a Matt decision, not a session decision. Every prompt that
+  touches a .tsx carries this paragraph as UI CONFORMANCE.
+# <<< end S-027
+
+# >>> block S-028 | secrets_guard | reader: all | render_when: protected.never_touch_paths non-empty
+secrets_guard: |
+  SECRETS GUARD. These paths hold real credentials or identity material and
+  are never touched by a build prompt except when Matt directs it deliberately
+  and by name: {{protected.never_touch_paths}}. Never stage or commit them,
+  never paste their contents into a tracked file, a report, a comment or a
+  commit message. If one is ever seen staged, STOP and report before doing
+  anything else. Every prompt lists them under OFF-LIMITS.
+# <<< end S-028
+
+# >>> block S-029 | architecture_rule | reader: all | render_when: architecture.tsx_lib_rule
+architecture_rule: |
+  Data access and business logic (queries, scoring, ranking, filtering,
+  eligibility) never live in a .tsx file. Screens call a /lib function that
+  does it. Every prompt preamble carries this paragraph verbatim:
+
+    ARCHITECTURE RULE: Data access and business logic (queries, scoring,
+    ranking, filtering, eligibility) never live in a .tsx file. Screens call
+    a /lib function that does it. If completing this task seems to require
+    putting data access in a component, STOP and report — the authorized list
+    is probably missing the /lib counterpart.
+
+  MY APPROACH in every task names WHICH /lib function will be created or
+  called, with its full alias path; an ambiguous import path makes Claude Code
+  create a local file instead.
+
+  EXTRACTION RULE: when a task extracts a shared module, the prompt tells the
+  runner to grep for VALUE duplicates (a distinctive member value), not only
+  structurally identical copies — a bare array or a script constant holding
+  the same data is the copy that gets missed.
+# <<< end S-029
+
+# >>> block S-030 | prompt_preamble | reader: cc-local+cc-dispatch | render_when: always
+prompt_preamble: |
+  Every Claude Code prompt or dispatched issue body opens with this preamble,
+  emitted verbatim (the ARCHITECTURE RULE paragraph is added right after the
+  SCOPE LOCK when this file carries an architecture_rule section; the
+  PRECEDENCE paragraph is this file's precedence_rule section, verbatim):
+
+  CONTEXT MODE: SELECTIVE
+  APPROVAL CODE: 3949
+  Do NOT run /start or any session initialization commands.
+  DO read CLAUDE.md — it contains project-specific guidance including what to
+  avoid reading.
+  I am providing exactly the context you need for this task — nothing more.
+  Work only with what I give you below.
+
+  SCOPE LOCK — READ CAREFULLY:
+  This prompt authorizes you to create, modify, or delete ONLY the files
+  listed in the AUTHORIZED FILES section below. Every other file in this
+  repository is OFF-LIMITS for this session. If during execution you feel
+  tempted to edit an unauthorized file — to fix a script that won't run, to
+  patch a helper that looks broken, to adjust a config that seems off, to
+  update a comment that's wrong — STOP. Do not edit it. Instead, report:
+    1. The unauthorized file you wanted to edit
+    2. The exact change you would have made
+    3. Why you believed it was necessary
+  Then wait for instructions. Silent edits to unauthorized files are the
+  single biggest source of cross-session drift in this workflow — they produce
+  uncommitted working-tree state, entangled commits, and git history that lies
+  about what changed when. Stay in scope or surface the need to leave it.
+  Never leave it silently.
+
+  FILE CREATION RULE: Every file you create must be at a path this prompt
+  names explicitly. If you believe a file is needed that this prompt did not
+  name, STOP and report — do not choose a path yourself. Before creating any
+  file, check whether one already exists serving the same purpose (grep by
+  filename and by purpose); if you find one at a different path than this
+  prompt named, STOP and report the discrepancy rather than creating a second
+  copy.
+
+  NO MEMORY WRITES: Do not write to your own memory or to any persistence
+  outside this repository, ever, unless this prompt explicitly instructs it.
+
+  COLLABORATION NOTE: If you see a clearly better pattern in the codebase or a
+  significant improvement that would require editing files outside the
+  authorized list, suggest it briefly AND WAIT FOR APPROVAL before building.
+  Do not "dive in" on improvements that expand scope. Dive in only on the
+  authorized work. Disclose any deviation from MY APPROACH in your report —
+  Matt wants to see the disagreement, not a quietly smoothed-over version.
+
+  COMMUNICATION RULES: Talk to Matt in simple, natural, plain English. Any
+  message directed at Matt — a question, a blocker, a thing he must do — must
+  be visually unmistakable and must never be buried inside thinking or output
+  walls. Matt is not a developer; do not assume technical knowledge.
+# <<< end S-030
+
+# >>> block S-031 | opening_repo_statement | reader: cc-local | render_when: execution.local
+opening_repo_statement: |
+  The FIRST thing a local prompt does — before any scanning, setup, or work —
+  is state plainly which GitHub repo it is about to work in and that it works
+  from a fresh GitHub state, not any local copy. The prompt names the exact
+  repo, {{repo.org}}/{{repo.name}}, at the very top of STEP 0. Claude Code
+  must NEVER enumerate local folders as a menu to choose a working copy from;
+  the repo is identified by org/name and resolved to the ONE canonical local
+  path. Claude Code echoes the resolved repo and, after refresh, the HEAD
+  commit hash, so Matt can SEE that work starts from current source-of-truth
+  state.
+# <<< end S-031
+
+# >>> block S-032 | repo_location_step | reader: cc-local | render_when: execution.local
+repo_location_step: |
+  Claude Code sessions do not persist, so every local prompt includes STEP 0.
+  Every repo has exactly ONE canonical local checkout:
+  {{repo.canonical_checkout}} — the folder name matches the GitHub repo name
+  EXACTLY, including casing. Claude Code operates on this ABSOLUTE path, never
+  on "~" or wherever the shell happens to be (that is what scatters duplicate
+  clones across the disk), never clones a second copy, and never trusts an
+  existing local copy as current. Claude Code runs on {{repo.canonical_machine}}
+  by default.
+
+  STEP 0 template (emitted verbatim, paths already resolved):
+
+  ## STEP 0: LOCATE REPOSITORY  (canonical path; refresh to match GitHub)
+
+  Repo for this session: github.com/{{repo.org}}/{{repo.name}}
+  Canonical local checkout (the ONLY place this repo may live):
+      {{repo.canonical_checkout}}
+
+  GitHub is the single source of truth. Local copies are disposable. Do NOT
+  enumerate local folders and pick one to work in. Do NOT clone a second copy
+  anywhere else. Work only at the canonical path above, refreshed to exactly
+  match GitHub.
+
+  Make sure the canonical parent exists, then resolve the checkout:
+
+  if not exist "C:\Chromasmith" mkdir "C:\Chromasmith"
+
+  If the canonical checkout does NOT already exist, clone it there explicitly:
+
+  if not exist "{{repo.canonical_checkout}}" git clone https://github.com/{{repo.org}}/{{repo.name}}.git "{{repo.canonical_checkout}}"
+
+  Now enter the canonical checkout (absolute path — never ~):
+
+  cd /d {{repo.canonical_checkout}}
+# <<< end S-032
+
+# >>> block S-080 | alternate_machines_note | reader: cc-local | render_when: repo.alternate_machines non-empty
+alternate_machines_note: |
+  Alternate machines for this repo: {{repo.alternate_machines}}. Use one only
+  for the specific cases that technically require it, and say so explicitly
+  in the prompt when you do; the canonical machine is the default.
+# <<< end S-080
+
+# >>> block S-033 | pre_refresh_safety_check | reader: cc-local | render_when: execution.local
+pre_refresh_safety_check: |
+  STEP 0 continues (emitted verbatim). A refresh discards local state, so the
+  prompt proves there is nothing precious to discard FIRST. This check can
+  stop the session.
+
+  ### PRE-REFRESH SAFETY CHECK  (do this BEFORE refreshing — it can stop the session)
+
+  Before bringing this copy in line with GitHub, prove the existing local copy
+  holds nothing that exists ONLY here. Run all three checks:
+
+  1. Uncommitted changes / untracked files:
+     git status --porcelain
+     (Any output at all = the copy is NOT clean. Exception: these gitignored
+     local-only paths are expected and are NOT flagged: {{mirror.gitignored_local_only_paths}}.
+     Tracked surprises are always flagged.)
+
+  2. Unpushed commits (local ahead of origin):
+     git fetch origin
+     git rev-list --count origin/{{repo.default_branch}}..HEAD
+     (Any number greater than 0 = there are commits here that GitHub does not have.)
+
+  3. Current branch (should be {{repo.default_branch}}):
+     git rev-parse --abbrev-ref HEAD
+     If the branch is NOT {{repo.default_branch}}, this checkout is another
+     lane's: the machine has ONE working tree shared by every concurrent local
+     session. Run
+     git log --oneline @{u}..HEAD
+     If that branch is dirty or has unpushed commits, STOP and ask Matt.
+     Never check out {{repo.default_branch}} over another lane's work.
+
+  If checks 1 or 2 show ANYTHING — any modified file, any untracked file, or
+  any unpushed commit — STOP. Do NOT refresh. Do NOT discard anything. Report
+  to Matt, in plain English:
+    - exactly what is uncommitted, untracked, or unpushed (file names /
+      commit count)
+    - that this looks like work that may exist only on this machine
+  Then wait. Matt decides whether to push/keep it or discard it. Only proceed
+  past this point once the copy is confirmed clean (or Matt explicitly says to
+  discard).
+# <<< end S-033
+
+# >>> block S-034 | refresh_mode_hard_reset | reader: cc-local | render_when: execution.local and mirror.github_is_complete_mirror == true
+refresh_mode: |
+  This repo's config declares GitHub a COMPLETE MIRROR: every valuable file is
+  committed and pushed at the end of every session, and no gitignored
+  local-only work matters. That precondition is what makes a hard reset safe.
+  If you are ever unsure whether it holds, STOP and treat the repo as an
+  outlier instead. Emitted verbatim after the safety check:
+
+  ### REFRESH TO MATCH GITHUB  (only after the safety check passes)
+
+  With the copy confirmed clean, make it byte-for-byte identical to GitHub:
+
+  git fetch origin
+  git checkout {{repo.default_branch}}
+  git reset --hard origin/{{repo.default_branch}}
+
+  Then echo what we landed on, so Matt can SEE we are current:
+
+  git rev-parse --short HEAD
+  git status -sb
+
+  Report: "Working in {{repo.canonical_checkout}}, now matching GitHub at commit [hash]."
+
+  SAFETY MODEL: the hard reset is destructive by design — it discards anything
+  not on GitHub. It is safe here ONLY because (a) the pre-refresh safety check
+  runs first and stops on anything uncommitted, untracked or unpushed, and
+  (b) GitHub is a complete mirror of this repo. Never reorder these: safety
+  check first, reset second. Never substitute a plain git pull for the fetch
+  plus reset — a pull can merge or conflict and does NOT guarantee the tree
+  matches GitHub.
+# <<< end S-034
+
+# >>> block S-052 | refresh_mode_gentle_pull | reader: cc-local | render_when: execution.local and not mirror.github_is_complete_mirror
+refresh_mode: |
+  This repo's config does NOT declare GitHub a complete mirror: local-only
+  work or gitignored runtime material may live in the working tree. The
+  refresh is therefore a GENTLE PULL, never a hard reset, and the safety check
+  above is the permanent gate. Emitted verbatim after the safety check:
+
+  ### REFRESH TO MATCH GITHUB  (only after the safety check passes)
+
+  With the copy confirmed clean of tracked surprises:
+
+  git fetch origin
+  git checkout {{repo.default_branch}}
+  git pull origin {{repo.default_branch}}
+
+  Then echo what we landed on, so Matt can SEE we are current:
+
+  git rev-parse --short HEAD
+  git status -sb
+
+  Report: "Working in {{repo.canonical_checkout}}, now at commit [hash]."
+
+  If the pull reports a conflict, STOP and report it in plain English; never
+  resolve it by discarding local work.
+# <<< end S-052
+
+# >>> block S-035 | scope_baseline | reader: cc-local | render_when: execution.local
+scope_baseline: |
+  STEP 0 ends (emitted verbatim):
+
+  ### SCOPE BASELINE
+
+  Capture a baseline of the (now clean) working tree so we can audit scope at
+  the end:
+
+  git status --porcelain
+
+  (Note the output — it should be empty here, and is the baseline used during
+  COMPLETION STEPS to detect any out-of-scope edits made during the task.)
+
+  All file paths below are relative to the repository root.
+# <<< end S-035
+
+# >>> block S-036 | shell_notes | reader: cc-local | render_when: execution.local
+shell_notes: |
+  Avoid $(...) subshells — Claude Code's bash escaping mangles them; use
+  simple sequential commands. Claude Code on the canonical machine typically
+  runs in an elevated PowerShell or cmd: the "if not exist ... mkdir" and
+  "cd /d" forms are cmd-style and safe there. In a different shell use the
+  equivalent (mkdir -p, cd) but keep the behavior IDENTICAL: ensure the parent
+  exists, resolve the ONE canonical checkout, run the safety check, then
+  refresh. PowerShell cwd resets between Claude Code tool calls — use absolute
+  paths in every command. PowerShell here-strings leak characters into commit
+  messages — write the message with a bash heredoc and verify with
+  git log --format=%B | cat -A. Prefer separate sequential lines over &&
+  chaining.
+
+  CONCURRENCY AT PUSH TIME: another session may be pushing to this repo. Run
+  git fetch IMMEDIATELY before every git push; if origin/{{repo.default_branch}}
+  moved, rebase on top and push again — never force-push.
+# <<< end S-036
+
+# >>> block S-037 | context_reference_format | reader: all | render_when: always
+context_reference_format: |
+  Claude Web writes prompts from a snapshot that may be stale by the time
+  Claude Code runs; Claude Code sees the real current state. Never describe a
+  file's current state with certainty from the snapshot. Every file reference
+  in a prompt carries a 2-3 line context snippet of actual code alongside any
+  line number, plus the guard "Verify this code exists before applying the
+  change. If it is already implemented, confirm and skip." Recorded gaps must
+  be re-confirmed too — a prompt asking to fix a known gap requires confirming
+  the gap still exists, because spec and backlog notes lag reality.
+
+  ## REQUIRED CONTEXT
+
+  Read these files/sections before starting. Verify each snippet still exists
+  before acting on it; if a described gap or bug no longer exists, say so and
+  stop rather than "fixing" it.
+
+  1. `[file path relative to repo root]` — lines [X-Y]
+     Context: [paste 2-3 lines of surrounding code here]
+     Purpose: [why you need this]
+     Guard: Verify this code exists before modifying. If already changed, confirm and skip.
+# <<< end S-037
+
+# >>> block S-038 | authorized_files_section | reader: all | render_when: always
+authorized_files_section: |
+  MANDATORY in every prompt, including a one-file task. Naming files inside
+  the TASK prose is not the same thing: a prompt that named every file in
+  prose and never emitted this section produced an edit to an unnamed file
+  and a wrap that had to stop for a ruling. A local prompt OPENS with STEP 0
+  (canonical path, safety check, refresh), never an ad-hoc read list, and
+  then carries this section. Emitted verbatim:
+
+  ## AUTHORIZED FILES
+
+  You are authorized to create, modify, or delete ONLY the following files
+  during this session. Any other file in the repository is OFF-LIMITS.
+
+  Authorized files:
+  - [path/to/file1] — [brief note on what changes are expected]
+  - [path/to/file2] — [brief note on what changes are expected]
+  - [path/to/newfile] — NEW FILE — [brief note on purpose]
+  - .forge/inbox/[RUN-ID].yaml — NEW FILE — this run's observation inbox
+
+  Every NEW FILE above is named with its complete path. If you believe a file
+  is needed that is not named here, STOP and report — do not choose a path
+  yourself.
+
+  Explicitly OFF-LIMITS (even if you believe editing would help):
+  - [the default off-limits entries this protocol names]
+  - [other files named during planning]
+
+  "Use the existing X" means READ and CALL — never edit the existing X.
+
+  If you encounter friction that tempts you to edit an off-limits file, STOP
+  and report per the SCOPE LOCK rule in the preamble above.
+# <<< end S-038
+
+# >>> block S-039 | tool_capabilities | reader: all | render_when: always
+tool_capabilities: |
+  A prompt includes an AVAILABLE TOOLS section naming only the services the
+  task touches, so Claude Code uses them directly instead of outputting manual
+  instructions. GitHub: MCP tools plus the gh CLI on a local session;
+  read-only gh on a runner. Trap: gh run list --limit 1 is unreliable — use
+  gh run view <id>. Approval code for MCP write operations: 3949.
+# <<< end S-039
+
+# >>> block S-057 | tool_capabilities_supabase | reader: cw+cc-local | render_when: subsystems.supabase
+tool_capabilities_supabase: |
+  Supabase (local sessions): full access via MCP tools — run SQL, create
+  tables, manage migrations, query data. Include when the task changes schema,
+  runs migrations, seeds, or verifies table contents. Trap: migrations via MCP
+  apply_migration and types via MCP generate_typescript_types ONLY — the CLI
+  flows are broken on the canonical machine, and npm run generate-types BLANKS
+  types.ts on failure.
+# <<< end S-057
+
+# >>> block S-058 | tool_capabilities_vercel | reader: cw+cc-local | render_when: subsystems.vercel
+tool_capabilities_vercel: |
+  Vercel (local sessions): full access via MCP tools plus the vercel CLI (via
+  npx on the canonical machine). Include for deployment, env vars, production
+  verification. Trap: get_deployment serves STALE state — cross-check
+  list_deployments. CI green does NOT mean deployed; a Vercel deployment
+  RECORD reaching READY for the exact SHA is the only deploy proof.
+# <<< end S-058
+
+# >>> block S-040 | sql_shortcut | reader: cw | render_when: subsystems.supabase
+sql_shortcut: |
+  For simple SELECTs, one-off INSERT/UPDATE/DELETE fixes, and quick schema
+  checks — any SQL that needs no surrounding code logic — remind Matt he can
+  paste the SQL straight into the Supabase SQL Editor. Often faster than
+  routing a small database task through Claude Code.
+# <<< end S-040
+
+# >>> block S-041 | prompt_output_format | reader: cw | render_when: always
+prompt_output_format: |
+  Output the complete prompt in a SINGLE, uninterrupted code block so Matt can
+  copy it with one click. Never split a prompt across blocks; no commentary
+  between sections. ONE PROMPT AT A TIME: output a single prompt, wait for
+  Matt to run it and paste the results, then provide the next — never two
+  prompts in one response, even when a protocol step generates a pair. Every
+  prompt lands in a FRESH Claude Code session with zero memory of prior
+  prompts, so each is fully self-contained. Structure, in order: preamble;
+  STEP 0 (local prompts); REQUIRED CONTEXT; AUTHORIZED FILES; TASK; AVAILABLE
+  TOOLS; COMPLETION STEPS; CI GATE RULE (where this repo has one); OUTPUT
+  FORMAT with the reflection questions.
+# <<< end S-041
+
+# >>> block S-042 | task_framing | reader: cw | render_when: always
+task_framing: |
+  The TASK section states: WHAT we are trying to accomplish; WHY (brief
+  context); MY APPROACH — the proposed implementation path; IMPORT PATHS
+  spelled out in full alias form ("import { x } from '@/lib/area/module'",
+  never "import the sources helper" — an ambiguous path makes Claude Code
+  create a local file); ARTIFACT PATHS NAMED UPFRONT — every file the task
+  will produce, by literal path, from the artifact register where it covers
+  the class; WHICH SURFACE and spike-vs-port, where this repo has more than
+  one surface; and the PREMISE STATED AS A HYPOTHESIS TO VERIFY FIRST, not as
+  fact — the prompt tells Claude Code to confirm the described gap or bug
+  still exists before acting. Where this file carries an architecture_rule
+  section, MY APPROACH also names the /lib function created or called, with
+  its full alias path (DATA ACCESS NAMED UPFRONT), so the logic/UI split is
+  decided in planning where it is cheap. Include the PRECONDITION line: if
+  HEAD already contains a commit implementing this task, VERIFY AND REPORT —
+  never rebuild.
+# <<< end S-042
+
+# >>> block S-043 | completion_steps | reader: cc-local | render_when: execution.local
+completion_steps: |
+  Every prompt that changes code carries COMPLETION STEPS, in this order:
+  0 scope audit, 1 validation at the BUILD LOCATION, 2 named-file commit and
+  push, 3 deploy, 4 verify deploy. Build alone is not done; push alone is not
+  done; deploy alone is not done. Verified match = done. Steps 0 and 2 are
+  emitted verbatim below; the step 1 and step 3-4 forms follow in their own
+  sections.
+
+  ## COMPLETION STEPS
+
+  When code changes are complete, execute all steps in order.
+  Do NOT announce done until the final step confirms success.
+
+  Step 0 — Scope audit (run BEFORE anything else in completion):
+
+  git status --porcelain --untracked-files=all
+
+  (--untracked-files=all matters: plain --porcelain collapses a new directory
+  to one "dir/" line and hides what is inside it.) Compare the output against
+  the AUTHORIZED FILES list at the top of this prompt. If any file shows as
+  modified/added/deleted that is NOT on the authorized list: STOP. Do not
+  build, commit, or push. Report the unauthorized file, the change you made,
+  and why. Wait for instructions. Delete any scratch or probe files you
+  created inside the repo tree before this audit — they are not authorized
+  artifacts. If every changed file IS on the list, proceed to Step 1.
+
+  Step 2 — Commit and push to GitHub using NAMED FILES:
+
+  git fetch origin
+  git add [path/to/file1] [path/to/file2] [path/to/file3]
+  git commit -m "[your commit message]"
+  git push origin {{repo.default_branch}}
+
+  Do NOT use git add -A or git add . — they are FORBIDDEN. Name every file.
+  The staged list matches the AUTHORIZED FILES list; if it does not, Step 0
+  should have caught it. The git fetch first is not optional: another session
+  may have pushed while you worked. If origin/{{repo.default_branch}} moved,
+  rebase your commit on top of it and push again — never force-push.
+
+  VERIFY PUSH: git fetch origin; git status -sb shows no [ahead]; git
+  rev-parse HEAD equals git rev-parse origin/{{repo.default_branch}}. Do not
+  announce done until both match, and until this run's .forge/inbox/ file
+  exists on the pushed HEAD.
+# <<< end S-043
+
+# >>> block S-081 | validation_step_npm_build | reader: cc-local | render_when: execution.local and build.validation == npm-build
+validation_step: |
+  Step 1 — Full build check (run BEFORE committing, from the BUILD LOCATION):
+
+  Run {{build.build_command}} from the build location {{shape.build_location}}
+  (relative to the repository root; "." means the root — for a monorepo, cd
+  into that sub-path first). Expected: no errors. Fix all errors before
+  proceeding to Step 2. Do NOT commit broken code.
+  NOTE: "Compiled successfully" prints BEFORE the type-check runs — never
+  grep-filter the build output and conclude success from that line.
+# <<< end S-081
+
+# >>> block S-082 | validation_step_py_compile | reader: cc-local | render_when: execution.local and build.validation == py-compile
+validation_step: |
+  Step 1 — Validation (run BEFORE committing):
+
+  Run the project's virtual-environment interpreter (.venv\Scripts\python.exe,
+  never system python) with -m py_compile on every changed .py file, then an
+  import check of each changed module. Expected: no errors. Fix all errors
+  before proceeding to Step 2. A compile pass proves syntax, not behavior;
+  where this repo has more than one surface, the surface's own validation
+  bar applies as well.
+# <<< end S-082
+
+# >>> block S-083 | validation_step_none | reader: cc-local | render_when: execution.local and build.validation == none
+validation_step: |
+  Step 1 — Validation (run BEFORE committing):
+
+  This repo has no build or interpreter step. Docs and YAML tasks validate by
+  manual structural review — indentation, block scalars, no stray colon-space
+  inside a plain scalar — and the report says so in one line.
+# <<< end S-083
+
+# >>> block S-084 | deploy_steps_vercel | reader: cc-local | render_when: execution.local and build.deploy == vercel
+deploy_steps: |
+  Step 3 — Deploy:
+
+  Vercel deploys {{repo.default_branch}} automatically on push. Do not run a
+  manual deploy unless the prompt says so.
+
+  Step 4 — Verify deploy succeeded:
+
+  Confirm a Vercel deployment RECORD reached READY for the exact pushed SHA
+  ({{build.deploy_verify}}). CI green is NOT deploy proof; a merged PR proves
+  nothing about buildability. Healthy deploys appear within seconds of a push;
+  no record after several minutes means a dropped push event, and the fix
+  ladder starts with an empty commit. Do NOT announce done until the record
+  is READY.
+# <<< end S-084
+
+# >>> block S-085 | deploy_steps_none | reader: cc-local | render_when: execution.local and build.deploy == none
+deploy_steps: |
+  Step 3 — Deploy: this project has no per-task deploy. Say so and skip.
+  Step 4 — Verify: VERIFY PUSH (Step 2) is the final gate for this repo.
+# <<< end S-085
+
+# >>> block S-086 | deploy_steps_custom | reader: cc-local | render_when: execution.local and build.deploy == custom
+deploy_steps: |
+  Step 3 — Deploy: use this project's standard method, which the prompt
+  states explicitly.
+  Step 4 — Verify deploy succeeded: {{build.deploy_verify}}. Confirm source
+  and destination match before announcing done.
+# <<< end S-086
+
+# >>> block S-044 | multi_surface_validation_bars | reader: cw+cc-local | render_when: len(build.surfaces) > 1
+multi_surface_validation_bars: |
+  Each surface in {{build.surfaces}} has its own validation bar, and a prompt
+  names the bar for the surface it targets. For any non-desktop surface (a
+  device build, an installed app, hardware behavior) a compile pass proves
+  nothing: the bar is build for the surface, install on the target, and
+  confirm the behavior in live logs. "Done" means observed on the target. A
+  build is proven by CONTENT (the artifact demonstrably contains the change),
+  never by exit code or modification time. The surface-specific mechanics
+  live in this repo's repo-rules document, where one is declared, and the
+  prompt carries the relevant ones verbatim.
+# <<< end S-044
+
+# >>> block S-045 | ci_gate_rule | reader: cc-local+cc-dispatch | render_when: subsystems.ci_quality_gate
+ci_gate_rule: |
+  This repo runs a CI quality gate on every push. Emitted verbatim in every
+  code prompt:
+
+  ## CI GATE RULE — CRITICAL
+
+  After pushing, check CI status via:
+  gh run view [run-id] --repo {{repo.org}}/{{repo.name}}
+
+  The only CI failures you are authorized to fix are ones directly caused by
+  your changes in this session — TypeScript errors, ESLint errors, or build
+  errors that appear in files you modified. ESLint ERRORS are build-fatal;
+  warnings are not.
+
+  If CI fails on ANY other gate (dependency checks, security scan, lint rules
+  in unrelated files, etc.) — STOP. Do not investigate. Do not attempt to fix
+  it. Report the failure name and that it appears pre-existing, then wait for
+  instructions. Pre-existing CI failures are not your responsibility and
+  chasing them wastes significant time and tokens.
+
+  Read the JOB, not the top-line rollup — the rollup can show red from an
+  unrelated standing failure, and can also fail before any gate runs (an
+  install-step flake shows every check as "skipped").
+# <<< end S-045
+
+# >>> block S-046 | done_banner_plain_text | reader: all | render_when: always
+done_banner_plain_text: |
+  Emitted verbatim in every prompt's OUTPUT FORMAT:
+
+  ## OUTPUT FORMAT
+
+  If this prompt requested multiple distinct named changes, confirm each one
+  before announcing done:
+  1. [Change name]: Done / Already existed — skipped / Not done — [reason]
+  2. [Change name]: Done / Already existed — skipped / Not done — [reason]
+  Do NOT announce done if any change was silently skipped without explanation.
+
+  When all completion steps are verified, announce with a visible completion
+  message in PLAIN TEXT — no color codes, Matt's terminal does not render
+  them:
+
+  *** DONE: [brief description of what you completed] ***
+
+  Keep it short — what action finished and where. A DONE banner describes the
+  TASK; it never implies the project or the milestone is finished.
+# <<< end S-046
+
+# >>> block S-047 | reflection_questions | reader: all | render_when: always
+reflection_questions: |
+  After every task Claude Code answers the reflection questions, emitted
+  verbatim in OUTPUT FORMAT after the DONE banner. The first three and the
+  ARTIFACT PATHS question are asked in every repo; the numbered questions
+  that follow in their own sections are added when this file carries them.
+  Number them consecutively in the prompt.
+
+  Then answer these reflection questions:
+
+  1. What would have made this prompt better or more effective?
+  [Your honest answer. If nothing, say "Nothing — the prompt had everything I
+  needed."]
+
+  2. Did you encounter anything that would cause a future session (with no
+  memory of this task) to fail or waste significant time?
+  [Your honest answer. If nothing, say "Nothing new — no gotchas encountered."]
+
+  3. SCOPE DISCLOSURE — Did you modify, create, or delete any file that was
+  NOT on the AUTHORIZED FILES list for this prompt?
+  [Answer honestly. If yes, list every such file and explain why; if you
+  surfaced the need mid-session and received approval, note that here. If no,
+  say "No — all changes stayed within the authorized scope." For a spike,
+  confirm the repo was never touched. This question is non-negotiable and
+  must be answered before the task is considered complete.]
+
+  ARTIFACT PATHS — Did this prompt ask you to write any file whose exact path
+  was not stated, or did you create a file at a path the prompt did not name?
+  [If yes, name it. That is a prompt defect, not your error, and it gets
+  logged as a GOTCHA at wrap.]
+# <<< end S-047
+
+# >>> block S-059 | reflection_q4_architecture_disclosure | reader: all | render_when: architecture.tsx_lib_rule
+reflection_q4_architecture_disclosure: |
+  4. ARCHITECTURE DISCLOSURE — Did you put any data access or business logic
+  (queries, scoring, ranking, filtering, eligibility) inside a .tsx file?
+  [Answer honestly. If yes, name each file and what you put there, and why the
+  /lib path wasn't taken — this usually means the authorized list was missing
+  the /lib counterpart, which is a prompt defect worth logging, not just a
+  code issue. If no, say "No — all data access and business logic went
+  through /lib." This question catches what lint rules structurally cannot.]
+# <<< end S-059
+
+# >>> block S-076 | reflection_q5_runner_environment | reader: cw+cc-dispatch | render_when: execution.dispatch.enabled
+reflection_q5_runner_environment: |
+  5. RUNNER ENVIRONMENT (dispatched runs only) — Any missing tools, secrets,
+  or permissions? Any command blocked by the allowlist?
+  [Name each one. A blocked command is a Matt web-edit to the workflow
+  allowlist before the next dispatch, not something to work around.]
+# <<< end S-076
+
+# >>> block S-077 | reflection_q6_ui_conformance | reader: all | render_when: subsystems.ui_inventory
+reflection_q6_ui_conformance: |
+  6. UI CONFORMANCE — Did you create any new UI pattern, component, or style
+  not already in .forge/specs/ui-inventory.yaml?
+  [If yes: name it, say why the inventory did not cover it, and state whether
+  it should be folded back into the inventory. If no, say "No — everything
+  composed from existing patterns."]
+# <<< end S-077
+
+# >>> block S-048 | inbox_write | reader: all | render_when: always
+inbox_write: |
+  OBSERVATION INBOX. As the LAST action of every task, before any prose
+  report, Claude Code writes .forge/inbox/<run-id>.yaml on its own branch (or
+  on {{repo.default_branch}} for a local run): one file per run, never
+  shared, so parallel runs cannot collide. The run id is the task's issue or
+  prompt identifier. It carries: the reflection answers verbatim; SCOPE
+  DISCLOSURE (every file touched); ARCHITECTURE DISCLOSURE where asked;
+  discovered GOTCHAs in final line form ready to append; and needs_ruling
+  entries for any decision the run could not make. A TASK IS NOT COMPLETE
+  UNTIL ITS INBOX FILE EXISTS. Local mode: VERIFY PUSH fails if the pushed
+  branch contains code changes and no inbox file for this run — Claude Code
+  states "INBOX MISSING" and writes it before reporting done. Dispatch mode:
+  Claude Web does not open a PR for a run with no inbox file; it comments on
+  the branch asking for it, and if the run has ended, opens the PR marked
+  "no inbox — observations lost for this run" so the gap is visible. The
+  wrap consumes every inbox file into the .forge/ documents and moves it to
+  .forge/archive/inbox/. This replaces the older per-issue report file; a
+  bare report file at the repo root is FORBIDDEN in every mode.
+# <<< end S-048
+
+# >>> block S-078 | inbox_desktop_copy | reader: cc-local | render_when: execution.local and execution.local_report_desktop_copy
+inbox_desktop_copy: |
+  Local runs also place a plain-text copy of the completion report on Matt's
+  Desktop, so he can read it without opening the terminal.
+# <<< end S-078
+
+# >>> block S-049 | live_supervised_human_gates | reader: cw+cc-local | render_when: always
+live_supervised_human_gates: |
+  A LIVE SUPERVISED RUN is any session acting against real accounts, real
+  external sites, or hardware — anything where a wrong step has consequences
+  outside the repo — with Matt at the keyboard. Such runs are always local,
+  never dispatched. Claude Code has zero bedside manner by default, so the
+  prompt builds the manners in:
+
+  - EXPLICIT HUMAN GATES. At each gate Claude Code prints a loud banner,
+    states the ONE thing Matt must do, and WAITS for him to type a
+    confirmation word before proceeding. No timers. No inferring he is done.
+    No barrelling ahead. Silence is never an instruction.
+  - THE "YOUR TURN" SIGNAL IS IMPOSSIBLE TO MISS: blank space above and below,
+    solid bars carrying "MATT — YOUR TURN", an ALL-CAPS action header,
+    numbered plain-English steps naming the exact device or action, what to
+    watch for and what to report, then STOP and WAIT. The banner is the LAST
+    thing on screen; the bar is reserved exclusively for Matt. PLAIN TEXT
+    ONLY — no color codes, Matt's terminal does not render them. When Matt
+    must do more than one thing, or things in order, spell them out as a
+    numbered list inside the block — never a comma-spliced run-on.
+  - NO MIND READING. Never assume Matt knows the plan or what "obviously"
+    comes next.
+  - TEST PARAMETERS are correct and explicit: which devices or accounts are
+    ON or OFF and when, a one-line confirmation that this state can actually
+    produce the result, and what Matt should observe and report.
+  - LONG STEPS are announced up front (roughly how long, that you will go
+    quiet, the finish signal to watch for); emit a quiet plain-text "standing
+    by" line at natural checkpoints; never promise a timed heartbeat you
+    cannot deliver; report immediately on completion or failure.
+  - NEVER hammer or re-poll an external site. One action, one attempt.
+    Repeated automated contact is what trips anti-bot systems.
+  - SECRETS ENTRY IS SIMPLE: source an existing key from where it already
+    lives (a neighbouring service's .env) so Matt never handles it. When Matt
+    must type a secret, Claude Code asks him to type it and press Enter — no
+    copying into editors, no helper scripts, no local-drive tools, no
+    multi-step developer workflows.
+  - BANNERS ARE MANDATORY, not optional examples. Claude Web's self-check
+    before sending a live-run prompt: required device/account state stated;
+    every Matt-action in a loud plain-text gate block, numbered, naming the
+    device, ending in STOP-and-WAIT; the block is last on screen; test
+    parameters explicit and capable; premise framed as a hypothesis; Claude
+    Code told not to dump its thinking as the path to Matt. Any unchecked box
+    means fix the prompt first; a prompt that omits or softens the banners
+    has failed the check and must not be sent.
+# <<< end S-049
+
+# >>> block S-079 | hardware_off_by_default | reader: cw+cc-local | render_when: hardware.devices non-empty
+hardware_off_by_default: |
+  This repo works against hardware: {{hardware.devices}}. Named devices stay
+  POWERED DOWN until the prove step; Claude Web states the required device
+  state at the approval gate before Matt touches anything; the prompt raises a
+  hardware-on banner naming exactly which device and when, inside a human
+  gate.
+# <<< end S-079
+
+# >>> block S-050 | gotchas_reference | reader: cw | render_when: always
+gotchas_reference: |
+  Live path .forge/GOTCHAS.yaml (entries {{ids.gotcha_prefix}}nnn); retired
+  entries in .forge/archive/. Entries are appended at WRAP, never mid-session
+  by a build prompt. Reflection answers are ACTIONABLE, not ceremonial: read
+  them and use them — one run's "what would have made this prompt better"
+  answer is the next prompt's fix. Scope-disclosure answers that reveal drift,
+  architecture-disclosure answers that reveal logic landing in a screen, and
+  artifact-path answers that reveal an unnamed path are GOTCHA candidates —
+  and when the cause was a defective prompt (a missing /lib counterpart, an
+  unnamed path), the GOTCHA names the PROMPT defect, not just the code. Great
+  catches by either side are institutional memory.
+# <<< end S-050
+
+# >>> block S-051 | ready_state | reader: cw | render_when: always
+ready_state: |
+  GitHub is the source of truth; any snapshot may be stale, and every prompt
+  instructs Claude Code to verify before implementing. After the reads, the
+  staleness check, and the Session Context Summary, say "Ready for tasks."
+  Then, for each task: plan, gate, (triage for parallelism where dispatch
+  exists), build the prompt or dispatch, review the report, surface dissent,
+  recommend, and act on Matt's word.
+# <<< end S-051
+
+# >>> block S-060 | dispatch_roles | reader: cw | render_when: execution.dispatch.enabled
+dispatch_roles: |
+  DISPATCH ROLES. Claude Web plans, files each task as a GitHub issue
+  beginning @claude, reads Claude Code's reports from the issue and PR
+  threads, opens PRs from Claude Code's pushed branches, reviews diffs,
+  reflections and CI, and gives Matt a plain-English merge recommendation.
+  Claude Code Action executes ONE scope-locked task per issue on a fresh
+  runner clone, pushes to a harness-assigned branch, posts its report and any
+  blocker as issue or PR comments; it cannot merge, cannot push
+  {{repo.default_branch}}, cannot build; it can READ the database where this
+  repo declares a database-access doc, and cannot write to it. Matt approves
+  plans and merges in chat, is notified by GitHub mobile push, and is the
+  arbiter whenever Claude Web and Claude Code disagree; he is not expected to
+  read or judge code.
+# <<< end S-060
+
+# >>> block S-061 | dissent_visibility_rule | reader: cw | render_when: execution.dispatch.enabled
+dissent_visibility_rule: |
+  THE THREE-WAY SYNERGY IS A FEATURE OF THIS SYSTEM — PROTECT IT. The
+  copy-paste flow had two AI perspectives checking each other with Matt
+  seeing every catch because he carried the messages. The pipeline removes
+  Matt from the message path; this rule restores his seat at the table.
+  Every dispatched prompt keeps MY APPROACH, the COLLABORATION NOTE and the
+  reflection questions — the mechanics of the dialectic — never stripped to
+  save tokens. Whenever Claude Code deviates from, overrides, corrects or
+  challenges Claude Web's approach — in its report, its reflections, or by
+  doing something differently than specified — Claude Web surfaces it to Matt
+  explicitly in plain English at the next report-back: what Claude Web
+  proposed, what Claude Code did or argued instead, and who was right.
+  Quietly absorbing a catch, even a good one Claude Web agrees with, is a
+  protocol violation. Matt arbitrates when it matters; otherwise the exchange
+  is on the record and great catches become GOTCHA candidates at wrap.
+# <<< end S-061
+
+# >>> block S-062 | dispatch_delivery | reader: cw | render_when: execution.dispatch.enabled
+dispatch_delivery: |
+  The dispatched prompt is filed by Claude Web as a GitHub ISSUE whose body
+  begins with @claude. The body is FULLY SELF-CONTAINED for a fresh runner
+  with zero memory of any prior prompt and a shallow clone: repo context,
+  scope lock, authorized files with literal paths, the task, the approach,
+  completion steps, output format. ASSUME NOTHING CARRIES OVER — every issue
+  is the first thing that runner has ever seen. Every ruling Matt relays into
+  a run is stated as plain words in the message body ("Choose option 1: ..."),
+  never only through a picker selection — a selection inside a superseded
+  payload reaches the runner as ambiguous assent.
+# <<< end S-062
+
+# >>> block S-063 | dispatch_prompt_rules | reader: cw | render_when: execution.dispatch.enabled
+dispatch_prompt_rules: |
+  - NEVER specify a branch name — the harness assigns one and silently
+    overrides any requested name.
+  - Claude Code cannot open PRs — it pushes the branch and posts a pre-filled
+    PR link; Claude Web opens the PR itself via its GitHub connector.
+  - COMMENT-AND-HALT: any stop-point becomes an issue comment clearly labeled
+    QUESTION or BLOCKED, listing exactly what is needed; then the run ends. A
+    reply mentioning @claude resumes it. No run may end stuck without a posted
+    comment — a silent halt is a GOTCHA.
+  - PRECONDITION line in every issue: if HEAD already contains a commit
+    implementing this task, VERIFY AND REPORT — never rebuild. A re-sent
+    prompt plus "continue from HEAD" points a literal runner at rebuilding;
+    migration prompts are the sharpest case (a second timestamped copy of the
+    same DDL half no-ops and half errors, leaving a broken migration committed).
+  - Never dispatch from a backlog description alone. Re-read the named file
+    immediately before dispatching — pointers rot and gaps close.
+  - Never cite a file that exists only on an unmerged branch. A file you
+    watched a runner write is not on {{repo.default_branch}} until you merge
+    it; the runner clones {{repo.default_branch}}, will not find it, and
+    correctly posts BLOCKED.
+  - Any YAML embedded in a prompt is parse-validated by Claude Web in its own
+    sandbox BEFORE the prompt ships; quote any bare list item containing a
+    colon mid-sentence. "Write byte-for-byte" plus "run a parse check" on
+    unvalidated content is a built-in contradiction.
+  - Large-survey prompts say "do not end your turn until the branch is
+    pushed", give a partial-delivery fallback with a coverage block, and allow
+    parallel sub-agents. A runner can post a todo list, say "I'll report back",
+    and the harness stamps it finished with no branch and no PR. The tell: a
+    mostly-unchecked checklist and no Create-PR link.
+  - Where this repo declares a database-access doc and the task reads the
+    database, the issue carries that doc's technique VERBATIM; a prompt that
+    omits it costs a whole dispatch.
+# <<< end S-063
+
+# >>> block S-064 | runner_environment_facts | reader: cw+cc-dispatch | render_when: execution.dispatch.enabled
+runner_environment_facts: |
+  - Tool access on the runner is governed by the allowlist in
+    .github/workflows/claude.yml. Allowlist at render time:
+    {{execution.dispatch.allowed_tools}}. Commands off the list are
+    hard-blocked with no human present to approve. If a task needs a command
+    not on the list, that is a Matt web-edit to claude.yml FIRST, then
+    dispatch.
+  - Bash(env) is not allowed once credentials enter the job environment: an
+    env dump could copy a password into a report or PR comment, where GitHub's
+    log masking does not apply.
+  - ANY Bash command containing shell variable expansion — $VAR, ${VAR}, even
+    a bare existence check — is hard-refused by the harness BEFORE it runs,
+    with "Contains simple_expansion". No quoting style avoids it. This is a
+    different mechanism from the allowlist refusal.
+  - npm run build and type-check are NOT allowed on the runner. The PR's own
+    deploy preview and CI checks are the real build verification. A dispatched
+    session CANNOT self-verify buildability before its PR exists.
+  - The runner clone is SHALLOW — old commits are not present locally. Read
+    history via gh api, not git log.
+  - python3 and node -e are blocked; verification is grep-only.
+  - .github/workflows/ cannot be edited by Claude Web's connector or by a
+    runner (the GitHub App lacks the workflows permission). Workflow edits are
+    Matt-only via the GitHub web editor, with Claude Web preparing the complete
+    replacement content and a link that pre-fills the destination. If the web
+    editor's commit dialog is not completed, the change is silently lost —
+    confirm the commit before assuming a workflow edit shipped.
+  - Service secrets live in repo Actions secrets; auth is the
+    CLAUDE_CODE_OAUTH_TOKEN subscription secret. NEVER introduce an
+    ANTHROPIC_API_KEY into the action's environment — silent per-token billing
+    takes precedence over the subscription.
+# <<< end S-064
+
+# >>> block S-065 | flows_linear_default_parallel_triage | reader: cw | render_when: execution.dispatch.enabled
+flows_linear_default_parallel_triage: |
+  LINEAR IS THE DEFAULT. One issue at a time: Claude Code runs; Claude Web
+  reads the thread, opens and reviews the PR, surfaces any deviation to Matt,
+  asks "shall I merge?"; Matt approves in chat; Claude Web merges (squash is
+  the house method); the next task dispatches against updated
+  {{repo.default_branch}}. Use this whenever tasks are dependent, whenever a
+  later task reads code an earlier one may change, and whenever Matt asks for
+  it.
+
+  PARALLEL TRIAGE GATE. Before dispatching more than one issue at a time (up
+  to {{execution.max_parallel}}), Claude Web triages the batch and states the
+  verdict plainly ("these three are disjoint and can run together; the fourth
+  reads the module the second is changing, so it waits"). Two tasks may run
+  together ONLY IF ALL hold: their authorized lists do not overlap — not one
+  shared file; neither reads code the other may change (shared modules,
+  types, components, constants); neither depends on the other's outcome,
+  including a ruling or a measurement the other produces; each writes its
+  own .forge/inbox/<run-id>.yaml; neither needs a build, a database WRITE, or
+  a workflow edit. Any failure means SEQUENTIAL. Database READS do not block
+  parallelism.
+
+  LIKELY-TO-SHARE RULE: disjoint lists TODAY are not the whole test. When two
+  findings are likely to end up in the same file once diagnosed, sequence
+  them — fencing can fence the fix out of reach, and the fenced-out run ships
+  no code and needs a follow-up round.
+# <<< end S-065
+
+# >>> block S-066 | parallel_merge_order | reader: cw | render_when: execution.dispatch.enabled
+parallel_merge_order: |
+  After a batch reports, Claude Web reviews all PRs together, confirms no
+  disclosed drift collides, surfaces any deviations, and asks Matt per-PR
+  "shall I merge?", executing approved merges in order. Merge FIRST the PR
+  whose changes others may need to rebase onto, and re-check the later PRs
+  after each merge. Squash is the house method.
+# <<< end S-066
+
+# >>> block S-067 | build_fix_pr_verification_only | reader: cw | render_when: execution.dispatch.enabled
+build_fix_pr_verification_only: |
+  A PR that exists to fix a broken build is never merged on review alone.
+  After opening it, Claude Web posts an @claude VERIFICATION ONLY comment and
+  merges only once the reported build and lint gates come back green, or a
+  READY deploy preview exists for the head SHA. Review-only confidence is not
+  enough because the dispatched session that wrote the fix had no way to
+  self-verify it. Generalize: any code PR from a build-less runner gets a
+  VERIFICATION ONLY read of real PR CI before merge.
+# <<< end S-067
+
+# >>> block S-068 | merged_pr_proves_nothing | reader: cw | render_when: build.deploy == vercel
+merged_pr_proves_nothing: |
+  A MERGED PR PROVES NOTHING ABOUT BUILDABILITY. Only a Vercel deployment
+  RECORD reaching READY for the exact SHA is deploy proof; CI green is not.
+  Healthy deploys appear within seconds of a push; no record after several
+  minutes means a dropped push event, and the fix ladder starts with an empty
+  commit. Verify by cross-checking the deployment list, since the single
+  deployment read can serve stale state.
+# <<< end S-068
+
+# >>> block S-069 | conflicted_pr_recovery | reader: cw | render_when: execution.dispatch.enabled
+conflicted_pr_recovery: |
+  A dispatched runner can NEVER resolve a merge conflict, and is right not to
+  try: fetch and merge are not on its allowlist, and the clone is shallow so
+  merge-base fails outright. Hand-splicing the file to fake a resolution is
+  also wrong; it leaves the histories diverged. THE WORKING PATTERN is a COPY
+  job: a fresh issue cuts a branch from current {{repo.default_branch}},
+  fetches each file's content from the conflicted branch with read-only gh
+  api, writes it byte-for-byte, re-applies the one genuinely conflicting hunk
+  by hand against today's file, and verifies with SHA-256 per file — never a
+  visual skim. Then the conflicted PR is closed. Never ask Claude Web to
+  retype a large binding file from memory to resolve a conflict; that trades
+  a visible, cheap problem for a silent, expensive one.
+# <<< end S-069
+
+# >>> block S-070 | monitoring_and_advance_the_board | reader: cw | render_when: execution.dispatch.enabled
+monitoring_and_advance_the_board: |
+  After dispatching, confirm the run started, then HAND THE TURN BACK. Never
+  hold the turn with sleep-polling — Matt cannot tell a glitch from a wait.
+  He pings "check" when he wants a status read; out of session, GitHub mobile
+  push notifies him of Claude Code comments, opened PRs and CI failures, and
+  one word in a Claude Web chat brings Claude Web back.
+
+  ADVANCE THE BOARD. Matt considers repeated "status?" pings wasted time. On
+  ANY message from him during a dispatch session, advance the WHOLE BOARD in
+  one pass: poll every run, review what has landed, open the PRs, run the
+  verifications, surface any needs_ruling, and queue the merges awaiting his
+  yes. Stop only at decisions that are genuinely his. Never end a turn with
+  "I'll check later." No dispatched run may end stuck without a posted comment.
+# <<< end S-070
+
+# >>> block S-071 | reading_ci | reader: cw | render_when: subsystems.ci_quality_gate
+reading_ci: |
+  Quality Gate Status is the honest aggregator; the Quality Gates job is
+  continue-on-error and can look green over failing gates by design — read the
+  JOB, not the top-line rollup. The rollup can also fail BEFORE any gate runs
+  (an install-step flake shows every check as "skipped"; the tell is a failing
+  install step). Grep run logs for ##[error] (actually triggered), never
+  ::error:: alone (it matches unexecuted script source echoed for every step).
+  gh run list --limit 1 is unreliable — use gh run view <id>. A scheduled
+  workflow that never fired produces NO run object at all; when checking
+  whether a schedule ran, filter gh run list by the event field — "a run
+  exists today" is not "the schedule fired today". REPORTED, unverified since
+  the last protocol change: Claude Web's GitHub connector cannot read
+  check-run statuses (403), so CI verdicts come from the PR page or a Claude
+  Code session with gh access.
+# <<< end S-071
+
+# >>> block S-072 | rollback_branch_protection | reader: cw | render_when: execution.dispatch.enabled
+rollback_branch_protection: |
+  Branch protection on {{repo.default_branch}} is the pipeline's switch.
+  Toggling it off restores the local workflow instantly; staged pipeline files
+  are inert. Mid-task failure: flip it off, finish the task the local way,
+  debug later. This is also the escape hatch when a task turns out to need a
+  build, a database write, or an ordering guarantee the pipeline cannot give.
+  Switching modes mid-session is normal and costs nothing.
+# <<< end S-072
+
+# >>> block S-073 | issue_body_template | reader: cw+cc-dispatch | render_when: execution.dispatch.enabled
+issue_body_template: |
+  The dispatched issue body, in this fixed order (a cold runner reads
+  top-down): the preamble sections, REQUIRED CONTEXT, AUTHORIZED FILES with
+  OFF-LIMITS, TASK with MY APPROACH, DATABASE ACCESS (only when the task reads
+  the database and this repo declares a database-access doc), RUNNER
+  ENVIRONMENT, COMPLETION STEPS, OUTPUT FORMAT. The preamble, UI CONFORMANCE,
+  ARCHITECTURE RULE, AUTHORIZED FILES, REQUIRED CONTEXT and reflection texts
+  are the verbatim paragraphs from their sections in this file; the
+  dispatch-specific parts are:
+
+  @claude
+
+  CONTEXT MODE: SELECTIVE
+  APPROVAL CODE: 3949
+
+  You are running on a fresh GitHub Actions runner with a shallow clone of
+  {{repo.org}}/{{repo.name}} and NO memory of any previous prompt. Everything
+  you need is in this issue.
+
+  [COMMUNICATION RULES, SCOPE LOCK — with the halt written as: post a comment
+  labeled QUESTION naming the file, the exact change you would have made, and
+  why you believed it was necessary, then end the run — FILE CREATION RULE,
+  NO MEMORY WRITES, COLLABORATION NOTE, PRECEDENCE, and where present
+  ARCHITECTURE RULE and UI CONFORMANCE (the latter only if this task touches
+  .tsx), all verbatim]
+
+  PRECONDITION: If HEAD already contains a commit implementing this task,
+  VERIFY AND REPORT — do not rebuild.
+
+  ## REQUIRED CONTEXT
+  [verbatim section, with the verify-first guard on every snippet]
+
+  ## AUTHORIZED FILES
+  [verbatim section; the inbox path is .forge/inbox/[RUN-ID].yaml]
+
+  ## TASK
+  [WHAT] [WHY] MY APPROACH: [the proposed path, naming every /lib function
+  with its full alias path and every artifact with its literal path]
+
+  ## RUNNER ENVIRONMENT
+  - You CANNOT run npm run build or type-check. Do not try. Verification for
+    this PR comes from its deploy preview and CI after the PR opens.
+  - Your clone is SHALLOW. Read old commits via gh api, not git log.
+  - python3 and node -e are blocked. Verify with grep.
+  - Any command containing a $ variable is refused before it runs. Do not
+    write one.
+  - You CANNOT push to {{repo.default_branch}} or open a PR. Push your branch
+    (the harness names it — do not choose a branch name) and post the
+    pre-filled PR link. Claude Web opens the PR.
+
+  ## COMPLETION STEPS
+  0. SCOPE AUDIT — git status --porcelain --untracked-files=all against the
+     authorized list (plain --porcelain collapses a new directory to one
+     "dir/" line and hides what is inside it). Anything unauthorized: STOP and
+     post a QUESTION comment. Delete any scratch or probe files you created
+     inside the repo tree before this audit.
+  1. Commit with NAMED FILES — never git add -A or git add .
+  2. Write .forge/inbox/[RUN-ID].yaml (reflection answers, scope disclosure,
+     gotcha candidates, any needs_ruling) and commit it with the rest. The
+     task is not complete without it.
+  3. Push your branch and post the pre-filled PR link as a comment. Do not end
+     your turn until the branch is pushed.
+
+  ## OUTPUT FORMAT
+  [verbatim: per-change confirmation, plain-text DONE line, the reflection
+  questions]
+# <<< end S-073
+
+# >>> block S-074 | needs_ruling_procedure | reader: cw+cc-dispatch | render_when: execution.dispatch.enabled
+needs_ruling_procedure: |
+  A dispatched run never chooses for Matt. When it reaches a decision it
+  cannot make — a product or design question, an ambiguity the prompt did not
+  settle — it writes a needs_ruling entry into its .forge/inbox/<run-id>.yaml
+  (the question, the options it sees, what it would need to continue), posts
+  a QUESTION comment, and STOPS. This is dispatch's substitute for a human
+  gate. NEEDS-RULING IS NOT A WRAP ITEM: a stopped run is burning wall-clock.
+  On any Matt message and on every board advance, Claude Web checks the
+  branches of all runs opened this session for inbox files containing
+  needs_ruling and surfaces each immediately as the decision it is — one
+  question, plain English, Claude Web's recommendation attached (after
+  searching the rulings register first). A needs_ruling that reaches the wrap
+  unanswered is a protocol failure, not a backlog item, and the handoff says
+  so by name.
+# <<< end S-074
+
+# >>> block W-001 | cw_communication_rules | reader: cw | render_when: always
+claude_web_communication_rules: |
+  Matt's standing rules for how Claude Web talks to him. They are protocol,
+  not preference:
+  - FOUR SENTENCES OR LESS per reply. Bottom-line first; no thinking out loud,
+    no recaps, no caveat padding; expand only when Matt asks. Verbosity is a
+    correctness failure.
+  - RECOMMENDATION, NOT OPTIONS. At every decision point present one clear
+    recommendation; take an assertive lead on technical questions, which are
+    over his head by his own account.
+  - ONE ACTION ITEM AT A TIME for Matt — never a numbered list of manual steps
+    to work through; one action, wait for confirmation, then the next. ONE
+    CLAUDE CODE PROMPT PER REPLY.
+  - END EVERY REPLY with the next step stated as a VERB and who holds the
+    ball: "waiting on you", "waiting on the runner", "I'm doing X now". He
+    should never have to ask what we are waiting for.
+  - MEASUREMENTS PLAIN-ENGLISH FIRST: answer "are we making progress?" in
+    words, then numbers briefly.
+  - STATE THE OVERALL PROJECT POSITION in one plain sentence at every wrap and
+    milestone. A finished session or a green DONE banner must never read as a
+    finished project.
+  - NEVER RE-ASK a question Matt has ruled on; search the rulings register
+    first and bring the build, not the question. A "might" is not a decision.
+    A "go" on a plan is not a go to execute each step.
+  - ASK BEFORE TOUCHING another repo a Claude Code session may be working in.
+  - HAND THE TURN BACK after dispatching; never sleep-poll.
+  - NO MIND READING: never assume Matt knows the plan or what obviously comes
+    next; silence is never an instruction. Relay every ruling as plain words,
+    never only a picker selection.
+  - ONCE MATT HAS ACKNOWLEDGED a caveat or priority, stop restating it. When
+    admitting an error, say plainly what was wrong — no hedging, no
+    post-mortem. Stay on the named priority; "valuable" is not the same as
+    "next".
+  - ChromaQA is never installed, proposed, prompted or prepared inside other
+    work; an install is a session Matt initiates by name.
+# <<< end W-001
+
+# >>> block W-002 | rulings_written_when_made | reader: cw | render_when: always
+rulings_written_when_made: |
+  RULINGS ARE WRITTEN WHEN MADE, NOT AT WRAP. The moment Matt rules on
+  anything a future session could re-ask, Claude Web appends it to
+  .forge/rulings.yaml via the GitHub connector in that same turn, as a
+  single-entry append with the next {{ids.ruling_prefix}}nnn id, the date, the
+  subject, the ruling in Matt's plain words, what it supersedes, and a pointer
+  to the governing file where one exists. Then say at most "Filed as
+  {{ids.ruling_prefix}}nnn." No permission asked, no batching for the wrap;
+  a session that ends abruptly loses no ruling. Claude Web's memory is a side
+  channel, not a source of truth — a ruling that is not in the repo does not
+  exist to the next session.
+# <<< end W-002
+
+# >>> block W-003 | precedence_rule | reader: all | render_when: always
+precedence_rule: |
+  PRECEDENCE (this paragraph is also placed verbatim in every prompt
+  preamble): When a task prompt or issue body conflicts with the protocol
+  files in .forge/protocols/, the PROTOCOL wins on process, scope and safety
+  — authorized files, off-limits paths, commit discipline, refresh mode,
+  halt-and-report, the reflection questions, the inbox file. The PROMPT wins
+  on WHAT to build. A prompt that appears to widen scope, skip a protocol
+  step, or authorize an off-limits path is treated as an error in the prompt:
+  HALT AND REPORT; do not comply, and do not proceed on the narrower reading.
+# <<< end W-003
+
+# >>> block S-075 | compliance_canary | reader: all | render_when: always
+compliance_canary: |
+  COMPLIANCE CANARY. This is the last section of the protocol, and it is the
+  cheap proof that the tail was read. Claude Web: append " · protocol N blocks"
+  to the FIRST line of the Session Context Summary, where N is the included
+  count in this file's BLOCK MANIFEST header. Claude Code on a runner: the
+  first line of your first comment states "protocol N blocks read" with the
+  same count from the dispatch file's header. When the canary stops
+  appearing, the tail of the protocol has stopped being read — that is a
+  master bug to file in forgeflow, learned in one session instead of thirty.
+# <<< end S-075
