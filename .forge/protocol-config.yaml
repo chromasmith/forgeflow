@@ -1,0 +1,69 @@
+# .forge/protocol-config.yaml — chromasmith/forgeflow
+# Repo-facing knobs for rendering this repo's session protocols from the ForgeFlow master.
+# forgeflow is the HOME of the master (master/) and is itself rendered from it: master/ is the
+# source, .forge/protocols/ is the rendered output — no loop, because a render never reads
+# .forge/protocols/. Edit these knobs, never the rendered files; re-render after a master change.
+profile: docs-only
+repo: { org: chromasmith, name: forgeflow }
+north_star_doc: "master/BLUEPRINT.yaml"
+ids:
+  backlog_prefix: "FF-"
+
+# --- effective values (written by render.py, do not edit) ---
+# architecture.tsx_lib_rule: false
+# build.build_command: "npm run build"
+# build.deploy: "none"
+# build.deploy_verify: "Vercel deployment record READY for the exact SHA"
+# build.surfaces: ["desktop"]
+# build.validation: "none"
+# companion_repos: []
+# execution.dispatch.allowed_tools: []
+# execution.dispatch.enabled: false
+# execution.dispatch.requires: [".github/workflows/claude.yml", "CLAUDE_CODE_OAUTH_TOKEN secret", "branch protection on main", "artifact register", "mirror.github_is_complete_mirror: true"]
+# execution.local: true
+# execution.local_report_desktop_copy: true
+# execution.max_parallel: 3
+# hardware.devices: []
+# ids.backlog_prefix: "FF-"
+# ids.bug_prefix: "BUG-"
+# ids.gotcha_prefix: "GOTCHA-"
+# ids.ruling_prefix: "RULING-"
+# mirror.github_is_complete_mirror: true
+# mirror.gitignored_local_only_paths: []
+# north_star_doc: "master/BLUEPRINT.yaml"
+# protected.never_touch_paths: []
+# protected.phase_authority_doc: null
+# protected.spec_dirs_off_limits: [".forge/specs/"]
+# protected.tombstone_gotchas: []
+# protocol.config_hash: "427225a67a50a3d1475cef13eade7b3e8fb2cbe5cbabbf277cf0d3634e63b001"
+# protocol.master_version: "v1.0.0"
+# protocol.render_method: "code"
+# protocol.rendered_on: "2026-09-04"
+# repo.alternate_machines: []
+# repo.canonical_checkout: "C:\\Chromasmith\\forgeflow"
+# repo.canonical_machine: "Surface 12"
+# repo.default_branch: "main"
+# repo.line_endings: "lf"
+# repo.name: "forgeflow"
+# repo.org: "chromasmith"
+# schema_version: "1"
+# shape.build_location: "."
+# shape.kind: "single-app"
+# subsystems.artifact_register: false
+# subsystems.chromaqa: false
+# subsystems.ci_quality_gate: false
+# subsystems.database_access_doc: null
+# subsystems.repo_rules_doc: null
+# subsystems.seogeo: false
+# subsystems.supabase: false
+# subsystems.ui_inventory: false
+# subsystems.vercel: false
+# thresholds.backlog_completed_archive_after_days: 30
+# thresholds.changelog_cap: 12
+# thresholds.chromaqa_debt_alert: 25
+# thresholds.gotcha_consolidation.or_every: "1 month"
+# thresholds.gotcha_consolidation.runs_as: "its own session"
+# thresholds.gotcha_consolidation.trigger_count: 100
+# thresholds.session_history_cap: 15
+# thresholds.wrap_split.edit_operations: 10
+# thresholds.wrap_split.lines: 1000

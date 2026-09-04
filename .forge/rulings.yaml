@@ -45,3 +45,16 @@ rulings:
       its own config (repo.name; build.deploy override dropped once linked to Vercel).
     supersedes: nothing — RULING-001 said Matt names the repo; this is him naming it
     stated_by: Matt, in chat, opening the render session (recorded at the wrap, not in the turn it was made — a W-002 miss)
+  - id: RULING-004
+    date: 2026-09-04
+    subject: Third repo to render from the ForgeFlow Master
+    ruling: >-
+      chromasmith/forgeflow ITSELF — the home of the master — is the THIRD repo rendered
+      from the master, in its own session with its own go ("lets begin installing it on the
+      same repo"). Docs-only profile. There is no loop: master/ is the source and
+      .forge/protocols/ the output; a render never reads .forge/protocols/. Matt confirmed
+      the only other activity on forgeflow was a Claude Web session READING master/ to
+      render another repo, and the render waited until that session's wrap commit
+      (827dba9) had landed, because a wrap writes forgeflow's own .forge/ docs.
+    supersedes: nothing — RULING-001 said Matt names the repo; this is him naming it
+    stated_by: Matt, in chat, opening the render session (recorded in the turn it was made, per the RULING-003 W-002 lesson)
