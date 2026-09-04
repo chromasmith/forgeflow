@@ -1,0 +1,39 @@
+# =============================================================================
+# FORGEFLOW MASTER — registered repos (Blueprint v1.3 Section 7, Board N5)
+# Home: github.com/chromasmith/forgeflow  master/registered-repos.yaml
+#
+# THE SINGLE AUTHORITY on which repos are rendered from the master and from which
+# master version. Written LAST — only after a render has landed and been proven
+# (blob SHAs equal, render.py check OK). A propagation pass updates it once, at
+# the end, never row by row mid-pass (PROPAGATION_PROCEDURE.md step 5).
+#
+# state: current  — rendered from the master version named here
+#        pinned   — deliberately lagging; `reason` is mandatory and is what the
+#                   protocol_drift line in the repo's handoff.yaml is derived from
+# config_hash is the full SHA-256 render.py stamps into the rendered headers.
+# A repo not listed here is NOT rendered from the master, whatever its files say.
+# Per RULING-001/002 (.forge/rulings.yaml) rows are added one at a time, each on
+# Matt naming the repo; there is no queue here and no implied order.
+# =============================================================================
+
+master_version_current: "v1.0.0"
+
+repos:
+  - repo: chromasmith/seogeo
+    config: .forge/protocol-config.yaml
+    profile: docs-only
+    master_version: "v1.0.0"
+    rendered_on: 2026-09-04
+    config_hash: 81ca6a54d712181be0d895f1411d7e4c88887ecde64ed8237800c4eeb4a7e23c
+    state: current
+    files:
+      - .forge/protocols/start-protocol.yaml
+      - .forge/protocols/end-protocol.yaml
+      - .forge/protocol-config.yaml
+      - CLAUDE.md
+    landed: "commits 042427f, 6c792a0, 14f1614 (2026-09-04); render.py check OK from a fresh forgeflow clone"
+    notes: >-
+      First repo ever rendered from the master (RULING-002). Private repo: detection ran on a
+      tree skeleton rebuilt from the GitHub listing (see RENDER_PROCEDURE.md STATUS). No
+      subsystems detected; dispatch off; the repo's own SEO/GEO template payload under
+      template/.seogeo/ is correctly NOT treated as an installed tool.
