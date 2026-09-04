@@ -13,9 +13,8 @@ meta:
   date: 2026-09-04
   author: Claude Web (step-2 session with Matt Fleming)
   status: >-
-    DRAFT FOR MATT'S READ — becomes GATE-PASSED when Matt says go on the dropped
-    list. Step 3 (build the master) does not start until this line says
-    GATE-PASSED.
+    GATE-PASSED 2026-09-04 (Matt's go in chat on the 16-item dropped list).
+    Step 3 (build the master) is authorized and began 2026-09-04.
   blueprint_ref: master/BLUEPRINT.yaml v1.2 @ 009370b (Section 4 artifact, Section 11 step 2)
   lineages_read:
     STD: >-
