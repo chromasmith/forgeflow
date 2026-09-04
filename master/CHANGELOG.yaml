@@ -2,6 +2,26 @@
 # The top entry's `version` is the master version render.py stamps into every render.
 # Newest first.
 entries:
+  - version: "v0.2.0-build"
+    date: 2026-09-04
+    status: BUILD IN PROGRESS — no repo is rendered from this master yet
+    changed: >-
+      ChromaQA 7.0 master change (first tool-driven change; nothing to re-render). Start:
+      S-014 rewritten (debt read from GitHub; profiles.json PROTECTED CONFIG; runs.jsonl
+      LOCAL ONLY, gitignored since ChromaQA 6.2; BROKEN GATE lines named separately);
+      S-045 gains the captain-review never-fix line; S-071 made repo-neutral (continue-on-error
+      aggregator vs hard-fail job); NEW S-087 pre-push gate rule for local code prompts
+      (exit 0/1/2, never --no-verify, never touch profiles.json, post-push telemetry is the
+      gate working); NEW S-088 reading ChromaQA's quality-gate CI job (hard-fail, merge
+      needs it green, runners have no pre-push hook). End: E-036/E-037/E-042 carry the
+      three-way file handling (protected config / pass-through / local only); E-040 drops
+      runs.jsonl and STOPs on a modified profiles.json; NEW E-047 local-remainder push-gate
+      block (exit-code rule; debt and showstoppers ALWAYS PERMITTED modified after a push,
+      committed as "chore: chromaqa telemetry"). House block gains one fenced ChromaQA
+      bullet. render.py detects ChromaQA by chromaqa-check.sh at the root, not only by a
+      .chromaqa/ directory. Source: chromasmith/chromaqa README, .forge/BLUEPRINT.yaml
+      (claude_md_section, output_contract.operational_rule_for_agents_and_scope_audits,
+      output.files tracking), reference/ install prompt.
   - version: "v0.1.0-build"
     date: 2026-09-04
     status: BUILD IN PROGRESS — no repo is rendered from this master yet

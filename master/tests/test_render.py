@@ -10,6 +10,7 @@ from pathlib import Path
 HERE = Path(__file__).resolve().parent
 RENDER = HERE.parent / "render.py"
 FIX = HERE / "fixtures"
+MASTER_VERSION = [l.split(":",1)[1].strip().strip('"') for l in (HERE.parent / "CHANGELOG.yaml").read_text().splitlines() if l.strip().startswith("- version:")][0]  # top entry = the version render.py stamps
 FIXTURE_BLOCKS = FIX / "fixture-master"          # only the three fixture master files live here
 REAL = HERE.parent                                # schema, CHANGELOG and profiles come from the REAL master, so the test cannot drift from them
 DATE = "2026-09-04"
@@ -78,7 +79,7 @@ with tempfile.TemporaryDirectory() as td:
     shutil.copy(FIX / "CLAUDE.md", td / "CLAUDE.md")
     render("config-standard.yaml", td / "c", extra=("--claude-md", str(td / "CLAUDE.md")))
     cm = read(td/"c"/"CLAUDE.md")
-    checks.append((cm.startswith("# CLAUDE.md for fixture\n\nProject notes stay untouched.") and cm.rstrip().endswith("Trailing notes stay untouched.") and "old block" not in cm and "chromasmith/fixture-standard" in cm and "v0.1.0-build" in cm, "CLAUDE.md: only the marker interior replaced", ""))
+    checks.append((cm.startswith("# CLAUDE.md for fixture\n\nProject notes stay untouched.") and cm.rstrip().endswith("Trailing notes stay untouched.") and "old block" not in cm and "chromasmith/fixture-standard" in cm and MASTER_VERSION in cm, "CLAUDE.md: only the marker interior replaced", ""))
     checks.append(("Dispatched runner rules" not in cm and "render_when" not in cm, "CLAUDE.md: dispatch-fenced lines dropped with their fences for a no-dispatch repo", ""))
     shutil.copy(FIX / "CLAUDE.md", td / "CLAUDE-s.md")
     render("config-sandbox.yaml", td / "cs", extra=("--claude-md", str(td / "CLAUDE-s.md")))

@@ -29,6 +29,9 @@ These rules are the same in every Chromasmith repo. They are rendered here from 
 <!-- >>> render_when: subsystems.repo_rules_doc -->
 - `{{subsystems.repo_rules_doc}}` holds this repo's own standing rules and is binding alongside this file.
 <!-- <<< end render_when -->
+<!-- >>> render_when: subsystems.chromaqa -->
+- This repo runs ChromaQA as a pre-push gate (`./chromaqa-check.sh`, also the `quality-gate` job in CI). ChromaQA's own section lower in this file is binding. Exit 2 (CAPTAIN REVIEW) means STOP: do not push, do not fix it to make it pass, report the finding as printed and wait. Never `--no-verify`; never delete, empty or edit `.chromaqa/profiles.json`. `.chromaqa/CQA-debt.jsonl` and `CQA-showstoppers.jsonl` showing modified right after a push is the gate working, not a scope breach — the wrap commits them.
+<!-- <<< end render_when -->
 
 ### Scope discipline
 
