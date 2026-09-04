@@ -19,6 +19,8 @@
 #   S-084/085/086 deploy steps by build.deploy (vercel / none / custom)
 # ADDED v0.2.0-build (ChromaQA 7.0 master change, 2026-09-04):
 #   S-087 chromaqa_push_gate_rule       S-088 reading_ci_chromaqa
+# ADDED v0.3.0-build (SEO/GEO master change, 2026-09-04):
+#   S-089 seogeo_standard_pointer       S-090 chromaqa_profile_generated_by_seogeo
 # Reader deviation from the index: S-049 (human gates) is cw+cc-local, not all —
 # P7 says a cold runner must not read typed-confirmation banners it cannot run.
 #
@@ -312,6 +314,57 @@ chromaqa_debt_check: |
                                      on GitHub and never committed. Do not claim
                                      to have read it.
 # <<< end S-014
+
+# >>> block S-089 | seogeo_standard_pointer | reader: all | render_when: subsystems.seogeo
+seogeo_standard_pointer: |
+  This repo carries SEO/GEO (the .seogeo/ directory: config.json, STANDARD.md,
+  crawlers.json, the library and the emitters). SEO/GEO BUILDS search and
+  AI-answer-engine signals; ChromaQA VERIFIES them. The paragraph below is
+  emitted verbatim, as its own rule, in every code prompt that may create or
+  modify a page, route or layout:
+
+  If this repo contains .seogeo/config.json, read .seogeo/STANDARD.md before
+  writing or modifying any page, route or layout. If it does not, skip this
+  step — most repos do not have SEO/GEO installed and their absence is normal,
+  not a problem to investigate or report.
+
+  The standard is 60 lines and binding. Two of its rules reach the prompt
+  WRITER, not only the prompt runner: a new route group is declared in
+  .seogeo/config.json in the same session that creates it, or it ships dark
+  (noindex, no sitemap entry) and is counted as a finding; and a surface's
+  visibility boundary — its surfaces, indexable_when values and posture — is
+  never widened to make an error go away. Declaring a route is a session's
+  job; redrawing the boundary is Matt's decision, made by name.
+# <<< end S-089
+
+# >>> block S-090 | chromaqa_profile_generated_by_seogeo | reader: all | render_when: subsystems.seogeo and subsystems.chromaqa
+chromaqa_profile_generated_by_seogeo: |
+  In this repo the ChromaQA profile is GENERATED, not hand-maintained.
+  .seogeo/config.json is the single source of truth for what is indexable, and
+  SEO/GEO writes the ChromaQA profile from it with
+      node .seogeo/bin/seogeo.mjs chromaqa-profile
+  adding --posture <value> when config.json declares a posture (the tool then
+  writes .chromaqa/profiles.<posture>.json and refuses to run without the
+  flag; with no posture declared it writes .chromaqa/profiles.json). The
+  generated file carries a DO_NOT_HAND_EDIT banner and a stamp,
+  _generated.source_sha256_16 — the first 16 hex characters of the SHA-256 of
+  config.json.
+
+  This narrows the PROTECTED CONFIG rule for .chromaqa/profiles.json to
+  exactly one sanctioned change: edit .seogeo/config.json, re-run the command
+  in the same session, commit both files together by name. The profile is
+  still never hand-edited, deleted or emptied, and running the command with
+  no config change is not a session's call. A profile whose stamp does not
+  match the current config.json is DRIFT; the fix is the command above,
+  stated in those words, never an edit to the profile. Check with
+      sha256sum .seogeo/config.json | cut -c1-16
+  which must equal the stamp.
+
+  As of this master version ChromaQA reads .chromaqa/profiles.json only. A
+  posture-stamped profiles.<posture>.json is written for a ChromaQA release
+  that does not exist yet and is consumed by no gate — say so plainly rather
+  than claiming the posture boundary is enforced.
+# <<< end S-090
 
 # >>> block S-015 | companion_relay_read | reader: cw | render_when: companion_repos non-empty
 companion_relay_read: |
