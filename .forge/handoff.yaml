@@ -1,75 +1,93 @@
 # .forge/handoff.yaml — chromasmith/forgeflow
 # Pass-the-baton briefing written BY the outgoing Claude Web session TO the next.
 # A WARNING LETTER, not a summary. The blueprint holds the design; this holds the feel.
-# generated: 2026-09-04T16:30:00Z
-# session: 2026-09-04 (step 3b, second half — end master + step-3 exit proof)
-# written_at_commit: ecf77e54141d626f699a00c89ac685c323097958
-# written_at_utc: 2026-09-04T16:30:00Z
+# generated: 2026-09-04T16:55:00Z
+# session: 2026-09-04 (step-3 cleanup — C-001 house block, S4 ceilings, blueprint slip)
+# written_at_commit: 8f529851e7080f68b71f6eb2066954b3c6b91b38
+# written_at_utc: 2026-09-04T16:55:00Z
 
 status: |
-  ForgeFlow Master: STEP 3 IS DONE and THE EFFORT IS STOPPED (RULING-001). Both masters
-  exist: master/start-protocol.master.yaml (89 blocks, commit ff1c07e, blob dd7a021) and
-  master/end-protocol.master.yaml (46 blocks E-001..E-046, commit ecf77e5, blob 1bcf860 —
-  equal to git hash-object of the sandbox copy — transcription landed byte-exact at ecf77e5).
-  Step-3 exit proof ran inside forgeflow at commit ecf77e5: render.py rendered the three
-  fixture profiles AND the real convergible-sandbox knob set (tests/fixtures/config-
-  sandbox-real.yaml, config_hash 80024e5a8a5a); two renders with the same --date were
-  byte-identical (diff -r clean); every rendered file parses as YAML; render.py check
-  reported OK (5 files byte-identical, manifest partition intact); the evidence check
-  passed its fixtures (wrap-good 2 verified / 1 reported / 0 unmarked; wrap-bad fails
-  on 1 unmarked); tests/test_render.py 31/31. Real-sandbox render sizes: CW start
-  1,436 lines, dispatch start 562, CW end 1,207, dispatch end 90 (one block, E-001, by
-  design — the wrap is Claude Web's direct write). NO REPO RUNS ON THE MASTER. Not
-  written: claude-md.house-block.master.md (C-001 — the one LINEAGE block the masters
-  do not hold), PROPAGATION_PROCEDURE.md, registered-repos.yaml, legacy banners +
-  README repoint, S4 ceilings, CHANGELOG bump to v1.0.0 (the CHANGELOG top entry still
-  says the master files are not written — stale until that bump). Overall position: the
-  unified protocol source exists and is proven to render (check OK at ecf77e5); nothing is
-  installed anywhere.
+  ForgeFlow Master: STEP 3 IS DONE (3b8ce23), three cleanup items LANDED at
+  96b4290 / 104a402 / 8f52985, and THE EFFORT IS STOPPED (RULING-001). Each commit
+  below carries the blob SHA checked against the pushed tree (HEAD 8f52985) from a
+  fresh fetch:
+  (1) 96b4290 — master/claude-md.house-block.master.md (C-001, blob 12f4641) written
+      with HTML-comment render_when fences (dispatch section, architecture rule,
+      database-access and repo-rules pointers, dispatch-vs-no-dispatch protocol-file
+      bullet); render.py (blob 86fc7fe) now resolves those fences, substitutes
+      placeholders and standalone-checks the block before placing it between the
+      CLAUDE.md markers; fixture house block fenced; tests/test_render.py 35/35 (was
+      31). Proof: the real master rendered with --claude-md for config-standard,
+      config-sandbox, config-legacy and config-sandbox-real, twice each with the same
+      --date — all four byte-identical, zero leftover fences or placeholders, text
+      outside the markers byte-identical. Rendered CLAUDE.md house block: 42 lines
+      (no dispatch, no .tsx) to 62 lines (sandbox-real).
+  (2) 104a402 — BLUEPRINT.yaml v1.4 (blob ebd0a21): S4 ceilings SET per reader file
+      in Section 6 rendering.file_ceilings — start 1650 / dispatch start 650 / end
+      1400 / dispatch end 150 — from the measured 1436 / 562 / 1207 / 90 at ecf77e5
+      (config-sandbox-real, about 15 percent headroom rounded up to 50); P11 and
+      Section 13 repointed; Section 8 wrap order aligned to E-021 (local remainder
+      BEFORE the docs write); stale "Nothing here is built yet" header corrected (same
+      commit 104a402).
+  (3) 8f52985 — BLUEPRINT.yaml (blob 963113c): Section 5 canonical_checkout example
+      restored from the truncated token to "<name>"; v1.4 note records it.
+  NO REPO RUNS ON THE MASTER. Still not written: PROPAGATION_PROCEDURE.md,
+  registered-repos.yaml, legacy banners + README repoint, CHANGELOG bump to v1.0.0
+  (the CHANGELOG top entry still says the master files are not written — stale until
+  that bump; render stamps read v0.1.0-build until then). Overall position: the
+  unified protocol source exists (both masters + C-001, HEAD 8f52985) and renders
+  byte-stable, ceilings are set; nothing is installed anywhere.
 
 first_thing: |
   WAIT. Do nothing on this effort until Matt names a repo (RULING-001). When he names
-  one, the opening act of THAT session — before any render — is one housekeeping commit
-  in forgeflow: claude-md.house-block.master.md (C-001, from the LR-nnn rules targeting
-  C-001 + S-030 and blueprint Section 4 markers), PROPAGATION_PROCEDURE.md,
-  registered-repos.yaml (empty registry, written LAST after the first render lands),
-  legacy banners + README repoint, S4 ceilings into BLUEPRINT.yaml (fix the Section 5
-  "<n>" for "<name>" slip in the same commit), and the CHANGELOG bump to v1.0.0. Then
-  RENDER_PROCEDURE.md steps 1-8 for the named repo. If the named repo is
-  convergible-sandbox, its two prerequisites come first (repo-rules.yaml from the
-  LR-163 items; CC-reports register entry renamed to .forge/inbox/<run-id>.yaml).
+  one, the opening act of THAT session — before any render — is ONE housekeeping
+  commit in forgeflow: PROPAGATION_PROCEDURE.md, legacy banners + README repoint, the
+  CHANGELOG bump to v1.0.0 (this changes the version every render stamps — do it
+  before the first real render, not after), and registered-repos.yaml written LAST,
+  after the first render lands. Then RENDER_PROCEDURE.md steps 1-8 for the named
+  repo. If the named repo is convergible-sandbox, its two prerequisites come first
+  (repo-rules.yaml from the LR-163 items; CC-reports register entry renamed to
+  .forge/inbox/<run-id>.yaml).
 
 watch_out_for:
   - "STOP POINT (RULING-001): this effort is at its stop point. Do NOT render, install,
      or prepare a render for any repo — not convergible-sandbox, not saas-starter —
      until Matt names it by name. A 'might' is not a decision."
-  - "S4 CEILING MEASUREMENT: the real-sandbox CW start file is 1,436 lines — ABOVE the
-     1,200 the reconciliation recommended (LINEAGE_RECONCILIATION size_measurement).
-     Recommendation for the S4 commit: ceilings per READER file, CW 1,500 / dispatch
-     800 (about 15 percent headroom over 1,436 and 562); or apply replace-to-add (P11)
-     in the start master first. Decide in that commit, not silently."
-  - "The end master's E-021 (local remainder) runs BEFORE the docs write when the local
-     checkout may hold unpushed work, so its commit SHA can be evidence; the blueprint's
-     Section 8 lists it after. The master is the ruling text now; amend the blueprint
-     wording in the S4 commit rather than the master."
-  - "End master sub-blocks (E-031..E-046) each carry their own top-level YAML key, so
-     no rendered file has duplicate keys; the end master has NO mutually exclusive
-     variant pairs. The start master does (S-034/S-052, S-081/082/083, S-084/085/086)
-     — any new pair anywhere must stay exclusive."
+  - "CLAUDE.md master fences are HTML-comment LINES only — a fence must be a full line
+     on its own; an inline fence mid-sentence is not recognised and would survive into
+     the render (the standalone check would then fail it on 'render_when'). Fences do
+     not nest. To vary one bullet by a knob, write two fenced variants (as the
+     protocol-files bullet does with 'not execution.dispatch.enabled')."
+  - "The C-001 block deliberately duplicates the preamble rules (SCOPE LOCK, FILE
+     CREATION, COLLABORATION NOTE, NO MEMORY WRITES, PRECEDENCE, COMMUNICATION) in
+     prose form because CLAUDE.md is the one file Claude Code reads without being
+     told to. Keep the two in step: a change to S-030 or W-003 is also a change to
+     claude-md.house-block.master.md."
+  - "S4 ceilings are recorded ONLY in BLUEPRINT.yaml rendering.file_ceilings (104a402);
+     render.py does not enforce them (RENDER_PROCEDURE step 5 is a manual wc -l
+     compare). Adding enforcement to render.py is a reasonable later change, not
+     owed now."
+  - "Blob-SHA proof pattern that worked this session: clone forgeflow into the
+     sandbox, edit there, git hash-object the file, push the full content through
+     the GitHub tool, then git fetch and git rev-parse origin/main:<path> — a
+     transcription slip shows up as a hash mismatch before anything else does. Every
+     re-push of a file read through the GitHub tool must go through this; the tool
+     displays one placeholder token in truncated form (the slip fixed at 8f52985)."
+  - "YAML traps: plain scalars with ': ' mid-sentence and commas inside flow-mapping
+     values both fail — quote them. Every pushed .forge/ and master YAML file is
+     parse-validated in the sandbox first."
+  - "The end master's E-021 runs BEFORE the docs write when the checkout may hold
+     unpushed work; the blueprint Section 8 now says the same (v1.4). The master is
+     the ruling text."
+  - "End master sub-blocks (E-031..E-046) each carry their own top-level YAML key;
+     the start master has three mutually exclusive variant sets (S-034/S-052,
+     S-081/082/083, S-084/085/086) — any new pair anywhere must stay exclusive."
   - "render.py FORBIDDEN_PHRASES include the fence syntax and placeholder opener as
      literal strings; master prose must describe them, never quote them. Also avoid
      'as in start-protocol' / 'as in end-protocol' / 'inherited from' / 'see the master'."
-  - "config-sandbox-real.yaml declares the sandbox knobs by hand because the sandbox
-     repo is private to the sandbox's git clone (only the MCP can read it); a real
-     render uses --tree on a shallow clone via the MCP-fetched files, or declares the
-     same overrides. subsystems.chromaqa is false there — the sandbox has no .chromaqa/
-     directory (checked via the MCP 2026-09-04)."
-  - "The GitHub read tool renders '<name>' as '<n>'; when re-pushing a file read
-     through it, fetch the raw copy and diff first. YAML traps: plain scalars with ': '
-     mid-sentence and commas inside flow-mapping values both fail — quote them."
-  - "SEO/GEO start-protocol block: goes into the master as a normal master change
-     (CHANGELOG entry, version bump, re-render of whatever repos are on the master —
-     none yet). Do not retrofit into legacy files."
+  - "SEO/GEO start-protocol block: a normal master change (CHANGELOG entry, version
+     bump, re-render of whatever repos are on the master — none yet). Do not retrofit
+     into legacy files."
   - "ChromaQA is never installed by a protocol or folded into another task. Do not
      propose it."
   - "Matt runs concurrent Claude Code sessions. Before pushing to ANY repo other than
@@ -84,11 +102,12 @@ next_up:
      Matt names a repo. drift_ci stays deferred until after the first real render is verified."
 
 north_star: |
-  Better: the second and last master file exists, and a machine proved that every rule
-  from four lineages now renders from one edit point — including a real repo's knob set.
-  Nothing was moved onto any repo's board.
+  Better: the last unwritten piece of the source (the CLAUDE.md house block) exists
+  and renders under the same machine proof as the two masters, and the size budget
+  is now a measured number instead of a guess. Nothing was moved onto any repo's board.
 
 tone: |
   Closed-out, waiting. The effort is parked at its stop point on purpose; the next move
   is Matt's, by name. When he makes it, open with the housekeeping commit and a plain
-  one-line position: "both masters exist and render; no repo runs on them yet."
+  one-line position: "both masters and the house block exist and render; no repo runs
+  on them yet."

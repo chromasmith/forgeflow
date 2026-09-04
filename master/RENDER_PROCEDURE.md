@@ -3,12 +3,13 @@
 Blueprint v1.2, Section 6 and Principle P9. Written so a fresh Claude Web session can execute it cold.
 Claude Web runs `master/render.py` in its own sandbox; GitHub is only ever read and written through the GitHub MCP.
 
-STATUS (2026-09-04, end of step 3): renderer, schema, profiles, fixture test AND both master protocol files are
-built. `start-protocol.master.yaml` (89 blocks) and `end-protocol.master.yaml` (46 blocks) render byte-stable for the
-three fixture profiles and for the real convergible-sandbox knob set (`tests/fixtures/config-sandbox-real.yaml`,
-rendered inside forgeflow only). Per RULING-001 no repo is rendered until Matt names it. Still to land before the first
-real render: `claude-md.house-block.master.md`, `PROPAGATION_PROCEDURE.md`, `registered-repos.yaml`, the S4 ceilings
-in BLUEPRINT.yaml, and the CHANGELOG bump to v1.0.0.
+STATUS (2026-09-04, step-3 cleanup, HEAD 8f52985): renderer, schema, profiles, fixture test (35/35), both master
+protocol files AND the CLAUDE.md house block (`claude-md.house-block.master.md`, C-001, commit 96b4290) are built.
+`start-protocol.master.yaml` (89 blocks), `end-protocol.master.yaml` (46 blocks) and the house block render byte-stable
+for the three fixture profiles and for the real convergible-sandbox knob set (`tests/fixtures/config-sandbox-real.yaml`,
+rendered inside forgeflow only). S4 ceilings are set in BLUEPRINT.yaml `rendering.file_ceilings` (commit 104a402).
+Per RULING-001 no repo is rendered until Matt names it. Still to land before the first real render:
+`PROPAGATION_PROCEDURE.md`, `registered-repos.yaml`, legacy banners + README repoint, and the CHANGELOG bump to v1.0.0.
 
 ## 0. Preconditions
 - The GitHub MCP is connected. Ask Matt whether a Claude Code session is active on the TARGET repo before step 7.
@@ -46,8 +47,9 @@ Run step 3 a second time into a different `--out` with the same `--date`; `diff 
 difference is a renderer bug; do not push.
 
 ## 5. Measure
-`wc -l /home/claude/out/.forge/protocols/*.yaml`. Compare against the S4 ceilings in `BLUEPRINT.yaml` once they are
-written (until then: report the numbers). A file over its ceiling is not pushed; apply replace-to-add (P11) in the master.
+`wc -l /home/claude/out/.forge/protocols/*.yaml`. Compare against the S4 ceilings in `BLUEPRINT.yaml`
+`rendering.file_ceilings` (start 1650, dispatch start 650, end 1400, dispatch end 150). A file over its ceiling is not
+pushed; apply replace-to-add (P11) in the master.
 
 ## 6. Diff and summarize
 `diff` each rendered file against the repo's current copy. Write Matt a plain-English summary (adds X, removes the
