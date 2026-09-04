@@ -1,0 +1,19 @@
+# .forge/rulings.yaml — chromasmith/forgeflow
+# Append-only register of decisions Matt has made about the ForgeFlow Master effort,
+# so no future session re-asks them. Search here BEFORE putting any question to Matt.
+# Format: one entry per ruling; never rewrite or soften an entry — supersede it with a new one.
+
+rulings:
+  - id: RULING-001
+    date: 2026-09-04
+    subject: Rollout order and stop point for the ForgeFlow Master effort
+    ruling: >-
+      The rollout has no fixed repo order. The blueprint's step 4 onward becomes
+      "render one repo at a time, the repo and the moment chosen by Matt, each its
+      own session and its own go." The Convergible FINAL repo is cloned from the
+      rendered saas-starter, so it is never rendered before saas-starter. The stop
+      point for THIS effort is the end of step 3 — both master protocol files
+      written and a byte-stable render proven inside forgeflow. No repo is rendered
+      until Matt names it.
+    supersedes: BLUEPRINT.yaml v1.2 Section 11 steps 4-9 and rollout_rule (amended to v1.3 in the same commit)
+    stated_by: Matt, in chat, at the step-3a session close

@@ -1,6 +1,6 @@
 # =============================================================================
 # FORGEFLOW MASTER — UNIFIED SESSION-PROTOCOL SYSTEM
-# Blueprint v1.2 — 2026-09-04 (two board passes; DESIGN CLOSED — next step is build)
+# Blueprint v1.3 — 2026-09-04 (two board passes; DESIGN CLOSED; build in progress; rollout order amended by ruling)
 # Author: Claude Web (planning session with Matt Fleming, Chromasmith LLC)
 # Status: DESIGN CLOSED after two committee passes. Nothing here is built yet.
 # Home: github.com/chromasmith/forgeflow  master/BLUEPRINT.yaml
@@ -15,7 +15,7 @@
 
 meta:
   name: ForgeFlow Master
-  version: "1.2-blueprint"
+  version: "1.3-blueprint"
   date: 2026-09-04
   revision_history:
     - version: "1.0"
@@ -44,6 +44,17 @@ meta:
         drift_ci workflow until the render is proven. Declined: the board drafting
         master text (that is the build session's work). Active-repo count answered
         (3-4). Design declared CLOSED; a third pass would be gilding.
+    - version: "1.3"
+      note: >
+        Matt's ruling 2026-09-04 (RULING-001 in forgeflow .forge/rulings.yaml): the
+        rollout has no fixed repo order. Section 11 steps 4-9 collapse into "render
+        one repo at a time, the repo and the moment chosen by Matt, each its own
+        session and its own go." One ordering constraint survives: the Convergible
+        FINAL repo is cloned from the rendered saas-starter, so it is never rendered
+        before saas-starter. The stop point for THIS effort is the end of step 3 —
+        both masters written and a byte-stable render proven inside forgeflow; no
+        repo is rendered until Matt names it. Step 3a (renderer, schema, profiles,
+        fixture proof) landed @ 5c66201.
   problem_in_one_sentence: >
     Matt runs the same start/wrap session protocol across many repos, but each repo
     holds a hand-forked copy, so fixes made in one never reach the others and the
@@ -455,7 +466,7 @@ protocol_config_schema:
     repo:
       org:                { type: string, declared: true, example: chromasmith }
       name:               { type: string, declared: true, example: convergible-sandbox }
-      canonical_checkout: { type: string, default: "C:\\Chromasmith\\<name>" }
+      canonical_checkout: { type: string, default: "C:\\Chromasmith\\<n>" }
       default_branch:     { type: string, default: main }
     mirror:
       github_is_complete_mirror:
@@ -887,9 +898,10 @@ variant_mapping:
       files, so its first render should diff nearly zero apart from the Section 9
       additions and the per-reader split (P7), which its four files already resemble.
   convergible_final_and_future_repos:
-    note: Rendered from the saas-starter template's baked-in config, so a new repo is
-      born on the current master version with dispatch pre-wired except the
-      Matt-only workflow-file step.
+    note: Born from the saas-starter template's baked-in config, so a new repo starts
+      on the current master version with dispatch pre-wired except the Matt-only
+      workflow-file step. The Convergible FINAL repo is cloned from the RENDERED
+      saas-starter (RULING-001), so saas-starter renders first.
 
 # =============================================================================
 # 11. ROLLOUT ORDER (in sessions, not days)
@@ -923,54 +935,32 @@ rollout:
     done_when: A cold CW session can read RENDER_PROCEDURE.md, run render.py, and
       render a repo.
   - step: 4
-    name: Render convergible-sandbox (proof)
+    name: Render repos — one at a time, repo and moment chosen by Matt (RULING-001, 2026-09-04)
     detail: >
-      Diff against its current four files; every difference must be explainable as a
-      Section 9 addition, a step-2 fold, or the per-reader split (P7). Run one real
-      local session and three dispatched tasks on the rendered copies; the dispatch
-      canary (S6) must surface in all three. If it does not, the dispatch essentials
-      — scope lock, off-limits, halt-and-report, inbox path, needs_ruling — are
-      inlined into the issue body by CW at dispatch time and the dispatch file
-      becomes reference only; the issue-body template then comes under master
-      control as a rendered artifact. After this step passes, drift_ci may be
-      installed.
-  - step: 4b
-    name: Render the Convergible final monorepo
-    detail: >
-      Once step 4 passes, render the new Convergible final monorepo (shape: monorepo,
-      dispatch enabled after its one-time install). Because it is created before the
-      master exists, it is born on convergible-sandbox's protocol set and picks up the
-      rendered set here; the pinned-with-reason entry covers the gap.
-  - step: 5
-    name: Update saas-starter
-    detail: >
-      Bake protocol-config.yaml defaults and rendered protocols into the house
-      template so every new repo is born current. NOTE: the Convergible final
-      monorepo is being created before this step can run; it starts on the current
-      convergible-sandbox protocol set and is rendered in step 4b (above).
-  - step: 6
-    name: Synclips + relay
-    detail: >
-      Render chromasync, synclips-platform and dv-captain with the companion knob.
-      The relay's PROTOCOL.md stays as-is; the wrap's relay write moves to CW
-      direct-write. (Confirmed 2026-09-04: the imminent "final" monorepo is
-      Convergible's, not Synclips' — the Synclips system stays multi-repo and the
-      relay stays in play.)
-  - step: 7
-    name: Remaining active repos (ChromaQA and any others in registered-repos.yaml)
-    detail: Any repo lacking .forge/ gets the initialization templates. Dormant repos
-      are NOT rendered — they receive a stamped, pinned copy of their existing
-      protocols with a pinned-with-reason entry in registered-repos.yaml.
-  - step: 8
-    name: Thought-box pointers + forgeflow legacy cleanup + drift_ci install
-  - step: 9
-    name: ChromaControl (optional, last)
-    detail: Only when Matt reactivates the project. Until then, pinned.
+      There is NO fixed repo order. Each render is its own session with its own
+      explicit go, and no repo is rendered until Matt names it. The one ordering
+      constraint: the Convergible FINAL repo is cloned from the already-rendered
+      saas-starter, so saas-starter is rendered before it and the final repo is
+      born on the master rather than rendered onto it. Everything the former
+      per-repo steps required still applies WHEN a given repo's turn comes —
+      convergible-sandbox needs its two prerequisites first (create
+      .forge/protocols/repo-rules.yaml from the LR-163 items; rename the
+      CC-reports/<ISSUE-ID>.md register entry to .forge/inbox/<run-id>.yaml) and
+      the S6 dispatch canary must surface in three dispatched tasks, with the
+      issue-body fallback if it does not; Synclips repos use the companion knob
+      and the relay's PROTOCOL.md stays as-is; saas-starter bakes the config
+      defaults and rendered protocols into the template; a repo lacking .forge/
+      gets the initialization templates; dormant repos get a stamped, pinned copy;
+      ChromaControl only when Matt reactivates it. drift_ci may be installed after
+      the first proven render. Thought-box pointers and the forgeflow legacy
+      cleanup happen whenever Matt chooses and gate nothing.
+    done_when: Never "done" as a step — each render closes on its own session's go.
 
 rollout_rule: >
-  Each step is its own session with its own go from Matt. A "go" on the blueprint
-  is not a go on step 2. Step 2 (lineage reconciliation) blocks step 3 (build);
-  step 4 (proof render) blocks steps 5-8.
+  Each step is its own session with its own go from Matt. Step 2 blocked step 3.
+  THE STOP POINT FOR THIS EFFORT IS THE END OF STEP 3 — both master protocol
+  files written and a byte-stable render proven inside forgeflow. Nothing past
+  that point happens until Matt names a repo (RULING-001, 2026-09-04).
 
 # =============================================================================
 # 12. RISKS AND DOWNSIDES (honest)
