@@ -2,6 +2,24 @@
 # The top entry's `version` is the master version render.py stamps into every render.
 # Newest first.
 entries:
+  - version: "v1.0.0"
+    date: 2026-09-04
+    status: RELEASED — first repo rendered from this master (chromasmith/seogeo, RULING-002)
+    changed: >-
+      RENDERER FIX found during the first real render: render.py read the condition literal
+      "none" as YAML null, so "build.validation == none" (S-083), "build.deploy == none" (S-085)
+      never rendered and "build.deploy != none" (E-023) rendered a deploy step reading "deploys
+      via none" for every no-deploy repo. "none" is a legal enum VALUE and now compares as the
+      string; only "null"/"None" mean null. Fixture block + two tests added (37/37, seen red
+      before the fix). Repos on the standard profile render byte-identical protocol text;
+      legacy-local and docs-only shapes gain S-085 (and S-083 for docs-only) and lose the wrong
+      E-023. No master protocol text changed. The master leaves BUILD IN PROGRESS: chromasmith/seogeo is the
+      first repo rendered from it (docs-only profile; subsystems all off by detection; nothing
+      else installed). The housekeeping bundle deferred by RULING-001 lands with this version:
+      PROPAGATION_PROCEDURE.md, registered-repos.yaml (written last, seogeo's row first), the
+      "superseded by master/" banners on the legacy Forge Flow 10 docs, and the README repointed
+      at master/. Every render from here carries "v1.0.0" in its header; the protocol text a
+      repo receives is identical to what v0.3.0-build would have produced for the same config.
   - version: "v0.3.0-build"
     date: 2026-09-04
     status: BUILD IN PROGRESS — no repo is rendered from this master yet

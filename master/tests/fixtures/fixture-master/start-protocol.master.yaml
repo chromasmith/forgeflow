@@ -22,6 +22,10 @@ preamble: CONTEXT MODE SELECTIVE, APPROVAL CODE 3949.
 refresh: hard reset to origin/{{repo.default_branch}} after the safety check.
 # <<< end S-034
 
+# >>> block S-085 | deploy_steps_none | reader: cc-local | render_when: execution.local and build.deploy == none
+deploy_steps: no per-task deploy for this repo; VERIFY PUSH is the final gate.
+# <<< end S-085
+
 # >>> block S-038 | authorized_files_section | reader: all | render_when: always
 authorized_files: mandatory in every prompt.
 # <<< end S-038

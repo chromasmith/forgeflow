@@ -72,6 +72,9 @@ with tempfile.TemporaryDirectory() as td:
     ls = read(td/"l"/".forge/protocols/start-protocol.yaml"); le = read(td/"l"/".forge/protocols/end-protocol.yaml")
     checks.append(("excluded S-034" in ls and "# --- S-026" in ls and "desktop, wsl-build, phone" in ls, "legacy: hard-reset out, spike in, surfaces substituted", ""))
     checks.append(("# --- E-020" in le and "synclips-relay" in le, "legacy: relay block in with companion name substituted", ""))
+    # enum literal "none" is a STRING value (build.deploy: none), not YAML null — S-083/S-085 must render for it
+    checks.append(("# --- S-085" in ls, "legacy: 'build.deploy == none' block INCLUDED (enum literal none is a string)", ""))
+    checks.append(("excluded S-085" in sp and "build.deploy == none" in sp, "standard: 'build.deploy == none' block excluded for a vercel repo", ""))
     # 5. effective values written back into the config
     ec = read(td/"l"/".forge/protocol-config.yaml")
     checks.append(("# --- effective values" in ec and "# mirror.github_is_complete_mirror: false" in ec, "config: effective values comment block written", ""))
