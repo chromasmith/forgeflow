@@ -1,101 +1,104 @@
 # .forge/handoff.yaml — chromasmith/forgeflow
 # Pass-the-baton briefing written BY the outgoing Claude Web session TO the next.
 # A WARNING LETTER, not a summary. The blueprint holds the design; this holds the feel.
-# generated: 2026-09-04T16:20:00Z
-# session: 2026-09-04 (step 3a)
-# written_at_commit: f7bc3eca844c64808c46b90d7d9f660f585877d5
-# written_at_utc: 2026-09-04T16:20:00Z
+# generated: 2026-09-04T16:10:00Z
+# session: 2026-09-04 (step 3b, first half)
+# written_at_commit: ff1c07ef280c9a1bd0ffc1a054ecd39722d615a3
+# written_at_utc: 2026-09-04T16:10:00Z
 
 status: |
-  ForgeFlow Master: step 3 is HALF done. 3a landed — render.py, protocol-config.schema.yaml
-  (Section 5 fields + the 8 new knobs), profiles/{standard,legacy-local,docs-only}.yaml,
-  RENDER_PROCEDURE.md, CHANGELOG.yaml (v0.1.0-build), tests/test_render.py — 31/31 checks
-  pass in the sandbox AND from a fresh clone of GitHub (commit 5c66201). The
-  LINEAGE_RECONCILIATION gate line was flipped to GATE-PASSED (commit 77ee15c, blob SHA
-  proven). RULING-001 recorded in .forge/rulings.yaml and BLUEPRINT.yaml amended to v1.3
-  (commit f7bc3ec). NOT written: start-protocol.master.yaml, end-protocol.master.yaml,
-  claude-md.house-block.master.md, PROPAGATION_PROCEDURE.md, registered-repos.yaml, the
-  legacy banners/README repoint, the S4 ceiling numbers. No repo runs on the master.
-  KNOWN DEVIATION: master/BLUEPRINT.yaml Section 5 repo.canonical_checkout example reads
-  "C:\Chromasmith\<n>" — should read "<name>"; a one-character transcription slip when the
-  file was re-pushed (the GitHub read tool displays "<name>" as "<n>"). Fix it in the first
-  commit that next touches the blueprint (the S4 ceiling write); not worth a commit alone.
+  ForgeFlow Master: step 3 is TWO-THIRDS done. The master EXISTS but is not finished.
+  master/start-protocol.master.yaml landed at commit ff1c07e (blob dd7a021, equal to
+  git hash-object of the sandbox copy) — 89 blocks, 1,685 lines, all four lineages plus
+  the board additions. Checked in the sandbox before the push (commit ff1c07e): render.py rendered all
+  three fixture configs (sandbox / standard / legacy) with a stub end master; every
+  rendered file parses as YAML; two renders with the same --date were byte-identical
+  (diff -r clean); render.py check reported OK on the sandbox output; the existing
+  tests/test_render.py still passes 31/31 (fixture-based, so it does not exercise the
+  real master). NOT written: end-protocol.master.yaml, claude-md.house-block.master.md,
+  PROPAGATION_PROCEDURE.md, registered-repos.yaml, legacy banners/README repoint, S4
+  ceilings. No repo runs on the master. Measured sizes with the fixture-sandbox config
+  (no --tree, so tsx/ui-inventory/ci blocks were OFF): CW start file 1,309 lines,
+  dispatch start file 490 lines; standard 980; legacy-local 990. The real sandbox
+  render will be larger (tsx_lib_rule, ui_inventory, ci_quality_gate all true).
+  KNOWN DEVIATION (unchanged): BLUEPRINT.yaml Section 5 canonical_checkout example
+  reads "<n>" for "<name>" — fix in the S4 ceiling commit.
 
 first_thing: |
-  WRITE master/start-protocol.master.yaml. It is transcription, not design: read
-  master/LINEAGE_RECONCILIATION.yaml master_block_index (the S-/W- blocks with reader hints
-  and render_when fences) and its rules list (every folded LR-nnn names its block), plus
-  board_additions_not_from_lineage. Fetch the four convergible-sandbox protocol files from
-  GitHub as the primary source text (start-protocol-local.yaml + start-protocol-dispatch.yaml
-  for this file). Use the fence syntax render.py parses — one full comment line per fence:
-  "# >>> block S-001 | name | reader: all | render_when: always" ... "# <<< end S-001";
-  reader tags cw / cc / cc-local / cc-dispatch / all, joined with +; conditions in the tiny
-  language in render.py's eval_condition docstring (always, path, not path, path == lit,
-  path non-empty, len(path) > N, joined by and/or); placeholders {{repo.name}} etc. must
-  resolve against protocol-config.schema.yaml paths. Put "# @reader-order cc-dispatch:
-  S-030, S-038, W-003, S-048, S-074" as a directive line before the first block. Keep the
-  provisional S-/W-/E- IDs (do NOT renumber to B-nnn — the manifest test and the
-  reconciliation both key on them). Write in the sandbox in pieces (a block group per
-  create_file), parse-validate the fences by running render.py render against
-  tests/fixtures/config-sandbox.yaml with a stub end-protocol.master.yaml if the real one
-  is not yet written, wc -l the output, THEN push via the GitHub MCP and prove the blob SHA
-  equals git hash-object of the sandbox copy. Budget: this file alone is ~1,300 lines and
-  costs two full passes (write + push); do not attempt the end master in the same session.
+  WRITE master/end-protocol.master.yaml (blocks E-001..E-030 from
+  LINEAGE_RECONCILIATION master_block_index.end_protocol, every folded/knobbed LR-nnn
+  whose target is an E- block, plus board additions E-008/E-014/E-024/E-026). Fetch
+  convergible-sandbox .forge/protocols/end-protocol-local.yaml (blob e8652d9) and
+  end-protocol-dispatch.yaml (blob 02be688) via the GitHub MCP as primary source text.
+  Copy the start master's conventions exactly: one top-level YAML key per block; key
+  names unique across the file except for mutually exclusive variants; fences as
+  render.py parses them; placeholders only on schema paths; E-004 and E-018 fenced on
+  subsystems.supabase, E-016 on protected.phase_authority_doc, E-020 on companion_repos
+  non-empty, E-021 on execution.local, E-022 on execution.dispatch.enabled, E-023 on
+  build.deploy != none; where the index says "sub-blocks conditional" (E-005) split
+  into extra E-0xx blocks and list the new IDs in the file preamble as the start
+  master does. Write in pieces (cat heredocs per block group), render all three fixture
+  configs with the REAL start master and the new end master, YAML-parse every output,
+  prove byte-stability with diff -r, THEN push via create_or_update_file and prove the
+  blob SHA equals git hash-object. Then run the step-3 exit proof: render the
+  convergible-sandbox profile INSIDE forgeflow (write a fixture config matching the
+  real sandbox knobs: dispatch on, supabase on, tsx_lib_rule on, ui_inventory on,
+  ci_quality_gate on, database_access_doc set) and record wc -l per reader file. Then
+  STOP and wrap. Do NOT render into any repo (RULING-001).
 
 watch_out_for:
   - "STOP POINT (RULING-001): this effort ends when both masters are written and a
-     byte-stable render is proven inside forgeflow. Do NOT render, install, or prepare a
-     render for any repo — not convergible-sandbox, not saas-starter — until Matt names it.
-     The old 'step 4 = sandbox proof' sequence is gone; do not resurrect it from memory."
-  - "Ordering constraint that DID survive: the Convergible FINAL repo is cloned from the
-     rendered saas-starter, so saas-starter is never rendered after it."
-  - "render.py rejects any non-comment text outside a block fence, duplicate block IDs,
-     unknown reader tags, unresolved {{placeholders}}, and the forbidden phrases in
-     FORBIDDEN_PHRASES (including the literal string 'render_when' and '{{' inside block
-     TEXT — so the master must not quote its own fence syntax in prose; describe it instead)."
-  - "Reader semantics in render.py: the cw file includes EVERY condition-true block; the
-     cc-dispatch file includes only blocks tagged cc, cc-dispatch or all. Tag blocks
-     accordingly — a block tagged cw+cc-dispatch lands in both files."
-  - "The LR-026 vs W-001 tension: use the wording in LINEAGE_RECONCILIATION flags —
-     planning questions only when the interview trigger fires, led by a recommendation,
-     never more than three."
-  - "LR-129 (connector cannot read check-run statuses, 403) renders as 'reported' until
-     re-tested at a real render."
-  - "SEO/GEO start-protocol block: Matt's tool is nearly ready; it goes into the master
-     AFTER both masters land and before any render, as a normal master change. Do not
-     retrofit it into the start master now unless Matt hands you the text."
-  - "The eleven rules SYN/CC2 never had (LR-033, 045, 086, 015, 032, 049, 050, 052, 144,
-     148, 140) are in the master unconditionally — the additive first-render diff for
-     those repos is expected."
-  - "ChromaQA is never installed by a protocol or folded into another task. Do not propose it."
+     byte-stable render is demonstrated inside forgeflow. Do NOT render, install, or prepare a
+     render for any repo — not convergible-sandbox, not saas-starter — until Matt names
+     it. Do not resurrect the old 'step 4 = sandbox proof' sequence."
+  - "The start master carries S-034 (hard reset) and S-052 (gentle pull) as two blocks
+     with mutually exclusive conditions and the SAME YAML key refresh_mode; validation
+     (S-081/082/083) and deploy (S-084/085/086) do the same. Any new end-master variant
+     pair must be exclusive too or the rendered YAML has duplicate keys."
+  - "render.py FORBIDDEN_PHRASES include the literal strings for the fence syntax and
+     the placeholder opener inside block TEXT — the master must never quote its own
+     syntax in prose; describe it. Also avoid 'as in start-protocol' / 'as in
+     end-protocol' / 'inherited from' / 'see the master'."
+  - "Reader semantics: the cw file gets EVERY condition-true block; the cc-dispatch
+     file gets only cc / cc-dispatch / all. The end master's E- blocks are almost all
+     cw-only; E-021 is cw+cc-local. Under the fixture-sandbox config the dispatch end
+     file may legitimately render with very few blocks."
+  - "The reconciliation's E-blocks were transcribed from SBX end files that still say
+     Claude Code writes the wrap docs; the master says Claude Web direct-writes them
+     (I1) and CC gets only the local remainder prompt (E-021). Drop the CDT-prompt
+     packaging language; keep every file behavior and template."
+  - "The pushed content must be transcribed EXACTLY from the sandbox file; the blob
+     SHA check is the only proof. A 93 KB push cost one large tool call this session;
+     the end master will be similar. Budget the context window before starting."
+  - "LR-129 (connector 403 on check runs) renders as 'reported' in S-071 — keep the
+     same treatment anywhere the end master mentions CI verdicts."
+  - "SEO/GEO start-protocol block: goes into the master AFTER both masters land, as a
+     normal master change. Do not retrofit now unless Matt hands you the text."
+  - "ChromaQA is never installed by a protocol or folded into another task. Do not
+     propose it."
   - "Matt runs concurrent Claude Code sessions. Before pushing to ANY repo other than
      forgeflow, ask whether a CC session is active on it."
   - "Matt's communication rules (blueprint Section 9 I4): four sentences or less,
-     recommendation not options, one action item at a time, end every reply with the next
-     verb and who holds the ball, state the overall project position at every milestone.
-     This session's first close-out read as 'step 3 done' to Matt and had to be corrected —
-     say 'the master EXISTS but is not finished' in those words."
-  - "YAML traps (bit twice this session): plain scalars with ': ' mid-sentence and commas
-     inside flow-mapping values both fail to parse — quote them. The GitHub read tool
-     renders the literal text '<name>' as '<n>'; when re-pushing a file you read through
-     it, fetch the raw copy in the sandbox and diff before trusting your transcription."
-  - "Large files cost two passes (sandbox write, then MCP push) and a 66 KB re-push is
-     ~17K tokens; budget the context window before starting a master file."
+     recommendation not options, one action item at a time, end every reply with the
+     next verb and who holds the ball, state the overall project position at every
+     milestone. Say 'the master EXISTS but is not finished' in those words."
+  - "YAML traps: plain scalars with ': ' mid-sentence and commas inside flow-mapping
+     values both fail to parse — quote them. The GitHub read tool renders '<name>' as
+     '<n>'; when re-pushing a file read through it, fetch the raw copy and diff first."
 
 next_up:
-  - "end-protocol.master.yaml (E-001..E-030), then claude-md.house-block.master.md,
+  - "After the end master and the step-3 exit proof: claude-md.house-block.master.md,
      PROPAGATION_PROCEDURE.md, registered-repos.yaml, legacy banners + README repoint,
-     wc -l of real renders → write S4 ceilings into the blueprint (fix the <name> slip in
-     the same commit), CHANGELOG bump to v1.0.0. Each is deferred, not next; first_thing
-     is the only agenda item."
+     S4 ceilings into the blueprint (fix the <name> slip in the same commit), CHANGELOG
+     bump to v1.0.0. Each is deferred, not next; first_thing is the only agenda item."
 
 north_star: |
-  Did today's work make the product better, or only move the board? Better: the renderer
-  is real code with a proof, so the master files that follow will be checked by a machine
-  rather than by discipline — that is the whole point of P9.
+  Did today's work make the product better, or only move the board? Better: the first
+  real master file exists and a machine, not a memory, proved it renders — every rule
+  from four lineages now has one edit point.
 
 tone: |
-  Transcription session. Head-down, one file, prove it, push it, stop. Matt will say go on
-  a clear recommendation; report progress in plain English first. When you close, state
-  the overall position plainly: after this file lands the master is TWO-THIRDS written and
-  still not finished; no repo runs on it.
+  Transcription session, head-down. Matt says go on a clear recommendation; report in
+  plain English first. When you close, state the overall position plainly: after the
+  end master lands and the exit proof runs, step 3 is DONE and the effort STOPS; no repo
+  runs on the master until Matt names one.
