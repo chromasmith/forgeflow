@@ -1,67 +1,76 @@
 # .forge/handoff.yaml — chromasmith/forgeflow
 # Pass-the-baton briefing written BY the outgoing Claude Web session TO the next.
 # A WARNING LETTER, not a summary. The blueprint holds the design; this holds the feel.
-# generated: 2026-09-04T14:00:00Z
+# generated: 2026-09-04T14:45:00Z
 # session: 2026-09-04
-# written_at_commit: 009370bcb14a3db3c43c22325066d7609a62c4f7
+# written_at_commit: 6fe50fae2ec12a711cef800e63d091cf3a8a2bf5
 
 status: |
-  ForgeFlow Master is a CLOSED DESIGN and an UNBUILT SYSTEM. master/BLUEPRINT.yaml
-  (v1.2, commit 009370b) is the single authority — it survived two nine-seat committee
-  passes and carries every ratified decision, the config schema, the rollout order and
-  the still-open items. Nothing else in master/ exists yet. The rest of this repo
-  (docs/, prompts/, examples/, SolutionPatterns.yaml) is the legacy Forge Flow 10 spec,
-  last touched 2026-04-16, and is NOT authoritative for anything the blueprint covers.
+  ForgeFlow Master: design CLOSED (master/BLUEPRINT.yaml v1.2 @ 009370b), step 2 DONE,
+  nothing built. master/LINEAGE_RECONCILIATION.yaml is committed (6fe50fa, 183 rules:
+  117 folded, 50 knobbed, 16 dropped, 8 new knobs proposed, 101 provisional block IDs).
+  Matt read the 16-item dropped list and said GO on 2026-09-04 — the gate is PASSED.
+  KNOWN INCONSISTENCY: the file's meta.status line still reads DRAFT because flipping
+  one line meant re-pushing 106 KB at the end of a full-context session; Matt's go is
+  recorded here instead. The rest of this repo (docs/, prompts/, examples/,
+  SolutionPatterns.yaml) is the legacy Forge Flow 10 spec and is NOT authoritative.
 
 first_thing: |
-  ROLLOUT STEP 2 — LINEAGE RECONCILIATION. Read master/BLUEPRINT.yaml Section 11 step 2
-  and Section 4 (master/LINEAGE_RECONCILIATION.yaml). Then read the four legacy protocol
-  lineages and inventory every behavioral rule with exactly one disposition — folded /
-  knobbed / dropped. Sources:
-    - STANDARD (2026-08-08) and SYNCLIPS-SYSTEM (2026-07-04) start + wrap: Matt holds
-      these outside GitHub (thought-box). Ask him to paste or upload them ONCE at the
-      top of the session — they are not in any repo.
-    - CHROMACONTROL v2 (2026-06-20/25): same — ask Matt.
-    - CONVERGIBLE-SANDBOX: github.com/chromasmith/convergible-sandbox
-      .forge/protocols/start-protocol-local.yaml, end-protocol-local.yaml,
-      start-protocol-dispatch.yaml, end-protocol-dispatch.yaml (also read
-      artifact-register.yaml and database-access.yaml for the concepts they bind).
-  Output: master/LINEAGE_RECONCILIATION.yaml committed to this repo. Matt reviews ONLY
-  the dropped list, in plain English, one screen. Done when he says go. Also record the
-  measured size of the folded set — it sets the S4 line ceiling (still open).
+  ROLLOUT STEP 3 — BUILD master/. First commit of the session: flip meta.status in
+  master/LINEAGE_RECONCILIATION.yaml to "GATE-PASSED 2026-09-04 (Matt's go in chat)"
+  and update meta.counts if anything moved. Then build from the reconciled inventory —
+  read BLUEPRINT Sections 4-8 and 11 step 3, then LINEAGE_RECONCILIATION master_block_index
+  (the skeleton: S-/W-/E-/C- blocks with reader hints and render_when fences) and the
+  rules list (every LR-nnn names its block or knob). Deliverables: master start + end
+  protocol files with block IDs, render.py (per-reader ordering, manifest check that
+  included + excluded == the index, evidence-count companion check), profiles, the
+  config schema INCLUDING the 8 new knobs in new_knobs_proposed, and the CLAUDE.md house
+  block. Measure the real renders with wc -l and write the S4 ceiling into the blueprint
+  (recommendation on file: 1,200 lines CW-read, 800 runner-read — finalize from
+  measurement, not from the estimates). Done when render.py produces a byte-stable render
+  of a test profile and the manifest check passes.
 
 watch_out_for:
-  - "Do NOT start building the master (step 3) in the same session as step 2. The whole
-     point of reordering was that step 2's output is step 3's content inventory."
-  - "The three legacy variants describe a retired model (ZIP upload, 'Claude Web has no
-     MCP access', 'Matt runs his own wrap prompt'). Those lines are inventory to DROP with
-     a reason, not rules to fold."
-  - "ChromaQA is never installed by a protocol or folded into another task — a ChromaQA
-     install is a separate ceremonious session Matt initiates by name. Do not propose it."
+  - "Step 4 has two PREREQUISITES recorded in LINEAGE_RECONCILIATION flags: create
+     .forge/protocols/repo-rules.yaml in convergible-sandbox (LR-163 items) and rename
+     CC-reports/<ISSUE-ID>.md to .forge/inbox/<run-id>.yaml in the register. Without the
+     first, the sandbox first-render diff shows real rules as deleted."
+  - "One tension to settle in master text: LR-026 (3-5 planning questions) vs W-001
+     (four sentences or less). Proposed wording is in the flags block — use it unless
+     Matt objects."
+  - "LR-129 (connector cannot read check-run statuses, 403) is a VERIFY flag — render as
+     'reported' until re-tested at step 4."
+  - "Block IDs in the reconciliation are PROVISIONAL (S-/W-/E-/C-). If you renumber to
+     B-nnn, carry the mapping into the master as a comment so every LR-nnn still resolves."
+  - "SYN and CC2 will pick up eleven rules they never had on first render (list in
+     step_3_reminders). That additive diff is expected — do not 'fix' it by dropping them."
+  - "ChromaQA is never installed by a protocol or folded into another task. Do not
+     propose it."
   - "Matt runs concurrent Claude Code sessions. Before pushing to ANY repo other than
      forgeflow, ask whether a CC session is active on it."
-  - "Parallel threads Matt is running that this effort must NOT gate: saas-starter
-     template repairs (first), his ChromaQA 7.0 install into the template (his session),
-     creation of the Convergible FINAL monorepo from the repaired template (born on the
-     sandbox protocol set; rendered at step 4b), and the SEO/GEO start-protocol update
-     (becomes the first real master change after step 3 — do not retrofit it now)."
-  - "Matt's communication rules are in the blueprint Section 9 I4 and apply to this
-     session: four sentences or less, recommendation not options, one action item at a
-     time, end every reply with the next verb and who holds the ball, state the overall
-     project position at every milestone."
-  - "YAML trap that bit this very blueprint three times: a plain-scalar list item or
-     mapping value containing ': ' mid-sentence fails to parse. Use '- >' / 'key: >'
-     folded scalars for prose. Parse-validate every YAML file in the sandbox before push."
+  - "Parallel threads this effort must NOT gate: saas-starter template repairs, Matt's
+     ChromaQA 7.0 install into the template (his session), the Convergible FINAL monorepo
+     (rendered at step 4b), the SEO/GEO start-protocol update (first real master change
+     after step 3 — do not retrofit it now)."
+  - "Matt's communication rules (blueprint Section 9 I4) apply: four sentences or less,
+     recommendation not options, one action item at a time, end every reply with the next
+     verb and who holds the ball, overall project position at every milestone."
+  - "YAML trap, bit this session four times: plain scalars with ': ' mid-sentence, and
+     commas inside flow-mapping values, both fail to parse. Use folded scalars for prose
+     and block style for anything with commas. Parse-validate in the sandbox before push,
+     and prove the pushed copy by comparing git hash-object of the validated file with
+     the blob SHA the API returns."
+  - "Large files cost two full passes (write to sandbox, then push). Budget the context
+     window for that before starting a build; step 3 will produce several files of this
+     size."
 
 next_up:
-  - "Step 3 — build master/ (render.py with block IDs, per-reader ordering, manifest,
-     evidence-count check; profiles; schema; procedures) from the reconciled inventory.
-     Its own session, its own go."
-  - "Step 4 — render convergible-sandbox as proof; three dispatched tasks must show the
-     compliance canary. Then 4b renders the Convergible final monorepo."
+  - "Step 4 — render convergible-sandbox as proof (after the two prerequisites above);
+     three dispatched tasks must show the compliance canary. Then 4b renders the
+     Convergible final monorepo."
 
 tone: |
-  Build phase begins. Matt is eager but wants reliable over fast; he trusts the
-  recommendation and will say go. Lineage reconciliation is a reading-heavy, judgment-
-  heavy session — take the full context window, be exhaustive on the inventory, and
-  bring him only the dropped list.
+  Build session. The inventory is exhaustive and the skeleton is drawn; step 3 is
+  transcription plus a renderer, not design. Matt will say go on a clear recommendation
+  and wants the overall position stated plainly at the end: after step 3 the master
+  EXISTS but no repo runs on it yet.
