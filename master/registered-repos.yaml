@@ -37,3 +37,25 @@ repos:
       tree skeleton rebuilt from the GitHub listing (see RENDER_PROCEDURE.md STATUS). No
       subsystems detected; dispatch off; the repo's own SEO/GEO template payload under
       template/.seogeo/ is correctly NOT treated as an installed tool.
+  - repo: chromasmith/chromasmith-saas-starter
+    config: .forge/protocol-config.yaml
+    profile: standard
+    master_version: "v1.0.0"
+    rendered_on: 2026-09-04
+    config_hash: f362bf02fcdf61baa61a070137e36a9b90fad35c0329e22b023f516b8c19ce78
+    state: current
+    files:
+      - .forge/protocols/start-protocol.yaml
+      - .forge/protocols/end-protocol.yaml
+      - .forge/protocol-config.yaml
+      - CLAUDE.md
+    landed: "commits a296c13 (config), 10bb67e (start), 60c0906 (end), c97a49a (CLAUDE.md), all 2026-09-04; blob SHAs equal; render.py check OK from a fresh forgeflow clone"
+    notes: >-
+      Second repo rendered (Matt named it 2026-09-04). This repo IS THE TEMPLATE, so its
+      rendered files are inherited by every project spawned from it; a child must re-render
+      with its own config (repo.name, and drop the build.deploy override once linked to
+      Vercel). Private repo: detection ran on a tree skeleton rebuilt from the GitHub listing.
+      Detected: single-app, npm-build, supabase, ci_quality_gate (quality-gate.yml), chromaqa
+      (chromaqa-check.sh, a real running gate here), tsx_lib_rule; vercel and seogeo off.
+      Override build.deploy: none because the template itself is deployed nowhere. The house
+      block replaced the placeholder "Session workflow" section of CLAUDE.md (TPL-030).
