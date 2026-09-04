@@ -1,0 +1,67 @@
+# .forge/handoff.yaml — chromasmith/forgeflow
+# Pass-the-baton briefing written BY the outgoing Claude Web session TO the next.
+# A WARNING LETTER, not a summary. The blueprint holds the design; this holds the feel.
+# generated: 2026-09-04T14:00:00Z
+# session: 2026-09-04
+# written_at_commit: 009370bcb14a3db3c43c22325066d7609a62c4f7
+
+status: |
+  ForgeFlow Master is a CLOSED DESIGN and an UNBUILT SYSTEM. master/BLUEPRINT.yaml
+  (v1.2, commit 009370b) is the single authority — it survived two nine-seat committee
+  passes and carries every ratified decision, the config schema, the rollout order and
+  the still-open items. Nothing else in master/ exists yet. The rest of this repo
+  (docs/, prompts/, examples/, SolutionPatterns.yaml) is the legacy Forge Flow 10 spec,
+  last touched 2026-04-16, and is NOT authoritative for anything the blueprint covers.
+
+first_thing: |
+  ROLLOUT STEP 2 — LINEAGE RECONCILIATION. Read master/BLUEPRINT.yaml Section 11 step 2
+  and Section 4 (master/LINEAGE_RECONCILIATION.yaml). Then read the four legacy protocol
+  lineages and inventory every behavioral rule with exactly one disposition — folded /
+  knobbed / dropped. Sources:
+    - STANDARD (2026-08-08) and SYNCLIPS-SYSTEM (2026-07-04) start + wrap: Matt holds
+      these outside GitHub (thought-box). Ask him to paste or upload them ONCE at the
+      top of the session — they are not in any repo.
+    - CHROMACONTROL v2 (2026-06-20/25): same — ask Matt.
+    - CONVERGIBLE-SANDBOX: github.com/chromasmith/convergible-sandbox
+      .forge/protocols/start-protocol-local.yaml, end-protocol-local.yaml,
+      start-protocol-dispatch.yaml, end-protocol-dispatch.yaml (also read
+      artifact-register.yaml and database-access.yaml for the concepts they bind).
+  Output: master/LINEAGE_RECONCILIATION.yaml committed to this repo. Matt reviews ONLY
+  the dropped list, in plain English, one screen. Done when he says go. Also record the
+  measured size of the folded set — it sets the S4 line ceiling (still open).
+
+watch_out_for:
+  - "Do NOT start building the master (step 3) in the same session as step 2. The whole
+     point of reordering was that step 2's output is step 3's content inventory."
+  - "The three legacy variants describe a retired model (ZIP upload, 'Claude Web has no
+     MCP access', 'Matt runs his own wrap prompt'). Those lines are inventory to DROP with
+     a reason, not rules to fold."
+  - "ChromaQA is never installed by a protocol or folded into another task — a ChromaQA
+     install is a separate ceremonious session Matt initiates by name. Do not propose it."
+  - "Matt runs concurrent Claude Code sessions. Before pushing to ANY repo other than
+     forgeflow, ask whether a CC session is active on it."
+  - "Parallel threads Matt is running that this effort must NOT gate: saas-starter
+     template repairs (first), his ChromaQA 7.0 install into the template (his session),
+     creation of the Convergible FINAL monorepo from the repaired template (born on the
+     sandbox protocol set; rendered at step 4b), and the SEO/GEO start-protocol update
+     (becomes the first real master change after step 3 — do not retrofit it now)."
+  - "Matt's communication rules are in the blueprint Section 9 I4 and apply to this
+     session: four sentences or less, recommendation not options, one action item at a
+     time, end every reply with the next verb and who holds the ball, state the overall
+     project position at every milestone."
+  - "YAML trap that bit this very blueprint three times: a plain-scalar list item or
+     mapping value containing ': ' mid-sentence fails to parse. Use '- >' / 'key: >'
+     folded scalars for prose. Parse-validate every YAML file in the sandbox before push."
+
+next_up:
+  - "Step 3 — build master/ (render.py with block IDs, per-reader ordering, manifest,
+     evidence-count check; profiles; schema; procedures) from the reconciled inventory.
+     Its own session, its own go."
+  - "Step 4 — render convergible-sandbox as proof; three dispatched tasks must show the
+     compliance canary. Then 4b renders the Convergible final monorepo."
+
+tone: |
+  Build phase begins. Matt is eager but wants reliable over fast; he trusts the
+  recommendation and will say go. Lineage reconciliation is a reading-heavy, judgment-
+  heavy session — take the full context window, be exhaustive on the inventory, and
+  bring him only the dropped list.
