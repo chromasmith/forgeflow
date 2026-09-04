@@ -22,6 +22,14 @@ Everything in a master file outside a block must be a comment or blank line.
 Optional master directive (comment line, anywhere before the first block):
   # @reader-order cc-dispatch: S-030, S-038, W-003, S-048, S-074
 
+CLAUDE.md house block (master/claude-md.house-block.master.md, block C-001) is Markdown, so its
+conditional fences are HTML-comment lines (each a full line on its own):
+  <!-- >>> render_when: <condition> -->
+  ...lines kept only when the condition is true...
+  <!-- <<< end render_when -->
+Fences do not nest. The rendered block is placeholder-substituted and standalone-checked like any
+protocol file, then placed between the CLAUDE.md markers; text outside the markers is never touched.
+
 Exit codes: 0 ok, 1 render/validation failure, 2 usage.
 """
 import argparse, copy, datetime, hashlib, json, os, re, sys
@@ -59,6 +67,8 @@ BLOCK_OPEN  = re.compile(r"^\s*#\s*>>>\s*block\s+(?P<id>[A-Z]-\d{3})\s*\|\s*(?P<
 BLOCK_CLOSE = re.compile(r"^\s*#\s*<<<\s*end\s+(?P<id>[A-Z]-\d{3})\s*$")
 ORDER_DIRECTIVE = re.compile(r"^\s*#\s*@reader-order\s+(?P<reader>[\w-]+)\s*:\s*(?P<ids>.+)$")
 PLACEHOLDER = re.compile(r"\{\{\s*([a-zA-Z0-9_.]+)\s*\}\}")
+MD_FENCE_OPEN  = re.compile(r"^\s*<!--\s*>>>\s*render_when:\s*(?P<cond>.+?)\s*-->\s*$")
+MD_FENCE_CLOSE = re.compile(r"^\s*<!--\s*<<<\s*end render_when\s*-->\s*$")
 
 # --------------------------------------------------------------------------- helpers
 class RenderError(Exception):
@@ -420,11 +430,36 @@ def standalone_check(text, label, skip_header_lines=0):
             if ph.lower() in low:
                 fail(f"standalone check failed in {label} line {n}: contains {ph!r}: {line.strip()[:80]}")
 
+def resolve_md_fences(text, eff, label):
+    """Markdown counterpart of the YAML block fences: keep a fenced run of lines when its
+    render_when condition is true, drop the run AND its fence lines when false. No nesting."""
+    if "\r" in text:
+        fail(f"{label}: contains CR characters — the master must be pure LF")
+    out, cond, depth_line = [], None, 0
+    for n, line in enumerate(text.split("\n"), 1):
+        mo = MD_FENCE_OPEN.match(line); mc = MD_FENCE_CLOSE.match(line)
+        if mo:
+            if cond is not None:
+                fail(f"{label}:{n}: render_when fence opens inside the fence opened at line {depth_line}")
+            cond, depth_line = mo.group("cond"), n
+            keep = eval_condition(cond, eff)
+        elif mc:
+            if cond is None:
+                fail(f"{label}:{n}: close fence without an open fence")
+            cond = None
+        elif cond is None or keep:
+            out.append(line)
+    if cond is not None:
+        fail(f"{label}: render_when fence opened at line {depth_line} never closed")
+    return "\n".join(out)
+
 def render_claude_md(master_dir, existing_text, eff, version, date):
     src = Path(master_dir) / CLAUDE_MD_MASTER
     if not src.exists():
         return None
-    block = substitute(src.read_text(encoding="utf-8").rstrip("\n"), eff, where=CLAUDE_MD_MASTER)
+    block = resolve_md_fences(src.read_text(encoding="utf-8"), eff, CLAUDE_MD_MASTER).strip("\n")
+    block = substitute(block, eff, where=CLAUDE_MD_MASTER)
+    standalone_check(block, "CLAUDE.md house block")
     open_line = CLAUDE_MD_OPEN.format(version=version)
     rendered_block = f"{open_line}\n{block}\n{CLAUDE_MD_CLOSE}"
     if existing_text is None:
