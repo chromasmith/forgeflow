@@ -78,6 +78,7 @@ subsystems:
   vercel:              { type: boolean, detected: true, default: false }
   ci_quality_gate:     { type: boolean, detected: true, default: false }
   chromaqa:            { type: boolean, detected: true, default: false }
+  seogeo:              { type: boolean, detected: true, default: false }
   ui_inventory:        { type: boolean, detected: true, default: false }
   artifact_register:   { type: boolean, detected: true, default: false }
   database_access_doc: { type: string,  declared: true, default: null }

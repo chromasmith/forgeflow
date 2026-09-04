@@ -32,6 +32,12 @@ These rules are the same in every Chromasmith repo. They are rendered here from 
 <!-- >>> render_when: subsystems.chromaqa -->
 - This repo runs ChromaQA as a pre-push gate (`./chromaqa-check.sh`, also the `quality-gate` job in CI). ChromaQA's own section lower in this file is binding. Exit 2 (CAPTAIN REVIEW) means STOP: do not push, do not fix it to make it pass, report the finding as printed and wait. Never `--no-verify`; never delete, empty or edit `.chromaqa/profiles.json`. `.chromaqa/CQA-debt.jsonl` and `CQA-showstoppers.jsonl` showing modified right after a push is the gate working, not a scope breach — the wrap commits them.
 <!-- <<< end render_when -->
+<!-- >>> render_when: subsystems.seogeo -->
+- **SEO/GEO:** if `.seogeo/config.json` exists in this repo, read `.seogeo/STANDARD.md` before writing pages. New route groups must be declared in `.seogeo/config.json` in the same session that creates them, or they ship unindexed.
+<!-- <<< end render_when -->
+<!-- >>> render_when: subsystems.seogeo and subsystems.chromaqa -->
+- In this repo `.chromaqa/profiles.json` is GENERATED from `.seogeo/config.json` by `node .seogeo/bin/seogeo.mjs chromaqa-profile` (add `--posture <value>` when a posture is declared). Never hand-edit the profile; change the config and re-run the command in the same session, then commit both together.
+<!-- <<< end render_when -->
 
 ### Scope discipline
 

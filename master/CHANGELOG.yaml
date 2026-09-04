@@ -2,6 +2,30 @@
 # The top entry's `version` is the master version render.py stamps into every render.
 # Newest first.
 entries:
+  - version: "v0.3.0-build"
+    date: 2026-09-04
+    status: BUILD IN PROGRESS — no repo is rendered from this master yet
+    changed: >-
+      SEO/GEO 1.0 master change (second tool-driven change; nothing to re-render). New knob
+      subsystems.seogeo, detected by .seogeo/config.json (the tool's own "installed" test).
+      Start: NEW S-089 seogeo_standard_pointer — the exact conditional pointer text from
+      chromasmith/seogeo .forge/protocol-pointer.md, emitted verbatim in code prompts that touch
+      a page, route or layout, plus the declare-routes-same-session and never-widen-a-surface
+      rules for the prompt writer; NEW S-090 (seogeo AND chromaqa) — .chromaqa/profiles.json is
+      GENERATED from .seogeo/config.json by "seogeo chromaqa-profile" (posture-stamped file when a
+      posture is declared), narrowing the PROTECTED CONFIG rule to one sanctioned change (edit
+      config, re-run, commit both), drift = stamp mismatch fixed by the command, and the plain
+      statement that no ChromaQA gate reads the posture stamp yet. End: NEW E-048 local-remainder
+      exception to E-040's STOP on a modified profile (three tests: config modified, _generated.by,
+      stamp equals sha256 of config); NEW E-049 .seogeo/.report/ is a LOCAL BUILD ARTIFACT
+      (never staged, not an audit surprise); NEW E-050 wrap manifest lines and E-051 file
+      behaviors for .seogeo/. House block gains two fenced bullets (the pointer's exact
+      CLAUDE.md text; the generated-profile rule). No wrap SEO check, per the tool's own rule
+      (verification is ChromaQA's). Existing blocks untouched; every new block is fenced, so
+      repos without .seogeo/config.json render byte-identically to v0.2.0-build. Source:
+      chromasmith/seogeo README, INSTALL.md, .forge/BLUEPRINT.yaml v3.0 (sections 6, 7, 8a),
+      .forge/protocol-pointer.md, .forge/handoff.yaml, template/.seogeo/bin/seogeo.mjs,
+      template/.seogeo/lib/report.mjs, template/.seogeo/STANDARD.md.
   - version: "v0.2.0-build"
     date: 2026-09-04
     status: BUILD IN PROGRESS — no repo is rendered from this master yet

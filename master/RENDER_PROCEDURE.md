@@ -3,11 +3,12 @@
 Blueprint v1.2, Section 6 and Principle P9. Written so a fresh Claude Web session can execute it cold.
 Claude Web runs `master/render.py` in its own sandbox; GitHub is only ever read and written through the GitHub MCP.
 
-STATUS (2026-09-04, step-3 cleanup, HEAD 8f52985): renderer, schema, profiles, fixture test (35/35), both master
-protocol files AND the CLAUDE.md house block (`claude-md.house-block.master.md`, C-001, commit 96b4290) are built.
-`start-protocol.master.yaml` (89 blocks), `end-protocol.master.yaml` (46 blocks) and the house block render byte-stable
-for the three fixture profiles and for the real convergible-sandbox knob set (`tests/fixtures/config-sandbox-real.yaml`,
-rendered inside forgeflow only). S4 ceilings are set in BLUEPRINT.yaml `rendering.file_ceilings` (commit 104a402).
+STATUS (2026-09-04, master v0.3.0-build after the ChromaQA 7.0 and SEO/GEO 1.0 master changes): renderer, schema,
+profiles, fixture test (35/35), both master protocol files AND the CLAUDE.md house block
+(`claude-md.house-block.master.md`, C-001) are built. `start-protocol.master.yaml` (93 blocks),
+`end-protocol.master.yaml` (51 blocks) and the house block render byte-stable for the three fixture profiles, for the
+real convergible-sandbox knob set (`tests/fixtures/config-sandbox-real.yaml`) and for a template-shaped set with both
+tools on (`tests/fixtures/config-starter-tools.yaml`) — all rendered inside forgeflow only. S4 ceilings are set in BLUEPRINT.yaml `rendering.file_ceilings` (commit 104a402).
 Per RULING-001 no repo is rendered until Matt names it. Still to land before the first real render:
 `PROPAGATION_PROCEDURE.md`, `registered-repos.yaml`, legacy banners + README repoint, and the CHANGELOG bump to v1.0.0.
 

@@ -1,0 +1,14 @@
+# fixture: a TEMPLATE-SHAPED knob set with BOTH tools forced on — ChromaQA 7.0 and SEO/GEO 1.0 —
+# so the ceiling measurement for a repo born from chromasmith-saas-starter is reproducible from
+# tests/fixtures/ instead of a temp copy. ILLUSTRATIVE knobs (single-app, npm build, Vercel,
+# Supabase, CI gate, .tsx present, dispatch off); it does NOT claim to be saas-starter's real
+# detected set. Rendered INSIDE forgeflow only — nothing here is written to any repo (RULING-001).
+profile: standard
+repo: { org: chromasmith, name: fixture-starter-tools }
+overrides:
+  subsystems.supabase: true
+  subsystems.vercel: true
+  subsystems.ci_quality_gate: true
+  subsystems.chromaqa: true
+  subsystems.seogeo: true
+  architecture.tsx_lib_rule: true
