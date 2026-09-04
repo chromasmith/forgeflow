@@ -17,6 +17,8 @@
 #   S-079 hardware_off_by_default       S-080 alternate_machines_note
 #   S-081/082/083 validation step by build.validation (npm-build / py-compile / none)
 #   S-084/085/086 deploy steps by build.deploy (vercel / none / custom)
+# ADDED v0.2.0-build (ChromaQA 7.0 master change, 2026-09-04):
+#   S-087 chromaqa_push_gate_rule       S-088 reading_ci_chromaqa
 # Reader deviation from the index: S-049 (human gates) is cw+cc-local, not all —
 # P7 says a cold runner must not read typed-confirmation banners it cannot run.
 #
@@ -283,13 +285,32 @@ build_location_detection: |
 
 # >>> block S-014 | chromaqa_debt_check | reader: cw | render_when: subsystems.chromaqa
 chromaqa_debt_check: |
-  This repo carries ChromaQA telemetry. Count the lines in
-  .chromaqa/CQA-debt.jsonl. If the count exceeds
-  {{thresholds.chromaqa_debt_alert}}, alert Matt in one plain line and wait
-  for his decision before saying "Ready for tasks." If it is at or under the
-  threshold, say nothing. The telemetry files (.chromaqa/CQA-runs.jsonl,
-  CQA-debt.jsonl, CQA-showstoppers.jsonl) are PASS-THROUGH: never generated or
-  edited by a prompt, committed only when git status shows them modified.
+  This repo runs ChromaQA (chromaqa-check.sh at the repo root; the same script
+  runs as the pre-push gate locally and as the quality-gate job in CI). Read
+  .chromaqa/CQA-debt.jsonl from GitHub and count its lines. If the count
+  exceeds {{thresholds.chromaqa_debt_alert}}, alert Matt in one plain line and
+  wait for his decision before saying "Ready for tasks." At or under the
+  threshold, say nothing. A debt line whose message begins "BROKEN GATE:" is a
+  check that could not run, not a finding about the code — name it separately
+  if any exist.
+
+  Three kinds of file live under .chromaqa/ and are handled three ways:
+    .chromaqa/profiles.json          PROTECTED CONFIG — committed; it switches on
+                                     the six SEO/GEO gates. Never generated,
+                                     edited, deleted or emptied by a prompt or a
+                                     wrap; a change to it is Matt's decision,
+                                     made by name. If it exists, the SEO/GEO
+                                     gates are live in this repo and any of
+                                     their findings can refuse a push.
+    .chromaqa/CQA-debt.jsonl         PASS-THROUGH telemetry — committed; never
+    .chromaqa/CQA-showstoppers.jsonl generated or edited by a prompt; committed
+                                     by the local remainder when git shows them
+                                     modified (the pre-push gate appends to them
+                                     DURING a push, so they are expected to show
+                                     modified right after one).
+    .chromaqa/CQA-runs.jsonl         LOCAL ONLY — gitignored, per machine, never
+                                     on GitHub and never committed. Do not claim
+                                     to have read it.
 # <<< end S-014
 
 # >>> block S-015 | companion_relay_read | reader: cw | render_when: companion_repos non-empty
@@ -1099,10 +1120,45 @@ ci_gate_rule: |
   instructions. Pre-existing CI failures are not your responsibility and
   chasing them wastes significant time and tokens.
 
+  A CI finding marked CAPTAIN REVIEW (human judgment needed) is never yours to
+  fix, even in a file you changed. Report it as printed and wait.
+
   Read the JOB, not the top-line rollup — the rollup can show red from an
   unrelated standing failure, and can also fail before any gate runs (an
   install-step flake shows every check as "skipped").
 # <<< end S-045
+
+# >>> block S-087 | chromaqa_push_gate_rule | reader: cc-local | render_when: execution.local and subsystems.chromaqa
+chromaqa_push_gate_rule: |
+  This repo runs ChromaQA as a pre-push gate. Emitted verbatim in every local
+  code prompt, next to the CI GATE RULE where that rule is present:
+
+  ## PRE-PUSH GATE RULE — CRITICAL
+
+  git push runs ./chromaqa-check.sh before anything leaves this machine. The
+  exit code decides what you do:
+
+  - Exit 0 — PASSED (warnings, if any, were logged). The push went through.
+  - Exit 1 — FAILED. Read the finding; every one names a code. If it is a
+    TypeScript, ESLint or build failure in a file you changed this session,
+    fix it in an authorized file, commit and push again. ANY other
+    showstopper — a secret scan, gitleaks missing, Row Level Security, a
+    package manager missing, a profiles.json that cannot be read — is a STOP:
+    report the finding as printed and wait for instructions.
+  - Exit 2 — CAPTAIN REVIEW. STOP. Do not push, do not "fix" it so it passes,
+    do not touch .chromaqa/profiles.json. Report the finding exactly as
+    printed and wait. It is not yours to resolve.
+
+  Never push with --no-verify. Never delete, empty or edit
+  .chromaqa/profiles.json to make a gate quiet. A skipped gate is not a passed
+  gate, and the script says which it was — believe it.
+
+  After a successful push, .chromaqa/CQA-debt.jsonl and
+  .chromaqa/CQA-showstoppers.jsonl may show as modified: the gate appended to
+  them during the push. That is ChromaQA working, not a scope breach. The
+  wrap's local remainder commits them; a task prompt leaves them alone and
+  says so in its report.
+# <<< end S-087
 
 # >>> block S-046 | done_banner_plain_text | reader: all | render_when: always
 done_banner_plain_text: |
@@ -1498,10 +1554,13 @@ monitoring_and_advance_the_board: |
 
 # >>> block S-071 | reading_ci | reader: cw | render_when: subsystems.ci_quality_gate
 reading_ci: |
-  Quality Gate Status is the honest aggregator; the Quality Gates job is
-  continue-on-error and can look green over failing gates by design — read the
-  JOB, not the top-line rollup. The rollup can also fail BEFORE any gate runs
-  (an install-step flake shows every check as "skipped"; the tell is a failing
+  Read the JOB, not the top-line rollup. Which job is the honest one is a fact
+  about THIS repo's workflows, and the two common shapes read differently: a
+  job marked continue-on-error can look green over failing gates and is
+  summarised by a separate status job (convergible-sandbox's "Quality Gate
+  Status" is that shape); a hard-fail job is red when any gate fails and its
+  redness is the verdict. The rollup can also fail BEFORE any gate runs (an
+  install-step flake shows every check as "skipped"; the tell is a failing
   install step). Grep run logs for ##[error] (actually triggered), never
   ::error:: alone (it matches unexecuted script source echoed for every step).
   gh run list --limit 1 is unreliable — use gh run view <id>. A scheduled
@@ -1512,6 +1571,21 @@ reading_ci: |
   check-run statuses (403), so CI verdicts come from the PR page or a Claude
   Code session with gh access.
 # <<< end S-071
+
+# >>> block S-088 | reading_ci_chromaqa | reader: cw | render_when: subsystems.chromaqa
+reading_ci_chromaqa: |
+  ChromaQA's CI job is .github/workflows/quality-gate.yml, job name
+  quality-gate. It runs the same chromaqa-check.sh the local pre-push hook
+  runs, and it is HARD-FAIL: the job is red on exit 1 (showstopper) and on
+  exit 2 (captain review) alike, so read the gate's own lines in the log to
+  tell them apart — every finding names its code (TSC-001, SEC-003, RLS-001,
+  SEO-053, PROFILE-006 ...). A captain-review finding is a decision for Matt,
+  relayed verbatim; never resolved by a prompt. A dispatched runner has no
+  pre-push hook, so on dispatched work this job is ChromaQA's ONLY enforcement:
+  a merge recommendation for any PR in this repo requires quality-gate green
+  on the PR's head, read from the job, not the rollup. Debt written by the CI
+  run stays on the runner; only local pushes append to the committed telemetry.
+# <<< end S-088
 
 # >>> block S-072 | rollback_branch_protection | reader: cw | render_when: execution.dispatch.enabled
 rollback_branch_protection: |
