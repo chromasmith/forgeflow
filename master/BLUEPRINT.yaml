@@ -1,0 +1,790 @@
+# =============================================================================
+# FORGEFLOW MASTER — UNIFIED SESSION-PROTOCOL SYSTEM
+# Blueprint v1.0 — 2026-09-04
+# Author: Claude Web (planning session with Matt Fleming, Chromasmith LLC)
+# Status: DESIGN FOR COMMITTEE REVIEW. Nothing here is built yet.
+# Intended home once approved: github.com/chromasmith/forgeflow  master/BLUEPRINT.yaml
+# =============================================================================
+#
+# HOW TO READ THIS DOCUMENT (for reviewers who cannot see the repos):
+#   Section 1 lists facts and decisions that are ALREADY RATIFIED. Please do not
+#   relitigate them — critique the design that sits on top of them. Sections 2-12
+#   are the design. Section 13 lists the questions we actually want your opinion on.
+#   Section 14 is a glossary of house terms.
+# =============================================================================
+
+meta:
+  name: ForgeFlow Master
+  version: "1.0-blueprint"
+  date: 2026-09-04
+  problem_in_one_sentence: >
+    Matt runs the same start/wrap session protocol across many repos, but each repo
+    holds a hand-forked copy, so fixes made in one never reach the others and the
+    copies have drifted apart (different reflection questions, different split
+    thresholds, different backlog schemas, stale role descriptions).
+  solution_in_one_sentence: >
+    Unify the SOURCE, not the runtime prompt: one master template plus a small
+    per-repo config, rendered into a complete standalone copy inside each repo, with
+    a version stamp so stale copies announce themselves; a fix lands once in the
+    master and is re-rendered to every registered repo.
+
+# =============================================================================
+# 1. HARD CONSTRAINTS — ALREADY RATIFIED. DO NOT RELITIGATE.
+# =============================================================================
+
+hard_constraints:
+  environment_facts:
+    - >
+      Matt is a non-developer "vibe coder"; he directs all work in plain English and
+      does not read code, YAML, or terminal output for judgment. Claude Web (CW) is the
+      planner/technical reviewer; Claude Code (CC) is the builder.
+    - >
+      CW now has GitHub, Supabase, Vercel and other MCP/CLI tools. It reads repos
+      directly from GitHub. The older "Matt uploads a ZIP + pastes the protocol" model
+      is retired everywhere. (The three legacy variant files still describe that model;
+      those descriptions are stale, not authoritative.)
+    - >
+      CC runs in two execution modes, both first-class: LOCAL (a CC session on Matt's
+      Surface machine at the canonical checkout C:\Chromasmith\<repo-name>) and
+      DISPATCH (CW files a GitHub issue beginning "@claude"; Claude Code Action runs it
+      on a hosted runner with a fresh shallow clone; CC pushes a branch; CW opens the
+      PR). Up to 3-4 dispatched jobs may run in parallel when a triage gate proves
+      their authorized file lists are disjoint and no dependency exists.
+    - >
+      Dispatch runners CANNOT build (no npm run build), CANNOT write the database,
+      CANNOT edit .github/workflows, and hard-refuse any bash command containing $
+      expansion. Vercel branch deploy + ChromaQA CI are the build verification.
+    - >
+      GitHub is the SINGLE SOURCE OF TRUTH for every repo. Local checkouts are
+      disposable. Nothing counts as "filed" unless it is committed and pushed.
+    - >
+      Every rendered protocol file must be COMPLETE and STANDALONE. Inheritance by
+      reference ("see the other file for schemas") is FORBIDDEN in the protocol layer —
+      ratified 2026-08-29 after content that lived only in a referenced file silently
+      dropped out of generated prompts and produced a rogue duplicate archive file.
+    - >
+      A repo's protocol copy lives at .forge/protocols/ inside that repo (ratified
+      2026-08-29), because a dispatched runner can read nothing else.
+  workflow_rules_that_survive_unchanged:
+    - >
+      SCOPE LOCK: every CC prompt names an AUTHORIZED FILES list (ceiling, not floor)
+      and an OFF-LIMITS list; CC must STOP/HALT-AND-REPORT rather than silently edit an
+      unauthorized file.
+    - >
+      Named-file commits only; git add -A / git add . are forbidden.
+    - >
+      Local wraps end with VERIFY PUSH (clean tree, not ahead of origin, local HEAD ==
+      origin/main). Dispatch wraps end with "the docs PR is merged."
+    - >
+      Architecture rule: data access and business logic never live in .tsx; screens
+      call a /lib function. Authorizing a data-touching screen requires authorizing
+      its /lib counterpart (paired-file rule).
+    - >
+      Pre-refresh SAFETY CHECK before any refresh of a local checkout; the check can
+      stop the session.
+    - >
+      CC reflection questions at the end of every task, including SCOPE DISCLOSURE.
+    - >
+      Approval code 3949 appears in every CC prompt preamble.
+    - >
+      CLAUDE.md is read by CC automatically every session and remains the repo's
+      standing-orders file.
+    - >
+      The .forge/ file family (handoff, session-state, backlog, active-bugs,
+      session-history, GOTCHAS, rulings, CHANGELOG, archive/) is the state-carrying
+      layer between sessions. handoff.yaml is the PRIMARY briefing, read first.
+    - >
+      Linear (one task at a time) is a first-class default, never a fallback.
+      Parallelism is a throughput tool, not a virtue.
+    - >
+      One-item agenda: handoff.first_thing names EXACTLY ONE next item.
+    - >
+      Human gates for live supervised runs: CC prints a loud plain-text banner, states
+      the one thing Matt must do, and WAITS for a typed confirmation word. No timers.
+      Plain text only — Matt's terminal does not render ANSI color codes.
+    - >
+      ChromaQA is never installed by a protocol or folded into another task; a ChromaQA
+      install is a separate ceremonious session Matt initiates by name.
+  decisions_ratified_in_this_planning_session_2026_09_04:
+    - >
+      RULING REVERSAL: edits are made in the MASTER first and rendered DOWN to repos.
+      The 2026-08-29 "edit in the repo, port up to the base" rule is superseded.
+    - >
+      The master lives in github.com/chromasmith/forgeflow, in a new top-level
+      master/ directory. Legacy docs in that repo get a one-line "superseded by
+      master/" banner; they are not rewritten in this effort.
+    - >
+      Repo protocol copies are NEVER hand-edited. A bug found in a copy is fixed in
+      the master and re-rendered.
+    - >
+      WRAP DIRECT-WRITE: CW writes the wrap's .forge/ documentation files itself via
+      the GitHub MCP (one commit or PR, diff-verified). CC's wrap role shrinks to
+      pushing its own code and telemetry (local mode). Rationale: CW already authors
+      100% of wrap content; most recorded wrap defects were runner transcription
+      errors (CRLF conversion, wrong backlog section, rogue archive path, heredoc
+      commit-message damage, indented GOTCHAS).
+    - >
+      The seven improvements in Section 9 are IN.
+    - >
+      ChromaControl (chromacontrol-v2) is dormant and is the only repo where GitHub
+      is NOT a complete mirror. It is rendered LAST, only after the model is proven
+      on active repos; until then its existing protocol pair stands untouched.
+
+# =============================================================================
+# 2. PROBLEM STATEMENT — evidence of drift
+# =============================================================================
+
+drift_evidence:
+  variants_in_the_wild:
+    - name: STANDARD (single-app + monorepo, unified)
+      dated: 2026-08-08
+      notes: 4 reflection questions; ARCHITECTURE RULE + paired /lib rule; wrap splits
+        at 1,000 lines or >10 edit operations; backlog schema uses in_progress/backlog.
+    - name: SYNCLIPS-SYSTEM (chromasync, synclips-platform, dv-captain)
+      dated: 2026-07-04
+      notes: Standard + relay read at start + mandatory relay assessment and optional
+        second "relay prompt" at wrap. Never received the 08-08 standard updates —
+        3 reflection questions, no ARCHITECTURE RULE, splits at 400 lines.
+    - name: CHROMACONTROL v2
+      dated: 2026-06-20 / 2026-06-25
+      notes: Gentle pull instead of hard reset; Python py_compile validation; three
+        surfaces (desktop / WSL build / phone); spike mode with EMPTY authorized list;
+        secrets guard; context-primer as phase authority; tombstone GOTCHA never
+        archived; operator-empathy banners. Internally inconsistent — the start file's
+        DONE banner uses echo -e ANSI in the same file that says ANSI does not render.
+    - name: CONVERGIBLE-SANDBOX (start/end × local/dispatch = 4 files)
+      dated: 2026-08-20, rewritten 2026-08-29, amended 2026-09-03
+      notes: The most advanced lineage. Adds dispatch pipeline, artifact register
+        (binding), database-access rules, rulings register, verify-before-you-write,
+        one-item agenda, closed backlog status vocabulary, sections
+        prioritized/in_progress/completed, 6 reflection questions, GOTCHA
+        consolidation at 100/monthly as its own session, backlog-archive after 30 days.
+        Still contains one stale line ("Matt runs his own wrap prompt — never
+        auto-generate") that contradicts the 2026-09-02 ruling that CW builds the wrap
+        from the protocol when Matt declares the session finished.
+  what_the_drift_costs:
+    - >
+      A fix made in one variant (e.g. the /lib architecture rule) never reaches the
+      others, so the same defect recurs in other repos months later.
+    - >
+      Behavioral rules Matt has stated in chat (end every reply with the next verb and
+      who owns it; plain-English-first on measurements; state overall project position
+      at every wrap) live only in CW's private memory, so a fresh CW session in a repo
+      whose protocol lacks them behaves differently.
+    - >
+      Schema divergence (backlog sections, status words) causes wrap misroutes.
+  what_is_NOT_the_problem:
+    - >
+      The per-repo differences are real and legitimate. This design does not try to
+      erase them; it moves them into a declared config so the shared 90% can be shared.
+
+# =============================================================================
+# 3. DESIGN PRINCIPLES
+# =============================================================================
+
+principles:
+  - id: P1
+    name: Unify the source, not the runtime prompt
+    text: There is one master. There is no runtime prompt that branches on "if this
+      repo is X." Each repo receives a rendered copy with the branches already
+      resolved, so a session reads a flat file with nothing conditional left in it.
+  - id: P2
+    name: Rendered copies are complete and standalone
+    text: A rendered file contains everything a session needs. It never says "see the
+      master" or "as in the local variant." A renderer check greps the output for
+      forbidden cross-reference phrasings before it ships.
+  - id: P3
+    name: Detect what can be detected; declare what cannot
+    text: Repo shape (single-app vs monorepo) and subsystem presence (package.json,
+      supabase/, .github/workflows, .chromaqa/, .venv) are auto-detected at render
+      time and written into the config as detected values Matt can override. Things
+      that cannot be inferred from the tree — mirror completeness, secrets paths,
+      tombstones, companion repos, surfaces, ID prefixes — are declared in the config.
+  - id: P4
+    name: Safe defaults on the destructive knobs
+    text: The refresh mode defaults to GENTLE PULL. HARD RESET is only rendered when
+      the config explicitly declares mirror complete. A missing or malformed config
+      never produces a destructive refresh.
+  - id: P5
+    name: The master is the only edit point
+    text: Repo copies carry a "DO NOT EDIT — rendered from forgeflow/master vN" header.
+      Any session that notices a protocol bug files it against the master.
+  - id: P6
+    name: Stale copies announce themselves
+    text: Every rendered file carries master_version and config_hash. The start
+      protocol's first step compares the repo copy's stamp to forgeflow/master and
+      states plainly "this repo is on protocol vN; master is vM" when they differ.
+  - id: P7
+    name: One session, one file per bookend
+    text: Each repo holds exactly ONE start file and ONE wrap file. Where dispatch is
+      enabled, the rendered start file contains both the LOCAL and DISPATCH sections
+      with an explicit mode_selection block, because mode is a per-task choice made
+      inside a session, not a per-session choice made before it. (Convergible-sandbox
+      currently splits these into four files; the merge is an open question for the
+      committee — see Section 13, Q1.)
+  - id: P8
+    name: Chat rulings become repo text
+    text: Any durable behavioral rule Matt states in chat is added to the master in the
+      same or next session, or it does not exist to the next session. CW's memory is a
+      side channel, not a source of truth.
+
+# =============================================================================
+# 4. ARTIFACT SET
+# =============================================================================
+
+artifacts:
+  in_forgeflow_master_directory:   # github.com/chromasmith/forgeflow  master/
+    - path: master/BLUEPRINT.yaml
+      purpose: This document, kept current as the design evolves.
+    - path: master/start-protocol.master.yaml
+      purpose: The master start protocol. Contains every section any repo could need,
+        each conditional block tagged with a `render_when:` condition that the
+        renderer resolves against the repo's config.
+    - path: master/end-protocol.master.yaml
+      purpose: The master wrap protocol, same conditional-block mechanism.
+    - path: master/claude-md.house-block.master.md
+      purpose: The house-standard block of CLAUDE.md (architecture rule, communication
+        rules, dispatched-session rules, protocol pointers). Rendered between marker
+        comments inside each repo's CLAUDE.md; repo-specific content outside the
+        markers is never touched by a render.
+    - path: master/protocol-config.schema.yaml
+      purpose: The schema every repo's .forge/protocol-config.yaml must satisfy,
+        with defaults and the detect-vs-declare flag per field.
+    - path: master/registered-repos.yaml
+      purpose: The list of repos that receive renders, with their config path and the
+        master version they were last rendered from. This is what a propagation pass
+        iterates.
+    - path: master/RENDER_PROCEDURE.md
+      purpose: Step-by-step how CW renders one repo — read config, detect, resolve
+        conditional blocks, run the standalone check, stamp headers, diff against the
+        repo's current copy, push. Written so a fresh CW session can execute it cold.
+    - path: master/PROPAGATION_PROCEDURE.md
+      purpose: How a master change ripples out — bump version, iterate
+        registered-repos, render each, open PR or direct commit per the size rule,
+        verify, update registered-repos.
+    - path: master/CHANGELOG.yaml
+      purpose: Version history of the master itself (what changed in v1 → v2 → ...).
+  rendered_into_each_repo:
+    - path: .forge/protocol-config.yaml
+      purpose: The repo's declared and detected knobs. Small (under ~60 lines).
+        Hand-editable by Matt-directed CW when a fact about the repo changes.
+    - path: .forge/protocols/start-protocol.yaml
+      purpose: Rendered, standalone start protocol. DO NOT EDIT header.
+    - path: .forge/protocols/end-protocol.yaml
+      purpose: Rendered, standalone wrap protocol. DO NOT EDIT header.
+    - path: CLAUDE.md   (house block only, between markers)
+      markers:
+        open: "<!-- FORGEFLOW HOUSE BLOCK — rendered from forgeflow/master vN — do not edit inside markers -->"
+        close: "<!-- END FORGEFLOW HOUSE BLOCK -->"
+    - path: .forge/rulings.yaml
+      purpose: Rulings register, created empty if absent (Section 9, item 3).
+    - path: .forge/protocols/artifact-register.yaml
+      purpose: Created from a house template if absent; repo-specific entries are
+        appended by sessions and never overwritten by a render.
+  kept_repo_specific_never_rendered:
+    - >
+      .forge/protocols/database-access.yaml (convergible-sandbox) — repo-specific facts
+      about runner database roles; the master references the CONCEPT ("if the repo
+      declares a database-access doc, it is binding on data tasks") and the config
+      names the path.
+    - >
+      The relay repo's own PROTOCOL.md (synclips-relay) — authoritative for relay
+      mechanics; the rendered Synclips protocols point to it by path, which is
+      permitted because it is a DIFFERENT repo's governing doc, not protocol content
+      delegated by reference.
+  thought_box:
+    - >
+      The thought-box vault entries for session-start and session-end become POINTERS
+      to forgeflow/master. No second copy of prompt content is kept there.
+
+# =============================================================================
+# 5. CONFIG SCHEMA — .forge/protocol-config.yaml
+# =============================================================================
+
+protocol_config_schema:
+  schema_version: "1"
+  fields:
+    protocol:
+      master_version: { type: string, set_by: renderer, example: "v1.0" }
+      rendered_on:    { type: date,   set_by: renderer }
+      config_hash:    { type: string, set_by: renderer }
+    repo:
+      org:                { type: string, declared: true, example: chromasmith }
+      name:               { type: string, declared: true, example: convergible-sandbox }
+      canonical_checkout: { type: string, default: "C:\\Chromasmith\\<name>" }
+      default_branch:     { type: string, default: main }
+    mirror:
+      github_is_complete_mirror:
+        type: boolean
+        declared: true
+        default: false
+        note: >
+          Drives refresh mode. true → hard reset to origin/main after the safety
+          check. false → gentle pull after the safety check. Defaults to false so a
+          missing config can never render a destructive refresh (Principle P4).
+      gitignored_local_only_paths:
+        type: list
+        declared: true
+        example: ["secrets/initiator-identity.yaml"]
+        note: Paths expected to appear untracked; the safety check must not flag them.
+    shape:
+      kind:           { type: enum, values: [single-app, monorepo], detected: true, overridable: true }
+      build_location: { type: string, detected: true, example: "apps/admin" }
+    build:
+      validation:
+        type: enum
+        values: [npm-build, py-compile, none]
+        detected: true
+        note: npm-build when package.json present at build_location; py-compile when a
+          .venv or pyproject exists and no package.json; none for docs-only repos.
+      build_command:  { type: string, default: "npm run build" }
+      deploy:         { type: enum, values: [vercel, none, custom], detected: true }
+      deploy_verify:  { type: string, declared: true, example: "Vercel deployment record READY for the exact SHA" }
+      surfaces:
+        type: list
+        declared: true
+        default: [desktop]
+        note: >
+          Multi-surface repos (ChromaControl) declare e.g. [desktop, wsl-build, phone]
+          with a validation bar per surface. Renders the surface-aware completion
+          steps and the spike-mode (empty authorized list) rules only when more than
+          one surface is declared.
+    execution:
+      local:    { type: boolean, default: true }
+      dispatch:
+        enabled:   { type: boolean, declared: true, default: false }
+        requires:  [".github/workflows/claude.yml", "CLAUDE_CODE_OAUTH_TOKEN secret", "branch protection on main", "artifact register", "mirror.github_is_complete_mirror: true"]
+        note: >
+          The renderer refuses dispatch: true when any requirement is absent and
+          says which one, so Matt knows the one-time install step still owed.
+      max_parallel: { type: integer, default: 3 }
+    subsystems:            # each: detected + overridable
+      supabase:        { detected_by: "supabase/ directory" }
+      vercel:          { detected_by: ".vercel/project.json or vercel.json" }
+      ci_quality_gate: { detected_by: ".github/workflows/*.yml naming a quality gate" }
+      chromaqa:        { detected_by: ".chromaqa/ directory", debt_threshold: 25 }
+      ui_inventory:    { detected_by: ".forge/specs/ui-inventory.yaml" }
+      artifact_register: { detected_by: ".forge/protocols/artifact-register.yaml" }
+      database_access_doc: { declared: true, example: ".forge/protocols/database-access.yaml" }
+    companion_repos:
+      type: list
+      declared: true
+      item:
+        name:          { example: synclips-relay }
+        role:          { enum: [relay], note: "other roles may be added later" }
+        read_at_start: { type: boolean, default: true }
+        write_at_wrap: { type: boolean, default: true }
+        governing_doc: { example: "PROTOCOL.md" }
+      note: Non-empty list renders the relay-read step at start and the mandatory
+        relay assessment + relay write at wrap.
+    protected:
+      never_touch_paths:   { type: list, declared: true, example: ["secrets/initiator-identity.yaml"] }
+      phase_authority_doc: { type: string, declared: true, example: ".forge/blueprint/context-primer.yaml", note: "renders the conditional phase-refresh wrap step when set" }
+      tombstone_gotchas:   { type: list, declared: true, example: ["V2-G-028"], note: "never archived by any consolidation" }
+      spec_dirs_off_limits: { type: list, default: [".forge/specs/"], exceptions: [".forge/specs/ui-inventory.yaml (append only)"] }
+    ids:
+      gotcha_prefix:  { default: "GOTCHA-", example_override: "V2-G-" }
+      bug_prefix:     { default: "BUG-" }
+      ruling_prefix:  { default: "RULING-" }
+      backlog_prefix: { declared: true, example: "CV-" }
+    thresholds:          # house defaults; overridable but discouraged
+      session_history_cap: 15
+      changelog_cap: 12
+      gotcha_consolidation: { trigger_count: 100, or_every: "1 month", runs_as: "its own session" }
+      backlog_completed_archive_after_days: 30
+      wrap_split: { lines: 1000, edit_operations: 10 }
+      chromaqa_debt_alert: 25
+  validation_rules:
+    - >
+      dispatch.enabled may not be true unless mirror.github_is_complete_mirror is true.
+    - >
+      surfaces must contain at least one entry.
+    - >
+      Every path in protected.never_touch_paths must appear in mirror.gitignored_local_only_paths
+      OR be tracked; the renderer reports which.
+    - >
+      Unknown fields fail the render with a clear message rather than being ignored.
+
+# =============================================================================
+# 6. RENDERING RULES
+# =============================================================================
+
+rendering:
+  who_renders: Claude Web, in a session Matt directs, using the GitHub MCP to read the
+    master and the target repo and to push the rendered files. No build tooling is
+    required on day one; a script or GitHub Action can automate this later if the repo
+    count grows.
+  conditional_blocks:
+    syntax_in_master: >
+      Each optional section in a master file is wrapped in
+      `# >>> render_when: <condition>` ... `# <<< end render_when` comment fences.
+      Conditions are simple boolean expressions over config fields, e.g.
+      `execution.dispatch.enabled`, `companion_repos is non-empty`,
+      `mirror.github_is_complete_mirror == false`, `len(build.surfaces) > 1`.
+    resolution: The renderer keeps a block when its condition is true and removes the
+      block AND its fences when false. No fence text survives into the rendered copy.
+  substitutions: >
+    Placeholders like {{repo.name}}, {{repo.canonical_checkout}}, {{build.build_command}}
+    are replaced with config values. An unresolved placeholder fails the render.
+  standalone_check: >
+    After resolution, the renderer greps the output for forbidden phrasings
+    ("see the local variant", "inherited from", "as in end-protocol", "refer to master")
+    and for any leftover `{{` or `render_when`. Any hit fails the render.
+  header_stamp: >
+    Every rendered file begins with a fixed header: rendered from
+    chromasmith/forgeflow master/<file> at version vN on <date>, config hash <hash>,
+    "DO NOT EDIT THIS FILE — edit the master and re-render." followed by a one-line
+    summary of the resolved knobs (mirror, refresh mode, shape, validation, dispatch,
+    companions) so a human can see at a glance what this copy assumes.
+  claude_md_rendering: >
+    The renderer locates the marker pair in the repo's CLAUDE.md, replaces only the
+    text between them, and leaves everything else byte-identical. If the markers are
+    absent, it appends the block at the end of the file with markers and reports that
+    Matt may want to reorder it.
+  diff_review: >
+    Before pushing, CW diffs the rendered files against the repo's current copies and
+    summarizes the change in plain English to Matt (e.g. "adds the rulings register
+    step, unifies backlog sections, removes the stale ZIP-upload wording"). For the
+    FIRST render of convergible-sandbox the expected diff is small — that repo is the
+    master's source lineage — and any large unexpected diff is a renderer bug.
+
+# =============================================================================
+# 7. PROPAGATION PROCEDURE — how one change reaches every repo
+# =============================================================================
+
+propagation:
+  trigger: Matt and CW agree a protocol change is needed (bug, refinement, a new tool
+    such as ChromaQA 7.0 or the SEO/GEO tool that changes what a session must do).
+  steps:
+    - >
+      Edit the master file(s) in forgeflow via PR or direct commit; bump master version;
+      add a master/CHANGELOG.yaml entry stating what changed and why.
+    - >
+      If the change needs a new knob, extend protocol-config.schema.yaml with a DEFAULT
+      so existing configs stay valid without edits.
+    - >
+      For each entry in registered-repos.yaml: read its config, render, run the
+      standalone check, diff, push. Delivery: a PR per repo by default; a direct commit
+      for small, low-risk changes per Matt's 2026-09-02 ruling on direct edits.
+      Before pushing to any repo, CW asks whether a CC session is active on it (two
+      writers on one repo is a collision).
+    - >
+      Update registered-repos.yaml with the new rendered version per repo.
+    - >
+      Report to Matt in one plain sentence per repo: rendered / PR open / skipped and why.
+  partial_propagation: >
+    A repo may deliberately lag (e.g. ChromaControl). registered-repos.yaml records
+    "pinned: vN — reason" so the drift flag at session start reads as intentional.
+  drift_detection: >
+    Step 1 of every rendered start protocol: read the repo copy's header stamp, read
+    forgeflow/master/registered-repos.yaml, and state the versions. If they differ and
+    the repo is not pinned, CW says so in the Session Context Summary and offers a
+    re-render as an option — it does NOT re-render unprompted mid-session.
+
+# =============================================================================
+# 8. SESSION FLOW UNDER THE NEW SYSTEM (what Matt experiences)
+# =============================================================================
+
+session_flow:
+  start:
+    - >
+      Matt opens a CW chat and names the repo. No ZIP, no protocol paste.
+    - >
+      CW reads, from GitHub, in order: .forge/protocol-config.yaml,
+      .forge/protocols/start-protocol.yaml, then the files the protocol names
+      (handoff FIRST, rulings, session-state, backlog, active-bugs, session-history,
+      GOTCHAS, artifact register and database-access doc if declared, companion repo
+      files if declared).
+    - >
+      CW performs the drift check (Section 7), the ChromaQA debt check if the
+      subsystem exists, and gives the 6-8 line Session Context Summary ending with
+      the ONE first_thing from the handoff. Then "Ready for tasks."
+  build:
+    - >
+      Planning conversation → approval gate ("say go") → scope lock → mode choice
+      (local prompt vs dispatch issue) per task → execution → CW reviews CC's report /
+      PR, surfaces any dissent between CW and CC to Matt, recommends merge.
+    - >
+      Every CW reply ends with the next step as a verb and who holds the ball.
+  wrap:
+    - >
+      Matt declares the day's work finished. CW runs scope reconciliation, verifies
+      every claim it is about to write against GitHub / Supabase (verify-before-you-
+      write), builds all .forge/ file contents, YAML-parses them, and — per the
+      2026-09-04 direct-write ruling — pushes them itself via the GitHub MCP as one
+      docs commit or PR with a plain-English diff summary.
+    - >
+      LOCAL mode remainder: CC gets a short prompt to commit and push its own code and
+      telemetry with named files and run VERIFY PUSH. DISPATCH mode: nothing further;
+      CC's work already landed via merged PRs.
+    - >
+      CW states the OVERALL PROJECT POSITION in one plain sentence — a finished session
+      must never read as a finished project.
+    - >
+      Relay assessment runs if a companion repo is declared; the explicit "no relay
+      update needed" sentence is required when nothing crossed a seam.
+
+# =============================================================================
+# 9. IMPROVEMENTS FOLDED INTO THE MASTER (all ratified 2026-09-04)
+# =============================================================================
+
+improvements:
+  - id: I1
+    name: Wrap direct-write
+    detail: See hard_constraints.decisions_ratified. Eliminates the transcription
+      failure class. Keeps a manual GitHub-web fallback for when the MCP is down.
+  - id: I2
+    name: One backlog schema and one status vocabulary
+    detail: Sections are prioritized / in_progress / completed (no section named
+      "backlog"). Status is one of ready | blocked | needs-ruling | in_progress |
+      deferred | completed | superseded. Completed items MOVE to completed and archive
+      to .forge/archive/backlog-archive.yaml after 30 days. Repos on the old schema are
+      migrated by a one-time wrap-style edit during their first render.
+  - id: I3
+    name: Promote convergible-sandbox's newest rules to every repo
+    detail: Rulings register (.forge/rulings.yaml) with search-before-asking;
+      verify-before-you-write (STEP 2b); one-item agenda; artifact register (R1-R5);
+      dissent-visibility rule; advance-the-board rule for dispatch sessions;
+      "a merged PR proves nothing about buildability."
+  - id: I4
+    name: Chat rulings become protocol text
+    detail: >
+      Added to the master's CW behavior section: end every reply with the next
+      step as a verb and who holds the ball; give measurements plain-English-first,
+      numbers after; state overall project position at every wrap and milestone;
+      human gates with typed confirmation for live supervised runs; never re-ask a
+      question Matt has ruled on (search rulings first); a "might" is not a decision;
+      ask before touching a repo another CC session may be working in; hand the turn
+      back after dispatching instead of sleep-polling; one CC prompt per reply; one
+      Matt action item per reply.
+  - id: I5
+    name: Version stamp + drift flag
+    detail: Section 6 header_stamp and Section 7 drift_detection.
+  - id: I6
+    name: One canonical reflection set
+    detail: >
+      Always: (1) what would have made this prompt better; (2) anything that would
+      make a future memoryless session fail or waste time; (3) SCOPE DISCLOSURE;
+      (4) ARCHITECTURE DISCLOSURE (data/business logic in .tsx?). Rendered only when
+      applicable: (5) RUNNER ENVIRONMENT (dispatch only); (6) UI CONFORMANCE (when
+      ui-inventory exists); (7) ARTIFACT PATHS (when the task creates any file).
+      For multi-surface repos, question 3 adds "for a spike, confirm the repo was
+      never touched."
+  - id: I7
+    name: Stale-line corrections carried into the master
+    detail: Remove "Claude Web has NO CLI/MCP access" everywhere; remove "Matt runs his
+      own wrap prompt — never auto-generate" (CW builds the wrap when Matt declares
+      the session finished, never unprompted mid-session); replace ZIP-upload wording
+      with GitHub-direct reading; make the DONE banner plain text everywhere (no
+      echo -e ANSI); CLAUDE.md "Session workflow" section names handoff.yaml and the
+      .forge/protocols/ path.
+
+# =============================================================================
+# 10. REPO EXCEPTIONS EXPRESSED AS CONFIG (proof the knobs cover the variants)
+# =============================================================================
+
+variant_mapping:
+  standard_saas_repo:
+    mirror.github_is_complete_mirror: true
+    shape.kind: detected
+    build.validation: npm-build
+    execution.dispatch.enabled: false until installed
+    companion_repos: []
+  synclips_system_repo:
+    same_as: standard_saas_repo
+    companion_repos:
+      - { name: synclips-relay, role: relay, governing_doc: PROTOCOL.md }
+    note: >
+      The rendered start file gains the relay-read step and the Session Context
+      Summary line "Cross-repo state: N inbound ripples pending, M relevant open
+      questions." The rendered wrap gains the mandatory relay assessment and, when
+      needed, the relay write (executed by CW direct-write against the relay repo,
+      same surgical-operations discipline, DELETE means delete, evidence rule, ID
+      counters from state.yaml).
+  chromacontrol_v2:
+    mirror.github_is_complete_mirror: false          # → gentle pull
+    mirror.gitignored_local_only_paths: ["secrets/initiator-identity.yaml"]
+    build.validation: py-compile
+    build.surfaces: [desktop, wsl-build, phone]      # → surface-aware completion, spike mode
+    build.deploy: none
+    execution.dispatch.enabled: false                 # structurally impossible (mirror false)
+    subsystems: { supabase: false, vercel: false, ci_quality_gate: false, chromaqa: false }
+    protected.never_touch_paths: ["secrets/initiator-identity.yaml"]
+    protected.phase_authority_doc: ".forge/blueprint/context-primer.yaml"
+    protected.tombstone_gotchas: ["V2-G-028"]
+    ids.gotcha_prefix: "V2-G-"
+    note: Rendered LAST and only after the model is proven. The operator-empathy /
+      human-gate banners are NOT a ChromaControl exception — they render for every
+      repo (Section 9, I4) and merely fire more often in hardware-test sessions.
+  convergible_sandbox:
+    mirror.github_is_complete_mirror: true
+    execution.dispatch.enabled: true
+    subsystems: all detected true; database_access_doc declared
+    note: First render target. The master is built FROM this repo's four protocol
+      files, so its first render should diff nearly zero apart from the Section 9
+      additions and the local/dispatch merge (Q1).
+  convergible_final_and_future_repos:
+    note: Rendered from the saas-starter template's baked-in config, so a new repo is
+      born on the current master version with dispatch pre-wired except the
+      Matt-only workflow-file step.
+
+# =============================================================================
+# 11. ROLLOUT ORDER (in sessions, not days)
+# =============================================================================
+
+rollout:
+  - step: 1
+    name: Committee review of this blueprint
+    done_when: Matt has fed back the committee's notes and we have revised v1.x.
+  - step: 2
+    name: Build the master in forgeflow
+    detail: Create master/ with the eight artifacts in Section 4, seeded from
+      convergible-sandbox's four protocol files plus the Section 9 additions, and the
+      config schema. Add the legacy banners to the old forgeflow docs and repoint the
+      README. Register convergible-sandbox as the first repo.
+    done_when: A cold CW session can read RENDER_PROCEDURE.md and render a repo.
+  - step: 3
+    name: Render convergible-sandbox (proof)
+    detail: Diff against its current four files; every difference must be explainable
+      as a Section 9 addition or the Q1 merge. Run one real session on the rendered
+      copy before proceeding.
+  - step: 4
+    name: Update saas-starter
+    detail: Bake protocol-config.yaml defaults and rendered protocols into the house
+      template so convergible-final is born current.
+  - step: 5
+    name: Synclips trio + relay
+    detail: Render chromasync, synclips-platform, dv-captain with the companion knob.
+      The relay's PROTOCOL.md stays as-is; the wrap's relay write moves to CW
+      direct-write.
+  - step: 6
+    name: Remaining standard repos
+    detail: Iterate the rest of registered-repos.yaml. Any repo lacking .forge/ gets
+      the initialization templates.
+  - step: 7
+    name: Thought-box pointers + forgeflow legacy cleanup
+  - step: 8
+    name: ChromaControl (optional, last)
+    detail: Only when Matt reactivates the project. Until then, pinned.
+
+rollout_rule: >
+  Each step is its own session with its own go from Matt. A "go" on the
+  blueprint is not a go on step 2.
+
+# =============================================================================
+# 12. RISKS AND DOWNSIDES (honest)
+# =============================================================================
+
+risks:
+  - risk: >
+      A renderer mistake propagates to every repo at once.
+    mitigation: >
+      Render convergible-sandbox first and diff-review; propagate to other
+      repos only after one real session on the rendered copy; PR-per-repo by default
+      so a bad render is reverted by closing PRs, not by editing many repos.
+  - risk: >
+      A wrong mirror flag renders a hard reset onto a repo with local-only work.
+    mitigation: >
+      Principle P4 — default false; the pre-refresh safety check remains in
+      every rendered copy regardless of mode and stops on any dirty or unpushed state.
+  - risk: >
+      Rendered files get long (dispatch + local in one start file).
+    mitigation: >
+      CW reads via MCP, not paste, so length costs tokens not ceremony; the
+      committee is asked to weigh one-file vs two-file (Q1).
+  - risk: >
+      Wrap direct-write means CW is writing to repos more often; concurrent CC
+      sessions could collide.
+    mitigation: >
+      Docs-only paths; CW asks about active CC sessions before any push;
+      one wrap per repo at a time; PR delivery when a session is known to be running.
+  - risk: >
+      The master becomes a second forge of drift if repo copies get hand-edited
+      "just this once."
+    mitigation: >
+      DO NOT EDIT header; drift flag at start; the rule that a copy bug is a
+      master bug.
+  - risk: >
+      Over-engineering — a renderer and config schema for ~8 repos.
+    mitigation: >
+      Day-one renderer is a written procedure CW follows, not software.
+      Automation is deferred until the repo count or change frequency justifies it.
+  - risk: >
+      ChromaQA 7.0 and the SEO/GEO tool may need knobs not anticipated here.
+    mitigation: >
+      Schema fields carry defaults so new knobs are additive; the
+      propagation procedure exists precisely for this.
+
+# =============================================================================
+# 13. OPEN QUESTIONS FOR THE COMMITTEE
+# =============================================================================
+
+committee_questions:
+  - id: Q1
+    question: >
+      One rendered start file containing both LOCAL and DISPATCH sections (mode
+      chosen per task inside the session), or two rendered start files as
+      convergible-sandbox has today? Same question for the wrap. Our lean is ONE
+      (Principle P7). Argue for or against.
+  - id: Q2
+    question: >
+      Is comment-fence conditional rendering (`# >>> render_when:`) the right
+      mechanism, or should the master be split into a core file plus include
+      fragments that the renderer concatenates? (Note: the OUTPUT must be standalone
+      either way; this is about master-side ergonomics only.)
+  - id: Q3
+    question: >
+      Wrap direct-write moves the .forge/ documentation writes from Claude Code to
+      Claude Web's GitHub MCP. What failure modes does that introduce that the
+      runner-transcription model did not have, and how should the manual fallback be
+      shaped?
+  - id: Q4
+    question: >
+      The drift flag reads forgeflow/master/registered-repos.yaml at every session
+      start — a cross-repo read. Is that an acceptable dependency, or should the
+      rendered copy carry enough (e.g. master version only) to flag drift without
+      reaching into forgeflow?
+  - id: Q5
+    question: >
+      Which of the knobs in Section 5 should be DETECTED rather than DECLARED, and
+      vice versa? In particular: should mirror completeness ever be inferred?
+  - id: Q6
+    question: >
+      Is there a simpler design that achieves "fix once, land everywhere" without a
+      renderer at all — e.g. git subtree/submodule of a shared protocol directory —
+      and what does it cost against the standalone-file constraint and the
+      shallow-clone dispatch runner?
+
+# =============================================================================
+# 14. GLOSSARY
+# =============================================================================
+
+glossary:
+  CW: Claude Web — the planning/reviewing AI in claude.ai chat. Has GitHub, Supabase,
+    Vercel MCP tools. Never edits application code.
+  CC: Claude Code — the coding AI. Runs locally on Matt's machine or as Claude Code
+    Action on a GitHub runner (dispatch).
+  .forge/: Per-repo directory holding session state, backlog, bugs, history, GOTCHAS,
+    rulings, handoff, specs, protocols, archive.
+  handoff.yaml: The pass-the-baton "warning letter" from the outgoing session to the
+    next. Primary briefing. first_thing names exactly one item.
+  GOTCHAS.yaml: Append-only lessons learned per repo.
+  rulings.yaml: Append-only register of decisions Matt has made, so no session re-asks.
+  artifact register: Binding list of every file class a session may create, with its
+    exact path. "Create an archive" without a path is forbidden.
+  scope lock: The AUTHORIZED FILES ceiling and OFF-LIMITS list in every CC prompt.
+  dispatch: Filing a CC task as a GitHub issue that Claude Code Action executes on a
+    runner; CC pushes a branch, CW opens the PR, Matt approves the merge.
+  relay: synclips-relay — a fourth repo holding cross-repo contracts, ripples
+    (obligations between repos), open questions, and a state snapshot for the three
+    Synclips-system repos.
+  ChromaQA: Matt's project-agnostic quality-gate bolt-on; writes .chromaqa/*.jsonl
+    telemetry; never installed by a protocol.
+  canonical checkout: C:\Chromasmith\<repo-name> — the ONE local location per repo.
+  hard reset vs gentle pull: The two refresh modes for a local checkout; hard reset is
+    safe only when GitHub is a complete mirror.
+  spike: Throwaway proving work outside the repo (ChromaControl Android/BLE), with an
+    EMPTY authorized list.
+  tombstone GOTCHA: A permanent warning entry never archived (e.g. the dead Termux plan).
+  render: Producing a repo's standalone protocol copy from master + config.
+  propagation: Re-rendering every registered repo after a master change.
