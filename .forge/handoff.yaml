@@ -1,95 +1,87 @@
 # .forge/handoff.yaml — chromasmith/forgeflow
 # Pass-the-baton briefing written BY the outgoing Claude Web session TO the next.
 # A WARNING LETTER, not a summary. The blueprint holds the design; this holds the feel.
-# generated: 2026-09-04T16:55:00Z
-# session: 2026-09-04 (step-3 cleanup — C-001 house block, S4 ceilings, blueprint slip)
-# written_at_commit: 8f529851e7080f68b71f6eb2066954b3c6b91b38
-# written_at_utc: 2026-09-04T16:55:00Z
+# generated: 2026-09-04T20:30:00Z
+# session: 2026-09-04 (ChromaQA 7.0 master change — first tool-driven change to the master)
+# written_at_commit: 9a8dfb69758b2f7286d7e6e0dc98bbf894a151ec
+# written_at_utc: 2026-09-04T20:30:00Z
 
 status: |
-  ForgeFlow Master: STEP 3 IS DONE (3b8ce23), three cleanup items LANDED at
-  96b4290 / 104a402 / 8f52985, and THE EFFORT IS STOPPED (RULING-001). Each commit
-  below carries the blob SHA checked against the pushed tree (HEAD 8f52985) from a
-  fresh fetch:
-  (1) 96b4290 — master/claude-md.house-block.master.md (C-001, blob 12f4641) written
-      with HTML-comment render_when fences (dispatch section, architecture rule,
-      database-access and repo-rules pointers, dispatch-vs-no-dispatch protocol-file
-      bullet); render.py (blob 86fc7fe) now resolves those fences, substitutes
-      placeholders and standalone-checks the block before placing it between the
-      CLAUDE.md markers; fixture house block fenced; tests/test_render.py 35/35 (was
-      31). Proof: the real master rendered with --claude-md for config-standard,
-      config-sandbox, config-legacy and config-sandbox-real, twice each with the same
-      --date — all four byte-identical, zero leftover fences or placeholders, text
-      outside the markers byte-identical. Rendered CLAUDE.md house block: 42 lines
-      (no dispatch, no .tsx) to 62 lines (sandbox-real).
-  (2) 104a402 — BLUEPRINT.yaml v1.4 (blob ebd0a21): S4 ceilings SET per reader file
-      in Section 6 rendering.file_ceilings — start 1650 / dispatch start 650 / end
-      1400 / dispatch end 150 — from the measured 1436 / 562 / 1207 / 90 at ecf77e5
-      (config-sandbox-real, about 15 percent headroom rounded up to 50); P11 and
-      Section 13 repointed; Section 8 wrap order aligned to E-021 (local remainder
-      BEFORE the docs write); stale "Nothing here is built yet" header corrected (same
-      commit 104a402).
-  (3) 8f52985 — BLUEPRINT.yaml (blob 963113c): Section 5 canonical_checkout example
-      restored from the truncated token to "<name>"; v1.4 note records it.
-  NO REPO RUNS ON THE MASTER. Still not written: PROPAGATION_PROCEDURE.md,
-  registered-repos.yaml, legacy banners + README repoint, CHANGELOG bump to v1.0.0
-  (the CHANGELOG top entry still says the master files are not written — stale until
-  that bump; render stamps read v0.1.0-build until then). Overall position: the
-  unified protocol source exists (both masters + C-001, HEAD 8f52985) and renders
-  byte-stable, ceilings are set; nothing is installed anywhere.
+  ForgeFlow Master is at v0.2.0-build (HEAD 9a8dfb6): the first TOOL-DRIVEN master
+  change landed — ChromaQA 7.0 — in four commits ending at 9a8dfb6, every file proven
+  by blob SHA from a fresh fetch, tests 35/35, and a fresh clone renders byte-identical to the
+  sandbox render. What changed: S-014 rewritten (debt read from GitHub, profiles.json
+  PROTECTED CONFIG, runs.jsonl LOCAL ONLY); S-045 gained the captain-review
+  never-fix line; S-071 made repo-neutral; NEW S-087 (pre-push gate rule for local
+  code prompts) and S-088 (reading ChromaQA's hard-fail quality-gate CI job);
+  E-036/E-037/E-042 carry the three-way file handling; E-040 drops runs.jsonl and
+  STOPs on a modified profiles.json; NEW E-047 (local-remainder push-gate block:
+  exit 0/1/2, debt+showstoppers ALWAYS PERMITTED modified after a push); house block
+  gained one fenced ChromaQA bullet; render.py detects ChromaQA by chromaqa-check.sh.
+  Commits: 03cd153 (CHANGELOG, house block, test), 794117d (render.py), 5d9b67c
+  (start master, 91 blocks), 9a8dfb6 (end master, 47 blocks). Measured on the real
+  sandbox knob set with chromaqa forced on: start 1515 / dispatch start 567 / end
+  1293 / dispatch end 91 — all under the S4 ceilings (1650/650/1400/150).
+  Still not written (deferred to the session in which Matt names the first repo):
+  PROPAGATION_PROCEDURE.md, registered-repos.yaml, legacy banners + README repoint,
+  CHANGELOG bump to v1.0.0. Overall position: the unified protocol source exists,
+  renders byte-stable, and now describes ChromaQA 7.0 correctly; NO REPO RUNS ON THE
+  MASTER and RULING-001's stop point still holds.
 
 first_thing: |
-  WAIT. Do nothing on this effort until Matt names a repo (RULING-001). When he names
-  one, the opening act of THAT session — before any render — is ONE housekeeping
-  commit in forgeflow: PROPAGATION_PROCEDURE.md, legacy banners + README repoint, the
-  CHANGELOG bump to v1.0.0 (this changes the version every render stamps — do it
-  before the first real render, not after), and registered-repos.yaml written LAST,
-  after the first render lands. Then RENDER_PROCEDURE.md steps 1-8 for the named
-  repo. If the named repo is convergible-sandbox, its two prerequisites come first
-  (repo-rules.yaml from the LR-163 items; CC-reports register entry renamed to
-  .forge/inbox/<run-id>.yaml).
+  Matt has a SECOND tool whose install will change what a session must do, and he
+  ruled (2026-09-04) that it gets its own fresh session rather than riding on the
+  ChromaQA one. When he names it: open its repo, read its README / blueprint /
+  installer the way the ChromaQA session did, and deliver a plain-English impact
+  assessment BEFORE editing anything — what the masters already say about it, what
+  the tool actually does (files it writes, exit codes, CI jobs, config it protects),
+  and the exact list of master blocks to add or edit. Then, on Matt's go, ONE master
+  change: new blocks fenced on a knob (add the knob to protocol-config.schema.yaml
+  with a default if the tool has none), CHANGELOG top entry v0.3.0-build, header
+  index lines in both masters, render all four fixtures twice plus the sandbox-real
+  set with the knob forced on, check the S4 ceilings, push per file and prove each
+  blob SHA. Nothing is rendered into any repo.
 
 watch_out_for:
-  - "STOP POINT (RULING-001): this effort is at its stop point. Do NOT render, install,
-     or prepare a render for any repo — not convergible-sandbox, not saas-starter —
-     until Matt names it by name. A 'might' is not a decision."
-  - "CLAUDE.md master fences are HTML-comment LINES only — a fence must be a full line
-     on its own; an inline fence mid-sentence is not recognised and would survive into
-     the render (the standalone check would then fail it on 'render_when'). Fences do
-     not nest. To vary one bullet by a knob, write two fenced variants (as the
-     protocol-files bullet does with 'not execution.dispatch.enabled')."
-  - "The C-001 block deliberately duplicates the preamble rules (SCOPE LOCK, FILE
-     CREATION, COLLABORATION NOTE, NO MEMORY WRITES, PRECEDENCE, COMMUNICATION) in
-     prose form because CLAUDE.md is the one file Claude Code reads without being
-     told to. Keep the two in step: a change to S-030 or W-003 is also a change to
-     claude-md.house-block.master.md."
-  - "S4 ceilings are recorded ONLY in BLUEPRINT.yaml rendering.file_ceilings (104a402);
-     render.py does not enforce them (RENDER_PROCEDURE step 5 is a manual wc -l
-     compare). Adding enforcement to render.py is a reasonable later change, not
-     owed now."
-  - "Blob-SHA proof pattern that worked this session: clone forgeflow into the
-     sandbox, edit there, git hash-object the file, push the full content through
-     the GitHub tool, then git fetch and git rev-parse origin/main:<path> — a
-     transcription slip shows up as a hash mismatch before anything else does. Every
-     re-push of a file read through the GitHub tool must go through this; the tool
-     displays one placeholder token in truncated form (the slip fixed at 8f52985)."
-  - "YAML traps: plain scalars with ': ' mid-sentence and commas inside flow-mapping
-     values both fail — quote them. Every pushed .forge/ and master YAML file is
-     parse-validated in the sandbox first."
-  - "The end master's E-021 runs BEFORE the docs write when the checkout may hold
-     unpushed work; the blueprint Section 8 now says the same (v1.4). The master is
-     the ruling text."
-  - "End master sub-blocks (E-031..E-046) each carry their own top-level YAML key;
-     the start master has three mutually exclusive variant sets (S-034/S-052,
-     S-081/082/083, S-084/085/086) — any new pair anywhere must stay exclusive."
-  - "render.py FORBIDDEN_PHRASES include the fence syntax and placeholder opener as
-     literal strings; master prose must describe them, never quote them. Also avoid
-     'as in start-protocol' / 'as in end-protocol' / 'inherited from' / 'see the master'."
-  - "SEO/GEO start-protocol block: a normal master change (CHANGELOG entry, version
-     bump, re-render of whatever repos are on the master — none yet). Do not retrofit
-     into legacy files."
-  - "ChromaQA is never installed by a protocol or folded into another task. Do not
-     propose it."
+  - "STOP POINT (RULING-001) still holds: do NOT render, install, or prepare a render for
+     any repo — not convergible-sandbox, not saas-starter — until Matt names it by name.
+     A master change is NOT a render."
+  - "Master-change procedure that worked this session, in order: clone forgeflow into the
+     sandbox; edit with Python replace-and-assert (never regex over the whole file); YAML
+     parse every changed file; python3 master/tests/test_render.py (35/35); render every
+     fixture config twice and diff; render the sandbox-real fixture with the new knob forced
+     on via a temp copy (tests/fixtures/config-sandbox-real.yaml has chromaqa OFF because
+     the sandbox has no ChromaQA — do not flip it in the fixture); wc -l against the S4
+     ceilings; git hash-object each file; push through the GitHub tool ONE FILE PER CALL
+     for the big masters; git fetch and rev-parse origin/main:<path> to prove each SHA."
+  - "GitHub tool trap: create_or_update_file needs the FULL 40-char blob SHA, not the
+     abbreviated one the earlier read printed — a short SHA is rejected as stale. push_files
+     needs no SHA and was used for every landing this session."
+  - "tests/test_render.py now reads MASTER_VERSION from CHANGELOG.yaml's top entry (it used
+     to hard-code v0.1.0-build and went red on the bump). Any future version bump needs no
+     test edit."
+  - "New blocks S-087, S-088, E-047 all fence on subsystems.chromaqa (S-087/E-047 also on
+     execution.local). S-087 says 'next to the CI GATE RULE where that rule is present'
+     because S-045 fences on a DIFFERENT knob (ci_quality_gate); the two are detected
+     separately and a ChromaQA repo normally has both."
+  - "E-047 overrides E-021's VERIFY PUSH check 1 for two paths in ChromaQA repos. E-021
+     itself is untouched (it fences on execution.local only). If E-021's audit language is
+     ever rewritten, keep E-047's override sentence in step with it."
+  - "ChromaQA's own repo carries stale ForgeFlow references (.forge/BLUEPRINT.yaml
+     output.files.CQA-debt.jsonl.read_by says 'via FOCUSED_BUILD_PROTOCOL ... after
+     extracting repo ZIP', and output_contract.operational_rule_for_agents_and_scope_audits
+     says FOCUSED_BUILD_PROTOCOL needs the telemetry exception). The exception now lives in
+     the master (E-047). That is a ChromaQA-repo doc fix, NOT this repo's work, and NOT an
+     install — mention it to Matt only if he opens the ChromaQA repo."
+  - "CLAUDE.md master fences are HTML-comment LINES only; fences do not nest. The ChromaQA
+     bullet is one fenced line inside the Protocol files section."
+  - "render.py FORBIDDEN_PHRASES include the fence syntax and placeholder opener as literal
+     strings; master prose must describe them, never quote them. Also avoid 'as in
+     start-protocol' / 'as in end-protocol' / 'inherited from' / 'see the master'."
+  - "YAML traps: plain scalars with ': ' mid-sentence and commas inside flow-mapping values
+     both fail — quote them. Every pushed .forge/ and master YAML file is parse-validated in
+     the sandbox first."
+  - "ChromaQA is never installed by a protocol or folded into another task. Do not propose it."
   - "Matt runs concurrent Claude Code sessions. Before pushing to ANY repo other than
      forgeflow, ask whether a CC session is active on it."
   - "Matt's communication rules (blueprint Section 9 I4): four sentences or less,
@@ -98,16 +90,24 @@ watch_out_for:
      milestone."
 
 next_up:
-  - "Deferred, not next: the housekeeping bundle named in first_thing lands only when
-     Matt names a repo. drift_ci stays deferred until after the first real render is verified."
+  - "Deferred, not next: the housekeeping bundle (PROPAGATION_PROCEDURE.md, legacy
+     banners + README repoint, CHANGELOG bump to v1.0.0, registered-repos.yaml written
+     LAST after the first render) lands only in the session in which Matt names a repo."
+  - "Deferred, not next: the SEO/GEO start-protocol block — a normal master change when
+     Matt says the tool is ready; may be the same tool as first_thing."
+  - "Deferred, not next: a committed fixture config with chromaqa ON (so the ceiling
+     measurement for ChromaQA repos is reproducible from tests/fixtures/ instead of a
+     temp copy). Cheap; do it inside the next master change, not as its own session."
+  - "Deferred, not next: drift_ci stays deferred until after the first real render is
+     verified."
 
 north_star: |
-  Better: the last unwritten piece of the source (the CLAUDE.md house block) exists
-  and renders under the same machine proof as the two masters, and the size budget
-  is now a measured number instead of a guess. Nothing was moved onto any repo's board.
+  Better: the master now tells a session the truth about ChromaQA 7.0 before any repo
+  is rendered from it — a wrong render was avoided rather than repaired. Nothing was moved
+  onto any repo's board.
 
 tone: |
-  Closed-out, waiting. The effort is parked at its stop point on purpose; the next move
-  is Matt's, by name. When he makes it, open with the housekeeping commit and a plain
-  one-line position: "both masters and the house block exist and render; no repo runs
-  on them yet."
+  Productive, closed-out. Matt named the priority, ruled on sequencing (one tool per
+  session), and the change is on GitHub at 9a8dfb6 with proof. The next move is his: name the second
+  tool. Open with a plain one-line position: "master v0.2.0-build describes ChromaQA
+  7.0; no repo runs on it yet."
