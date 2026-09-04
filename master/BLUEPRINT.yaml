@@ -1,8 +1,8 @@
 # =============================================================================
 # FORGEFLOW MASTER — UNIFIED SESSION-PROTOCOL SYSTEM
-# Blueprint v1.3 — 2026-09-04 (two board passes; DESIGN CLOSED; build in progress; rollout order amended by ruling)
+# Blueprint v1.4 — 2026-09-04 (two board passes; DESIGN CLOSED; step 3 built; rollout order amended by ruling; S4 ceilings set from measured renders)
 # Author: Claude Web (planning session with Matt Fleming, Chromasmith LLC)
-# Status: DESIGN CLOSED after two committee passes. Nothing here is built yet.
+# Status: DESIGN CLOSED after two committee passes. Step 3 built (renderer, both masters, C-001 house block); no repo runs on the master (RULING-001).
 # Home: github.com/chromasmith/forgeflow  master/BLUEPRINT.yaml
 # =============================================================================
 #
@@ -15,7 +15,7 @@
 
 meta:
   name: ForgeFlow Master
-  version: "1.3-blueprint"
+  version: "1.4-blueprint"
   date: 2026-09-04
   revision_history:
     - version: "1.0"
@@ -55,6 +55,15 @@ meta:
         both masters written and a byte-stable render proven inside forgeflow; no
         repo is rendered until Matt names it. Step 3a (renderer, schema, profiles,
         fixture proof) landed @ 5c66201.
+    - version: "1.4"
+      note: >
+        Step-3 cleanup session 2026-09-04. S4 rendered-file ceilings SET from the
+        measured renders of the real convergible-sandbox knob set at ecf77e5 (Section
+        6, rendering.file_ceilings; P11 and Section 13 repointed). Section 8 wrap
+        order amended to match the end master's E-021: the LOCAL remainder prompt
+        runs BEFORE the docs write when the checkout may hold unpushed work. The
+        CLAUDE.md house block master (C-001) landed @ 96b4290 with its own Markdown
+        fence syntax (Section 6, conditional_blocks).
   problem_in_one_sentence: >
     Matt runs the same start/wrap session protocol across many repos, but each repo
     holds a hand-forked copy, so fixes made in one never reach the others and the
@@ -302,9 +311,9 @@ principles:
       reviews the master: a rule not cited, triggered or violated in 200 sessions is
       deleted or demoted to a reference document no session must read. A compliance
       canary near the end of every rendered protocol detects when the tail has
-      stopped being read. The ceiling NUMBER is set after the lineage reconciliation
-      shows the real size — 400 lines was the board's guess, not a measurement.
-      (Board S4 + pre-mortem 1.)
+      stopped being read. The ceiling NUMBERS were set in v1.4 from measured
+      renders, per READER file — see rendering.file_ceilings in Section 6; 400
+      lines was the board's guess, not a measurement. (Board S4 + pre-mortem 1.)
 
 # =============================================================================
 # 4. ARTIFACT SET
@@ -582,6 +591,11 @@ rendering:
       `mirror.github_is_complete_mirror == false`, `len(build.surfaces) > 1`.
     resolution: The renderer keeps a block when its condition is true and removes the
       block AND its fences when false. No fence text survives into the rendered copy.
+    claude_md_master_fences: >
+      The CLAUDE.md house-block master is Markdown, so its conditional fences are
+      HTML-comment lines carrying the same render_when condition language, one fence
+      per line, no nesting. render.py resolves them, substitutes placeholders and runs
+      the standalone check on the block before placing it between the markers.
   substitutions: >
     Placeholders like {{repo.name}}, {{repo.canonical_checkout}}, {{build.build_command}}
     are replaced with config values. An unresolved placeholder fails the render.
@@ -589,6 +603,29 @@ rendering:
     After resolution, the renderer greps the output for forbidden phrasings
     ("see the local variant", "inherited from", "as in end-protocol", "refer to master")
     and for any leftover `{{` or `render_when`. Any hit fails the render.
+  file_ceilings:
+    rule: >
+      Board S4 / Principle P11, SET 2026-09-04 (v1.4). Ceilings are per READER FILE,
+      not per repo: a rendered file that exceeds its ceiling is not pushed, and the
+      master change that pushed it over must name the rule it replaces or retires
+      (replace-to-add). RENDER_PROCEDURE.md step 5 compares wc -l against these.
+    ceilings_lines:
+      start-protocol.yaml:          1650   # Claude Web reader
+      start-protocol.dispatch.yaml: 650    # runner reader
+      end-protocol.yaml:            1400   # Claude Web reader
+      end-protocol.dispatch.yaml:   150    # runner reader — one block (E-001) by design; a second block is a deliberate decision, not drift
+    measurement:
+      date: 2026-09-04
+      master_commit: ecf77e5
+      config: master/tests/fixtures/config-sandbox-real.yaml (the real convergible-sandbox knob set — the largest render, every subsystem on, dispatch on)
+      method: wc -l on render.py output in the Claude Web sandbox, two renders byte-identical
+      measured_lines: { start-protocol.yaml: 1436, start-protocol.dispatch.yaml: 562, end-protocol.yaml: 1207, end-protocol.dispatch.yaml: 90 }
+      headroom: about 15 percent over each measured file, rounded up to the nearest 50
+      note: >
+        The lineage reconciliation estimated 1,200 for CW-read files; the real CW
+        start file came in at 1,436, so the estimate was superseded by the
+        measurement rather than trimming content Matt has kept in every lineage.
+        A ChromaControl-shape render (config-legacy.yaml) is smaller on every file.
   header_stamp: >
     Every rendered file begins with a fixed header: source
     (chromasmith/forgeflow master/<file>), master version, render date,
@@ -778,9 +815,13 @@ session_flow:
       CW answers the north-star question in one sentence in the handoff: "Did today's
       work make the product better, or only move the board?"
     - >
-      LOCAL mode remainder: CC gets a short prompt to commit and push its own code and
-      telemetry with named files and run VERIFY PUSH. DISPATCH mode: nothing further;
-      CC's work already landed via merged PRs.
+      LOCAL mode remainder (end master E-021): CC gets a short prompt to commit and
+      push its own code and telemetry with named files and run VERIFY PUSH. CW issues
+      it BEFORE the docs write when the local checkout may hold unpushed work, so the
+      resulting commit SHA can serve as evidence in the wrap files; when every task
+      already pushed and verified, CW says so in one line and skips it. DISPATCH mode:
+      nothing further; CC's work already landed via merged PRs. (Order corrected in
+      v1.4; the master is the ruling text.)
     - >
       CW states the OVERALL PROJECT POSITION in one plain sentence — a finished session
       must never read as a finished project.
@@ -1048,8 +1089,9 @@ committee_resolutions:
     machinery before knowing the population" objection is thereby answered: the
     population is four, and the machinery is a 200-line script plus a registry.
 
+  board_S4_ceiling: SET 2026-09-04 (v1.4) from measured renders — Section 6, rendering.file_ceilings.
+
 still_open:
-  - S4 ceiling number for rendered protocol length — set after step 2 measures the folded set.
   - drift_ci [VERIFY] — can a rendered repo's Action fetch forgeflow?
 
 committee_questions_v1_0_for_the_record:
