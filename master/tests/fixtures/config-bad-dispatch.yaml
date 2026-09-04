@@ -1,0 +1,4 @@
+profile: legacy-local
+repo: { org: chromasmith, name: bad }
+overrides:
+  execution.dispatch.enabled: true

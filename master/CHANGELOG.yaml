@@ -1,0 +1,12 @@
+# Version history of the ForgeFlow MASTER itself (not of any rendered repo).
+# The top entry's `version` is the master version render.py stamps into every render.
+# Newest first.
+entries:
+  - version: "v0.1.0-build"
+    date: 2026-09-04
+    status: BUILD IN PROGRESS — no repo is rendered from this master yet
+    changed: >-
+      Step 3 begins. Renderer machinery landed: render.py, protocol-config.schema.yaml
+      (Section 5 fields plus the eight new knobs from LINEAGE_RECONCILIATION), the three
+      profiles, and a fixture test proving byte-stable renders and the block-manifest check.
+      The master protocol files are not yet written.

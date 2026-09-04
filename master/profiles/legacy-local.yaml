@@ -1,0 +1,7 @@
+# ForgeFlow profile: legacy-local — a repo where GitHub is NOT a complete mirror
+# (spike work, gitignored secrets). Refresh is a GENTLE PULL; dispatch is structurally off.
+mirror.github_is_complete_mirror: false
+build.validation: py-compile
+build.deploy: none
+execution.local: true
+execution.dispatch.enabled: false

@@ -1,0 +1,7 @@
+# ForgeFlow profile: standard — house-standard SaaS repo (Next.js + Supabase + Vercel).
+# GitHub is a complete mirror, so the local refresh is a HARD RESET after the safety check.
+mirror.github_is_complete_mirror: true
+build.validation: npm-build
+build.deploy: vercel
+execution.local: true
+execution.dispatch.enabled: false

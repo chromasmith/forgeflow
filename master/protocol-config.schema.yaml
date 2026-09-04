@@ -1,0 +1,118 @@
+# =============================================================================
+# FORGEFLOW MASTER — protocol-config schema (renderer's internal contract)
+# Blueprint v1.2 Section 5 + the 8 new knobs from LINEAGE_RECONCILIATION.
+# Home: github.com/chromasmith/forgeflow  master/protocol-config.schema.yaml
+#
+# How render.py reads this file:
+#   - A mapping that contains a `type` key is a FIELD SPEC (a leaf).
+#   - Any other mapping is a GROUP of fields.
+#   - Field spec keys: type (string|boolean|integer|enum|list|date|mapping),
+#     default, values (enum), declared (true = Matt/CW must state it),
+#     detected (true = render.py may fill it from the repo tree when --tree is
+#     given), set_by: renderer (never in a repo config), note.
+#   - A field with no default, not set_by renderer, and absent from the
+#     expanded config FAILS the render with its path named.
+#   - Unknown fields in a repo config FAIL the render (Section 5 validation).
+# =============================================================================
+
+schema_version:
+  type: string
+  default: "1"
+
+protocol:
+  master_version: { type: string, set_by: renderer }
+  rendered_on:    { type: date,   set_by: renderer }
+  config_hash:    { type: string, set_by: renderer, note: "SHA-256 of the expanded config, computed by render.py" }
+  render_method:  { type: enum, values: [code, manual], set_by: renderer, default: code }
+
+north_star_doc:
+  type: string
+  declared: true
+  default: null
+  note: Pointer to the repo's existing product-truth document, read at start before the backlog.
+
+repo:
+  org:                { type: string, declared: true }
+  name:               { type: string, declared: true }
+  canonical_checkout: { type: string, default: "C:\\Chromasmith\\{{repo.name}}" }
+  default_branch:     { type: string, default: main }
+  canonical_machine:  { type: string, declared: true, default: "Surface 12" }
+  alternate_machines: { type: list,   declared: true, default: [] }
+  line_endings:       { type: enum,   values: [lf, crlf, mixed], default: lf }
+
+mirror:
+  github_is_complete_mirror:
+    type: boolean
+    declared: true
+    default: false
+    note: "true renders HARD RESET, false renders GENTLE PULL (P4 safe default)."
+  gitignored_local_only_paths: { type: list, declared: true, default: [] }
+
+shape:
+  kind:           { type: enum, values: [single-app, monorepo], detected: true, default: single-app }
+  build_location: { type: string, detected: true, default: "." }
+
+build:
+  validation:     { type: enum, values: [npm-build, py-compile, none], detected: true, default: none }
+  build_command:  { type: string, default: "npm run build" }
+  deploy:         { type: enum, values: [vercel, none, custom], detected: true, default: none }
+  deploy_verify:  { type: string, declared: true, default: "Vercel deployment record READY for the exact SHA" }
+  surfaces:       { type: list, declared: true, default: [desktop] }
+
+architecture:
+  tsx_lib_rule:   { type: boolean, detected: true, default: false, note: "detected by any .tsx under src/ or app/" }
+
+execution:
+  local:    { type: boolean, default: true }
+  dispatch:
+    enabled:       { type: boolean, declared: true, default: false }
+    requires:
+      type: list
+      default: [".github/workflows/claude.yml", "CLAUDE_CODE_OAUTH_TOKEN secret", "branch protection on main", "artifact register", "mirror.github_is_complete_mirror: true"]
+    allowed_tools: { type: list, declared: true, default: [], note: "copied from .github/workflows/claude.yml at render time; renderer warns on mismatch" }
+  max_parallel:   { type: integer, default: 3 }
+  local_report_desktop_copy: { type: boolean, default: true }
+
+subsystems:
+  supabase:            { type: boolean, detected: true, default: false }
+  vercel:              { type: boolean, detected: true, default: false }
+  ci_quality_gate:     { type: boolean, detected: true, default: false }
+  chromaqa:            { type: boolean, detected: true, default: false }
+  ui_inventory:        { type: boolean, detected: true, default: false }
+  artifact_register:   { type: boolean, detected: true, default: false }
+  database_access_doc: { type: string,  declared: true, default: null }
+  repo_rules_doc:      { type: string,  declared: true, default: null }
+
+companion_repos:
+  type: list
+  declared: true
+  default: []
+  note: "items are { name, role: relay, read_at_start: true, write_at_wrap: true, governing_doc: PROTOCOL.md }"
+
+hardware:
+  devices: { type: list, declared: true, default: [], note: "items are { name, on_for }" }
+
+protected:
+  never_touch_paths:   { type: list,   declared: true, default: [] }
+  phase_authority_doc: { type: string, declared: true, default: null }
+  tombstone_gotchas:   { type: list,   declared: true, default: [] }
+  spec_dirs_off_limits: { type: list,  default: [".forge/specs/"] }
+
+ids:
+  gotcha_prefix:  { type: string, default: "GOTCHA-" }
+  bug_prefix:     { type: string, default: "BUG-" }
+  ruling_prefix:  { type: string, default: "RULING-" }
+  backlog_prefix: { type: string, declared: true, default: "BL-" }
+
+thresholds:
+  session_history_cap: { type: integer, default: 15 }
+  changelog_cap:       { type: integer, default: 12 }
+  gotcha_consolidation:
+    trigger_count: { type: integer, default: 100 }
+    or_every:      { type: string,  default: "1 month" }
+    runs_as:       { type: string,  default: "its own session" }
+  backlog_completed_archive_after_days: { type: integer, default: 30 }
+  wrap_split:
+    lines:           { type: integer, default: 1000 }
+    edit_operations: { type: integer, default: 10 }
+  chromaqa_debt_alert: { type: integer, default: 25 }

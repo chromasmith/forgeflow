@@ -1,0 +1,6 @@
+# ForgeFlow profile: docs-only — a repo with no build and no deploy (specs, protocols, references).
+mirror.github_is_complete_mirror: true
+build.validation: none
+build.deploy: none
+execution.local: true
+execution.dispatch.enabled: false

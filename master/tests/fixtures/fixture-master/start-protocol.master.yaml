@@ -1,0 +1,35 @@
+# FIXTURE master — a miniature start protocol exercising every renderer feature.
+# @reader-order cc-dispatch: S-030, S-038, S-074
+
+# >>> block S-001 | header_stamp_and_standalone_rule | reader: all | render_when: always
+standalone_rule: >-
+  This file is complete. Repo {{repo.org}}/{{repo.name}} at {{repo.canonical_checkout}}.
+# <<< end S-001
+
+# >>> block S-002 | mode_selection_local_vs_dispatch | reader: cw | render_when: execution.dispatch.enabled
+mode_selection: choose local or dispatch per task; linear is the default.
+# <<< end S-002
+
+# >>> block S-026 | spike_mode | reader: cw+cc-local | render_when: len(build.surfaces) > 1
+spike_mode: surfaces are {{build.surfaces}}.
+# <<< end S-026
+
+# >>> block S-030 | prompt_preamble | reader: cc-local+cc-dispatch | render_when: always
+preamble: CONTEXT MODE SELECTIVE, APPROVAL CODE 3949.
+# <<< end S-030
+
+# >>> block S-034 | refresh_mode | reader: cc-local | render_when: mirror.github_is_complete_mirror == true
+refresh: hard reset to origin/{{repo.default_branch}} after the safety check.
+# <<< end S-034
+
+# >>> block S-038 | authorized_files_section | reader: all | render_when: always
+authorized_files: mandatory in every prompt.
+# <<< end S-038
+
+# >>> block S-074 | needs_ruling_procedure | reader: cw+cc-dispatch | render_when: execution.dispatch.enabled
+needs_ruling: a stopped run writes needs_ruling and stops.
+# <<< end S-074
+
+# >>> block W-001 | cw_communication_rules | reader: cw | render_when: always
+cw_rules: four sentences or less; end with the next verb and who holds the ball.
+# <<< end W-001

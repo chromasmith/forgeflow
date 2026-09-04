@@ -1,0 +1,7 @@
+# fixture: convergible-sandbox shape — dispatch on, supabase on, companion none
+profile: standard
+repo: { org: chromasmith, name: fixture-sandbox }
+overrides:
+  execution.dispatch.enabled: true
+  subsystems.supabase: true
+  subsystems.database_access_doc: ".forge/protocols/database-access.yaml"

@@ -1,0 +1,3 @@
+# fixture: a standard SaaS repo, no dispatch
+profile: standard
+repo: { org: chromasmith, name: fixture-standard }

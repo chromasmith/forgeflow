@@ -1,0 +1,16 @@
+# FIXTURE master — miniature end protocol.
+# >>> block E-001 | trigger_and_wrap_build_rule | reader: cw | render_when: always
+trigger: Matt declares the day's work finished; CW builds the wrap.
+# <<< end E-001
+
+# >>> block E-018 | schema_refresh_gate | reader: cw | render_when: subsystems.supabase
+schema_refresh: only if migrations ran.
+# <<< end E-018
+
+# >>> block E-020 | relay_assessment_and_write | reader: cw | render_when: companion_repos non-empty
+relay: companions {{companion_repos}}.
+# <<< end E-020
+
+# >>> block E-030 | wrap_commit_message_and_evidence_count | reader: cw | render_when: always
+commit_message: "docs: end session — N claims verified by ID, M reported unverified"
+# <<< end E-030

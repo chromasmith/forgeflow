@@ -1,0 +1,7 @@
+# fixture: ChromaControl shape — gentle pull, three surfaces, one companion
+profile: legacy-local
+repo: { org: chromasmith, name: fixture-legacy }
+overrides:
+  build.surfaces: [desktop, wsl-build, phone]
+  companion_repos:
+    - { name: synclips-relay, role: relay, read_at_start: true, write_at_wrap: true, governing_doc: PROTOCOL.md }
