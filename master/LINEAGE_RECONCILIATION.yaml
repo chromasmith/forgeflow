@@ -1,0 +1,2101 @@
+# =============================================================================
+# FORGEFLOW MASTER — LINEAGE RECONCILIATION (rollout step 2, Board M2 / v1.2 N4)
+# Every behavioral rule found in the four legacy protocol lineages, each with
+# EXACTLY ONE disposition: folded (names the master block), knobbed (names the
+# config field), or dropped (one-sentence reason). A rule with no disposition
+# blocks the first render.
+# Home: github.com/chromasmith/forgeflow  master/LINEAGE_RECONCILIATION.yaml
+# =============================================================================
+
+meta:
+  name: LINEAGE_RECONCILIATION
+  version: "1.0"
+  date: 2026-09-04
+  author: Claude Web (step-2 session with Matt Fleming)
+  status: >-
+    DRAFT FOR MATT'S READ — becomes GATE-PASSED when Matt says go on the dropped
+    list. Step 3 (build the master) does not start until this line says
+    GATE-PASSED.
+  blueprint_ref: master/BLUEPRINT.yaml v1.2 @ 009370b (Section 4 artifact, Section 11 step 2)
+  lineages_read:
+    STD: >-
+      STANDARD (single-app + monorepo, unified), FOCUSED_BUILD_PROTOCOL +
+      END SESSION, dated 2026-08-08. Source: Matt's thought-box, pasted into
+      this session.
+    SYN: >-
+      SYNCLIPS-SYSTEM (chromasync + synclips-platform + dv-captain),
+      FOCUSED_BUILD_PROTOCOL + END SESSION, dated 2026-07-04. Source:
+      thought-box, pasted.
+    CC2: >-
+      CHROMACONTROL v2, FOCUSED_BUILD_PROTOCOL (2026-06-25) + END SESSION
+      (2026-06-20). Source: thought-box, pasted.
+    SBX: >-
+      CONVERGIBLE-SANDBOX, four files read from GitHub at HEAD of main this
+      session: .forge/protocols/start-protocol-local.yaml (blob e57b902),
+      end-protocol-local.yaml (e8652d9), start-protocol-dispatch.yaml (d6d85c2),
+      end-protocol-dispatch.yaml (02be688). Suffix -L = local files, -D =
+      dispatch files. Also read: database-access.yaml (897faa3).
+  not_read_this_session: >-
+    .forge/protocols/artifact-register.yaml (40 KB). Its five binding rules
+    R1-R5 are quoted identically in all four SBX protocol files and were taken
+    from there. The register's per-repo entries are repo content, not protocol
+    rules, and the blueprint already keeps the register repo-specific (Section
+    4, artifact-register.yaml is created from a house template and never
+    overwritten by a render). Step 3 should read it once when writing the house
+    template.
+  method: >-
+    Each lineage was read end to end. Every sentence that tells a participant
+    (Claude Web, Claude Code, or Matt) to do or not do something was extracted
+    as a rule. Rules that appear in several lineages are one entry with all
+    sources listed. Narrative, history, examples and headers are not rules and
+    appear only where their removal is worth Matt's attention (the dropped list).
+    Board additions from v1.1/v1.2 are NOT lineage rules; they are listed in
+    board_additions_not_from_lineage so step 3 knows the inventory below is not
+    the whole master.
+  block_id_scheme: >-
+    Provisional master block IDs assigned here so folded rules have a target.
+    S-nnn = start-protocol master block. E-nnn = end-protocol master block.
+    W-nnn = Claude Web behaviour block (rendered into the start file, excluded
+    from the dispatch reader file). C-nnn = CLAUDE.md house block. Step 3 may
+    renumber to the blueprint's B-nnn scheme but must carry this mapping into
+    the master files as a comment so every LR-nnn below still resolves. Each
+    block carries a reader hint (cw / cc-local / cc-dispatch / all) for the
+    per-reader ordering in P7.
+  counts:
+    rules_inventoried: 183
+    folded: 117
+    knobbed: 50
+    dropped: 16
+    new_knobs_proposed: 8
+    verify_flags: 1
+    counts_computed_by: python yaml parse in the step-2 session sandbox, not estimated
+
+# =============================================================================
+# MASTER BLOCK INDEX (the skeleton step 3 builds against)
+# =============================================================================
+
+master_block_index:
+  start_protocol:
+    - { id: S-001, name: header_stamp_and_standalone_rule,   reader: all,        render_when: always }
+    - { id: S-002, name: mode_selection_local_vs_dispatch,   reader: cw,         render_when: execution.dispatch.enabled }
+    - { id: S-003, name: artifact_register_binding,          reader: all,        render_when: always }
+    - { id: S-004, name: database_access_binding,            reader: all,        render_when: subsystems.database_access_doc }
+    - { id: S-005, name: repo_rules_doc_binding,             reader: all,        render_when: subsystems.repo_rules_doc, note: NEW concept (see new_knobs_proposed) }
+    - { id: S-006, name: cw_role_boundary,                   reader: cw,         render_when: always }
+    - { id: S-007, name: documentation_layer_direct_write,   reader: cw,         render_when: always }
+    - { id: S-008, name: concurrency_rule,                   reader: cw,         render_when: always }
+    - { id: S-009, name: session_start_ritual,               reader: cw,         render_when: always }
+    - { id: S-010, name: handoff_staleness_check,            reader: cw,         render_when: always, source: board M3 }
+    - { id: S-011, name: session_context_read_list,          reader: cw,         render_when: always (sub-blocks conditional) }
+    - { id: S-012, name: session_context_summary,            reader: cw,         render_when: always }
+    - { id: S-013, name: build_location_detection,           reader: cw,         render_when: build.validation == npm-build }
+    - { id: S-014, name: chromaqa_debt_check,                reader: cw,         render_when: subsystems.chromaqa }
+    - { id: S-015, name: companion_relay_read,               reader: cw,         render_when: companion_repos non-empty }
+    - { id: S-016, name: phase_authority_read,               reader: cw,         render_when: protected.phase_authority_doc }
+    - { id: S-017, name: task_clarification,                 reader: cw,         render_when: always }
+    - { id: S-018, name: prior_ruling_search,                reader: cw,         render_when: always }
+    - { id: S-019, name: approval_gate,                      reader: cw,         render_when: always }
+    - { id: S-020, name: scope_lock_authorized_list,         reader: cw,         render_when: always }
+    - { id: S-021, name: new_file_literal_path_rule,         reader: cw,         render_when: always }
+    - { id: S-022, name: paired_lib_file_rule,               reader: cw,         render_when: architecture.tsx_lib_rule }
+    - { id: S-023, name: path_and_pattern_verification,      reader: cw,         render_when: always }
+    - { id: S-024, name: prohibited_list_defaults,           reader: cw,         render_when: always (sub-blocks conditional) }
+    - { id: S-025, name: use_existing_helpers_rule,          reader: all,        render_when: always }
+    - { id: S-026, name: spike_mode,                         reader: cw+cc-local, render_when: len(build.surfaces) > 1 }
+    - { id: S-027, name: ui_conformance,                     reader: all,        render_when: subsystems.ui_inventory }
+    - { id: S-028, name: secrets_guard,                      reader: all,        render_when: protected.never_touch_paths non-empty }
+    - { id: S-029, name: architecture_rule,                  reader: all,        render_when: architecture.tsx_lib_rule }
+    - { id: S-030, name: prompt_preamble,                    reader: cc-local+cc-dispatch, render_when: always }
+    - { id: S-031, name: opening_repo_statement,             reader: cc-local,   render_when: execution.local }
+    - { id: S-032, name: repo_location_step,                 reader: cc-local,   render_when: execution.local }
+    - { id: S-033, name: pre_refresh_safety_check,           reader: cc-local,   render_when: execution.local }
+    - { id: S-034, name: refresh_mode,                       reader: cc-local,   render_when: execution.local (text varies by mirror flag) }
+    - { id: S-035, name: scope_baseline,                     reader: cc-local,   render_when: execution.local }
+    - { id: S-036, name: shell_notes,                        reader: cc-local,   render_when: execution.local }
+    - { id: S-037, name: context_reference_format,           reader: all,        render_when: always }
+    - { id: S-038, name: authorized_files_section,           reader: all,        render_when: always }
+    - { id: S-039, name: tool_capabilities,                  reader: all,        render_when: per subsystem }
+    - { id: S-040, name: sql_shortcut,                       reader: cw,         render_when: subsystems.supabase }
+    - { id: S-041, name: prompt_output_format,               reader: cw,         render_when: always }
+    - { id: S-042, name: task_framing,                       reader: cw,         render_when: always }
+    - { id: S-043, name: completion_steps,                   reader: cc-local,   render_when: execution.local }
+    - { id: S-044, name: multi_surface_validation_bars,      reader: cw+cc-local, render_when: len(build.surfaces) > 1 }
+    - { id: S-045, name: ci_gate_rule,                       reader: cc-local+cc-dispatch, render_when: subsystems.ci_quality_gate }
+    - { id: S-046, name: done_banner_plain_text,             reader: all,        render_when: always }
+    - { id: S-047, name: reflection_questions,               reader: all,        render_when: always (Q5-7 conditional) }
+    - { id: S-048, name: inbox_write,                        reader: all,        render_when: always, source: board M1 }
+    - { id: S-049, name: live_supervised_human_gates,        reader: all,        render_when: always }
+    - { id: S-050, name: gotchas_reference,                  reader: cw,         render_when: always }
+    - { id: S-051, name: ready_state,                        reader: cw,         render_when: always }
+    - { id: S-060, name: dispatch_roles,                     reader: cw,         render_when: execution.dispatch.enabled }
+    - { id: S-061, name: dissent_visibility_rule,            reader: cw,         render_when: execution.dispatch.enabled }
+    - { id: S-062, name: dispatch_delivery,                  reader: cw,         render_when: execution.dispatch.enabled }
+    - { id: S-063, name: dispatch_prompt_rules,              reader: cw,         render_when: execution.dispatch.enabled }
+    - { id: S-064, name: runner_environment_facts,           reader: cw+cc-dispatch, render_when: execution.dispatch.enabled }
+    - { id: S-065, name: flows_linear_default_parallel_triage, reader: cw,       render_when: execution.dispatch.enabled }
+    - { id: S-066, name: parallel_merge_order,               reader: cw,         render_when: execution.dispatch.enabled }
+    - { id: S-067, name: build_fix_pr_verification_only,     reader: cw,         render_when: execution.dispatch.enabled }
+    - { id: S-068, name: merged_pr_proves_nothing,           reader: cw,         render_when: build.deploy == vercel }
+    - { id: S-069, name: conflicted_pr_recovery,             reader: cw,         render_when: execution.dispatch.enabled }
+    - { id: S-070, name: monitoring_and_advance_the_board,   reader: cw,         render_when: execution.dispatch.enabled }
+    - { id: S-071, name: reading_ci,                         reader: cw,         render_when: subsystems.ci_quality_gate }
+    - { id: S-072, name: rollback_branch_protection,         reader: cw,         render_when: execution.dispatch.enabled }
+    - { id: S-073, name: issue_body_template,                reader: cw+cc-dispatch, render_when: execution.dispatch.enabled }
+    - { id: S-074, name: needs_ruling_procedure,             reader: cw+cc-dispatch, render_when: execution.dispatch.enabled, source: board N2 }
+    - { id: S-075, name: compliance_canary,                  reader: all,        render_when: always, source: board pre-mortem 1 }
+  cw_behaviour:
+    - { id: W-001, name: cw_communication_rules,             reader: cw,         render_when: always, source: I4 + CC2 captain rules }
+    - { id: W-002, name: rulings_written_when_made,          reader: cw,         render_when: always, source: board M6 }
+    - { id: W-003, name: precedence_rule,                    reader: all,        render_when: always, source: board S3 (also in S-030) }
+  end_protocol:
+    - { id: E-001, name: trigger_and_wrap_build_rule,        reader: cw,         render_when: always }
+    - { id: E-002, name: wrap_direct_write_delivery,         reader: cw,         render_when: always }
+    - { id: E-003, name: wrap_file_manifest,                 reader: cw,         render_when: always }
+    - { id: E-004, name: database_state_invisible_rule,      reader: cw,         render_when: subsystems.supabase }
+    - { id: E-005, name: scope_reconciliation,               reader: cw,         render_when: always (sub-blocks conditional) }
+    - { id: E-006, name: identify_project,                   reader: cw,         render_when: always }
+    - { id: E-007, name: read_current_state,                 reader: cw,         render_when: always }
+    - { id: E-008, name: verify_before_you_write_and_evidence, reader: cw,       render_when: always }
+    - { id: E-009, name: session_state_overwrite,            reader: cw,         render_when: always }
+    - { id: E-010, name: bugs_surgical_edit,                 reader: cw,         render_when: always }
+    - { id: E-011, name: session_history_append,             reader: cw,         render_when: always }
+    - { id: E-012, name: backlog_surgical_edit,              reader: cw,         render_when: always }
+    - { id: E-013, name: gotchas_append,                     reader: cw,         render_when: always }
+    - { id: E-014, name: handoff_overwrite,                  reader: cw,         render_when: always }
+    - { id: E-015, name: archive_maintenance,                reader: cw,         render_when: always }
+    - { id: E-016, name: phase_authority_refresh,            reader: cw,         render_when: protected.phase_authority_doc }
+    - { id: E-017, name: changelog_gate_schema_tone,         reader: cw,         render_when: always }
+    - { id: E-018, name: schema_refresh_gate,                reader: cw,         render_when: subsystems.supabase }
+    - { id: E-019, name: rulings_confirm_landed,             reader: cw,         render_when: always }
+    - { id: E-020, name: relay_assessment_and_write,         reader: cw,         render_when: companion_repos non-empty }
+    - { id: E-021, name: cc_local_remainder_prompt,          reader: cw+cc-local, render_when: execution.local }
+    - { id: E-022, name: dispatch_wrap_verification,         reader: cw,         render_when: execution.dispatch.enabled }
+    - { id: E-023, name: deploy_step,                        reader: cw,         render_when: build.deploy != none }
+    - { id: E-024, name: inbox_consumption,                  reader: cw,         render_when: always, source: board M1 }
+    - { id: E-025, name: north_star_question,                reader: cw,         render_when: always, source: board pre-mortem 2 }
+    - { id: E-026, name: project_position_statement,         reader: cw,         render_when: always }
+    - { id: E-027, name: manual_fallback,                    reader: cw,         render_when: always }
+    - { id: E-028, name: file_behaviors_summary,             reader: cw,         render_when: always }
+    - { id: E-029, name: initialization_templates,           reader: cw,         render_when: always }
+    - { id: E-030, name: wrap_commit_message_and_evidence_count, reader: cw,     render_when: always, source: board M4 + N3 }
+  claude_md:
+    - { id: C-001, name: claude_md_house_block,              reader: cc,         render_when: always }
+
+# =============================================================================
+# DISPOSITIONS — one entry per rule
+#   found_in codes: STD, SYN, CC2, SBX-L, SBX-D
+#   disposition: folded | knobbed | dropped
+# =============================================================================
+
+rules:
+
+  # --------------------------------------------------------------- headers, roles
+  - id: LR-001
+    rule: >-
+      A protocol file is COMPLETE and STANDALONE; it inherits nothing by
+      reference and is never abridged; shrinking it is a Matt decision made in
+      a session about the protocol.
+    found_in: [SBX-L, SBX-D]
+    disposition: folded
+    target: S-001
+    note: Also P2. The 2026-08-20 abridgement narrative is dropped (LR-160).
+  - id: LR-002
+    rule: >-
+      The file states which variant it is, its companion wrap, and its parallel
+      variant, and names the artifact register and database-access doc as binding.
+    found_in: [SBX-L, SBX-D]
+    disposition: folded
+    target: S-001
+    note: Becomes the renderer header stamp plus block manifest.
+  - id: LR-003
+    rule: >-
+      Claude Web is the planner and prompt author, not the builder; it never
+      edits application code, not even in its sandbox to test a fix; its
+      deliverable is a prompt; the tell is reaching for a file-write on an
+      application path, and diligence makes the slip more likely.
+    found_in: [STD, SYN, CC2, SBX-L, SBX-D]
+    disposition: folded
+    target: S-006
+    note: Kept with the correction that the boundary is APPLICATION code, not all files (LR-005).
+  - id: LR-004
+    rule: >-
+      Claude Web has NO CLI access and NO MCP access; it cannot push, commit or
+      deploy; the only delivery path is a Claude Code prompt Matt runs.
+    found_in: [STD, SYN, CC2]
+    disposition: dropped
+    reason: >-
+      False since the GitHub/Supabase/Vercel MCP tools arrived; retired model
+      (blueprint hard constraint + I7).
+  - id: LR-005
+    rule: >-
+      With a live GitHub connector, CW may commit the .forge/ documentation
+      layer and protocol files directly (via PR) when Matt directs it; application
+      code, migrations, config and workflows remain prompt-only.
+    found_in: [SBX-L, SBX-D]
+    disposition: folded
+    target: S-007
+    note: >-
+      Widened by the 2026-09-04 wrap direct-write ruling and the 2026-09-02
+      direct-edit ruling: CW writes the wrap docs itself and may make small
+      one-spot .forge edits directly. Protocol files are edited in the master
+      only (P5).
+  - id: LR-006
+    rule: >-
+      While a Claude Code session runs against the repo, CW does not push
+      multi-file changes; single-file commits on current HEAD are safe.
+    found_in: [SBX-L, SBX-D]
+    disposition: folded
+    target: S-008
+  - id: LR-007
+    rule: >-
+      While a CC session runs, CW exports deliverables for Matt to carry into a
+      sequenced session instead of writing to GitHub.
+    found_in: [SBX-L]
+    disposition: dropped
+    reason: >-
+      Superseded by the blueprint's concurrency mitigation: CW asks whether a CC
+      session is active on the repo before any push, and uses PR delivery when
+      one is running; exporting for hand-carry is the friction Matt has engineered out.
+  - id: LR-008
+    rule: >-
+      Across concurrent Claude Web lanes, artifact-register.yaml is the one file
+      every lane appends to; merge the first PR promptly and rebase the second;
+      governance files are wrap-only and one lane wraps at a time.
+    found_in: [SBX-D]
+    disposition: folded
+    target: S-008
+  - id: LR-009
+    rule: >-
+      Participants are Claude Web (planner), Matt (plain-English direction,
+      routes friction, arbiter), Claude Code (executes with minimal context,
+      reports friction).
+    found_in: [STD, SYN, CC2, SBX-L, SBX-D]
+    disposition: folded
+    target: S-006
+  - id: LR-010
+    rule: >-
+      The Synclips-system variant is used ONLY for chromasync, synclips-platform
+      and dv-captain; the standard variant must not be used for ChromaControl or
+      any repo where GitHub is not a complete mirror.
+    found_in: [STD, SYN, CC2, SBX-L, SBX-D]
+    disposition: knobbed
+    target: mirror.github_is_complete_mirror + companion_repos + profile
+    note: Variant selection becomes config; the "do not use this for X" headers are not rendered.
+
+  # ------------------------------------------------------------ session start
+  - id: LR-011
+    rule: >-
+      Matt uploads the repo as a ZIP (two ZIPs for Synclips — repo plus relay);
+      Claude Web extracts and indexes locally; the ZIP snapshot may be stale.
+    found_in: [STD, SYN, CC2]
+    disposition: dropped
+    reason: >-
+      Replaced by reading the repo (and the relay repo) directly from GitHub;
+      the durable half — "any snapshot may be stale, verify before acting" — is
+      folded separately (LR-062).
+  - id: LR-012
+    rule: >-
+      Matt names the repo; CW reads it from GitHub (connector preferred, never
+      stale); no protocol paste.
+    found_in: [SBX-L, SBX-D]
+    disposition: folded
+    target: S-009
+  - id: LR-013
+    rule: >-
+      CW auto-detects repo shape (single-app root build vs monorepo sub-path
+      build) from the tree; Matt is never asked; if multiple apps, the target
+      app is settled during planning; the detected shape and build location lead
+      the readiness summary.
+    found_in: [STD, SYN, SBX-L]
+    disposition: knobbed
+    target: shape.kind + shape.build_location (detected, overridable)
+    note: Detection moves to render time (P3); the summary line renders from config. Block S-013 carries the residual instruction.
+  - id: LR-014
+    rule: >-
+      Read .forge/ files in order — handoff.yaml FIRST (primary briefing), then
+      session-state, backlog, active-bugs, session-history (live 15, deeper at
+      archive), GOTCHAS; skip missing files silently.
+    found_in: [STD, SYN, CC2, SBX-L, SBX-D]
+    disposition: folded
+    target: S-011
+  - id: LR-015
+    rule: >-
+      Read .forge/rulings.yaml SECOND, right after handoff; before putting any
+      product or design question to Matt, search rulings, then the source it
+      points to, then strategy docs and backlog descriptions; if a ruling exists,
+      bring the build, not the question; a chat ruling is appended in the same
+      session or it does not exist.
+    found_in: [SBX-L, SBX-D]
+    disposition: folded
+    target: S-011 + S-018 + W-002
+  - id: LR-016
+    rule: >-
+      Read .forge/protocols/artifact-register.yaml before writing any prompt; it
+      is binding.
+    found_in: [SBX-L, SBX-D]
+    disposition: folded
+    target: S-011 + S-003
+  - id: LR-017
+    rule: >-
+      Read the context primer (.forge/blueprint/context-primer.yaml) FIRST as the
+      narrative/phase authority; read the founding brief when the task touches
+      camera protocol, transport or property discovery.
+    found_in: [CC2]
+    disposition: knobbed
+    target: protected.phase_authority_doc (renders S-016) + north_star_doc
+    note: >-
+      The primer is ChromaControl's phase authority AND its north-star doc; the
+      founding brief is a task-conditional read the repo-rules doc can name.
+  - id: LR-018
+    rule: >-
+      Treat the handoff's agenda (first_thing / next_up, formerly
+      next_session_tasks) as the default unless Matt says otherwise.
+    found_in: [STD, SYN, CC2, SBX-L, SBX-D]
+    disposition: folded
+    target: S-011
+    note: The stale field name next_session_tasks is dropped (LR-165).
+  - id: LR-019
+    rule: >-
+      Give a Session Context Summary of 6-8 lines max: repo shape and build
+      location, last session, in progress, active bugs, backlog, gotchas to keep
+      in mind, blockers/rulings owed by Matt, phase (CC2), cross-repo state (SYN).
+    found_in: [STD, SYN, CC2, SBX-L, SBX-D]
+    disposition: folded
+    target: S-012
+    note: Board amended to a HARD 8-line ceiling with two reserved lines (first_thing, project position); silence is the pass state.
+  - id: LR-020
+    rule: >-
+      ChromaQA debt check: count lines in .chromaqa/CQA-debt.jsonl; if over 25,
+      alert Matt and wait for his decision before "Ready for tasks"; say nothing
+      if under.
+    found_in: [STD, SYN]
+    disposition: knobbed
+    target: subsystems.chromaqa (detected) + thresholds.chromaqa_debt_alert (25)
+    note: Renders S-014 only when .chromaqa/ exists. CC2's "no debt check here" is the same knob false.
+  - id: LR-021
+    rule: >-
+      ChromaQA is never installed by a protocol or folded into another task; an
+      install is a separate ceremonious session Matt initiates by name.
+    found_in: [SBX-L, SBX-D]
+    disposition: folded
+    target: S-011 (one sentence) + W-001
+    note: Hard constraint in the blueprint; stated once in the master so every render carries it.
+  - id: LR-022
+    rule: >-
+      Relay read at start (Synclips only): read synclips-relay state.yaml,
+      ripples.yaml, questions.yaml in full, index contracts.yaml; compute N
+      pending inbound ripples and M relevant open questions; surface one line
+      "Cross-repo state: N inbound ripples pending, M relevant open questions";
+      say zero plainly; factor operational caveats into planning; contracts are
+      binding when a task touches a seam and a contract change is a deliberate
+      act; PROTOCOL.md wins on conflict; honesty norms apply.
+    found_in: [SYN]
+    disposition: knobbed
+    target: companion_repos (renders S-015)
+    note: CW reads the relay from GitHub, not a second ZIP (LR-011).
+  - id: LR-023
+    rule: >-
+      If the relay was not provided, ask Matt once; if he says proceed without
+      it, state that cross-repo state is UNKNOWN and flag seam-touching tasks as
+      higher risk; never pretend it was read.
+    found_in: [SYN]
+    disposition: folded
+    target: S-015
+    note: >-
+      Reworded for GitHub reads — if the relay repo cannot be read, say so.
+  - id: LR-024
+    rule: >-
+      Ready state: after the reads, confirm with a brief summary and say
+      "Ready for tasks."
+    found_in: [STD, SYN, CC2, SBX-L, SBX-D]
+    disposition: folded
+    target: S-051
+
+  # ------------------------------------------------------------------ planning
+  - id: LR-025
+    rule: >-
+      Conduct a brief planning conversation before generating a prompt when the
+      task is a new feature, schema change, new route/integration, touches more
+      than 2 files, creates more than 2 new files (split first), any hardware/
+      BLE/Android work (CC2), or is described with uncertainty; skip for a
+      clearly scoped bug fix, text/style change, or "just do it".
+    found_in: [STD, SYN, CC2, SBX-L, SBX-D]
+    disposition: folded
+    target: S-017
+    note: The multi-surface trigger renders only when len(surfaces) > 1.
+  - id: LR-026
+    rule: >-
+      Ask 3-5 clarifying questions conversationally as flowing sentences, not a
+      numbered questionnaire; draw from where it lives, existing pattern vs new,
+      what not to touch, error/edge states, relevant GOTCHAS, cross-repo seams
+      (SYN), which surface and spike-vs-port (CC2), exact device state for a
+      hardware test (CC2); wait for Matt's full response.
+    found_in: [STD, SYN, CC2, SBX-L, SBX-D]
+    disposition: folded
+    target: S-017
+    note: >-
+      Tension with W-001 (four sentences or less, recommendation not options):
+      the master states that planning questions are the one place a short
+      conversational question set is permitted, and still leads with a
+      recommendation. Conditional prompts render per knob.
+  - id: LR-027
+    rule: >-
+      Planning is about deciding what Claude Code will do; CW does not edit a
+      file to "get a head start."
+    found_in: [STD, SYN, SBX-L]
+    disposition: folded
+    target: S-017
+  - id: LR-028
+    rule: >-
+      Approval gate: summarize task, approach, surface (CC2), scope boundaries,
+      and for a hardware test the device state and why it can prove the result;
+      ask "Does that sound right? Say 'go' and I'll build the prompt / dispatch
+      it"; wait for explicit approval; for a batch also state the parallel
+      triage verdict.
+    found_in: [STD, SYN, CC2, SBX-L, SBX-D]
+    disposition: folded
+    target: S-019
+  - id: LR-029
+    rule: >-
+      A "go" on a plan or ruling is not a go to start executing it; each
+      execution step, especially one on another repo, needs its own explicit go.
+    found_in: []
+    disposition: folded
+    target: S-019 + W-001
+    note: Not in any lineage; Matt's 2026-09-03 chat ruling (I4). Listed here so the gate block carries it.
+
+  # ---------------------------------------------------------------- scope lock
+  - id: LR-030
+    rule: >-
+      The authorized list names files CC may create/modify/delete; minimal —
+      only files that MUST be touched; "might need to touch" does not belong; if
+      in doubt leave it off and let CC surface the need; necessary vs convenient
+      is the test; it is a ceiling not a floor; "not on the list" is the default
+      state of the whole repo.
+    found_in: [STD, SYN, CC2, SBX-L, SBX-D]
+    disposition: folded
+    target: S-020
+  - id: LR-031
+    rule: >-
+      The authorized list names what CLAUDE CODE may edit, never what Claude Web
+      may edit.
+    found_in: [STD, SYN, SBX-L]
+    disposition: folded
+    target: S-020
+  - id: LR-032
+    rule: >-
+      Every NEW file on the authorized list is named with its complete path and
+      filename, never described; register-covered classes take the path from the
+      register verbatim.
+    found_in: [SBX-L, SBX-D]
+    disposition: folded
+    target: S-021
+  - id: LR-033
+    rule: >-
+      Paired-file rule: a data-touching .tsx on the authorized list requires its
+      /lib counterpart (existing or NEW) on the list too; exactly one counterpart
+      per screen; name the new exported function if the module exists; do not
+      add /lib speculatively; presentational helpers may live in the component.
+    found_in: [STD, SBX-L, SBX-D]
+    disposition: knobbed
+    target: architecture.tsx_lib_rule (NEW knob, detected by .tsx presence) — renders S-022
+    note: SYN never received this 2026-08-08 rule; the master gives it to every TS/React repo.
+  - id: LR-034
+    rule: >-
+      Verify every cited path against the live tree; never write a CONDITIONAL
+      authorization ("only if X"); when a locked component needs new data,
+      authorize a delivery path (prop or /lib export).
+    found_in: [SBX-D]
+    disposition: folded
+    target: S-023
+    note: The convergible path examples (gible-data.ts, serendipity-reveal.tsx) are dropped from master text (LR-162).
+  - id: LR-035
+    rule: >-
+      Grep the whole file for a repeated pattern before writing an edit list for
+      a large document; enumerate every hit; ask the runner to report remaining
+      hits after editing.
+    found_in: [SBX-D]
+    disposition: folded
+    target: S-023
+  - id: LR-036
+    rule: >-
+      Frame scope positively — name the files a session MAY read for orientation,
+      not only what it may not.
+    found_in: [SBX-D]
+    disposition: folded
+    target: S-023
+  - id: LR-037
+    rule: >-
+      The collision contract includes every UNMERGED PR, not only issues
+      dispatched together; list open PRs touching a file before authorizing it;
+      for artifact-register.yaml, merge outstanding PRs first or pre-register
+      from Claude Web.
+    found_in: [SBX-D]
+    disposition: folded
+    target: S-023 (dispatch sub-block)
+    note: The PR #386 / registry.ts examples are dropped from master text (LR-162).
+  - id: LR-038
+    rule: >-
+      Default prohibited list on every prompt: supabase/migrations/ (unless the
+      task requires one), .forge/specs/ (schema.yaml refreshed only at wrap),
+      .forge/GOTCHAS.yaml (wrap only), .forge/protocols/ (Matt's direction
+      only), .github/workflows/ (Matt-only via web editor), any "use the
+      existing X" helper; plus anything Matt ruled out and anything adjacent CC
+      might be tempted to improve.
+    found_in: [STD, SYN, CC2, SBX-L, SBX-D]
+    disposition: folded
+    target: S-024
+    note: supabase/migrations and .forge/specs/schema.yaml lines render only when subsystems.supabase.
+  - id: LR-039
+    rule: >-
+      The entire synclips-relay repo is off-limits to build-session prompts;
+      relay writes happen only at wrap.
+    found_in: [SYN]
+    disposition: knobbed
+    target: companion_repos (renders an off-limits line in S-024)
+  - id: LR-040
+    rule: >-
+      Never touch secrets/initiator-identity.yaml (the real GUID) or the
+      founding brief / context primer except deliberately; never stage or commit
+      the secret or paste it into a tracked file; if seen staged, STOP.
+    found_in: [CC2]
+    disposition: knobbed
+    target: protected.never_touch_paths + protected.phase_authority_doc + mirror.gitignored_local_only_paths
+    note: The generic SECRETS GUARD text renders as S-028 with the path placeholders filled from config.
+  - id: LR-041
+    rule: >-
+      A task touching a UI surface may also authorize .forge/specs/ui-inventory.yaml
+      for an append or entry edit only, never a restructure — the one exception to
+      the .forge/specs/ prohibition.
+    found_in: [SBX-L, SBX-D]
+    disposition: knobbed
+    target: subsystems.ui_inventory (detected) — renders the exception in S-024
+  - id: LR-042
+    rule: >-
+      "Use the existing X" means READ and CALL, never edit; "follow the pattern in
+      Y" means STUDY and REPLICATE; a broken helper is a STOP-and-report, never a
+      silent fix; CW includes this clarification whenever a prompt references
+      existing code.
+    found_in: [STD, SYN, CC2, SBX-L, SBX-D]
+    disposition: folded
+    target: S-025
+  - id: LR-043
+    rule: >-
+      Spike mode: Android/BLE proving work is a throwaway spike outside the repo
+      with an EMPTY authorized list ("NONE — spike"), the whole repo off-limits,
+      no pull/commit/push; success is a hardware-proven fact recorded in .forge
+      later; the captain decides spike vs in-repo port explicitly and never
+      blurs them.
+    found_in: [CC2]
+    disposition: knobbed
+    target: build.surfaces (len > 1 renders S-026)
+  - id: LR-044
+    rule: >-
+      UI conformance: before writing any .tsx, read ui-inventory.yaml
+      house_idioms and the entries for every authorized file; compose existing
+      components; prefer native HTML; overlays follow the house overlay idiom
+      (in-tree, never a portal); sheet.tsx is deliberately unused; if no pattern
+      fits, HALT AND REPORT — a new UI pattern is a Matt decision.
+    found_in: [SBX-L, SBX-D]
+    disposition: knobbed
+    target: subsystems.ui_inventory — renders S-027
+    note: The sheet.tsx and overlay-idiom specifics are Convergible facts; they move to the repo-rules doc (LR-163) and S-027 points at ui-inventory.yaml's own house_idioms block.
+  - id: LR-045
+    rule: >-
+      Architecture rule: data access and business logic never live in a .tsx;
+      screens call a /lib function; if a task seems to require otherwise, STOP —
+      the authorized list is probably missing the /lib counterpart.
+    found_in: [STD, SBX-L, SBX-D]
+    disposition: knobbed
+    target: architecture.tsx_lib_rule — renders S-029 and the preamble line
+  - id: LR-046
+    rule: >-
+      Extraction rule: when a task extracts a shared module, grep for VALUE
+      duplicates (a distinctive member), not only structurally identical copies.
+    found_in: [SBX-D]
+    disposition: folded
+    target: S-029
+    note: The METROS-1 / 4,105-places example is dropped from master text (LR-162).
+
+  # ------------------------------------------------------ the generated prompt
+  - id: LR-047
+    rule: >-
+      Prompt preamble opens with CONTEXT MODE: SELECTIVE, APPROVAL CODE: 3949,
+      "Do NOT run /start", "DO read CLAUDE.md", and "I am providing exactly the
+      context you need — work only with what I give you."
+    found_in: [STD, SYN, CC2, SBX-L, SBX-D]
+    disposition: folded
+    target: S-030
+  - id: LR-048
+    rule: >-
+      SCOPE LOCK text: only authorized files; if tempted to edit an unauthorized
+      file STOP and report the file, the exact change, and why, then wait;
+      silent edits are the biggest source of cross-session drift.
+    found_in: [STD, SYN, CC2, SBX-L, SBX-D]
+    disposition: folded
+    target: S-030
+  - id: LR-049
+    rule: >-
+      FILE CREATION RULE: every created file is at a path the prompt names;
+      otherwise STOP; grep for an existing file serving the purpose before
+      creating; a discrepancy is a STOP, never a second copy.
+    found_in: [SBX-L, SBX-D]
+    disposition: folded
+    target: S-030
+  - id: LR-050
+    rule: >-
+      NO MEMORY WRITES: CC does not write to its own memory or any persistence
+      outside the repository unless the prompt explicitly instructs it.
+    found_in: [SBX-L, SBX-D]
+    disposition: folded
+    target: S-030
+  - id: LR-051
+    rule: >-
+      COLLABORATION NOTE: suggest a clearly better pattern or improvement
+      briefly and WAIT FOR APPROVAL before building; never dive in on scope
+      expansion; disclose any deviation from MY APPROACH in the report.
+    found_in: [STD, SYN, CC2, SBX-L, SBX-D]
+    disposition: folded
+    target: S-030
+  - id: LR-052
+    rule: >-
+      COMMUNICATION RULES: CC talks to Matt in simple, natural, plain English;
+      any message directed at Matt is visually unmistakable and never buried in
+      thinking or output walls; do not assume technical knowledge.
+    found_in: [CC2, SBX-L, SBX-D]
+    disposition: folded
+    target: S-030 + C-001
+  - id: LR-053
+    rule: >-
+      Captain brevity: answer short, bottom-line first, no thinking out loud, no
+      recaps, no caveat padding; expand only when Matt asks; verbosity is a
+      correctness failure.
+    found_in: [CC2]
+    disposition: folded
+    target: W-001
+    note: Matt's standing rule is stricter (four sentences or less, per I4); the master carries the stricter form.
+  - id: LR-054
+    rule: >-
+      Opening repo statement: the prompt names the exact GitHub org/repo at the
+      top of STEP 0; CC never enumerates local folders as a menu; CC echoes the
+      resolved repo and, after refresh, the HEAD hash.
+    found_in: [STD, SYN, CC2, SBX-L]
+    disposition: folded
+    target: S-031
+  - id: LR-055
+    rule: >-
+      Canonical checkout: exactly one local location per repo at
+      C:\Chromasmith\<repo-name>, folder name matching GitHub casing; absolute
+      path, never ~; never a second clone; cmd-style mkdir/clone/cd forms.
+    found_in: [STD, SYN, CC2, SBX-L]
+    disposition: knobbed
+    target: repo.canonical_checkout (default C:\Chromasmith\<name>) — renders S-032
+  - id: LR-056
+    rule: >-
+      Claude Code runs on Surface 12 by default; use Anvil only for cases that
+      technically require it and say so in the prompt.
+    found_in: [SBX-L]
+    disposition: knobbed
+    target: repo.canonical_machine + repo.alternate_machines (NEW knobs) — renders one sentence in S-032
+  - id: LR-057
+    rule: >-
+      Pre-refresh safety check before any refresh: git status --porcelain, git
+      fetch + rev-list --count origin/main..HEAD, current branch; anything
+      dirty/untracked/unpushed means STOP, do not refresh, do not discard,
+      report in plain English, wait for Matt.
+    found_in: [STD, SYN, CC2, SBX-L]
+    disposition: folded
+    target: S-033
+  - id: LR-058
+    rule: >-
+      Branch check: if the checkout is not on main it is another lane's — the
+      Surface is ONE working tree shared by every concurrent local session; run
+      git log @{u}..HEAD; if dirty or unpushed, STOP and ask; never check out
+      main over another lane's work.
+    found_in: [SBX-L]
+    disposition: folded
+    target: S-033
+  - id: LR-059
+    rule: >-
+      Expected untracked gitignored paths (secrets/initiator-identity.yaml) are
+      NOT flagged by the safety check; tracked surprises are.
+    found_in: [CC2]
+    disposition: knobbed
+    target: mirror.gitignored_local_only_paths — renders the exemption in S-033
+  - id: LR-060
+    rule: >-
+      Refresh to match GitHub: with the copy clean, git fetch + checkout main +
+      reset --hard origin/main; never substitute a plain pull; the hard reset is
+      safe only because the safety check runs first and GitHub is a complete
+      mirror; never reorder.
+    found_in: [STD, SYN, SBX-L]
+    disposition: knobbed
+    target: mirror.github_is_complete_mirror == true — renders the hard-reset form of S-034
+  - id: LR-061
+    rule: >-
+      Gentle pull, not hard reset: GitHub is not a complete mirror (spike work
+      in WSL scratch, gitignored secrets); run the safety check, then git pull
+      origin main; the safety check is the permanent gate.
+    found_in: [CC2]
+    disposition: knobbed
+    target: mirror.github_is_complete_mirror == false — renders the gentle-pull form of S-034 (P4 default)
+  - id: LR-062
+    rule: >-
+      Snapshot caution: CW's view may be stale by the time CC runs; every file
+      reference carries a 2-3 line context snippet plus "verify this code exists
+      before applying; if already implemented, confirm and skip"; never describe
+      live state with certainty from a snapshot; recorded gaps must be
+      re-confirmed because spec and backlog notes lag reality.
+    found_in: [STD, SYN, CC2, SBX-L, SBX-D]
+    disposition: folded
+    target: S-037
+    note: The ZIP wording is dropped (LR-011); the verify-first discipline is kept for GitHub reads too.
+  - id: LR-063
+    rule: >-
+      Scope baseline: after refresh, capture git status --porcelain as the
+      baseline for the end-of-task scope audit.
+    found_in: [STD, SYN, CC2, SBX-L]
+    disposition: folded
+    target: S-035
+  - id: LR-064
+    rule: >-
+      Shell notes: avoid $(...) subshells; cmd-style forms are safe in elevated
+      PowerShell/cmd, otherwise use equivalents with identical behavior;
+      PowerShell cwd resets between CC tool calls so use absolute paths;
+      PowerShell here-strings leak characters into commit messages so use a bash
+      heredoc and verify with git log --format=%B | cat -A; prefer separate
+      sequential lines over && chaining.
+    found_in: [STD, SYN, CC2, SBX-L, SBX-D]
+    disposition: folded
+    target: S-036
+  - id: LR-065
+    rule: >-
+      Concurrency at push time: run git fetch immediately before every git push;
+      if origin/main moved, rebase and push again; never force-push.
+    found_in: [SBX-L, SBX-D]
+    disposition: folded
+    target: S-036 + S-043 + E-021
+  - id: LR-066
+    rule: >-
+      AUTHORIZED FILES section is mandatory in every prompt, even a one-file
+      task; naming files in TASK prose is not the same; the section lists
+      authorized files with notes, NEW FILE paths, the report/inbox path, and
+      the explicit OFF-LIMITS list.
+    found_in: [STD, SYN, CC2, SBX-L, SBX-D]
+    disposition: folded
+    target: S-038
+  - id: LR-067
+    rule: >-
+      A local prompt OPENS with the protocol's STEP 0 (canonical path, safety
+      check, refresh), never an ad-hoc read list.
+    found_in: [SBX-L]
+    disposition: folded
+    target: S-038 + S-041
+  - id: LR-068
+    rule: >-
+      Tool capabilities: Supabase (SQL/migrations/types via MCP only — CLI flows
+      broken, npm run generate-types blanks types.ts on failure), Vercel (MCP +
+      CLI; get_deployment serves stale state so cross-check list_deployments; CI
+      green is not deploy proof), GitHub (MCP + gh; gh run list --limit 1
+      unreliable, use gh run view); include only the services the task touches;
+      approval code 3949 for MCP writes; CC2 advertises GitHub only.
+    found_in: [STD, SYN, CC2, SBX-L]
+    disposition: knobbed
+    target: subsystems.supabase / subsystems.vercel (detected) — renders S-039 per service
+    note: The trap lines are generic to the tools and fold with the service block.
+  - id: LR-069
+    rule: >-
+      SQL shortcut: for simple SELECTs, one-off writes and schema checks, remind
+      Matt he can paste SQL into the Supabase SQL Editor.
+    found_in: [STD, SYN, SBX-L]
+    disposition: knobbed
+    target: subsystems.supabase — renders S-040
+  - id: LR-070
+    rule: >-
+      Prompt output: one complete prompt in a SINGLE uninterrupted code block;
+      never split across blocks; no commentary between sections.
+    found_in: [STD, SYN, CC2, SBX-L]
+    disposition: folded
+    target: S-041
+  - id: LR-071
+    rule: >-
+      ONE PROMPT AT A TIME: output a single prompt, wait for Matt to run it and
+      paste results, then the next; never two prompts in one response even when
+      a protocol step generates a pair.
+    found_in: [SBX-L]
+    disposition: folded
+    target: S-041 + W-001
+  - id: LR-072
+    rule: >-
+      Task framing: WHAT, WHY, MY APPROACH, IMPORT PATHS spelled out in full
+      alias form, DATA ACCESS NAMED UPFRONT (which /lib function, full path),
+      ARTIFACT PATHS NAMED UPFRONT, WHICH SURFACE and spike-vs-port (CC2), and
+      the premise stated as a HYPOTHESIS TO VERIFY FIRST rather than fact.
+    found_in: [STD, SYN, CC2, SBX-L, SBX-D]
+    disposition: folded
+    target: S-042
+    note: Data-access line renders when architecture.tsx_lib_rule; surface line when len(surfaces) > 1; premise-as-hypothesis is generic and renders always.
+
+  # --------------------------------------------------------------- completion
+  - id: LR-073
+    rule: >-
+      Completion steps in order: 0 scope audit (git status against baseline,
+      --untracked-files=all, delete scratch/probe files first; anything
+      unauthorized STOP), 1 validation at the BUILD LOCATION, 2 named-file commit
+      and push, 3 deploy, 4 verify deploy; build/push/deploy alone is not done;
+      verified match is done.
+    found_in: [STD, SYN, CC2, SBX-L, SBX-D]
+    disposition: folded
+    target: S-043
+  - id: LR-074
+    rule: >-
+      Validation command by shape: npm run build from repo root (single-app) or
+      cd <app> && npm run build (monorepo); "Compiled successfully" prints before
+      the type-check so never grep-filter the build output.
+    found_in: [STD, SYN, SBX-L]
+    disposition: knobbed
+    target: build.validation == npm-build + build.build_command + shape.build_location — fills S-043 step 1
+  - id: LR-075
+    rule: >-
+      Desktop Python validation: .venv\Scripts\python.exe -m py_compile on the
+      changed files plus an import check; never system python; docs/YAML-only
+      tasks invoke no interpreter and validate by manual structural review
+      (indentation, block scalars, no stray ": " in plain scalars) and say so.
+    found_in: [CC2]
+    disposition: knobbed
+    target: build.validation == py-compile | none — fills S-043 step 1
+  - id: LR-076
+    rule: >-
+      Android/BLE validation bar: py_compile proves nothing; the bar is build in
+      WSL, install on the phone, confirm behavior in live logcat; "done" means
+      observed on hardware; a build is proven by CONTENT, never exit code or
+      mtime.
+    found_in: [CC2]
+    disposition: knobbed
+    target: build.surfaces (len > 1) — renders S-044 with per-surface bars from config
+    note: The surface-specific mechanics (Rules A-D) move to ChromaControl's repo-rules doc (LR-164).
+  - id: LR-077
+    rule: >-
+      Named-file commits only; git add -A and git add . are FORBIDDEN; the
+      staged list matches the authorized list.
+    found_in: [STD, SYN, CC2, SBX-L, SBX-D]
+    disposition: folded
+    target: S-043 + E-021
+  - id: LR-078
+    rule: >-
+      Deploy: use the project's standard method (Vercel CLI/MCP, CDN, server,
+      local folder); skip if the project has none; there is NO web deploy for
+      ChromaControl and "shipping" the app is a packaging activity, not a per-
+      task step.
+    found_in: [STD, SYN, CC2, SBX-L]
+    disposition: knobbed
+    target: build.deploy (vercel | none | custom) + build.deploy_verify — fills S-043 steps 3-4 and E-023
+  - id: LR-079
+    rule: >-
+      Deploy proof is a Vercel deployment RECORD reaching READY for the exact
+      SHA; CI green is not deploy proof; a merged PR proves nothing about
+      buildability; no record after several minutes means a dropped push event
+      and the fix ladder starts with an empty commit.
+    found_in: [SBX-L, SBX-D]
+    disposition: knobbed
+    target: build.deploy == vercel — renders S-068 and the S-043 step-4 wording
+  - id: LR-080
+    rule: >-
+      Push verification for repo tasks: git fetch, git status -sb shows no
+      [ahead], rev-parse HEAD == rev-parse origin/main; do not announce done
+      until both match.
+    found_in: [CC2, SBX-L]
+    disposition: folded
+    target: S-043
+  - id: LR-081
+    rule: >-
+      CI gate rule: after pushing, check CI via gh run view <id>; fix only
+      failures directly caused by this session's changes (TypeScript, ESLint
+      errors, build errors in files you modified; ESLint errors are build-fatal,
+      warnings are not); on any other gate STOP, do not investigate, report as
+      pre-existing; read the JOB not the rollup; an install-step flake shows every
+      check as skipped.
+    found_in: [STD, SYN, SBX-L, SBX-D]
+    disposition: knobbed
+    target: subsystems.ci_quality_gate (detected) — renders S-045; CC2's "no CI, gh run list returns nothing" is the knob false
+  - id: LR-082
+    rule: >-
+      Per-change confirmation: if the prompt requested multiple named changes,
+      confirm each as Done / Already existed — skipped / Not done — reason;
+      never announce done with a silent skip.
+    found_in: [STD, SYN, CC2, SBX-L, SBX-D]
+    disposition: folded
+    target: S-046
+  - id: LR-083
+    rule: >-
+      DONE banner: a visible completion message, short — what finished and
+      where.
+    found_in: [STD, SYN, CC2, SBX-L, SBX-D]
+    disposition: folded
+    target: S-046 + E-021
+    note: Rendered as PLAIN TEXT; the echo -e / Write-Host color forms are dropped (LR-155).
+  - id: LR-084
+    rule: >-
+      Session report: write the full report to CC-reports/<ISSUE-ID>.md (never a
+      bare CC-report.md at root — parallel runs collide) and, in local mode,
+      place a copy on Matt's Desktop.
+    found_in: [SBX-L, SBX-D]
+    disposition: folded
+    target: S-048
+    note: RENAMED by board M1 to .forge/inbox/<run-id>.yaml, one file per run; the register records the rename; the Desktop copy stays as a local-mode line.
+  - id: LR-085
+    rule: >-
+      Reflection questions after every task: (1) what would have made this
+      prompt better; (2) anything that would make a memoryless future session
+      fail or waste time; (3) SCOPE DISCLOSURE — non-negotiable, list every
+      unauthorized file touched and why, or "No"; for a spike confirm the repo
+      was never touched.
+    found_in: [STD, SYN, CC2, SBX-L, SBX-D]
+    disposition: folded
+    target: S-047
+  - id: LR-086
+    rule: >-
+      Reflection (4) ARCHITECTURE DISCLOSURE — any data access or business logic
+      in a .tsx; if yes, name the file and why /lib was not taken (usually a
+      missing /lib counterpart = prompt defect).
+    found_in: [STD, SBX-L]
+    disposition: knobbed
+    target: architecture.tsx_lib_rule — renders Q4 in S-047
+    note: SYN and CC2 stopped at three questions; the canonical set (I6) gives Q4 to every TS/React repo.
+  - id: LR-087
+    rule: >-
+      Reflection (5) UI CONFORMANCE — any new UI pattern, component or style not
+      in ui-inventory.yaml; if yes name it, why the inventory did not cover it,
+      whether it should fold back.
+    found_in: [SBX-L, SBX-D]
+    disposition: knobbed
+    target: subsystems.ui_inventory — renders Q6 (I6 numbering) in S-047
+  - id: LR-088
+    rule: >-
+      Reflection RUNNER ENVIRONMENT — missing tools, secrets, permissions, or
+      commands blocked by the allowlist.
+    found_in: [SBX-D]
+    disposition: knobbed
+    target: execution.dispatch.enabled — renders Q5 (I6) in S-047, dispatch reader only
+  - id: LR-089
+    rule: >-
+      Reflection ARTIFACT PATHS — did the prompt ask for a file whose exact path
+      was not stated, or did you create a file at an unnamed path; that is a
+      prompt defect, not the runner's error.
+    found_in: [SBX-L, SBX-D]
+    disposition: folded
+    target: S-047 (Q7, renders when the task creates any file)
+  - id: LR-090
+    rule: >-
+      Reflection answers are actionable, not ceremonial; read them and use them;
+      great catches by either side are GOTCHA candidates at wrap.
+    found_in: [SBX-D]
+    disposition: folded
+    target: S-061 + S-050
+
+  # ---------------------------------------------- human gates / operator empathy
+  - id: LR-091
+    rule: >-
+      Live supervised runs: build explicit HUMAN GATES; CC prints a loud banner,
+      states the ONE thing Matt must do, and WAITS for a typed confirmation
+      word; no timers, no inferring he is done, no barreling ahead.
+    found_in: [CC2, SBX-L]
+    disposition: folded
+    target: S-049
+  - id: LR-092
+    rule: >-
+      Never hammer or re-poll an external site; one action, one attempt;
+      repeated automated contact trips anti-bot systems.
+    found_in: [SBX-L]
+    disposition: folded
+    target: S-049
+  - id: LR-093
+    rule: >-
+      Secrets entry is simple: source an existing key from where it already
+      lives so Matt never handles it; when Matt must type a secret, CC asks him
+      to type it and press Enter — no editors, helper scripts, or multi-step
+      developer workflows.
+    found_in: [SBX-L]
+    disposition: folded
+    target: S-049
+  - id: LR-094
+    rule: >-
+      The "your turn" signal is impossible to miss: blank space above and below,
+      solid bars carrying "MATT — YOUR TURN", ALL-CAPS action header, numbered
+      plain-English steps naming the exact device/action, then STOP and WAIT;
+      the banner is the LAST thing on screen; the bar is reserved exclusively
+      for Matt; PLAIN TEXT ONLY, no ANSI codes because Matt's terminal does not
+      render them.
+    found_in: [CC2]
+    disposition: folded
+    target: S-049 (banner template, generic wording; device names come from config)
+  - id: LR-095
+    rule: >-
+      Numbered sequences: when Matt must do more than one thing or things in
+      order, spell them out as a numbered list inside the YOUR-TURN block, with
+      what to watch for and what to report; never a comma-spliced run-on.
+    found_in: [CC2]
+    disposition: folded
+    target: S-049
+  - id: LR-096
+    rule: >-
+      No mind reading: never assume Matt knows the plan or what "obviously"
+      comes next; silence is never an instruction.
+    found_in: [CC2]
+    disposition: folded
+    target: S-049 + W-001
+  - id: LR-097
+    rule: >-
+      Hardware off by default: named devices stay powered down until the prove
+      step; the captain states the required device state before Matt touches
+      anything; prompts raise the hardware-on banner naming exactly which device
+      and when.
+    found_in: [CC2]
+    disposition: knobbed
+    target: hardware.devices (NEW knob, declared list) — renders the hardware-off paragraph of S-049 when non-empty
+  - id: LR-098
+    rule: >-
+      Test parameters must be correct and explicit: which devices ON/OFF and
+      when, a one-line confirmation that this state can actually produce the
+      result, and what Matt should observe and report.
+    found_in: [CC2]
+    disposition: folded
+    target: S-049
+  - id: LR-099
+    rule: >-
+      Announce the wait up front before a long step (roughly how long, that you
+      will go quiet, the finish signal to watch for); emit a quiet plain-text
+      "standing by" line at natural checkpoints; never promise a timed heartbeat
+      you cannot deliver; report immediately on completion or failure.
+    found_in: [CC2]
+    disposition: folded
+    target: S-049
+  - id: LR-100
+    rule: >-
+      Captain self-check before sending a prompt: hardware-off stated; every
+      Matt-action in a loud plain-text gate block, numbered, naming the device,
+      ending in STOP-and-WAIT; the block is last on screen; test parameters
+      explicit and capable; premise framed as hypothesis; CC told not to dump
+      thinking as the path to Matt. Any unchecked box means fix the prompt first.
+    found_in: [CC2]
+    disposition: folded
+    target: S-049 (generic form; the hardware line renders with hardware.devices)
+  - id: LR-101
+    rule: >-
+      Banners are mandatory, not optional examples; a prompt that omits or
+      softens them has failed the self-check and must not be sent.
+    found_in: [CC2]
+    disposition: folded
+    target: S-049
+
+  # -------------------------------------------------------------- dispatch
+  - id: LR-102
+    rule: >-
+      Mode selection: dispatch when tasks are independent, need no local build,
+      need only database reads or none, or Matt wants throughput; linear when
+      tasks are dependent, need a build/type-check, need a database write or
+      migration, are live supervised runs, Matt wants one thing at a time, or
+      the protocol layer itself is touched; linear is a first-class default;
+      parallelism is a throughput tool, not a virtue.
+    found_in: [SBX-D, SBX-L]
+    disposition: folded
+    target: S-002
+  - id: LR-103
+    rule: >-
+      Dispatch roles: CW plans, files issues, reads reports from threads, opens
+      PRs from CC's branches, reviews diffs/reflections/CI, recommends merges;
+      CC Action executes one scope-locked task per issue, pushes a harness
+      branch, posts report and blockers as comments, cannot merge, push main or
+      build, can read the database; Matt approves and merges in chat, is
+      notified by GitHub mobile push, and is the arbiter on disagreement.
+    found_in: [SBX-D]
+    disposition: folded
+    target: S-060
+  - id: LR-104
+    rule: >-
+      Dissent visibility: keep MY APPROACH, the COLLABORATION NOTE and the
+      reflection questions in every dispatched prompt; whenever CC deviates
+      from, overrides or challenges CW's approach, CW surfaces it to Matt in
+      plain English at the next report-back with what CW proposed, what CC did,
+      and who was right; quietly absorbing a catch is a violation.
+    found_in: [SBX-D]
+    disposition: folded
+    target: S-061
+  - id: LR-105
+    rule: >-
+      Delivery: the prompt is filed as a GitHub issue beginning @claude; the
+      body is fully self-contained for a fresh shallow-clone runner with zero
+      memory — repo context, scope lock, literal paths, task, approach,
+      completion steps, output format; assume nothing carries over.
+    found_in: [SBX-D]
+    disposition: folded
+    target: S-062
+  - id: LR-106
+    rule: >-
+      Never specify a branch name (the harness assigns and overrides); CC cannot
+      open PRs — it pushes and posts a pre-filled PR link and CW opens the PR.
+    found_in: [SBX-D]
+    disposition: folded
+    target: S-063
+  - id: LR-107
+    rule: >-
+      COMMENT-AND-HALT: any stop-point becomes an issue comment labeled QUESTION
+      or BLOCKED listing exactly what is needed, then the run ends; a reply
+      mentioning @claude resumes it; no run may end stuck without a posted
+      comment — a silent halt is a GOTCHA.
+    found_in: [SBX-D]
+    disposition: folded
+    target: S-063 + S-074
+    note: Board N2 adds needs_ruling in the inbox file as the structured form of the same halt.
+  - id: LR-108
+    rule: >-
+      If the task reads the database, include the bare-psql technique and the
+      no-$-variables trap verbatim; name the exact tables and confirm each is
+      readable; never print PG* values; a write-needing task is not dispatched.
+    found_in: [SBX-D]
+    disposition: knobbed
+    target: subsystems.database_access_doc — renders S-004 and the DATABASE ACCESS section of S-073
+  - id: LR-109
+    rule: >-
+      PRECONDITION line: if HEAD already contains a commit implementing the
+      task, VERIFY AND REPORT, never rebuild — a re-sent prompt plus "continue
+      from HEAD" rebuilds; migration prompts are the sharpest case.
+    found_in: [SBX-D]
+    disposition: folded
+    target: S-063
+  - id: LR-110
+    rule: >-
+      Never dispatch from a backlog description alone; re-read the named file
+      immediately before dispatching — pointers rot and gaps close.
+    found_in: [SBX-D]
+    disposition: folded
+    target: S-063
+  - id: LR-111
+    rule: >-
+      Never cite a file that exists only on an unmerged branch; the runner
+      clones main and will post BLOCKED.
+    found_in: [SBX-D]
+    disposition: folded
+    target: S-063
+  - id: LR-112
+    rule: >-
+      Any YAML embedded in a prompt is parse-validated by CW in its sandbox
+      before the prompt ships; quote any bare list item containing a colon
+      mid-sentence.
+    found_in: [SBX-D]
+    disposition: folded
+    target: S-063 + E-008
+  - id: LR-113
+    rule: >-
+      Large-survey prompts say "do not end your turn until the branch is
+      pushed", give a partial-delivery fallback with a coverage block, and allow
+      parallel sub-agents; the tell of a phantom finish is an unchecked
+      checklist and no Create-PR link.
+    found_in: [SBX-D]
+    disposition: folded
+    target: S-063
+  - id: LR-114
+    rule: >-
+      Relay every ruling as a plain-words statement in the message body, never
+      only through a picker selection.
+    found_in: [SBX-D]
+    disposition: folded
+    target: S-063 + W-001
+  - id: LR-115
+    rule: >-
+      Name the exact CSS CLASS and its expected VALUE, never a theme nickname;
+      check which theme class live pages apply.
+    found_in: [SBX-D]
+    disposition: knobbed
+    target: subsystems.repo_rules_doc (Convergible entry) — see LR-163
+  - id: LR-116
+    rule: >-
+      When pasting authored CSS, paste verbatim then run prettier --write on that
+      ONE file after confirming it is prettier-clean at HEAD; repo-wide --write
+      stays banned.
+    found_in: [SBX-D]
+    disposition: knobbed
+    target: subsystems.repo_rules_doc (Convergible entry) — see LR-163
+  - id: LR-117
+    rule: >-
+      For an externally-throttled dry run, persist the pure cache memo and
+      withhold only the destructive write.
+    found_in: [SBX-D]
+    disposition: knobbed
+    target: subsystems.repo_rules_doc (Convergible entry) — see LR-163
+  - id: LR-118
+    rule: >-
+      Census and scout prompts spend spare probe budget on unresolved or
+      INCONCLUSIVE targets first, new candidates second.
+    found_in: [SBX-D]
+    disposition: knobbed
+    target: subsystems.repo_rules_doc (Convergible entry) — see LR-163
+  - id: LR-119
+    rule: >-
+      Runner environment facts: tool access is the claude.yml allowlist and
+      off-list commands are hard-blocked with no human to approve (a needed
+      command is a Matt web-edit FIRST); Bash(env) removed once credentials
+      entered the job; any $ expansion is hard-refused with "Contains
+      simple_expansion" and no quoting avoids it; npm run build and type-check
+      are not allowed; the clone is shallow so read history via gh api;
+      python3 and node -e are blocked so verification is grep-only;
+      .github/workflows cannot be edited by the connector or a runner (Matt-only,
+      web editor, and an uncompleted commit dialog silently loses the change);
+      auth is CLAUDE_CODE_OAUTH_TOKEN and an ANTHROPIC_API_KEY must never enter
+      the action environment.
+    found_in: [SBX-D]
+    disposition: knobbed
+    target: execution.dispatch.allowed_tools (NEW knob, declared, copied from claude.yml) — the rest folds into S-064 as fixed text
+    note: The allowlist contents are perishable and were already stale-prone in the protocol; the knob keeps the rendered file truthful.
+  - id: LR-120
+    rule: >-
+      Parallel triage gate — two tasks run together only if authorized lists do
+      not overlap at all, neither reads code the other may change, neither
+      depends on the other's outcome, each writes its own report path, and
+      neither needs a build, database write or workflow edit; any failure means
+      sequential; state the verdict plainly; database reads do not block.
+    found_in: [SBX-D]
+    disposition: folded
+    target: S-065
+  - id: LR-121
+    rule: >-
+      Likely-to-share rule: disjoint lists today are not the whole test; when
+      two findings are likely to end up in the same file once diagnosed,
+      sequence them — fencing can fence the fix out of reach.
+    found_in: [SBX-D]
+    disposition: folded
+    target: S-065
+    note: The GAPFILL-FIX-1 / SERENROW-FIX-1 example drops from master text (LR-162).
+  - id: LR-122
+    rule: >-
+      Up to 3-4 dispatched jobs may run in parallel when the triage gate clears
+      them.
+    found_in: [SBX-D]
+    disposition: knobbed
+    target: execution.max_parallel (default 3)
+  - id: LR-123
+    rule: >-
+      After a batch, review all PRs together, confirm no disclosed drift
+      collides, surface deviations, ask per-PR "shall I merge?", execute in
+      order; merge first the PR others may need to rebase onto and re-check the
+      rest after each merge; squash is the house method.
+    found_in: [SBX-D]
+    disposition: folded
+    target: S-066
+  - id: LR-124
+    rule: >-
+      A build-fix PR is never merged on review alone: post an @claude
+      VERIFICATION ONLY comment and merge only when the reported gates are green
+      or a READY Vercel preview exists for the head SHA; generalize to any code
+      PR from a build-less runner.
+    found_in: [SBX-D]
+    disposition: folded
+    target: S-067
+  - id: LR-125
+    rule: >-
+      A dispatched runner can never resolve a merge conflict (fetch/merge not
+      allowlisted, shallow clone, merge-base fails); hand-splicing is wrong; the
+      working pattern is a COPY job — a fresh issue cuts a branch from main,
+      fetches each file from the conflicted branch via gh api, writes it byte-
+      for-byte, re-applies the one conflicting hunk by hand, verifies with
+      SHA-256 per file, then the conflicted PR is closed; never ask CW to retype
+      a large binding file from memory.
+    found_in: [SBX-D]
+    disposition: folded
+    target: S-069
+    note: The issue #388 timing example drops (LR-162).
+  - id: LR-126
+    rule: >-
+      In-session monitoring: after dispatching, CW polls GitHub itself at 3-5
+      minute intervals with a roughly 30-minute cap and acts the moment CC
+      reports; Matt need not say "check".
+    found_in: [SBX-D]
+    disposition: dropped
+    reason: >-
+      Superseded by Matt's 2026-09-02 ruling: dispatch, confirm it started, then
+      hand the turn back — never hold the turn with sleep-polling; Matt pings
+      "check" when he wants a status read.
+  - id: LR-127
+    rule: >-
+      Advance-the-board: on ANY message from Matt during a dispatch session,
+      poll every run, review what landed, open PRs, run verifications, queue
+      merges for his yes; stop only at decisions that are genuinely his; never
+      end a turn with "I'll check later"; out of session, GitHub mobile push
+      notifies him and one word ("check") brings CW back.
+    found_in: [SBX-D]
+    disposition: folded
+    target: S-070
+  - id: LR-128
+    rule: >-
+      Reading CI: Quality Gate Status is the honest aggregator and the Quality
+      Gates job is continue-on-error; the rollup can fail before any gate runs;
+      grep run logs for ##[error] not ::error::; a scheduled workflow that never
+      fired produces no run object so filter gh run list by event.
+    found_in: [SBX-D]
+    disposition: folded
+    target: S-071
+    note: The SCHEDULER-DIAG-1 name drops as an example (LR-162).
+  - id: LR-129
+    rule: >-
+      CW's GitHub connector cannot read check-run statuses (403); CI verdicts
+      come from the PR page or a dispatched CC session with gh access.
+    found_in: [SBX-D]
+    disposition: folded
+    target: S-071
+    verify: >-
+      [VERIFY at step 4] This is a tool-capability fact from 2026-08-2x; the
+      connector may have changed. Render it as "reported" until re-tested.
+  - id: LR-130
+    rule: >-
+      Rollback: branch protection on main is the pipeline's switch; toggling it
+      off restores the local workflow instantly; mid-task failure means flip it
+      off and finish locally; switching modes mid-session is normal.
+    found_in: [SBX-D]
+    disposition: folded
+    target: S-072
+  - id: LR-131
+    rule: >-
+      Issue body template: @claude header, CONTEXT MODE / APPROVAL CODE, fresh-
+      runner statement, COMMUNICATION RULES, SCOPE LOCK with QUESTION-comment
+      halt, ARCHITECTURE RULE, FILE CREATION RULE, NO MEMORY WRITES,
+      COLLABORATION NOTE, UI CONFORMANCE (if .tsx), REQUIRED CONTEXT with
+      verify-first, AUTHORIZED FILES with literal paths and report path,
+      OFF-LIMITS, TASK + MY APPROACH, DATABASE ACCESS (if reads), RUNNER
+      ENVIRONMENT, COMPLETION STEPS (scope audit --untracked-files=all, named
+      commit, push + PR link, report), OUTPUT FORMAT with six reflections.
+    found_in: [SBX-D]
+    disposition: folded
+    target: S-073
+    note: The template's fixed sections become the P7 dispatch-reader FIXED ORDERING (scope lock, off-limits, halt-and-report, inbox path, needs_ruling first).
+  - id: LR-132
+    rule: >-
+      Dispatch precondition: GitHub is a complete mirror; the pipeline requires
+      claude.yml, the OAuth secret, branch protection on main, and the artifact
+      register.
+    found_in: [SBX-D]
+    disposition: knobbed
+    target: >-
+      execution.dispatch.requires (renderer refuses dispatch=true when any is absent)
+
+  # ------------------------------------------------------------------- wrap
+  - id: LR-133
+    rule: >-
+      Trigger: Matt says "end session", "wrap up", or runs his own wrap prompt;
+      never auto-generate a wrap Matt did not ask for — he triggers it with his
+      own prompt format.
+    found_in: [STD, SYN, CC2, SBX-L, SBX-D]
+    disposition: dropped
+    reason: >-
+      The "runs his own wrap prompt / never auto-generate" wording contradicts
+      Matt's 2026-09-02 correction: CW builds the wrap from the protocol when
+      Matt declares the day's work finished, and never produces it unprompted
+      mid-session (I7). The corrected rule is folded as E-001.
+  - id: LR-134
+    rule: >-
+      Claude Web prepares all file contents; Claude Code writes, commits and
+      deploys them from a CDT prompt (local) or a dispatched wrap issue whose
+      docs PR Matt squash-merges; CC's job is simple — write/edit/append as
+      instructed.
+    found_in: [STD, SYN, CC2, SBX-L, SBX-D]
+    disposition: dropped
+    reason: >-
+      Replaced by the 2026-09-04 WRAP DIRECT-WRITE ruling: CW pushes the wrap's
+      .forge/ files itself via the GitHub MCP (one diff-verified commit or PR);
+      CC's wrap role shrinks to pushing its own code and telemetry in local mode
+      (E-021), and dispatch mode needs nothing further from CC.
+  - id: LR-135
+    rule: >-
+      Every path the wrap may write is listed literally (session-state,
+      active-bugs, session-history, backlog, GOTCHAS, rulings, handoff, schema
+      conditional, CHANGELOG, the four archive files, ChromaQA telemetry pass-
+      through); the list must agree with the artifact register and the register
+      wins.
+    found_in: [SBX-L, SBX-D]
+    disposition: folded
+    target: E-003
+  - id: LR-136
+    rule: >-
+      Never write to the rogue path .forge/GOTCHAS-archive.yaml; the canonical
+      archive is .forge/archive/GOTCHAS-archive.yaml; a reappearance is a new
+      defect.
+    found_in: [SBX-L, SBX-D]
+    disposition: folded
+    target: E-003 + E-015
+    note: Generalized to "one archive path per file class; any second path is a defect", with the sandbox path as the example only in the sandbox render.
+  - id: LR-137
+    rule: >-
+      STEP 0 scope reconciliation before anything else: for every prompt this
+      session collect the authorized list and CC's disclosures (scope,
+      architecture, UI conformance, runner environment, artifact paths); build
+      session-authorized scope, disclosed drift, suspected drift, architecture
+      drift, UI drift, artifact-path defects, parallel collisions, spike
+      contamination, and database state changes; disclosed or suspected scope
+      drift BLOCKS the wrap until Matt chooses accept/revert/bring-into-scope-
+      and-log; the other classes are surfaced in plain English and folded into
+      the handoff without blocking; no drift means proceed silently.
+    found_in: [STD, SYN, CC2, SBX-L, SBX-D]
+    disposition: folded
+    target: E-005
+    note: Spike contamination renders when len(surfaces) > 1; parallel collisions when dispatch; database state when supabase. Board M1 makes the inbox files the source of the disclosures.
+  - id: LR-138
+    rule: >-
+      Identify the project (org/repo, canonical checkout); if unclear ask; a
+      ChromaControl wrap on a standard repo is a STOP — use the right wrap.
+    found_in: [STD, SYN, CC2, SBX-L, SBX-D]
+    disposition: folded
+    target: E-006
+    note: The "wrong variant" check is replaced by the config hash in the header stamp.
+  - id: LR-139
+    rule: >-
+      Read the current contents of every wrap file before writing; note missing
+      files and use the initialization templates; read ChromaQA telemetry for
+      awareness only.
+    found_in: [STD, SYN, CC2, SBX-L, SBX-D]
+    disposition: folded
+    target: E-007
+  - id: LR-140
+    rule: >-
+      Verify before you write: every factual claim is checked against its source
+      of truth now (repo claims by reading GitHub, database claims by a query,
+      universal claims by a count written next to the claim); unverifiable
+      claims are written as UNVERIFIED or left out; every status field is
+      re-read against the item's own description and the description wins;
+      every wrap YAML is parsed by a real parser first; the report lists which
+      claims were verified and how.
+    found_in: [SBX-L, SBX-D]
+    disposition: folded
+    target: E-008
+    note: Board M4 evidence rule and N3 computed count extend this block.
+  - id: LR-141
+    rule: >-
+      session-state.yaml is a full OVERWRITE: milestones, decisions, blockers,
+      next_steps, context; unmerged PRs are never milestones; database state
+      changed this session goes in decisions; for multi-surface repos record the
+      surface and what was proven on hardware (a compiled-but-unproven build is
+      not a milestone).
+    found_in: [STD, SYN, CC2, SBX-L, SBX-D]
+    disposition: folded
+    target: E-009
+    note: surface field renders when len(surfaces) > 1.
+  - id: LR-142
+    rule: >-
+      active-bugs.yaml is a SURGICAL EDIT with REMOVE / KEEP / ADD operations
+      only, never the whole file; take the next unused BUG-NNN from the file.
+    found_in: [STD, SYN, CC2, SBX-L, SBX-D]
+    disposition: folded
+    target: E-010
+  - id: LR-143
+    rule: >-
+      session-history.yaml APPENDs only the new entry; files_modified is
+      audit-grade from git log/diff or merged PR diffs, never memory, with
+      accepted out-of-scope files marked; include PR numbers and merge SHAs in
+      dispatch mode; a spike session may legitimately show an empty list and
+      that is not an idle session.
+    found_in: [STD, SYN, CC2, SBX-L, SBX-D]
+    disposition: folded
+    target: E-011
+  - id: LR-144
+    rule: >-
+      backlog.yaml is a SURGICAL EDIT with REMOVE / UPDATE / MOVE / ADD naming
+      the section exactly as it appears in the file; sections are prioritized /
+      in_progress / completed (no section named backlog); status vocabulary is
+      closed to ready | blocked | needs-ruling | in_progress | deferred |
+      completed | superseded; completed items MOVE to completed and archive to
+      .forge/archive/backlog-archive.yaml after 30 days; a child left ready
+      under a completed parent is a defect; needs-ruling is checked against
+      rulings.yaml.
+    found_in: [SBX-L, SBX-D]
+    disposition: folded
+    target: E-012
+    note: This is the unified schema (I2). The legacy schema is dropped (LR-157).
+  - id: LR-145
+    rule: >-
+      GOTCHAS.yaml APPENDs only new entries as a bare top-level list, never
+      indented; take the next unused ID (prefix per repo); gotchas are rarely
+      deleted; log GOTCHAs for scope-drift patterns, architecture drift from a
+      missing /lib counterpart (naming the PROMPT defect), artifact-path defects
+      (naming the register rule violated), silent halts, runner permission gaps,
+      and any CC catch worth keeping; new perishable build-env specifics belong
+      in GOTCHAS, not protocol.
+    found_in: [STD, SYN, CC2, SBX-L, SBX-D]
+    disposition: folded
+    target: E-013
+    note: ids.gotcha_prefix knob fills the ID form (GOTCHA- default, V2-G- for ChromaControl).
+  - id: LR-146
+    rule: >-
+      Tombstone GOTCHAs (V2-G-028, the dead Termux plan) are NEVER archived by
+      any staleness review; a fresh session must keep being warned.
+    found_in: [CC2]
+    disposition: knobbed
+    target: protected.tombstone_gotchas — renders the exemption in E-013 and E-015
+  - id: LR-147
+    rule: >-
+      handoff.yaml is an OVERWRITE written as a WARNING LETTER to a memoryless
+      colleague, not a summary: status (honest 3-4 lines, name unmerged PRs),
+      first_thing, watch_out_for (the 30-minute trap, scope pressure points,
+      architecture pressure points, artifact-path defects, parallel collisions,
+      perishable build-env hazards, database state the repo cannot show),
+      next_up, tone; include the generation timestamp.
+    found_in: [STD, SYN, CC2, SBX-L, SBX-D]
+    disposition: folded
+    target: E-014
+    note: Board M3 adds written_at_commit + written_at_utc; S1 adds the protocol_drift field; pre-mortem 2 adds the north-star line.
+  - id: LR-148
+    rule: >-
+      ONE-ITEM AGENDA: first_thing names EXACTLY ONE item; next_up is a record
+      of what was seen and deliberately deferred (each marked not-next-session
+      in the backlog), not a menu; session-state next_steps carries the same
+      single item.
+    found_in: [SBX-L, SBX-D]
+    disposition: folded
+    target: E-014
+    note: The legacy "second priority / third priority" next_up wording is superseded by this (LR-166).
+  - id: LR-149
+    rule: >-
+      Archive maintenance: session-history cap 15 (oldest-first, move before the
+      append); CHANGELOG cap 12 (newest-at-top, only when a new entry passes the
+      gate); every ARCHIVE MOVE names a literal Destination; archive files are
+      created on first use after grepping for an existing one; archives are
+      never read at session start.
+    found_in: [STD, SYN, CC2, SBX-L, SBX-D]
+    disposition: knobbed
+    target: thresholds.session_history_cap (15) + thresholds.changelog_cap (12) — renders E-015
+  - id: LR-150
+    rule: >-
+      GOTCHAS consolidation trigger is 100 entries OR one month since the last
+      consolidation, whichever first; the wrap never performs it — it says so in
+      the handoff and the consolidation runs as its own session with Matt-set
+      criteria; a wrap may archive entries it can justify individually; a bulk
+      prune to a target number is its own session; declining to prune is
+      correct behavior.
+    found_in: [SBX-L, SBX-D]
+    disposition: knobbed
+    target: thresholds.gotcha_consolidation (100 / 1 month / own session) — renders E-015
+    note: The legacy review-at-50 rule is dropped (LR-158).
+  - id: LR-151
+    rule: >-
+      Archive fidelity: the runner counts entries before and after in BOTH
+      files, never stops between the append and the removal, and CW diffs the
+      sorted line multiset of source plus destination against the originals
+      before merging; the count proves nothing was dropped, only the diff proves
+      nothing was changed.
+    found_in: [SBX-D]
+    disposition: folded
+    target: E-015
+    note: Under direct-write CW performs the move itself; the same count+diff check runs on CW's own commit.
+  - id: LR-152
+    rule: >-
+      Context primer phase check: the primer is refreshed ONLY when the project's
+      phase or a load-bearing narrative fact shifted (migration completes,
+      runtime target changes, first proven-on-hardware function); the ordinary
+      case omits it; when refreshed it is a full overwrite keeping history
+      intact.
+    found_in: [CC2]
+    disposition: knobbed
+    target: protected.phase_authority_doc — renders E-016
+  - id: LR-153
+    rule: >-
+      CHANGELOG quality gate: PUBLIC-WORTHY wins only (would a customer or buyer
+      care); include shipped features, architecture milestones, integrations,
+      infrastructure wins; exclude bug fixes, minor tweaks, refactors, friction,
+      failures, and anything built but not proven; omit entirely if nothing
+      qualifies; PREPEND newest-first; schema (date, slug, title, summary,
+      category, technical, tags, impact) and tone (benefit-first, never "Added"
+      or "New", credible technical, 3-6 tags, strategic impact, forward
+      momentum); no em dashes in customer-facing copy; "shipped" means proven
+      working, not just built.
+    found_in: [STD, SYN, CC2, SBX-L, SBX-D]
+    disposition: folded
+    target: E-017
+  - id: LR-154
+    rule: >-
+      Schema refresh gate: only if migrations ran (CREATE/ALTER tables, columns,
+      indexes, constraints); discovery-based (list base tables first, then the
+      six detail queries against exactly those tables; enums schema-wide; empty
+      list writes tables: {}); PRESERVE RULE — schema.yaml is hand-annotated, so
+      diff the live catalog against the documented tables, carry every
+      annotation forward, add only what is new, report added vs preserved; match
+      migrations by NAME not Supabase version number; policy queries need a
+      ::text cast on polcmd; the refresh is CW's own work via Supabase MCP with
+      full-catalog visibility because the runner role sees only a subset and
+      would write a silently incomplete document.
+    found_in: [STD, SYN, SBX-L, SBX-D]
+    disposition: knobbed
+    target: subsystems.supabase — renders E-018 (CW performs it in both modes under direct-write)
+    note: CC2's "NOT APPLICABLE, no database, no FILE 4b" is the same knob false.
+  - id: LR-155
+    rule: >-
+      DONE banner via echo -e "\033[32m ... \033[0m" (bash) or Write-Host
+      -ForegroundColor Green (PowerShell).
+    found_in: [STD, SYN, CC2, SBX-L, SBX-D]
+    disposition: dropped
+    reason: >-
+      ANSI color does not render in Matt's terminal (CC2 says so in the same
+      file); I7 makes every banner plain text; the banner itself is kept (LR-083).
+  - id: LR-156
+    rule: >-
+      Output the wrap prompt: estimate lines and count distinct edit operations;
+      split into two labeled parts at 1,000 lines or more than 10 operations
+      (STD/SBX) or at 400 lines (SYN/CC2); announce the split; deliver Part 1,
+      wait, then Part 2; OVERWRITE = complete content, SURGICAL = operations
+      only, APPEND = new entry only; commentary after the block.
+    found_in: [STD, SYN, CC2, SBX-L, SBX-D]
+    disposition: knobbed
+    target: thresholds.wrap_split (1000 lines / 10 ops default)
+    note: >-
+      Under direct-write the threshold is repurposed: it decides PR delivery vs
+      a direct docs commit for CW's own write, and still splits the small CC
+      local remainder prompt if ever needed. The 400 figure is dropped (LR-159).
+  - id: LR-157
+    rule: >-
+      Legacy backlog schema: sections in_progress and backlog; statuses
+      in_progress / blocked / prompt_ready and ready / blocked; NO completed
+      section — completed work lives in session-history; MOVE ops read "backlog
+      to in_progress".
+    found_in: [STD, SYN, CC2]
+    disposition: dropped
+    reason: >-
+      Replaced by the unified schema (I2, LR-144); repos still on this schema
+      are migrated by a one-time wrap-style edit during their first render.
+  - id: LR-158
+    rule: >-
+      GOTCHAS review threshold: at 50 entries review each for staleness and
+      archive candidates as part of the wrap.
+    found_in: [STD, SYN, CC2]
+    disposition: dropped
+    reason: >-
+      Calibrated for one session a day; replaced 2026-09-03 by the 100-or-monthly
+      consolidation trigger that runs as its own session (LR-150).
+  - id: LR-159
+    rule: >-
+      Split the wrap prompt at 400 lines.
+    found_in: [SYN, CC2]
+    disposition: dropped
+    reason: >-
+      Raised to 1,000 lines / 10 operations on 2026-08-08 (Opus 5-era capability);
+      SYN and CC2 never received the update; the knob default is the new figure.
+  - id: LR-160
+    rule: >-
+      Narrative history embedded in protocol text: the 2026-08-20 abridgement
+      story, the Google Drive relay predecessor (synclips_cross_repo v001-v022
+      frozen), the ChromaControl two-repo phase and v1 upload convention, the
+      purple/ANSI reserved-color history, ARCHIVE-SPLIT-1's timeline, the
+      2026-08-29 nine-registration handoff anecdote, DBACCESS-TEST-1/2 narratives.
+    found_in: [SYN, CC2, SBX-L, SBX-D]
+    disposition: dropped
+    reason: >-
+      History is not a rule; every rule these stories justify is folded on its
+      own line, and the stories already live in GOTCHAS, session history and
+      database-access.yaml.
+  - id: LR-161
+    rule: >-
+      Variant-selection headers and cross-variant pointers ("this is the
+      STANDARD variant, it replaces two flavors", "do NOT use this for
+      ChromaControl", "parallel_variant: ...", "companion_wrap: ...").
+    found_in: [STD, SYN, CC2, SBX-L, SBX-D]
+    disposition: dropped
+    reason: >-
+      The renderer header stamp and config hash replace variant selection; a
+      rendered file names its companion by path in the stamp, not in prose.
+  - id: LR-162
+    rule: >-
+      Convergible-specific evidence woven into rule text: file paths
+      (gible-data.ts, serendipity-reveal.tsx, src/lib/metros/registry.ts),
+      issue/PR numbers (#260, #261, #386, #388), task names (METROS-1, GAPFILL-
+      FIX-1, SERENROW-FIX-1, WW-SCOUT-1, DBACCESS-TEST-1/2, SCHEDULER-DIAG-1,
+      DISPATCH-TEST-1), counts (4,105 places, 2m29s).
+    found_in: [SBX-L, SBX-D]
+    disposition: dropped
+    reason: >-
+      Examples are evidence, not rules; every rule they illustrate is folded
+      generically above, and the evidence stays in convergible-sandbox's GOTCHAS
+      and archive where it originated.
+  - id: LR-163
+    rule: >-
+      Convergible-specific operating rules folded into the protocol on 2026-09-03
+      (DOC-FOLD-1): CSS class-and-value naming, per-file prettier, throttled dry-
+      run cache persistence, census/scout probe budget, sheet.tsx deliberately
+      unused and the house overlay idiom.
+    found_in: [SBX-D, SBX-L]
+    disposition: knobbed
+    target: subsystems.repo_rules_doc (NEW knob) -> .forge/protocols/repo-rules.yaml, created for convergible-sandbox at step 4
+    note: >-
+      Same mechanism as database-access.yaml: the master says "if the repo
+      declares a repo-rules doc, it is binding on every prompt" (S-005) and the
+      content stays in the repo. Nothing is lost; the sandbox render still
+      carries them by pointer to a file the runner can read.
+  - id: LR-164
+    rule: >-
+      ChromaControl Android build mechanics — Rule A durable long-lived
+      background build with log + done-marker, Rule B `yes |` into buildozer,
+      Rule C prove APK freshness by CONTENT (grep the bundled .pyc), Rule D WSL
+      crash recovery via wsl --shutdown and re-verify; sync the edited file into
+      the build dir first; activate the pinned build venv; ADB multi-device -s
+      target and fresh wireless port; copy the APK to a Windows path; pre-grant
+      BLE permissions; the three surfaces' canonical paths; device names (Nikon
+      ZR, LIT Duo, S26 Ultra, Solis network).
+    found_in: [CC2]
+    disposition: knobbed
+    target: subsystems.repo_rules_doc for chromacontrol-v2 + hardware.devices + build.surfaces
+    note: >-
+      CC2's own text says the perishable specifics belong in GOTCHAS V2-G-098..111
+      and only the SHAPE is durable; the shape is folded (LR-076, LR-097) and the
+      mechanics move to ChromaControl's repo-rules doc when it is rendered (step 9).
+  - id: LR-165
+    rule: >-
+      References to retired tooling and stale field names: "See
+      GOTCHAS_SYSTEM_BLUEPRINT", "LOG_FRICTION prompt (captain flow) /
+      LOG_FRICTION_STANDALONE", "handoff.yaml is a new file — older repos may
+      not have it", "treat its next_session_tasks as the default agenda".
+    found_in: [STD, SYN, CC2]
+    disposition: dropped
+    reason: >-
+      The blueprint, the flow, and the field no longer exist; the handoff is
+      universal and its agenda field is first_thing.
+  - id: LR-166
+    rule: >-
+      handoff next_up carries "second priority task" and "third priority" as a
+      prioritized list of what to do after first_thing.
+    found_in: [STD, SYN, CC2]
+    disposition: dropped
+    reason: >-
+      Superseded by the one-item agenda (RULING-019 / LR-148): next_up is a
+      record of deferred items, not a menu, because a menu invites drift.
+  - id: LR-167
+    rule: >-
+      Relay write at wrap (Synclips): mandatory assessment at EVERY wrap for
+      cross-repo effects (contract created/changed, obligation on another repo,
+      inbound ripple resolved with evidence, question raised/answered, state.yaml
+      stale); if any, write the relay — surgical operations only, DELETE means
+      delete, evidence to resolve a ripple, IDs from state.yaml counters with the
+      counter bump, PROTOCOL.md wins, no archive machinery in the relay, 40-80
+      lines typical and 200+ means internal detail is leaking; if none, state
+      "No relay update needed this session — nothing crossed a repo seam"; a
+      wrap silent on the relay is defective.
+    found_in: [SYN]
+    disposition: knobbed
+    target: >-
+      companion_repos (write_at_wrap=true) — renders E-020, executed by CW direct-write against the relay repo
+  - id: LR-168
+    rule: >-
+      The relay write is delivered as a SECOND Claude Code prompt run after the
+      main wrap prompt, with a GitHub-web manual fallback of whole relay files.
+    found_in: [SYN]
+    disposition: dropped
+    reason: >-
+      Replaced by wrap direct-write (LR-134): CW applies the same surgical
+      operations to the relay repo itself via the GitHub MCP, after asking
+      whether a CC session is active there; the manual fallback shape (E-027)
+      covers the relay too.
+
+  # ----------------------------------------- wrap: commit, verify, fallback
+  - id: LR-169
+    rule: >-
+      Working tree audit before the docs write: git status --porcelain; the
+      wrap may modify only its listed paths; other modified files are a STOP
+      and Matt decides whether to commit separately, revert, or accept with an
+      updated message; never sweep surprises into the wrap commit; never stage
+      the gitignored secret.
+    found_in: [STD, SYN, CC2, SBX-L, SBX-D]
+    disposition: folded
+    target: E-021
+    note: Under direct-write this audit belongs to the CC local remainder prompt (the only step that touches the local tree).
+  - id: LR-170
+    rule: >-
+      Line-ending check: the repo is pure LF; editing tools and shell appends
+      silently convert to CRLF; verify every written file is LF before staging.
+    found_in: [SBX-L, SBX-D]
+    disposition: knobbed
+    target: repo.line_endings (NEW knob, default lf) — renders in E-021 and in CW's own direct-write check
+  - id: LR-171
+    rule: >-
+      Commit message "docs: end session YYYY-MM-DD — N milestones" with suffixes
+      " + schema refresh", " + archive maintenance", " + chromaqa telemetry",
+      " + primer refresh"; bash heredoc, verify with cat -A; git fetch first;
+      named files; push origin main.
+    found_in: [STD, SYN, CC2, SBX-L, SBX-D]
+    disposition: folded
+    target: E-030
+    note: Board M4 appends "N claims verified by ID, M reported unverified" to the message.
+  - id: LR-172
+    rule: >-
+      VERIFY PUSH is mandatory in local mode: clean tree (git status --porcelain
+      empty), not ahead (git status -sb without [ahead N]), HEAD == origin/main
+      after fetch; echo the proven state; any failure means the session is NOT
+      done — fix and re-run all three; an unverified wrap is destroyed by
+      tomorrow's hard reset (or orphaned by tomorrow's pull).
+    found_in: [STD, SYN, CC2, SBX-L]
+    disposition: folded
+    target: E-021
+  - id: LR-173
+    rule: >-
+      Dispatch wrap verification: VERIFY PUSH does not apply (runners are
+      disposable); the session is wrapped when the docs PR is MERGED and main
+      shows the new content; an unmerged wrap PR at walk-away is safe but is the
+      first item next session; confirm main has not moved on any wrap file
+      before merging and re-land via the COPY pattern if it has.
+    found_in: [SBX-D]
+    disposition: folded
+    target: E-022
+    note: Under direct-write, applies whenever CW delivers the wrap as a PR (the size rule or a concurrent CC session).
+  - id: LR-174
+    rule: >-
+      ChromaQA telemetry (.chromaqa/CQA-runs.jsonl, CQA-debt.jsonl,
+      CQA-showstoppers.jsonl) is PASS-THROUGH: never generated or edited,
+      committed only if git status shows it modified; CC2 has none and must not
+      look for it.
+    found_in: [STD, SYN, CC2, SBX-L, SBX-D]
+    disposition: knobbed
+    target: subsystems.chromaqa — renders the pass-through lines in E-003 / E-007 / E-021
+  - id: LR-175
+    rule: >-
+      Constraints for the wrap runner: do NOT propose next steps; do NOT show
+      intermediate outputs; OVERWRITE exactly as provided; SURGICAL applies each
+      op precisely; APPEND at the correct location; ARCHIVE MOVE appends to the
+      destination first then removes from the live file; check existing IDs
+      before assigning sequential IDs; create .forge/archive/ if missing.
+    found_in: [STD, SYN, CC2, SBX-L, SBX-D]
+    disposition: folded
+    target: E-021 (as CC constraints) + E-015 (as CW's own operation discipline)
+  - id: LR-176
+    rule: >-
+      Troubleshooting report after the wrap: what went wrong, workarounds, MCP
+      errors, schema refresh ran/skipped, archive ops, telemetry, push confirmed,
+      PUSH VERIFICATION result, working tree audit, SCOPE DISCLOSURE, ARTIFACT
+      PATHS, context primer refreshed/untouched, secret never staged; "No issues
+      encountered" if clean.
+    found_in: [STD, SYN, CC2, SBX-L, SBX-D]
+    disposition: folded
+    target: E-021 (CC remainder) + E-030 (CW's own wrap report with the evidence count)
+  - id: LR-177
+    rule: >-
+      Manual fallback when the write path fails: explicit GitHub web-editor
+      instructions with FULL URLs, COMPLETE file content (never "add this to the
+      existing file"), every click named, exact commit message, one file at a
+      time, confirm each commit landed (an uncompleted commit dialog silently
+      loses the change), offer to verify; the redeploy step follows when a
+      deploy exists; never instruct pasting the real GUID anywhere.
+    found_in: [STD, SYN, CC2, SBX-L, SBX-D]
+    disposition: folded
+    target: E-027
+    note: The trigger becomes "if the GitHub MCP is down" rather than "if CC fails" (I1 keeps this fallback).
+  - id: LR-178
+    rule: >-
+      Deploy after the wrap push if the project has a deploy; skip if none;
+      Vercel deploys main automatically on merge in dispatch mode.
+    found_in: [STD, SYN, CC2, SBX-L, SBX-D]
+    disposition: knobbed
+    target: build.deploy — renders E-023
+  - id: LR-179
+    rule: >-
+      File behaviors summary table (path, action, cap, destination, ordering per
+      wrap file) and initialization templates for every wrap file, including
+      the archive files, the handoff, the schema init marked hand-annotated, and
+      the relay repo card (SYN).
+    found_in: [STD, SYN, CC2, SBX-L, SBX-D]
+    disposition: folded
+    target: E-028 + E-029
+    note: backlog_init uses the unified sections; a rulings_init and inbox directory init are added by the master.
+  - id: LR-180
+    rule: >-
+      Database state is INVISIBLE to the repo (role grants, RLS policies,
+      pg_cron jobs, vault secrets, feed_registry rows, registrations, backfills,
+      status flips); a session that changes any of it records it in session-
+      state decisions AND handoff watch_out_for or the next session will not know.
+    found_in: [SBX-D]
+    disposition: knobbed
+    target: subsystems.supabase — renders E-004
+  - id: LR-181
+    rule: >-
+      A session may mix modes (some dispatched, one local); use the dispatch
+      wrap and take files_modified from both merged PR diffs and local commits.
+    found_in: [SBX-D]
+    disposition: folded
+    target: E-011 + E-022
+  - id: LR-182
+    rule: >-
+      Documentation-layer wrap edits land through the Edit tool as surgical
+      edits (the 2026-08-29 in-place completed-item convention was a clobber-
+      safety measure and is retired).
+    found_in: [SBX-L, SBX-D]
+    disposition: folded
+    target: E-012
+    note: Under direct-write CW's surgical edits go through the GitHub MCP with a diff check (P9); same guarantee.
+
+  # ------------------------------------------------------------ CLAUDE.md
+  - id: LR-183
+    rule: >-
+      CLAUDE.md is read by CC automatically every session and remains the
+      standing-orders file; the prompt says "DO read CLAUDE.md — it contains
+      project-specific guidance including what to avoid reading".
+    found_in: [STD, SYN, CC2, SBX-L]
+    disposition: folded
+    target: C-001 + S-030
+    note: >-
+      The house block (architecture rule, communication rules, dispatched-session
+      rules, protocol pointers, session workflow naming handoff.yaml and
+      .forge/protocols/) is rendered between markers per Section 4; repo-specific
+      content outside the markers is never touched.
+
+# =============================================================================
+# NEW KNOBS PROPOSED (additive to Section 5; every one carries a default so
+# existing configs stay valid)
+# =============================================================================
+
+new_knobs_proposed:
+  - field: architecture.tsx_lib_rule
+    type: boolean
+    detected_by: any .tsx file under src/ or app/
+    default: false
+    renders: S-022, S-029, the ARCHITECTURE RULE preamble line, reflection Q4, the DATA ACCESS NAMED UPFRONT framing line
+    why: The /lib rule is meaningless in a Python repo; rendering it there is noise that trains skimming.
+  - field: subsystems.repo_rules_doc
+    type: string (path)
+    declared: true
+    default: null
+    example: ".forge/protocols/repo-rules.yaml"
+    renders: S-005 (one binding paragraph, same shape as the database-access binding)
+    why: >-
+      Home for repo-specific operating rules that are neither master content nor
+      config values — Convergible's DOC-FOLD-1 items (LR-163) and ChromaControl's
+      Android mechanics (LR-164). Created for convergible-sandbox at step 4 by
+      moving those items out of the rendered protocol; without it the sandbox
+      render would silently lose rules it has today.
+  - field: hardware.devices
+    type: list of { name, on_for }
+    declared: true
+    default: []
+    example: [{ name: "Nikon ZR", on_for: "camera tests" }, { name: "LIT Duo", on_for: "meter tests" }]
+    renders: the hardware-off-by-default paragraph and device names inside the S-049 gate banners
+  - field: repo.canonical_machine
+    type: string
+    declared: true
+    default: "Surface 12"
+    renders: one sentence in S-032
+  - field: repo.alternate_machines
+    type: list
+    declared: true
+    default: []
+    example: ["Anvil — Anvil-only artifacts, worker profile, live browser worker"]
+    renders: one sentence in S-032 when non-empty
+  - field: repo.line_endings
+    type: enum [lf, crlf, mixed]
+    default: lf
+    renders: the LF check in E-021 and CW's own pre-push check
+  - field: execution.dispatch.allowed_tools
+    type: list
+    declared: true (copied from .github/workflows/claude.yml at render time; renderer warns on mismatch)
+    default: []
+    renders: the allowlist sentence in S-064 and the RUNNER ENVIRONMENT section of S-073
+  - field: execution.local_report_desktop_copy
+    type: boolean
+    default: true
+    renders: the "place a copy on Matt's Desktop" line in S-048, local reader only
+
+# =============================================================================
+# BOARD ADDITIONS NOT FROM ANY LINEAGE (so step 3 does not mistake this
+# inventory for the whole master)
+# =============================================================================
+
+board_additions_not_from_lineage:
+  - block: S-010
+    item: >-
+      handoff staleness check (M3) — written_at_commit vs HEAD, "HANDOFF IS STALE" opener
+  - block: S-012
+    item: >-
+      8-line hard ceiling with two reserved lines; collapse to one line when more than six checks fire
+  - block: S-048
+    item: >-
+      observation inbox .forge/inbox/<run-id>.yaml written before any prose report; task incomplete without it (M1, N1)
+  - block: S-074
+    item: >-
+      needs_ruling written by a stopped run; surfaced on every board advance (N2)
+  - block: S-075
+    item: >-
+      compliance canary near the end of every rendered file
+  - block: W-001
+    item: >-
+      Matt's chat rulings as text (I4) — four sentences or less, recommendation not options, one action item at a time, end every reply with the next verb and who holds the ball, plain-English measurements first, state project position at milestones, never re-ask a ruled question, a might is not a decision, ask before touching a repo another CC session may be on, hand the turn back after dispatching, one CC prompt per reply
+  - block: W-002
+    item: >-
+      rulings written when made, single-line append, "Filed as RULING-nnn" (M6)
+  - block: W-003
+    item: >-
+      precedence rule — protocol wins on process/scope/safety, prompt wins on what to build; a widening prompt is HALT AND REPORT (S3)
+  - block: E-008
+    item: >-
+      evidence rule — every state-change claim carries an artifact ID or is written in reported form; the count is computed by render.py's companion check (M4, N3)
+  - block: E-014
+    item: >-
+      protocol_drift field read and stated in one line (S1); north-star question (pre-mortem 2)
+  - block: E-024
+    item: >-
+      inbox consumption reconciled against RUNS, moved to .forge/archive/inbox/ (N1)
+  - block: E-026
+    item: >-
+      overall project position in one plain sentence at every wrap and milestone
+  - block: S-011
+    item: >-
+      north_star_doc read before the backlog
+  - block: all
+    item: >-
+      header stamp, block manifest, DO NOT EDIT header, config hash (P5, Section 6)
+
+# =============================================================================
+# SIZE MEASUREMENT (sets the S4 ceiling — still open in the blueprint)
+# =============================================================================
+
+size_measurement:
+  method: >-
+    Rule count is exact (this file). Line counts are ESTIMATES from the byte
+    sizes GitHub reports for the sandbox files, at roughly 55-60 bytes per line
+    of wrapped YAML prose; step 3 replaces them with wc -l on the real files in
+    the sandbox before the ceiling is written into the blueprint.
+  folded_set:
+    rules_folded_or_knobbed: 167
+    master_blocks: 101   # 67 start (S-001..051, S-060..075) + 3 CW (W) + 30 end (E) + 1 CLAUDE.md (C)
+  current_sandbox_files_estimated_lines:
+    start-protocol-local.yaml:    "~1,000  (58,097 bytes)"
+    end-protocol-local.yaml:      "~1,050  (61,481 bytes)"
+    start-protocol-dispatch.yaml: "~800    (47,091 bytes)"
+    end-protocol-dispatch.yaml:   "~700    (40,439 bytes)"
+  projected_render_sizes:
+    standard_saas_no_dispatch:
+      start: "~850 lines (local start minus dispatch-only blocks, plus I4/M-series additions)"
+      wrap:  "~950 lines (schema queries and templates dominate; the CDT prompt body shrinks under direct-write)"
+    convergible_sandbox_with_dispatch:
+      start_cw_file:       "~1,100"
+      start_dispatch_file: "~650 (runner-irrelevant blocks excluded, fixed ordering)"
+      wrap_cw_file:        "~1,000"
+      wrap_dispatch_file:  "~500"
+    chromacontrol_legacy_local:
+      start: "~900 (multi-surface, spike, hardware gates; dispatch blocks excluded)"
+      wrap:  "~800 (no schema, no deploy, no telemetry)"
+  finding: >-
+    The board's 400-line guess is not achievable without dropping content Matt
+    has kept in every lineage. The biggest single consumers are the schema-refresh
+    queries (~120 lines), the initialization templates (~90), and the
+    preamble/completion boilerplate that must be verbatim in the rendered prompt.
+  recommendation_for_S4_ceiling: >-
+    Set the ceiling per READER file, not per repo: CW-read files 1,200 lines,
+    runner-read (dispatch) files 800 lines. Both leave roughly 15 percent
+    headroom over the largest projected render. Replace-to-add (P11) applies
+    above the ceiling. Finalize the numbers at step 3 from wc -l of the real
+    renders; do not write them into the blueprint from these estimates.
+
+# =============================================================================
+# FLAGS FOR STEP 3 / STEP 4
+# =============================================================================
+
+flags:
+  verify_before_render:
+    - "LR-129 — CW connector check-run 403; render as reported until re-tested at step 4."
+    - "LR-119 — the runner allowlist; copy from claude.yml at render time, never from this inventory (not a verify flag, a render-time source rule)."
+  step_4_prerequisites:
+    - Create .forge/protocols/repo-rules.yaml in convergible-sandbox holding the LR-163 items and register it (R2) in the same PR; the sandbox render then points at it via S-005. Without this the first-render diff will show those rules as deleted.
+    - The sandbox files' CC-reports/<ISSUE-ID>.md convention becomes .forge/inbox/<run-id>.yaml; the register entry is renamed in the same PR (M1).
+  tension_to_resolve_in_master_text:
+    - LR-026 (3-5 conversational planning questions) versus W-001 (four sentences or less, recommendation not options). Proposed wording: planning questions are asked only when the interview trigger fires, are led by a recommendation, and never exceed three.
+  step_3_reminders:
+    - Every block ID here must appear in the master with a render_when fence; the renderer's manifest check proves included + excluded == this index.
+    - SYN and CC2 will pick up eleven rules they never had (LR-033, LR-045, LR-086, LR-015, LR-032, LR-049, LR-050, LR-052, LR-144, LR-148, LR-140); the first render of each will show a large additive diff, which is expected and correct.
