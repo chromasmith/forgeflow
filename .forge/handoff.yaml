@@ -1,87 +1,104 @@
 # .forge/handoff.yaml — chromasmith/forgeflow
 # Pass-the-baton briefing written BY the outgoing Claude Web session TO the next.
 # A WARNING LETTER, not a summary. The blueprint holds the design; this holds the feel.
-# generated: 2026-09-04T20:30:00Z
-# session: 2026-09-04 (ChromaQA 7.0 master change — first tool-driven change to the master)
-# written_at_commit: 9a8dfb69758b2f7286d7e6e0dc98bbf894a151ec
-# written_at_utc: 2026-09-04T20:30:00Z
+# generated: 2026-09-04T22:10:00Z
+# session: 2026-09-04 (SEO/GEO 1.0 master change — second tool-driven change to the master)
+# written_at_commit: a0e26554ee5bc5bad4add95ccfe57773cf20bac6
+# written_at_utc: 2026-09-04T22:10:00Z
 
 status: |
-  ForgeFlow Master is at v0.2.0-build (HEAD 9a8dfb6): the first TOOL-DRIVEN master
-  change landed — ChromaQA 7.0 — in four commits ending at 9a8dfb6, every file proven
-  by blob SHA from a fresh fetch, tests 35/35, and a fresh clone renders byte-identical to the
-  sandbox render. What changed: S-014 rewritten (debt read from GitHub, profiles.json
-  PROTECTED CONFIG, runs.jsonl LOCAL ONLY); S-045 gained the captain-review
-  never-fix line; S-071 made repo-neutral; NEW S-087 (pre-push gate rule for local
-  code prompts) and S-088 (reading ChromaQA's hard-fail quality-gate CI job);
-  E-036/E-037/E-042 carry the three-way file handling; E-040 drops runs.jsonl and
-  STOPs on a modified profiles.json; NEW E-047 (local-remainder push-gate block:
-  exit 0/1/2, debt+showstoppers ALWAYS PERMITTED modified after a push); house block
-  gained one fenced ChromaQA bullet; render.py detects ChromaQA by chromaqa-check.sh.
-  Commits: 03cd153 (CHANGELOG, house block, test), 794117d (render.py), 5d9b67c
-  (start master, 91 blocks), 9a8dfb6 (end master, 47 blocks). Measured on the real
-  sandbox knob set with chromaqa forced on: start 1515 / dispatch start 567 / end
-  1293 / dispatch end 91 — all under the S4 ceilings (1650/650/1400/150).
+  ForgeFlow Master is at v0.3.0-build (HEAD a0e2655): the second TOOL-DRIVEN master
+  change landed — SEO/GEO 1.0 — in four commits (1b6eb98 CHANGELOG/schema/house
+  block/fixture/RENDER_PROCEDURE, ff66b0e render.py, 3ae3f90 start master, a0e2655
+  end master), every file's blob SHA matching a fresh fetch (a0e2655), tests 35/35, and a
+  fresh clone renders the both-tools fixture byte-identical to the sandbox render.
+  What changed: new knob subsystems.seogeo (detected by .seogeo/config.json); NEW
+  S-089 (the exact conditional pointer text from seogeo .forge/protocol-pointer.md)
+  and S-090 (profiles.json is GENERATED from .seogeo/config.json — one sanctioned
+  change, drift = stamp mismatch, no gate reads the posture stamp yet); NEW E-048
+  (local-remainder exception to E-040's STOP on a modified profile), E-049
+  (.seogeo/.report/ is a LOCAL BUILD ARTIFACT), E-050 (manifest lines), E-051 (file
+  behaviors); house block gained two fenced bullets; render.py detects SEO/GEO.
+  Existing blocks untouched — every fixture without .seogeo/config.json renders
+  byte-identical protocol text to v0.2.0-build (only the config hash moves, because
+  the new knob is part of the expanded config). Measured with both tools forced on
+  the sandbox-real knob set: start 1564 / dispatch start 616 / end 1354 / dispatch
+  end 95 — all under the S4 ceilings (1650/650/1400/150); the end file is closest.
   Still not written (deferred to the session in which Matt names the first repo):
   PROPAGATION_PROCEDURE.md, registered-repos.yaml, legacy banners + README repoint,
   CHANGELOG bump to v1.0.0. Overall position: the unified protocol source exists,
-  renders byte-stable, and now describes ChromaQA 7.0 correctly; NO REPO RUNS ON THE
-  MASTER and RULING-001's stop point still holds.
+  renders byte-stable, and now describes ChromaQA 7.0 AND SEO/GEO 1.0 correctly;
+  NO REPO RUNS ON THE MASTER and RULING-001's stop point still holds; SEO/GEO itself
+  is installed nowhere (its own template install is a separate session in the
+  seogeo repo, per its INSTALL.md).
 
 first_thing: |
-  Matt has a SECOND tool whose install will change what a session must do, and he
-  ruled (2026-09-04) that it gets its own fresh session rather than riding on the
-  ChromaQA one. When he names it: open its repo, read its README / blueprint /
-  installer the way the ChromaQA session did, and deliver a plain-English impact
-  assessment BEFORE editing anything — what the masters already say about it, what
-  the tool actually does (files it writes, exit codes, CI jobs, config it protects),
-  and the exact list of master blocks to add or edit. Then, on Matt's go, ONE master
-  change: new blocks fenced on a knob (add the knob to protocol-config.schema.yaml
-  with a default if the tool has none), CHANGELOG top entry v0.3.0-build, header
-  index lines in both masters, render all four fixtures twice plus the sandbox-real
-  set with the knob forced on, check the S4 ceilings, push per file and prove each
-  blob SHA. Nothing is rendered into any repo.
+  WAIT. There is no ForgeFlow work to start on your own. The master covers
+  both tools and RULING-001 forbids rendering any repo until Matt names it by
+  name. Open with the one-line position ("master v0.3.0-build describes ChromaQA
+  7.0 and SEO/GEO 1.0; no repo runs on it yet") and ask Matt what he wants. If he
+  names a repo to render: follow RENDER_PROCEDURE.md, and land the housekeeping
+  bundle in next_up in that same session. If he names a third tool: same shape as
+  the last two sessions — read its repo, impact assessment BEFORE editing, then one
+  fenced master change with per-file blob-SHA proof.
 
 watch_out_for:
   - "STOP POINT (RULING-001) still holds: do NOT render, install, or prepare a render for
      any repo — not convergible-sandbox, not saas-starter — until Matt names it by name.
      A master change is NOT a render."
-  - "Master-change procedure that worked this session, in order: clone forgeflow into the
-     sandbox; edit with Python replace-and-assert (never regex over the whole file); YAML
-     parse every changed file; python3 master/tests/test_render.py (35/35); render every
-     fixture config twice and diff; render the sandbox-real fixture with the new knob forced
-     on via a temp copy (tests/fixtures/config-sandbox-real.yaml has chromaqa OFF because
-     the sandbox has no ChromaQA — do not flip it in the fixture); wc -l against the S4
-     ceilings; git hash-object each file; push through the GitHub tool ONE FILE PER CALL
-     for the big masters; git fetch and rev-parse origin/main:<path> to prove each SHA."
-  - "GitHub tool trap: create_or_update_file needs the FULL 40-char blob SHA, not the
-     abbreviated one the earlier read printed — a short SHA is rejected as stale. push_files
-     needs no SHA and was used for every landing this session."
-  - "tests/test_render.py now reads MASTER_VERSION from CHANGELOG.yaml's top entry (it used
-     to hard-code v0.1.0-build and went red on the bump). Any future version bump needs no
-     test edit."
-  - "New blocks S-087, S-088, E-047 all fence on subsystems.chromaqa (S-087/E-047 also on
-     execution.local). S-087 says 'next to the CI GATE RULE where that rule is present'
-     because S-045 fences on a DIFFERENT knob (ci_quality_gate); the two are detected
-     separately and a ChromaQA repo normally has both."
-  - "E-047 overrides E-021's VERIFY PUSH check 1 for two paths in ChromaQA repos. E-021
-     itself is untouched (it fences on execution.local only). If E-021's audit language is
-     ever rewritten, keep E-047's override sentence in step with it."
-  - "ChromaQA's own repo carries stale ForgeFlow references (.forge/BLUEPRINT.yaml
-     output.files.CQA-debt.jsonl.read_by says 'via FOCUSED_BUILD_PROTOCOL ... after
-     extracting repo ZIP', and output_contract.operational_rule_for_agents_and_scope_audits
-     says FOCUSED_BUILD_PROTOCOL needs the telemetry exception). The exception now lives in
-     the master (E-047). That is a ChromaQA-repo doc fix, NOT this repo's work, and NOT an
-     install — mention it to Matt only if he opens the ChromaQA repo."
-  - "CLAUDE.md master fences are HTML-comment LINES only; fences do not nest. The ChromaQA
-     bullet is one fenced line inside the Protocol files section."
+  - "TWO FOLLOW-UPS OWED IN OTHER REPOS — Matt asked to be reminded and these are NOT
+     this repo's work. (1) chromasmith/seogeo, small doc touch: .forge/protocol-pointer.md
+     still ends 'the standard does not exist and neither line should be installed yet'
+     and its handoff surrounding_context.forgeflow_master still says 'not built or
+     installed' — both should now record that the ForgeFlow master carries the fenced
+     line (S-089, v0.3.0-build) so a future session does not add it twice; and the
+     .seogeo/.report/ directory ships with no .gitignore — the master treats it as a
+     LOCAL BUILD ARTIFACT never staged (E-049/E-050/E-051), which is Claude Web's
+     recommendation, not a seogeo ruling; seogeo should gitignore it or rule otherwise.
+     Ask whether a Claude Code session is active on seogeo before pushing there.
+     (2) chromasmith/chromaqa, its own session on Matt's word: stale FOCUSED_BUILD_PROTOCOL
+     references in .forge/BLUEPRINT.yaml (noted last session), and the posture-stamp
+     gate requests GR-01..GR-05 from seogeo .forge/BLUEPRINT.yaml section 8a. Until
+     that lands, S-090 truthfully says no gate reads the posture stamp."
+  - "Master-change procedure that worked again this session, in order: clone forgeflow
+     (public, plain https clone works) into the sandbox; edit with Python
+     replace-and-assert (never regex over the whole file); YAML parse every changed
+     file; python3 master/tests/test_render.py (35/35); render every fixture with the OLD
+     master (git stash copy) and the NEW master and diff modulo the version stamp and
+     renderer bookkeeping lines — protocol text must be identical for every fixture the
+     change does not target; render the targeted fixture twice and diff; wc -l against
+     the S4 ceilings; git hash-object each file; push through push_files ONE FILE PER
+     CALL for the big masters; git fetch and rev-parse origin/main:<path> to prove each
+     SHA; finally clone fresh and re-render."
+  - "GitHub tool trap (unchanged): create_or_update_file needs the FULL 40-char blob SHA;
+     push_files needs no SHA and was used for every landing. The sandbox has no push
+     credential — every write goes through the GitHub tool, so a 100 KB master is emitted
+     verbatim and MUST be checked by blob SHA afterwards; a mismatch means retype."
+  - "A one-line doc edit to master/BLUEPRINT.yaml was made locally and NOT pushed (the
+     subsystems knob table at ~line 531 still lists chromaqa as detected by '.chromaqa/
+     directory' and has no seogeo line). It is 70 KB for one cosmetic line; land it inside
+     the next master change, not as its own push. The schema file is the contract and is
+     correct."
+  - "New fixture tests/fixtures/config-starter-tools.yaml is ILLUSTRATIVE (template-shaped
+     knobs, both tools forced on); it does not claim saas-starter's real detected set.
+     tests/fixtures/config-sandbox-real.yaml still has chromaqa and seogeo OFF because the
+     sandbox has neither — do not flip them in the fixture; use a temp copy for dispatch
+     ceiling measurements."
+  - "S-089 and S-090 are reader: all (a dispatched runner creating pages must read the
+     standard too). E-048 fences on execution.local AND seogeo AND chromaqa; E-049 on
+     execution.local AND seogeo; E-050/E-051 on seogeo. S-014, E-036, E-037, E-040, E-042
+     are UNTOUCHED — the seogeo blocks narrow them by stating the exception, never by
+     rewriting the ChromaQA-only text."
+  - "The exact pointer text in S-089 and the house-block bullet is copied word for word
+     from seogeo .forge/protocol-pointer.md; if seogeo changes that text, the master
+     follows it (a normal master change), never the other way round."
   - "render.py FORBIDDEN_PHRASES include the fence syntax and placeholder opener as literal
      strings; master prose must describe them, never quote them. Also avoid 'as in
      start-protocol' / 'as in end-protocol' / 'inherited from' / 'see the master'."
   - "YAML traps: plain scalars with ': ' mid-sentence and commas inside flow-mapping values
-     both fail — quote them. Every pushed .forge/ and master YAML file is parse-validated in
-     the sandbox first."
-  - "ChromaQA is never installed by a protocol or folded into another task. Do not propose it."
+     both fail — quote them (E-051's action values are quoted for this reason)."
+  - "ChromaQA is never installed by a protocol or folded into another task; SEO/GEO is
+     never retrofitted into an existing repo (seogeo SC-01). Do not propose either."
   - "Matt runs concurrent Claude Code sessions. Before pushing to ANY repo other than
      forgeflow, ask whether a CC session is active on it."
   - "Matt's communication rules (blueprint Section 9 I4): four sentences or less,
@@ -93,21 +110,20 @@ next_up:
   - "Deferred, not next: the housekeeping bundle (PROPAGATION_PROCEDURE.md, legacy
      banners + README repoint, CHANGELOG bump to v1.0.0, registered-repos.yaml written
      LAST after the first render) lands only in the session in which Matt names a repo."
-  - "Deferred, not next: the SEO/GEO start-protocol block — a normal master change when
-     Matt says the tool is ready; may be the same tool as first_thing."
-  - "Deferred, not next: a committed fixture config with chromaqa ON (so the ceiling
-     measurement for ChromaQA repos is reproducible from tests/fixtures/ instead of a
-     temp copy). Cheap; do it inside the next master change, not as its own session."
+  - "Deferred, not next: master/BLUEPRINT.yaml knob-table line (seogeo detected_by;
+     chromaqa detected_by wording) — inside the next master change."
   - "Deferred, not next: drift_ci stays deferred until after the first real render is
      verified."
 
 north_star: |
-  Better: the master now tells a session the truth about ChromaQA 7.0 before any repo
-  is rendered from it — a wrong render was avoided rather than repaired. Nothing was moved
-  onto any repo's board.
+  Better: the master now tells a session the truth about SEO/GEO before any repo is
+  rendered from it, and resolves the one real conflict (a generated profile vs a
+  protected-config rule) in the protocol rather than leaving it for a wrap to trip
+  on. Nothing was moved onto any repo's board.
 
 tone: |
-  Productive, closed-out. Matt named the priority, ruled on sequencing (one tool per
-  session), and the change is on GitHub at 9a8dfb6 with proof. The next move is his: name the second
-  tool. Open with a plain one-line position: "master v0.2.0-build describes ChromaQA
-  7.0; no repo runs on it yet."
+  Productive, closed-out. Matt named the tool, asked the right questions about ripple
+  and coexistence (answer: none, and the friction was ours, not the tools'), said GO,
+  and the change is on GitHub at a0e2655 with proof. The next move is his: name a repo
+  to render, or a third tool. Open with the one-line position and the two owed
+  follow-ups in seogeo and chromaqa, in that order.
