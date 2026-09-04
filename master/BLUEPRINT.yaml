@@ -63,7 +63,9 @@ meta:
         order amended to match the end master's E-021: the LOCAL remainder prompt
         runs BEFORE the docs write when the checkout may hold unpushed work. The
         CLAUDE.md house block master (C-001) landed @ 96b4290 with its own Markdown
-        fence syntax (Section 6, conditional_blocks).
+        fence syntax (Section 6, conditional_blocks). Section 5 canonical_checkout
+        example restored to "<name>" — an earlier re-push had carried the truncated
+        form the GitHub read tool displays for that token (a transcription slip).
   problem_in_one_sentence: >
     Matt runs the same start/wrap session protocol across many repos, but each repo
     holds a hand-forked copy, so fixes made in one never reach the others and the
@@ -475,7 +477,7 @@ protocol_config_schema:
     repo:
       org:                { type: string, declared: true, example: chromasmith }
       name:               { type: string, declared: true, example: convergible-sandbox }
-      canonical_checkout: { type: string, default: "C:\\Chromasmith\\<n>" }
+      canonical_checkout: { type: string, default: "C:\\Chromasmith\\<name>" }
       default_branch:     { type: string, default: main }
     mirror:
       github_is_complete_mirror:
