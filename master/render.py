@@ -235,6 +235,7 @@ def detect(tree):
     wf = list(t.glob(".github/workflows/*.yml"))
     out["subsystems.ci_quality_gate"] = any(re.search(r"quality|gate|ci", p.name, re.I) for p in wf)
     out["subsystems.chromaqa"] = (t / "chromaqa-check.sh").is_file() or (t / ".chromaqa").is_dir()  # 7.0: a fresh install with no findings and no profiles.json has no .chromaqa/ on GitHub yet
+    out["subsystems.seogeo"] = (t / ".seogeo" / "config.json").is_file()  # SEO/GEO 1.0: the tool's own "installed" test is this one file
     out["subsystems.ui_inventory"] = (t / ".forge" / "specs" / "ui-inventory.yaml").exists()
     out["subsystems.artifact_register"] = (t / ".forge" / "protocols" / "artifact-register.yaml").exists()
     out["architecture.tsx_lib_rule"] = any(t.glob("src/**/*.tsx")) or any(t.glob("app/**/*.tsx"))
@@ -364,7 +365,7 @@ def knob_summary(eff):
             f"shape={get_path(d,'shape.kind')}@{get_path(d,'shape.build_location')} build={get_path(d,'build.validation')} "
             f"deploy={get_path(d,'build.deploy')} dispatch={'on' if get_path(d,'execution.dispatch.enabled') else 'off'} "
             f"surfaces={len(get_path(d,'build.surfaces') or [])} companions={len(get_path(d,'companion_repos') or [])} "
-            f"supabase={get_path(d,'subsystems.supabase')} chromaqa={get_path(d,'subsystems.chromaqa')} "
+            f"supabase={get_path(d,'subsystems.supabase')} chromaqa={get_path(d,'subsystems.chromaqa')} seogeo={get_path(d,'subsystems.seogeo')} "
             f"ui_inventory={get_path(d,'subsystems.ui_inventory')} tsx_lib_rule={get_path(d,'architecture.tsx_lib_rule')}")
 
 def render_file(kind, reader, blocks, orders, eff, version, date, chash, method="code"):
