@@ -1,109 +1,74 @@
 # .forge/handoff.yaml — chromasmith/forgeflow
 # Pass-the-baton briefing written BY the outgoing Claude Web session TO the next.
 # A WARNING LETTER, not a summary. The blueprint holds the design; this holds the feel.
-# generated: 2026-09-04T20:00:12Z
-# session: 2026-09-04 (FIRST RENDER — chromasmith/seogeo — plus the housekeeping bundle; master released as v1.0.0)
-# written_at_commit: c4e1cf34aa97109f8d330d796ddcd0ffa5168740
-# written_at_utc: 2026-09-04T20:00:12Z
+# generated: 2026-09-04T22:45:00Z
+# session: 2026-09-04 (SECOND RENDER — chromasmith/chromasmith-saas-starter, the house template)
+# written_at_commit: e856a72fe57f382d25c302b22a2ee01e1491b695
+# written_at_utc: 2026-09-04T22:45:00Z
 
 status: |
-  ForgeFlow Master is RELEASED at v1.0.0 (forgeflow HEAD c4e1cf34aa97109f8d330d796ddcd0ffa5168740) and ONE repo runs on
-  it: chromasmith/seogeo, rendered 2026-09-04 (seogeo commits 042427f start protocol,
-  6c792a0 end protocol, 14f1614 config + CLAUDE.md house block + doc touch, 9a624db
-  session history), every blob SHA equal to the sandbox output and render.py check OK
-  from a fresh forgeflow clone (config_hash 81ca6a54d712, docs-only profile, all
-  subsystems off, start 956 / end 994 lines). registered-repos.yaml exists with that one
-  row (commit c4e1cf3, written last). A RENDERER BUG was found and fixed on the way
-  (commit 1f0d1d0): the condition literal "none" was read as YAML null, so S-083/S-085
-  never rendered and E-023 rendered "deploys via none" for every no-deploy repo;
-  fixture block + two tests added, seen red before the fix, 37/37 after (commit 90209d0
-  with the CHANGELOG bump). Housekeeping landed at c3de0e2 (PROPAGATION_PROCEDURE.md +
-  RENDER_PROCEDURE STATUS), 3c57699 and 38d8301 ("superseded" banners on docs/*.md,
-  prompts/FORGE_INIT.md, examples/README.md) and ea652f5 (README repointed at master/).
-  NOT bannered: prompts/INSTALL_REPAIR.md (23 KB paste-able legacy prompt — the README
-  now marks it legacy; banner it when cheap) and SolutionPatterns.yaml (29 KB, not linked
-  from the README, and it was ALREADY malformed YAML at ~line 205 before this session —
-  a banner would not have changed that). Overall position: the unified protocol source
-  exists, is released, and seogeo is the only repo rendered from it; every other repo
-  still runs its old protocols, RULING-001's stop point holds for all of them, and the
-  SEO/GEO tool itself is installed nowhere.
+  ForgeFlow Master is RELEASED at v1.0.0 and TWO repos run on it. chromasmith/seogeo
+  (docs-only, config_hash 81ca6a54d712, rendered earlier 2026-09-04) and now
+  chromasmith/chromasmith-saas-starter — the house TEMPLATE — rendered 2026-09-04 on the
+  standard profile (config_hash f362bf02fcdf, start 1157 / end 1246 lines, ChromaQA blocks
+  in, vercel/seogeo off, override build.deploy: none): saas-starter commits a296c13 (config),
+  10bb67e (start), 60c0906 (end), c97a49a (CLAUDE.md house block, placed where the old
+  placeholder "Session workflow" section was), every blob SHA equal to the sandbox output,
+  render.py check OK from a fresh forgeflow clone; the template's own docs then truthed up
+  (KNOWN-ISSUES 45e5c0f, START_HERE 1f6a6b1) and its first ForgeFlow wrap written.
+  registered-repos.yaml has both rows (this repo, e856a72). No renderer bug this time; the
+  "none" fix from the first render did its job (S-085 in, E-023 out, for a no-deploy repo).
+  Overall position: the master is released (v1.0.0 @ 90209d0) and proven on two real repos of different shape (registry e856a72);
+  every other repo still runs old protocols under RULING-001; the saas-starter-before-
+  convergible-final constraint of RULING-001 is now SATISFIED, so the Convergible final repo
+  may be cloned from the rendered template whenever Matt starts it.
 
 first_thing: |
   WAIT. Do not render any repo until Matt names it by name in this session (RULING-001;
-  RULING-002 named seogeo and that is done). When he names one, follow
+  RULING-002 seogeo and RULING-003 saas-starter are both done). When he names one, follow
   master/RENDER_PROCEDURE.md exactly, asking in one line whether a Claude Code session is
-  active on that repo first. If the repo he names is chromaqa: its config MUST carry
-  `overrides: { subsystems.chromaqa: false }` because render.py detects the tool's own
-  chromaqa-check.sh at the root as a running gate (RULING-002). If it is a private repo,
-  the sandbox cannot clone it — rebuild a tree skeleton from the GitHub listing with the
-  exact paths detect() looks for, and say so in the report. Verify: rendered headers name
-  master v1.0.0 and a config hash, blob SHAs match, render.py check OK, registry row added
-  LAST.
+  active on that repo first. Likely candidates and their traps: chromaqa (config MUST carry
+  overrides subsystems.chromaqa: false — render.py would detect the tool's own script as a
+  running gate); a project SPAWNED from saas-starter (it inherits the template's rendered
+  files with the template's name baked in — re-render with repo.name set and the
+  build.deploy override dropped once it is linked to Vercel; START_HERE step 3 says so);
+  convergible-sandbox (dispatch on, the two step-4 prerequisites still owed: repo-rules.yaml
+  for the DOC-FOLD-1 items, CC-reports -> .forge/inbox rename). Private repo: rebuild the
+  tree skeleton from the GitHub listing and say so.
 
 watch_out_for:
-  - "STOP POINT (RULING-001) holds for every repo now that seogeo is done: do NOT render,
-     install, or prepare a render for convergible-sandbox, saas-starter, chromaqa or any
-     other repo until Matt names it by name. A master change is NOT a render."
-  - "The first render found a real renderer bug that four fixture profiles had not caught
-     (standard renders were unaffected, so the tests were green). Before the NEXT render,
-     run the old-vs-new fixture diff again for the target's PROFILE specifically, and read
-     the rendered block manifest line by line against the target's real shape — a
-     no-build/no-deploy repo must show S-083 and S-085 IN and E-023 OUT."
-  - "Renderer condition language: only 'null' and 'None' mean null in a render_when; 'none'
-     is the enum VALUE. Never reintroduce 'none' as a null literal in parse_literal."
-  - "seogeo follow-up that is NOT this repo's work: the tool itself is still installed
-     nowhere; its INSTALL.md now says to gitignore .seogeo/.report/ in the target (step 7)
-     and NOT to hand-write the CLAUDE.md line when a rendered house block exists (step 8).
-     Both are Claude Web's recommendations recorded in seogeo; Matt may overrule there."
-  - "chromaqa follow-ups still owed, on Matt's word only: stale FOCUSED_BUILD_PROTOCOL
-     references in its .forge/BLUEPRINT.yaml, the posture-stamp gate requests GR-01..GR-05
-     from seogeo BLUEPRINT 8a, and — when rendered — the subsystems.chromaqa override."
-  - "Landing procedure that worked (three times now): clone forgeflow (public, plain https)
-     into the sandbox; edit with Python replace-and-assert; YAML-parse every changed file;
-     python3 master/tests/test_render.py (37/37); render fixtures with OLD and NEW render.py
-     and diff modulo bookkeeping lines; push_files ONE FILE PER CALL for anything over ~20
-     KB; git fetch and rev-parse origin/main:<path> to prove each blob SHA; clone fresh and
-     re-run check. Private targets: transcribe each file into the sandbox and PROVE the
-     transcription by git hash-object against the GitHub blob SHA BEFORE editing it."
-  - "GitHub tool trap (unchanged): create_or_update_file needs the FULL 40-char blob SHA;
-     push_files needs none. The sandbox has no push credential, so every write is emitted
-     verbatim through the tool and checked by blob SHA afterwards; a mismatch means retype."
-  - "master/BLUEPRINT.yaml knob table (~line 531) still lists chromaqa detected by
-     '.chromaqa/ directory' only and has no seogeo line; the schema file is the contract
-     and is correct. Land the doc line inside the next master change, never alone."
-  - "The fixture master (tests/fixtures/fixture-master/) now carries S-085; keep fixture
-     block IDs equal to real master IDs so the manifest tests stay meaningful."
-  - "render.py FORBIDDEN_PHRASES include the fence syntax and placeholder opener as literal
-     strings; master prose must describe them, never quote them."
-  - "YAML traps: plain scalars with ': ' mid-sentence and commas inside flow-mapping values
-     both fail — quote them."
-  - "ChromaQA is never installed by a protocol or folded into another task; SEO/GEO is
-     never retrofitted into an existing repo (seogeo SC-01). Do not propose either."
-  - "Matt runs concurrent Claude Code sessions. Before pushing to ANY repo other than
-     forgeflow, ask whether a CC session is active on it."
-  - "Matt's communication rules (blueprint Section 9 I4): four sentences or less,
-     recommendation not options, one action item at a time, end every reply with the
-     next verb and who holds the ball, state the overall project position at every
-     milestone."
+  - "STOP POINT (RULING-001) holds for every unnamed repo: do NOT render, install, or prepare a render for convergible-sandbox, chromaqa, a spawned child or anything else until Matt names it by name. A master change is NOT a render."
+  - "A TEMPLATE render is special: its outputs are inherited by every child, and the child's copies are WRONG until re-rendered (repo.name, build.deploy). The template's config comment block, START_HERE step 3 and its sharp-edges list all say so; the registry notes say so. If a child shows up with the template's name in its protocol headers, that is the tell."
+  - "build.deploy: none on a Next.js repo is a legitimate knob (the template has no Vercel project) — the profile default vercel is NOT always right for a standard-profile repo. Read the effective-values block, do not assume the profile."
+  - "House-block placement: render.py appends the block at the END of CLAUDE.md when no markers exist. To put it somewhere specific, place the two marker lines yourself first (with one line between them) and render into them — that is how the template's block replaced its placeholder section instead of landing after the ChromaQA section."
+  - "The first ForgeFlow wrap on a repo that already has a fat legacy session-state.yaml will OVERWRITE it (E-009). On saas-starter the 34 earlier decisions were condensed to one line each with a pointer to the old blob; say what you did in the handoff. Consider whether the master should say this explicitly (candidate master change, not made)."
+  - "The renderer's evidence check (render.py evidence) treats 'proven', 'landed', 'shipped', 'done' etc. as claims needing an ID. Wrap prose in handoffs is dense with them; run the check BEFORE composing the commit message and rewrite in reported form where no ID exists."
+  - "Landing procedure that worked (four renders/edits now): clone forgeflow (public, plain https) into the sandbox; for a PRIVATE target, transcribe each file and PROVE it by git hash-object against the GitHub blob SHA before editing; edit with Python replace-and-assert; YAML-parse every changed file; push ONE FILE PER CALL for anything over ~20 KB; prove each landing by blob SHA; run render.py check from a fresh clone."
+  - "GitHub tool trap (unchanged): create_or_update_file needs the FULL 40-char blob SHA; push_files needs none."
+  - "master/BLUEPRINT.yaml knob table (~line 531) still lists chromaqa detected by '.chromaqa/ directory' only and has no seogeo line; the schema file is the contract and is correct. Land the doc line inside the next master change, never alone."
+  - "Renderer condition language: only 'null' and 'None' mean null in a render_when; 'none' is the enum VALUE (GOTCHA-001)."
+  - "YAML traps: plain scalars with ': ' mid-sentence and commas inside flow-mapping values both fail — quote them."
+  - "ChromaQA is never installed by a protocol or folded into another task; SEO/GEO is never retrofitted into an existing repo (seogeo SC-01). Do not propose either."
+  - "Matt runs concurrent Claude Code sessions. Before pushing to ANY repo other than forgeflow, ask whether a CC session is active on it."
+  - "Matt's communication rules (blueprint Section 9 I4): four sentences or less, recommendation not options, one action item at a time, end every reply with the next verb and who holds the ball, state the overall project position at every milestone."
+  - "The evidence checker (render.py evidence) flags the bare schema key for finished items in a session-history entry as an unmarked claim; a trailing `# evidence: <sha>` comment on that line satisfies it. Candidate master/renderer fix (not made)."
+  - "RULING-003 (saas-starter named) was NOT written when made — it was back-filled at this wrap. W-002 says rulings are written in the turn Matt makes them; that slipped here. Do it in the turn next time."
 
 next_up:
-  - "Deferred, not next: banner prompts/INSTALL_REPAIR.md (and decide whether
-     SolutionPatterns.yaml is worth fixing or archiving — it is malformed YAML today)."
-  - "Deferred, not next: master/BLUEPRINT.yaml knob-table line — inside the next master
-     change."
-  - "Deferred, not next: drift_ci — the first real render is now verified, so the blueprint's
-     precondition is met; still its own decision by Matt."
-  - "Deferred, not next: chromaqa render (RULING-002 'likely second') — only when Matt
-     names it."
+  - "Deferred, not next: banner prompts/INSTALL_REPAIR.md (and decide whether SolutionPatterns.yaml is worth fixing or archiving — malformed YAML today)."
+  - "Deferred, not next: master/BLUEPRINT.yaml knob-table line — inside the next master change."
+  - "Deferred, not next: drift_ci — precondition met since the first render; still its own decision by Matt."
+  - "Deferred, not next: candidate master change — say explicitly in E-009 what to do with a fat legacy session-state on a repo's first ForgeFlow wrap (condense + pointer is what was done on saas-starter)."
+  - "Deferred, not next: chromaqa render (RULING-002 'likely second' is now 'likely third') — only when Matt names it."
 
 north_star: |
-  Better: one repo (seogeo, 14f1614) now runs on the master; the render procedure held up
-  end to end against a real private target; and the "none"-literal renderer defect
-  (1f0d1d0) no longer waits to reach the no-deploy repos. Nothing moved onto any repo's
-  board.
+  Better: the master now runs on the house template, so every future Chromasmith product
+  is born with the session layer instead of reinventing it; the procedure held on a second,
+  differently-shaped private target with no renderer defect. The board also moved
+  (registry, docs), but the render itself is product.
 
 tone: |
-  Milestone session, closed out clean. Matt said "Continue" and let the procedure run;
-  the one surprise was the renderer bug, handled inside the session. Open with the
-  one-line position (v1.0.0 released; seogeo the only rendered repo; everything else
-  waits on his naming) and then WAIT — do not propose the next repo.
+  Milestone session, closed clean; Matt gave four one-word instructions (the repo name,
+  "no", "go", "wrap") and the procedure ran. Open with the one-line position (v1.0.0;
+  seogeo + saas-starter rendered; convergible-final unblocked; everything else waits on his
+  naming) and then WAIT — do not propose the next repo.

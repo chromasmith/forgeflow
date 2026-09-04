@@ -1,3 +1,23 @@
 # Session history — new entries appended after each session
 # Permanent record of completed work
-sessions: []
+sessions:
+  - date: 2026-09-04
+    duration: ~2hr
+    completed:  # evidence: e856a72
+      - "Rendered chromasmith/chromasmith-saas-starter from master v1.0.0 (standard profile, config_hash f362bf02fcdf) — saas-starter commits a296c13, 10bb67e, 60c0906, c97a49a; blob SHAs equal to the sandbox output; render.py check OK from a fresh forgeflow clone"
+      - "Registry row added last: master/registered-repos.yaml @ e856a72"
+      - "Template docs truthed up on Matt's go: KNOWN-ISSUES TPL-030 closed @ 45e5c0f; START_HERE re-render spawn step @ 1f6a6b1 (both in saas-starter)"
+      - "First ForgeFlow wrap on saas-starter written (handoff created, session-state overwritten, session-history appended)"
+      - "RULING-003 back-filled (saas-starter named as the second rendered repo)"
+    commits:
+      - message: "registry: add chromasmith/chromasmith-saas-starter (standard profile, v1.0.0, config_hash f362bf02fcdf) — second rendered repo (e856a72)"
+      - message: "docs: end session 2026-09-04 — second render (this commit)"
+    key_changes:
+      - "No master or renderer change this session; the 'none' fix from the first render behaved correctly on a no-deploy standard-profile repo (S-085 in, E-023 out)"
+    files_modified:
+      - master/registered-repos.yaml
+      - .forge/handoff.yaml
+      - .forge/session-state.yaml
+      - .forge/session-history.yaml
+      - .forge/rulings.yaml
+    blockers_remaining: []

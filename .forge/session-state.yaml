@@ -1,8 +1,24 @@
 # Session state — overwritten each session with current snapshot
-session_date: null
-project: null
-milestones: []
-decisions: []
+session_date: 2026-09-04
+project: forgeflow (ForgeFlow Master — unified start/wrap protocols rendered per repo)
+milestones:
+  - "master v1.0.0 released; chromasmith/seogeo rendered (first repo) — earlier 2026-09-04, wrap @ 3145732"
+  - "chromasmith/chromasmith-saas-starter rendered (second repo, the house template) — saas-starter commits a296c13 / 10bb67e / 60c0906 / c97a49a; render.py check OK; registry row @ e856a72"
+decisions:
+  - decision: "saas-starter is the second repo rendered from the master (RULING-003)"
+    rationale: "Matt named it by name; it is the base every future product is cloned from, and RULING-001 requires it before the Convergible final repo."
+    impact: "The saas-starter-before-convergible-final constraint is satisfied; children inherit rendered files and must re-render with their own config."
+  - decision: "The template renders with build.deploy overridden to none"
+    rationale: "The template has no Vercel project and no vercel.json; the profile default would make every wrap demand a deployment record that cannot exist."
+    impact: "Children linked to Vercel drop the override; documented in the template's config, START_HERE and the registry row."
+  - decision: "House-block markers may be pre-placed in CLAUDE.md so the render lands in a chosen spot"
+    rationale: "render.py appends at the end when no markers exist; the template's placeholder 'Session workflow' section was the right home."
+    impact: "Procedure note for future renders (recorded in the handoff)."
 blockers: []
-next_steps: []
-context: ""
+next_steps:
+  - priority: high
+    task: "WAIT — render no repo until Matt names it by name (RULING-001); chromaqa is the likely next, with subsystems.chromaqa overridden false."
+context: |
+  Two repos of different shape (docs-only private, standard private with ChromaQA) now run
+  on master v1.0.0 with no renderer defect on the second render. Every other repo waits on
+  Matt's naming. Housekeeping deferred items are listed in the handoff's next_up.

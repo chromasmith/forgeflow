@@ -32,3 +32,16 @@ rulings:
       README repoint, CHANGELOG v1.0.0) lands in the seogeo render session.
     supersedes: nothing — RULING-001 said Matt names the repo; this is him naming it
     stated_by: Matt, in chat, at the close of the SEO/GEO master-change session ("I will start with SEO/GEO, per your recommendation")
+  - id: RULING-003
+    date: 2026-09-04
+    subject: Second repo to render from the ForgeFlow Master
+    ruling: >-
+      chromasmith/chromasmith-saas-starter — the house SaaS template — is the SECOND repo
+      rendered from the master, in its own session with its own go ("Let's install this in
+      our new template"). Matt confirmed no Claude Code session was active on it before
+      the push. This satisfies RULING-001's constraint that the Convergible final repo is
+      never rendered before saas-starter: the final repo may now be cloned from the
+      rendered template. A project spawned from the template re-renders the protocols with
+      its own config (repo.name; build.deploy override dropped once linked to Vercel).
+    supersedes: nothing — RULING-001 said Matt names the repo; this is him naming it
+    stated_by: Matt, in chat, opening the render session (recorded at the wrap, not in the turn it was made — a W-002 miss)
