@@ -1,3 +1,5 @@
+> **SUPERSEDED (2026-09-04).** This document describes the legacy Forge Flow 10 methodology. The live system is the **ForgeFlow Master** in [`master/`](../master/) — one master rendered per repo by `master/render.py`; see `master/BLUEPRINT.yaml`, `master/RENDER_PROCEDURE.md` and `master/registered-repos.yaml`. This file is kept for the record and is not maintained.
+
 # Integration Points
 
 Forge Flow is a folder convention and workflow specification. It does not own or define the external tools that interact with it. This document maps the touchpoints — which Forge Flow files each tool reads from and writes to — so the systems can coexist without stepping on each other.

@@ -1,3 +1,5 @@
+> **SUPERSEDED (2026-09-04).** This document describes the legacy Forge Flow 10 methodology. The live system is the **ForgeFlow Master** in [`master/`](../master/) — one master rendered per repo by `master/render.py`; see `master/BLUEPRINT.yaml`, `master/RENDER_PROCEDURE.md` and `master/registered-repos.yaml`. This file is kept for the record and is not maintained.
+
 # Session Lifecycle
 
 A Forge Flow session follows a consistent three-phase pattern: Start → Build → End. This document describes each phase, who does what, and how the files are used.

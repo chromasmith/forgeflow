@@ -1,3 +1,5 @@
+> **SUPERSEDED (2026-09-04).** This document describes the legacy Forge Flow 10 methodology. The live system is the **ForgeFlow Master** in [`master/`](../master/) — one master rendered per repo by `master/render.py`; see `master/BLUEPRINT.yaml`, `master/RENDER_PROCEDURE.md` and `master/registered-repos.yaml`. This file is kept for the record and is not maintained.
+
 # Visibility Tiers
 
 Forge Flow uses a deliberate information architecture to control what AI coding agents consume. This isn't about file organization — it's about managing context windows for maximum agent effectiveness.
