@@ -934,19 +934,28 @@ rollout:
       becomes reference only; the issue-body template then comes under master
       control as a rendered artifact. After this step passes, drift_ci may be
       installed.
+  - step: 4b
+    name: Render the Convergible final monorepo
+    detail: >
+      Once step 4 passes, render the new Convergible final monorepo (shape: monorepo,
+      dispatch enabled after its one-time install). Because it is created before the
+      master exists, it is born on convergible-sandbox's protocol set and picks up the
+      rendered set here; the pinned-with-reason entry covers the gap.
   - step: 5
     name: Update saas-starter
-    detail: Bake protocol-config.yaml defaults and rendered protocols into the house
-      template so every new repo — including the final monorepo Matt is about to
-      stand up — is born current.
+    detail: >
+      Bake protocol-config.yaml defaults and rendered protocols into the house
+      template so every new repo is born current. NOTE: the Convergible final
+      monorepo is being created before this step can run; it starts on the current
+      convergible-sandbox protocol set and is rendered in step 4b (above).
   - step: 6
     name: Synclips + relay
     detail: >
-      Render the Synclips-system repos with the companion knob. NOTE (2026-09-04):
-      Matt reports migrating to a new "final" monorepo within a day or two; if the
-      Synclips repos consolidate into one monorepo, the relay's cross-repo role
-      shrinks or disappears and this step is re-scoped before it runs. The relay's
-      PROTOCOL.md stays as-is either way; any relay write moves to CW direct-write.
+      Render chromasync, synclips-platform and dv-captain with the companion knob.
+      The relay's PROTOCOL.md stays as-is; the wrap's relay write moves to CW
+      direct-write. (Confirmed 2026-09-04: the imminent "final" monorepo is
+      Convergible's, not Synclips' — the Synclips system stays multi-repo and the
+      relay stays in play.)
   - step: 7
     name: Remaining active repos (ChromaQA and any others in registered-repos.yaml)
     detail: Any repo lacking .forge/ gets the initialization templates. Dormant repos
@@ -1042,7 +1051,8 @@ committee_resolutions:
   board_Q_dispatch_reads_protocol: UNCONFIRMED — tested by the S6 canary in rollout step 3.
   board_Q_active_repo_count: >
     ANSWERED 2026-09-04 — 3 to 4: convergible-sandbox, the Synclips system, ChromaQA,
-    plus a new "final" monorepo Matt is standing up within a day or two. Consequence:
+    plus the new Convergible final monorepo Matt is standing up within a day or two
+    (migrating off convergible-sandbox). Consequence:
     the propagation set is small by design; dormant repos get a stamped, pinned copy
     and are not rendered (rollout step 7). The Radical's "you are building propagation
     machinery before knowing the population" objection is thereby answered: the
@@ -1050,7 +1060,6 @@ committee_resolutions:
 
 still_open:
   - S4 ceiling number for rendered protocol length — set after step 2 measures the folded set.
-  - Whether the imminent "final" monorepo consolidates the Synclips repos (affects rollout step 6 scope).
   - drift_ci [VERIFY] — can a rendered repo's Action fetch forgeflow?
 
 committee_questions_v1_0_for_the_record:
