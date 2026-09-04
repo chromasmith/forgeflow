@@ -1,0 +1,18 @@
+# fixture: the REAL convergible-sandbox knob set (step-3 exit proof, rendered INSIDE forgeflow only —
+# nothing here is written to convergible-sandbox; RULING-001). Knobs mirror what P3 detection would
+# find in that tree as of 2026-09-04: dispatch on, supabase on, vercel on, ci gate on, ui inventory on,
+# .tsx present, artifact register present, database-access doc declared, no ChromaQA telemetry dir.
+profile: standard
+repo: { org: chromasmith, name: convergible-sandbox }
+north_star_doc: ".forge/specs/convergible-2.5-vision.yaml"
+ids:
+  backlog_prefix: "CV-"
+overrides:
+  execution.dispatch.enabled: true
+  subsystems.supabase: true
+  subsystems.vercel: true
+  subsystems.ci_quality_gate: true
+  subsystems.ui_inventory: true
+  subsystems.artifact_register: true
+  subsystems.database_access_doc: ".forge/protocols/database-access.yaml"
+  architecture.tsx_lib_rule: true

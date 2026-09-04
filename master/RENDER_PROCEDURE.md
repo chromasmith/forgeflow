@@ -3,9 +3,12 @@
 Blueprint v1.2, Section 6 and Principle P9. Written so a fresh Claude Web session can execute it cold.
 Claude Web runs `master/render.py` in its own sandbox; GitHub is only ever read and written through the GitHub MCP.
 
-STATUS (2026-09-04): the renderer, schema, profiles and fixture test are built and proven on the miniature
-fixture master (`master/tests/fixtures/`). The real `start-protocol.master.yaml` and `end-protocol.master.yaml`
-are NOT written yet — until they exist, steps 3-7 below can only be run against the fixture.
+STATUS (2026-09-04, end of step 3): renderer, schema, profiles, fixture test AND both master protocol files are
+built. `start-protocol.master.yaml` (89 blocks) and `end-protocol.master.yaml` (46 blocks) render byte-stable for the
+three fixture profiles and for the real convergible-sandbox knob set (`tests/fixtures/config-sandbox-real.yaml`,
+rendered inside forgeflow only). Per RULING-001 no repo is rendered until Matt names it. Still to land before the first
+real render: `claude-md.house-block.master.md`, `PROPAGATION_PROCEDURE.md`, `registered-repos.yaml`, the S4 ceilings
+in BLUEPRINT.yaml, and the CHANGELOG bump to v1.0.0.
 
 ## 0. Preconditions
 - The GitHub MCP is connected. Ask Matt whether a Claude Code session is active on the TARGET repo before step 7.
