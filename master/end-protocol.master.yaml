@@ -28,6 +28,9 @@
 #   E-046 cc_remainder_secrets_guard
 # ADDED v0.2.0-build (ChromaQA 7.0 master change, 2026-09-04):
 #   E-047 cc_remainder_push_gate (exit-code rule + post-push telemetry exception)
+# ADDED v0.3.0-build (SEO/GEO master change, 2026-09-04):
+#   E-048 cc_remainder_seogeo_profile   E-049 cc_remainder_seogeo_report
+#   E-050 wrap_manifest_seogeo_lines    E-051 file_behaviors_seogeo
 # E-004 (database state invisible) also carries the STEP 0 database-state class, so
 # the index's "sub-blocks conditional" for E-005 resolves to E-004 + E-031..E-034.
 # Reader deviation from the index: E-001 is all, not cw — a cold runner must hold the
@@ -167,6 +170,23 @@ wrap_file_manifest_chromaqa: |
     .chromaqa/CQA-runs.jsonl          LOCAL ONLY — gitignored, never committed,
                                       never on GitHub
 # <<< end E-036
+
+# >>> block E-050 | wrap_manifest_seogeo_lines | reader: cw | render_when: subsystems.seogeo
+wrap_file_manifest_seogeo: |
+  Additional paths for this repo (SEO/GEO present):
+    .seogeo/config.json               COMMITTED CONFIG — the single source of truth
+                                      for surfaces and visibility; edited by a
+                                      session only to declare a route group it
+                                      created; the boundary itself (surfaces,
+                                      indexable_when, posture) is Matt's, by name
+    .seogeo/STANDARD.md               COMMITTED, read by sessions, never edited by
+                                      a wrap — 60 lines, a rule replaces a rule
+    .seogeo/crawlers.json             COMMITTED, dated and perishable — refreshed
+                                      as its own deliberate change, never as a
+                                      side effect of other work
+    .seogeo/.report/emit-report.json  LOCAL BUILD ARTIFACT — never served, never
+                                      staged, never a wrap artifact
+# <<< end E-050
 
 # >>> block E-004 | database_state_invisible_rule | reader: cw | render_when: subsystems.supabase
 database_state_invisible_rule: |
@@ -1071,6 +1091,37 @@ cc_remainder_push_gate: |
   resolved / telemetry commit at [hash]]".
 # <<< end E-047
 
+# >>> block E-048 | cc_remainder_seogeo_profile | reader: cw+cc-local | render_when: execution.local and subsystems.seogeo and subsystems.chromaqa
+cc_remainder_seogeo_profile: |
+  GENERATED PROFILE exception for the local remainder (this repo runs both
+  SEO/GEO and ChromaQA). SEO/GEO generates the ChromaQA profile from
+  .seogeo/config.json, so the STOP on a modified .chromaqa/profiles.json (or a
+  posture-stamped .chromaqa/profiles.<posture>.json) has exactly one
+  exception, and it applies only when ALL three hold:
+    1. .seogeo/config.json is itself modified this session, and
+    2. the profile's _generated.by field reads "seogeo chromaqa-profile", and
+    3. the profile's _generated.source_sha256_16 equals the output of
+           sha256sum .seogeo/config.json | cut -c1-16
+  Then commit .seogeo/config.json and the regenerated profile together, by
+  name, with the message "chore: seogeo config + regenerated chromaqa
+  profile", and continue. In every other state — a profile modified with no
+  config change, a stamp that does not match, a profile deleted or emptied —
+  the STOP stands: report it and wait.
+  The report adds: "- SEO/GEO profile: [committed with config / unchanged /
+  STOP — reason]".
+# <<< end E-048
+
+# >>> block E-049 | cc_remainder_seogeo_report | reader: cw+cc-local | render_when: execution.local and subsystems.seogeo
+cc_remainder_seogeo_report: |
+  EMIT REPORT line for the local remainder (this repo runs SEO/GEO).
+  .seogeo/.report/emit-report.json is written by
+  node .seogeo/bin/seogeo.mjs report and is a LOCAL BUILD ARTIFACT: never
+  served, never staged, never a wrap artifact. Its presence in git status is
+  expected and is NOT a working-tree-audit surprise; if git add would stage
+  it, leave it out. Nothing else under .seogeo/ is created, deleted or
+  reformatted by a wrap.
+# <<< end E-049
+
 # >>> block E-046 | cc_remainder_secrets_guard | reader: cw+cc-local | render_when: execution.local and protected.never_touch_paths non-empty
 cc_remainder_secrets_guard: |
   SECRETS GUARD for the local remainder. These paths are never staged, never
@@ -1300,6 +1351,23 @@ file_behaviors_chromaqa:
     path: .chromaqa/CQA-runs.jsonl
     action: LOCAL ONLY (gitignored, per machine; never committed, never on GitHub, not read by the wrap)
 # <<< end E-042
+
+# >>> block E-051 | file_behaviors_seogeo | reader: cw | render_when: subsystems.seogeo
+file_behaviors_seogeo:
+  seogeo_config:
+    path: .seogeo/config.json
+    action: "COMMITTED CONFIG (single source of truth for surfaces and visibility; a session edits it only to declare a route group it created; the boundary is Matt's, by name)"
+    note: "where ChromaQA is also present, the ChromaQA profile is generated from this file and never hand-edited"
+  seogeo_standard:
+    path: .seogeo/STANDARD.md
+    action: "COMMITTED (read by every session that touches a page, route or layout; never edited by a wrap; 60-line cap, a rule replaces a rule)"
+  seogeo_crawlers:
+    path: .seogeo/crawlers.json
+    action: "COMMITTED (dated and perishable; refreshed as its own deliberate change, never as a side effect)"
+  seogeo_report:
+    path: .seogeo/.report/emit-report.json
+    action: "LOCAL BUILD ARTIFACT (written by the report command; never served, never staged, never a wrap artifact, not read by the wrap)"
+# <<< end E-051
 
 # >>> block E-029 | initialization_templates | reader: cw | render_when: always
 initialization_templates:
