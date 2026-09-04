@@ -59,3 +59,24 @@ repos:
       (chromaqa-check.sh, a real running gate here), tsx_lib_rule; vercel and seogeo off.
       Override build.deploy: none because the template itself is deployed nowhere. The house
       block replaced the placeholder "Session workflow" section of CLAUDE.md (TPL-030).
+  - repo: chromasmith/forgeflow
+    config: .forge/protocol-config.yaml
+    profile: docs-only
+    master_version: "v1.0.0"
+    rendered_on: 2026-09-04
+    config_hash: 427225a67a50a3d1475cef13eade7b3e8fb2cbe5cbabbf277cf0d3634e63b001
+    state: current
+    files:
+      - .forge/protocols/start-protocol.yaml
+      - .forge/protocols/end-protocol.yaml
+      - .forge/protocol-config.yaml
+      - CLAUDE.md
+    landed: "commits 0f7ec5e (config + RULING-004), 5e1f463 (start), 56f2389 (end), b9046e2 (CLAUDE.md), all 2026-09-04; blob SHAs equal; render.py check OK from a fresh clone at b9046e2"
+    notes: >-
+      Third repo rendered (Matt named it 2026-09-04, RULING-004) and the master's own home:
+      master/ is the source, .forge/protocols/ the output, and a render never reads
+      .forge/protocols/, so rendering the repo from itself is not circular. Public repo, so
+      detection ran on the real tree: no package.json/pyproject, no subsystems, dispatch off.
+      The house block was APPENDED to CLAUDE.md (the file had no markers); the rest of that
+      CLAUDE.md is still the unfilled Chromasmith template. north_star_doc = master/BLUEPRINT.yaml,
+      backlog prefix FF-.
