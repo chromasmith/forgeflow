@@ -257,7 +257,7 @@ def parse_literal(tok):
     tok = tok.strip()
     if tok in ("true", "True"):  return True
     if tok in ("false", "False"): return False
-    if tok in ("none", "null", "None"): return None
+    if tok in ("null", "None"): return None   # NOT "none": it is a legal enum VALUE (build.validation/build.deploy: none) and must compare as the string
     if re.fullmatch(r"-?\d+", tok): return int(tok)
     return tok.strip("'\"")
 
