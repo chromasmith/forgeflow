@@ -1,0 +1,1392 @@
+# =============================================================================
+# FORGEFLOW MASTER — END / WRAP PROTOCOL (master source; never read by a session)
+# Home: github.com/chromasmith/forgeflow  master/end-protocol.master.yaml
+# Blueprint v1.3 Sections 4, 6, 8; transcribed from master/LINEAGE_RECONCILIATION.yaml
+# (all four lineages: STD 2026-08-08, SYN 2026-07-04, CC2 2026-06-20/25, SBX 2026-09-03;
+# primary source text = convergible-sandbox end-protocol-local.yaml blob e8652d9 and
+# end-protocol-dispatch.yaml blob 02be688) plus the board additions listed there
+# (E-008 evidence rule, E-014 drift field + north-star, E-024 inbox consumption,
+# E-026 project position). Every folded/knobbed LR-nnn whose target is an E- block
+# resolves to its index block ID; IDs are stable and never reused.
+#
+# WRAP DIRECT-WRITE (I1, ratified 2026-09-04) is the governing model of this file:
+# Claude Web writes the wrap's .forge/ documentation files itself through the GitHub
+# connector. Claude Code's wrap role is the LOCAL REMAINDER only (E-021): push its own
+# code and telemetry. The legacy CDT-prompt / dispatched-wrap-issue packaging is
+# dropped (LR-134); every file behavior, schema and template is kept.
+#
+# NEW IDs added in step 3b where the index said "sub-blocks conditional" or where one
+# paragraph varies by knob (one block = one render condition, per P1):
+#   E-031 scope_reconciliation_architecture_drift   E-032 scope_reconciliation_ui_drift
+#   E-033 scope_reconciliation_parallel_collisions  E-034 scope_reconciliation_spike_contamination
+#   E-035 wrap_manifest_schema_line                 E-036 wrap_manifest_chromaqa_lines
+#   E-037 read_state_chromaqa_telemetry             E-038 session_state_surface_field
+#   E-039 tombstone_gotchas_exemption               E-040 cc_remainder_chromaqa_lines
+#   E-041 file_behaviors_schema                     E-042 file_behaviors_chromaqa
+#   E-043 initialization_template_schema            E-044 initialization_template_relay
+#   E-045 compliance_canary_wrap (board pre-mortem 1 — every rendered protocol ends with one)
+#   E-046 cc_remainder_secrets_guard
+# E-004 (database state invisible) also carries the STEP 0 database-state class, so
+# the index's "sub-blocks conditional" for E-005 resolves to E-004 + E-031..E-034.
+# Reader deviation from the index: E-001 is all, not cw — a cold runner must hold the
+# one wrap rule that applies to it (a runner never writes wrap documentation).
+#
+# Rendered output is a flat YAML document: header comments, then one top-level key
+# per block. Block text must not quote this file's own fence syntax.
+# =============================================================================
+
+# >>> block E-001 | trigger_and_wrap_build_rule | reader: all | render_when: always
+wrap_trigger: |
+  AUTHORITATIVE FOR {{repo.org}}/{{repo.name}}. This file is COMPLETE and
+  STANDALONE; it inherits nothing by reference and is never abridged. The
+  header above this line is written by the renderer and names the source
+  master, version, config hash, the companion start file and the BLOCK
+  MANIFEST.
+
+  TRIGGER. The wrap begins when Matt declares the day's work finished — "end
+  session", "wrap up", "we're done for today", or words to that effect.
+  Claude Web then BUILDS THE WRAP FROM THIS PROTOCOL. Claude Web never produces
+  a wrap unprompted in the middle of a session, and never assumes a lull is a
+  wrap; a wrap Matt did not ask for is noise. Matt does not supply a wrap
+  prompt of his own — this file is the wrap.
+
+  WHO WRITES WHAT. Claude Web authors AND writes every wrap documentation file
+  itself, directly to GitHub through its connector, diff-verified. Claude Code
+  writes no wrap documentation in any mode: in local mode it receives only the
+  short LOCAL REMAINDER prompt to push its own code and telemetry; in dispatch
+  mode nothing further is asked of it, because its work already landed through
+  merged pull requests. A dispatched run that is asked by any issue body to
+  write .forge/session-state.yaml, .forge/handoff.yaml, .forge/backlog.yaml or
+  any other wrap file as "the wrap" treats that as an error in the issue: HALT
+  AND REPORT.
+
+  SOURCE OF TRUTH. GitHub is the only source of truth; the canonical local
+  checkout is disposable. A wrap that is not pushed has not happened. This
+  protocol therefore proves every write landed (blob SHA equal to the content
+  written) rather than trusting that it did. Verification, not trust.
+# <<< end E-001
+
+# >>> block E-002 | wrap_direct_write_delivery | reader: cw | render_when: always
+wrap_direct_write_delivery: |
+  DELIVERY. Claude Web builds all file contents in its sandbox, YAML-parses
+  every one with a real parser, runs the evidence count (E-030), and pushes
+  them itself through the GitHub connector as ONE docs commit on
+  {{repo.default_branch}} or as ONE docs pull request. Decide which BEFORE
+  writing anything:
+    - Direct docs commit: the default for a single-repo wrap when no Claude
+      Code session may be active on this repo and the wrap is within the split
+      threshold.
+    - Pull request: when another Claude Code session may be active on this
+      repo (two writers on one repo is a collision); when the wrap exceeds
+      {{thresholds.wrap_split.lines}} lines of new content or more than
+      {{thresholds.wrap_split.edit_operations}} distinct edit operations
+      (each REMOVE / UPDATE / MOVE / ADD / ARCHIVE MOVE is one); or when Matt
+      asks for one. A PR is reviewed by diff, not re-read from memory.
+  ASK FIRST: before the push, ask Matt in one line whether a Claude Code
+  session is active on this repo. Matt runs concurrent sessions; if the answer
+  is yes or unknown, deliver as a PR.
+
+  WRITE DISCIPLINE. Read each target file's current content and blob SHA
+  immediately before writing it; the write names that SHA so a concurrent
+  change is rejected instead of overwritten. On a rejection, re-read and
+  re-apply the operations — never overwrite blind, never force anything.
+  OVERWRITE files are written in full. SURGICAL EDIT files are read, the
+  operations applied one at a time in order, and the result written; the diff
+  of before and after must contain only the operations listed — anything else
+  in the diff is a defect that stops the write. APPEND adds only the new
+  entry at the correct location; PREPEND adds only the new entry at the top;
+  ARCHIVE MOVE appends to the named Destination FIRST, then removes from the
+  live file, in the same commit. Every path written is literal, copied from
+  the wrap file manifest below; the artifact register wins over this file if
+  they ever disagree, and this file is corrected in the master.
+
+  PROOF OF LANDING. After the push, fetch each written file and compare the
+  blob SHA GitHub reports with the SHA of the content written (git
+  hash-object in the sandbox). Equal means landed; anything else means the
+  wrap is not done. Report to Matt in plain English: what changed in each
+  file, in one line per file, then the commit SHA or PR number.
+
+  DIRECT EDITS ARE FOR THE DOCUMENTATION LAYER ONLY. Application code,
+  migrations, configuration and workflow files remain Claude Code's work
+  through prompts; the wrap never touches them. Protocol files under
+  .forge/protocols/ are never edited here — a protocol bug is a master bug,
+  filed against the master and re-rendered.
+# <<< end E-002
+
+# >>> block E-003 | wrap_file_manifest | reader: cw | render_when: always
+wrap_file_manifest: |
+  EVERY PATH THIS WRAP MAY WRITE. All literal, none inferred. The list must
+  agree with .forge/protocols/artifact-register.yaml; the register wins.
+
+    .forge/session-state.yaml                      OVERWRITE
+    .forge/active-bugs.yaml                        SURGICAL EDIT
+    .forge/session-history.yaml                    APPEND (cap {{thresholds.session_history_cap}})
+    .forge/backlog.yaml                            SURGICAL EDIT
+    .forge/GOTCHAS.yaml                            APPEND (consolidate at {{thresholds.gotcha_consolidation.trigger_count}} or every {{thresholds.gotcha_consolidation.or_every}}, {{thresholds.gotcha_consolidation.runs_as}})
+    .forge/rulings.yaml                            APPEND (confirm every ruling made this session landed)
+    .forge/handoff.yaml                            OVERWRITE
+    CHANGELOG.yaml                                 PREPEND (cap {{thresholds.changelog_cap}}, quality gate)
+    .forge/archive/session-history-archive.yaml    APPEND, oldest-first
+    .forge/archive/GOTCHAS-archive.yaml            APPEND, oldest-first  <- the ONLY GOTCHAS archive
+    .forge/archive/CHANGELOG-archive.yaml          APPEND, newest-at-top
+    .forge/archive/backlog-archive.yaml            APPEND, oldest-first (completed items older than {{thresholds.backlog_completed_archive_after_days}} days)
+    .forge/archive/inbox/<run-id>.yaml             MOVE from .forge/inbox/<run-id>.yaml (consumed observation files)
+
+  ONE ARCHIVE PATH PER FILE CLASS. Every archive lives under .forge/archive/
+  at the path named above. An archive file for the same class at any other
+  path — a second GOTCHAS archive beside .forge/ for example — is a defect to
+  surface as a new GOTCHA, never a place to write, even if it looks
+  established. Before creating any archive file, grep the repo for an existing
+  file serving that purpose; a discrepancy is HALT AND REPORT, never a second
+  copy.
+
+  The paths .forge/protocols/ and .forge/specs/ are OFF LIMITS to the wrap,
+  with exactly the exceptions named in this file (the conditional schema
+  refresh, where the repo has a database).
+# <<< end E-003
+
+# >>> block E-035 | wrap_manifest_schema_line | reader: cw | render_when: subsystems.supabase
+wrap_file_manifest_schema: |
+  Additional path for this repo (database present):
+    .forge/specs/schema.yaml                       CONDITIONAL REFRESH (only if migrations ran; preserve annotations)
+# <<< end E-035
+
+# >>> block E-036 | wrap_manifest_chromaqa_lines | reader: cw | render_when: subsystems.chromaqa
+wrap_file_manifest_chromaqa: |
+  Additional paths for this repo (ChromaQA present) — PASS-THROUGH only, never
+  generated or edited by anyone; committed by the local remainder only when
+  git status shows them modified:
+    .chromaqa/CQA-runs.jsonl
+    .chromaqa/CQA-debt.jsonl
+    .chromaqa/CQA-showstoppers.jsonl
+# <<< end E-036
+
+# >>> block E-004 | database_state_invisible_rule | reader: cw | render_when: subsystems.supabase
+database_state_invisible_rule: |
+  DATABASE STATE IS INVISIBLE TO THE REPO. Role grants, RLS policies, pg_cron
+  jobs, vault secrets, registry rows, registrations, backfills and status
+  flips leave no trace in any file. If a session changed any of them, the wrap
+  MUST record it — in session-state decisions AND in the handoff's
+  watch_out_for — or the next session will not know it exists. Treat this as
+  the standing requirement, not a one-off. Where the repo declares a
+  database-access doc, its rules on who may write the database are binding on
+  the wrap's claims: a runner's read-only role sees only a subset of tables,
+  so any database fact the wrap records is verified by Claude Web's own query
+  with full-catalog visibility, never taken from a runner's report.
+
+  STEP 0 CLASS — DATABASE STATE CHANGES: as part of scope reconciliation,
+  list every registration, backfill, status flip, role grant, policy, pg_cron
+  job or vault secret changed this session. This class does not block the
+  wrap, but it never passes silently, and each item lands in both places
+  named above.
+# <<< end E-004
+
+# >>> block E-005 | scope_reconciliation | reader: cw | render_when: always
+scope_reconciliation: |
+  STEP 0 — SCOPE RECONCILIATION (run BEFORE anything else). The evidence is
+  the session's observation inbox files, .forge/inbox/<run-id>.yaml, one per
+  run, written by Claude Code before any prose report — plus, for a local
+  session, the AUTHORIZED FILES list of each prompt Claude Web generated. For
+  every run of the session collect: the AUTHORIZED FILES list emitted for it;
+  the SCOPE DISCLOSURE; the ARCHITECTURE DISCLOSURE where asked; the UI
+  CONFORMANCE answer where asked; the RUNNER ENVIRONMENT answer where asked;
+  the ARTIFACT PATHS answer where the run created files. A run with no inbox
+  file is a missing disclosure, recorded as such (E-024), never assumed clean.
+
+  Build the consolidated list:
+    - Session-authorized scope: every file that appeared on any AUTHORIZED
+      FILES list this session.
+    - Disclosed drift: every file Claude Code admitted touching that was NOT
+      authorized.
+    - Suspected drift: any file Claude Code is likely to have touched that
+      was neither authorized nor disclosed, based on the friction you saw.
+    - ARTIFACT-PATH DEFECTS: every instance where a prompt or issue named an
+      artifact without its exact path, or where Claude Code created a file at
+      a path the prompt did not name. Treat exactly like scope drift: surface
+      it, and log a GOTCHA naming the PROMPT defect and the register rule it
+      violated, not the run's behaviour.
+    - Additional classes this repo renders (architecture drift, UI drift,
+      parallel collisions, spike contamination, database state changes) are
+      defined in their own sections of this file.
+
+  If there is ANY disclosed or suspected scope drift: do NOT write the wrap
+  yet. Report it to Matt in plain English — which files were modified outside
+  the authorized scope, what you think happened and why — with ONE
+  recommendation among the three outcomes: (a) accept the edits and record
+  them in a separate, honestly labeled commit; (b) revert them; (c) bring them
+  into scope retroactively and log a GOTCHA about the pattern. Wait for his
+  ruling, then fold the outcome into the wrap (a separate commit, a GOTCHA
+  entry, or both). Scope drift BLOCKS the wrap until Matt rules.
+
+  Every other class is surfaced in one or two plain-English lines, gets a
+  GOTCHA where the cause was a prompt defect, and is folded into
+  handoff.yaml watch_out_for. None of them blocks the wrap; none passes
+  silently. If there is no drift of any kind, proceed silently to STEP 1.
+# <<< end E-005
+
+# >>> block E-031 | scope_reconciliation_architecture_drift | reader: cw | render_when: architecture.tsx_lib_rule
+scope_reconciliation_architecture_drift: |
+  STEP 0 CLASS — ARCHITECTURE DRIFT: every disclosed instance of data access
+  or business logic (queries, scoring, ranking, filtering, eligibility)
+  landing in a .tsx file this session. The code is already committed, so this
+  does not block the wrap, but it must not pass silently. Surface it, and
+  propose a GOTCHA when the cause was a prompt defect — most commonly an
+  authorized list that named the screen but not its /lib counterpart, making
+  the inline query the compliant path. The GOTCHA names the prompt defect,
+  not just the code symptom. Name in the handoff the screens or flows that
+  keep attracting inline data access, so future prompts authorize the /lib
+  pair.
+# <<< end E-031
+
+# >>> block E-032 | scope_reconciliation_ui_drift | reader: cw | render_when: subsystems.ui_inventory
+scope_reconciliation_ui_drift: |
+  STEP 0 CLASS — UI DRIFT: every new UI pattern, component or style created
+  this session that is not in .forge/specs/ui-inventory.yaml. Surface it and
+  decide with Matt — with a recommendation — whether the new pattern folds
+  into the inventory (append-only, the one permitted write under
+  .forge/specs/) or is reverted. Does not block the wrap.
+# <<< end E-032
+
+# >>> block E-033 | scope_reconciliation_parallel_collisions | reader: cw | render_when: execution.dispatch.enabled
+scope_reconciliation_parallel_collisions: |
+  STEP 0 CLASS — PARALLEL COLLISIONS: any file that appeared on TWO
+  concurrently dispatched issues' authorized lists. Even if both merged
+  cleanly, that is a triage-gate failure and belongs in the handoff's
+  watch_out_for and in a GOTCHA. For dispatched work the disclosures come
+  from the inbox files on each run's branch and from the issue and PR
+  threads; re-read every dispatched issue of the session before reconciling.
+# <<< end E-033
+
+# >>> block E-034 | scope_reconciliation_spike_contamination | reader: cw | render_when: len(build.surfaces) > 1
+scope_reconciliation_spike_contamination: |
+  STEP 0 CLASS — SPIKE CONTAMINATION: this repo has more than one surface
+  ({{build.surfaces}}) and permits spike work outside the repo with an EMPTY
+  authorized list. For every spike this session, confirm from its disclosure
+  that the repo tree was never touched. Any file a spike changed inside the
+  repo is scope drift and blocks the wrap like any other. Record what each
+  spike proved, on which surface, in session-state.
+# <<< end E-034
+
+# >>> block E-006 | identify_project | reader: cw | render_when: always
+identify_project: |
+  STEP 1 — IDENTIFY PROJECT. This wrap is rendered for {{repo.org}}/{{repo.name}};
+  canonical local checkout {{repo.canonical_checkout}} (the ONLY local
+  location; folder name matches the GitHub repo name exactly, including
+  casing); default branch {{repo.default_branch}}. Confirm the session's work
+  was on this repo. If the conversation was about a different repo, STOP —
+  open that repo's own wrap protocol; a wrap run against the wrong repo is a
+  stop, not a warning. The header's config hash identifies the exact knob set
+  this file was rendered from; there are no variants to choose between.
+# <<< end E-006
+
+# >>> block E-007 | read_current_state | reader: cw | render_when: always
+read_current_state: |
+  STEP 2 — READ CURRENT STATE. Read, from GitHub at {{repo.default_branch}}
+  HEAD, the current contents of every file this wrap may write, at these exact
+  paths, and record each file's blob SHA for the write step:
+      .forge/session-state.yaml
+      .forge/active-bugs.yaml
+      .forge/session-history.yaml
+      .forge/backlog.yaml
+      .forge/GOTCHAS.yaml
+      .forge/rulings.yaml
+      .forge/handoff.yaml
+      CHANGELOG.yaml
+  Also list .forge/inbox/ (the session's observation files) and check
+  whether each archive file under .forge/archive/ exists. If any file does
+  not exist, note that it will be created and use the matching template from
+  initialization_templates in this file; grep first for a file already
+  serving that purpose (R3). Never write a file you have not read in this
+  wrap.
+# <<< end E-007
+
+# >>> block E-037 | read_state_chromaqa_telemetry | reader: cw | render_when: subsystems.chromaqa
+read_state_chromaqa_telemetry: |
+  Also read the ChromaQA telemetry files if they exist — for awareness only,
+  never to generate or edit them:
+      .chromaqa/CQA-runs.jsonl
+      .chromaqa/CQA-debt.jsonl
+      .chromaqa/CQA-showstoppers.jsonl
+  A debt count at or above {{thresholds.chromaqa_debt_alert}} is stated in
+  one line in the handoff status. Telemetry is never a wrap artifact; the
+  local remainder commits it only when git shows it modified.
+# <<< end E-037
+
+# >>> block E-008 | verify_before_you_write_and_evidence | reader: cw | render_when: always
+verify_before_you_write_and_evidence: |
+  STEP 2b — VERIFY BEFORE YOU WRITE. Every factual claim the wrap is about to
+  write — in session-state, the handoff, a backlog status, an active-bugs
+  entry, a session-history line — is checked against its source of truth NOW,
+  before it is written, never composed from belief or from memory of the
+  session:
+    - A claim about the repo (a file exists, a PR merged, a line says X, a
+      commit landed) is verified by reading that file, commit or PR on GitHub
+      now.
+    - A claim about the database (rows exist, a backfill landed, a status
+      flipped) is verified by a query now, with full-catalog visibility.
+    - A universal claim ("every X has a Y", "all N rows") is verified by a
+      count, and the count is written next to the claim.
+    - A claim that cannot be verified this session is written in REPORTED
+      form ("Claude Code reports X — unverified, no PR fetched") or left out.
+      It is never written as fact.
+  Status fields are validated: every backlog status is one of
+  ready | blocked | needs-ruling | in_progress | deferred | completed |
+  superseded. Any status the wrap sets is re-read against that item's own
+  description before it is written; the two must agree, and the description
+  wins. A needs-ruling status is checked against .forge/rulings.yaml and
+  corrected if the ruling already exists.
+
+  EVIDENCE RULE (binding on every wrap write). Every state-change claim —
+  complete, shipped, merged, deployed, fixed, passing, landed, proven, live —
+  carries the identifier of the artifact Claude Web actually fetched to check
+  it: commit SHA, PR number, CI run ID, deployment ID, or "query result" with
+  the count. A claim with no identifier is written in reported form, never in
+  verified form. Claude Web never writes an unqualified completion claim from
+  a Claude Code report alone. THE COUNT IS COMPUTED, NOT ESTIMATED: before the
+  push, run the renderer's companion check (python3 render.py evidence, from
+  the forgeflow master, against the wrap's changed .forge/ files or their
+  diff) in the sandbox. It prints "N claims verified by ID, M reported
+  unverified, K unmarked". K must be 0 — fetch the artifact or rewrite the
+  line in reported form. A wrap recording no state changes at all in a
+  session that produced commits is itself flagged and must be explained.
+
+  EVERY WRAP-WRITTEN YAML FILE IS PARSED BY A REAL PARSER in the sandbox
+  before it is pushed; a parse failure stops the wrap. Traps: a plain scalar
+  containing colon-space mid-sentence, and a comma inside a flow-mapping
+  value, both fail to parse — quote them. The wrap's report lists which
+  claims were verified and how.
+# <<< end E-008
+
+# >>> block E-009 | session_state_overwrite | reader: cw | render_when: always
+session_state_overwrite: |
+  STEP 3 — SESSION STATE (OVERWRITE .forge/session-state.yaml). A fresh
+  snapshot; previous content is replaced entirely. Include milestones
+  achieved, key decisions (with rationale and impact), blockers, next_steps,
+  and critical context. Unmerged pull requests are NEVER milestones — an
+  unmerged PR is in_progress in both session-state and the backlog. next_steps
+  carries the SAME single item as the handoff's first_thing (one-item agenda).
+  Every milestone line carries its evidence identifier or is written in
+  reported form.
+
+  session_state_schema (write exactly this shape):
+    session_date: [YYYY-MM-DD]
+    project: [project name]
+    milestones:
+      - [terse description of what was completed — with commit SHA / PR number]
+    decisions:
+      - decision: [what was decided]
+        rationale: [why, one line]
+        impact: [what this affects going forward]
+    blockers:
+      - [unresolved blockers, or an empty list]
+    next_steps:
+      - priority: [high/medium/low]
+        task: [the one first_thing item, specific and actionable]
+    context: |
+      [Critical info for next session that does not fit above — terse]
+# <<< end E-009
+
+# >>> block E-038 | session_state_surface_field | reader: cw | render_when: len(build.surfaces) > 1
+session_state_surface_field: |
+  This repo has more than one surface ({{build.surfaces}}). Every milestone
+  and decision in session-state records the SURFACE it concerns and what was
+  PROVEN ON HARDWARE. A build that compiled but was never proven on its
+  surface is not a milestone; write it as reported, with the surface named.
+# <<< end E-038
+
+# >>> block E-010 | bugs_surgical_edit | reader: cw | render_when: always
+bugs_surgical_edit: |
+  STEP 4 — RECONCILE BUGS (SURGICAL EDIT .forge/active-bugs.yaml). The file
+  holds ONLY currently unresolved bugs. Build an explicit operation list and
+  apply it to the file you read in STEP 2 — never rewrite the whole file:
+      Action: REMOVE id: [{{ids.bug_prefix}}NNN]          <- fixed this session (evidence ID in the history entry)
+      Action: KEEP id: [{{ids.bug_prefix}}NNN]            <- still unresolved (no content needed)
+      Action: ADD -> [full new entry block]      <- new unresolved bug discovered
+  Before assigning a new ID, read the file and use the next unused
+  {{ids.bug_prefix}}NNN. The resulting diff contains exactly these operations
+  and nothing else.
+
+  active_bugs_schema:
+    schema_version: "1.0"
+    session_date: [YYYY-MM-DD]
+    project: [project name]
+    active_bugs:
+      - id: [{{ids.bug_prefix}}001, ...]
+        summary: [one-line description]
+        symptom: [what it looks like]
+        context: [where/when it occurs]
+        severity: [blocker/high/medium/low]
+        notes: |
+          [details, workarounds, theories]
+    If no unresolved bugs remain the list is written as: active_bugs: []
+# <<< end E-010
+
+# >>> block E-011 | session_history_append | reader: cw | render_when: always
+session_history_append: |
+  STEP 5 — SESSION HISTORY (APPEND to the sessions list in
+  .forge/session-history.yaml). Write ONLY the new entry, appended after the
+  existing last entry with matching indentation; existing entries are never
+  rewritten. If the live file holds {{thresholds.session_history_cap}} or more
+  sessions, the ARCHIVE MOVE of the oldest session(s) runs BEFORE this append
+  (E-015). Include date, a duration estimate, completed items, commits, key
+  changes, files_modified and blockers_remaining.
+
+  files_modified is AUDIT-GRADE: every file touched this session, derived
+  from git log and diff of the landed commits — for work that landed through
+  pull requests, from the merged PR diffs — never from memory. Files touched
+  outside scope and accepted in STEP 0 are listed here too, marked
+  "[out-of-scope, accepted]". commits carries the message and, where work
+  landed by PR, the PR number and merge SHA. A spike session may legitimately
+  show an empty files_modified; that is not an idle session, and the entry
+  says what the spike proved.
+
+  session_history_schema (the new entry only):
+    - date: [YYYY-MM-DD]
+      duration: [~Xhr estimate]
+      completed:
+        - [item that was finished — with its evidence identifier]
+      commits:
+        - message: [commit message; PR number and merge SHA where landed by PR]
+      key_changes:
+        - [significant changes made]
+      files_modified:
+        - [file path]    # ground truth from git, every file touched
+      blockers_remaining:
+        - [blockers carried forward, or an empty list]
+# <<< end E-011
+
+# >>> block E-012 | backlog_surgical_edit | reader: cw | render_when: always
+backlog_surgical_edit: |
+  STEP 6 — BACKLOG (SURGICAL EDIT .forge/backlog.yaml). Build an explicit
+  operation list against the file you read in STEP 2 and apply it as surgical
+  edits — the diff shows exactly these operations and nothing else:
+      Action: REMOVE id: [{{ids.backlog_prefix}}NNN]                          <- superseded or withdrawn
+      Action: UPDATE id: [{{ids.backlog_prefix}}NNN] -> set status: [value]    <- status changes only
+      Action: MOVE id: [{{ids.backlog_prefix}}NNN] -> prioritized to in_progress
+      Action: MOVE id: [{{ids.backlog_prefix}}NNN] -> prioritized to completed  <- with status: completed
+      Action: ADD section: [prioritized|in_progress|completed] -> [full new item block]
+
+  UNIFIED SCHEMA. The live sections are exactly prioritized, in_progress and
+  completed. There is NO section named "backlog"; an ADD naming one misroutes
+  silently. Name the section exactly as it appears in the file. The STATUS
+  VOCABULARY is closed: ready | blocked | needs-ruling | in_progress |
+  deferred | completed | superseded — any other word is a defect the wrap
+  corrects. COMPLETED ITEMS LEAVE prioritized: the wrap that completes an
+  item MOVEs it to completed with status: completed; a completed item never
+  sits in prioritized with a note. Items in completed older than
+  {{thresholds.backlog_completed_archive_after_days}} days ARCHIVE MOVE to
+  .forge/archive/backlog-archive.yaml (oldest-first) when the wrap sees them,
+  each move naming that literal Destination. Close any child item whose
+  parent this session completed — a child left ready under a completed
+  parent is a wrap defect. A needs-ruling status is checked against
+  .forge/rulings.yaml and the item's own description. Deferred items that
+  the handoff lists in next_up are marked so they are not mistaken for the
+  next session's agenda. A repo still on an older backlog shape (a section
+  named backlog, statuses such as prompt_ready) is migrated to this schema by
+  a one-time surgical edit in its first wrap on this protocol, reported as
+  such.
+
+  backlog_schema:
+    prioritized:
+      - id: [{{ids.backlog_prefix}}NNN]
+        name: [task name]
+        priority: [P0/P1/P2/P3]
+        estimate: [time estimate]
+        spec_ref: [reference to spec if applicable]
+        description: |
+          [what needs to be done]
+        status: [ready | blocked | needs-ruling | in_progress | deferred | completed | superseded]
+        blocked_by: [what is blocking, if blocked]
+    in_progress: []
+    completed: []    # entries older than {{thresholds.backlog_completed_archive_after_days}} days rotate to .forge/archive/backlog-archive.yaml
+# <<< end E-012
+
+# >>> block E-013 | gotchas_append | reader: cw | render_when: always
+gotchas_append: |
+  STEP 7 — GOTCHAS (APPEND to .forge/GOTCHAS.yaml if new, otherwise skip).
+  Review the entries read in STEP 2 and the discovered-GOTCHA lines the inbox
+  files carry in final form. If any NEW lessons were learned, append ONLY the
+  new entries; existing entries are never rewritten. FORMAT TRAP: the live
+  file is a BARE TOP-LEVEL LIST — never indent appended entries; match the
+  shape of the existing last entry rather than assuming a schema. Before
+  assigning an ID, read the file and use the next unused {{ids.gotcha_prefix}}NNN.
+  Gotchas are rarely deleted — they are permanent lessons. If there are no
+  new entries and no archive move, this file is not touched.
+
+  Log a GOTCHA for: a scope-drift pattern Matt chose to log (the friction
+  that led to the drift, so it does not recur); architecture drift caused by
+  an authorized list missing its /lib counterpart (name the PROMPT defect);
+  an artifact-path defect (name the prompt defect and the register rule it
+  violated); a silent halt; a runner permission gap; and any Claude Code
+  catch worth keeping. New PERISHABLE build-environment specifics (tool
+  quirks, allowlist changes, machine paths) belong in GOTCHAS, not in
+  protocol text.
+
+  gotchas_schema (append only new entries, at column zero):
+    - id: [{{ids.gotcha_prefix}}NNN]
+      date: [YYYY-MM-DD]
+      summary: [one-line description]
+      detail: |
+        [full explanation of the problem and how to avoid it]
+      source: [where this was discovered — issue/PR number, run id, or prompt]
+      applies_to:
+        - [file or context where this applies]
+# <<< end E-013
+
+# >>> block E-039 | tombstone_gotchas_exemption | reader: cw | render_when: protected.tombstone_gotchas non-empty
+tombstone_gotchas_exemption: |
+  TOMBSTONE GOTCHAS: {{protected.tombstone_gotchas}}. These entries are NEVER
+  archived by any staleness review or consolidation, however old — a fresh
+  session must keep being warned. Any ARCHIVE MOVE that names one is a defect
+  and is not applied.
+# <<< end E-039
+
+# >>> block E-014 | handoff_overwrite | reader: cw | render_when: always
+handoff_overwrite: |
+  STEP 7b — HANDOFF (OVERWRITE .forge/handoff.yaml, create if missing). The
+  pass-the-baton briefing for the next Claude Web session. It is NOT a summary
+  of what happened — it is a WARNING LETTER to a fresh session with no memory
+  of this work, written as if briefing a capable colleague about to walk into
+  the room mid-project. Focus on what will burn them if they are not ready,
+  what to do first, and the emotional state of the project. Not architecture
+  docs — the other .forge/ files hold state; this holds feel. Always
+  overwrite; the file reflects right now, not history.
+
+  STAMPS. written_at_commit is the HEAD SHA of {{repo.default_branch}} at the
+  moment the handoff is written (the docs commit itself will follow it; the
+  next session compares this SHA to HEAD and treats a mismatch beyond the
+  wrap's own commit as a stale handoff). written_at_utc is the write time.
+  Both are real values fetched now, never narrated.
+
+  ONE-ITEM AGENDA. first_thing names EXACTLY ONE item — a specific file,
+  function or exact change, why it matters, and what to verify when done.
+  next_up is a RECORD of what was seen and deliberately deferred (each marked
+  deferred in the backlog so it is not mistaken for the agenda); it is not a
+  menu and it is not a prioritized list of second and third tasks. A menu of
+  next steps is what invites drift.
+
+  watch_out_for carries: the thing most likely to waste 30 minutes; scope
+  pressure points (where sessions have drifted and the friction that causes
+  it); architecture pressure points where they apply; any artifact-path
+  defect found this session and the correct path; any parallel collision;
+  perishable build-environment hazards; database state the repo cannot show;
+  and any needs_ruling that reached the wrap unanswered, named as a protocol
+  failure. status is an honest 3-4 line snapshot — what works, what is
+  broken, what phase — naming every unmerged PR explicitly, with no spin.
+
+  PROTOCOL DRIFT FIELD. If the handoff you read carries a protocol_drift
+  line, carry it forward UNCHANGED — it was written by a propagation pass and
+  only a re-render removes it. The wrap never adds one and never deletes one.
+
+  handoff_schema (write exactly this shape):
+    # .forge/handoff.yaml — {{repo.org}}/{{repo.name}}
+    # Pass-the-baton briefing written BY the outgoing Claude Web session TO the next.
+    # A WARNING LETTER, not a summary. The other .forge/ files hold state; this holds feel.
+    # generated: [YYYY-MM-DDThh:mm:ssZ]
+    # session: [YYYY-MM-DD]
+    written_at_commit: [full HEAD SHA at write time]
+    written_at_utc: [YYYY-MM-DDThh:mm:ssZ]
+    status: |
+      [Honest 3-4 line snapshot. Name any unmerged PR. No spin. End with the
+       one-sentence overall project position.]
+    first_thing: |
+      [The single most important thing to do — specific file, function, exact
+       change. Why it matters. What to verify when it is done.]
+    watch_out_for:
+      - "[The thing most likely to waste 30 minutes if you are not ready for it]"
+      - "[Scope pressure points — the file and the friction that causes drift]"
+      - "[Any artifact-path defect found this session, and the correct path]"
+      - "[Database state, collisions, hazards, unanswered needs_ruling — as they apply]"
+    next_up:
+      - "[Deferred item, marked deferred in the backlog — a record, not a menu]"
+    north_star: |
+      [One sentence: did today's work make the product better, or only move the board?]
+    tone: |
+      [1-2 sentences. What kind of session is this? What does Matt need today?]
+# <<< end E-014
+
+# >>> block E-015 | archive_maintenance | reader: cw | render_when: always
+archive_maintenance: |
+  STEP 7c — ARCHIVE MAINTENANCE. Run this check before writing; archive
+  operations are part of the write plan for the affected file. EVERY ARCHIVE
+  MOVE names its literal Destination path — never "the archive". Archive
+  files are append-only and are never read at session start; they exist for
+  the record.
+
+    .forge/session-history.yaml — cap {{thresholds.session_history_cap}} sessions
+      Count the sessions in the live file. At the cap or above, ARCHIVE MOVE
+      the oldest session(s) BEFORE the append.
+      Destination: .forge/archive/session-history-archive.yaml
+      Ordering: OLDEST-FIRST in both files.
+
+    .forge/GOTCHAS.yaml — consolidation trigger {{thresholds.gotcha_consolidation.trigger_count}} entries
+    OR {{thresholds.gotcha_consolidation.or_every}} since the last consolidation, whichever first
+      The wrap NEVER performs the consolidation itself. When the trigger has
+      fired, the wrap SAYS SO in the handoff and the consolidation runs as
+      {{thresholds.gotcha_consolidation.runs_as}}, with Matt-set criteria. A wrap
+      may archive individual entries it can justify one by one — the pattern
+      no longer exists in the codebase, a later entry on the same topic
+      supersedes it, or the file, route or feature it references was removed.
+      A BULK prune toward a target number is its own session. Declining to
+      prune, and saying so, is correct behavior, not failure. Below the
+      trigger, no review is needed.
+      Destination: .forge/archive/GOTCHAS-archive.yaml   <- the ONLY GOTCHAS archive
+      Ordering: oldest-first, original numbering preserved.
+
+    CHANGELOG.yaml — cap {{thresholds.changelog_cap}} entries
+      Check only when a new entry passes the quality gate (STEP 8). At the cap
+      or above, ARCHIVE MOVE the oldest entry BEFORE the prepend.
+      Destination: .forge/archive/CHANGELOG-archive.yaml
+      Ordering: NEWEST-AT-TOP in both files.
+
+    .forge/backlog.yaml — completed entries older than {{thresholds.backlog_completed_archive_after_days}} days
+      ARCHIVE MOVE them as part of the backlog edit (STEP 6).
+      Destination: .forge/archive/backlog-archive.yaml
+      Ordering: OLDEST-FIRST in the archive.
+
+  OPERATION DISCIPLINE (Claude Web performs every move itself under
+  direct-write): append the full entry to the Destination FIRST, then remove
+  it from the live file, then perform the normal write — all in the same
+  commit, never stopping between the append and the removal. Create
+  .forge/archive/ if it does not exist. Before creating any archive file,
+  grep for an existing file serving the same purpose and HALT on a
+  discrepancy rather than creating a second copy; a missing archive file is
+  created from its initialization template. FIDELITY: count entries before
+  and after in BOTH files, and diff the sorted line multiset of the landed
+  source plus destination against the originals before declaring the move
+  done. The count proves nothing was dropped; only the diff proves nothing
+  was changed. Existing IDs are checked before any sequential ID is assigned.
+# <<< end E-015
+
+# >>> block E-016 | phase_authority_refresh | reader: cw | render_when: protected.phase_authority_doc
+phase_authority_refresh: |
+  STEP 7d — PHASE AUTHORITY CHECK. This repo's phase authority is
+  {{protected.phase_authority_doc}}. It is refreshed ONLY when the project's
+  phase or a load-bearing narrative fact shifted this session — a migration
+  completed, the runtime target changed, the first function was proven on
+  hardware. The ordinary session omits it entirely and the wrap report says
+  "phase authority untouched". When a refresh is warranted, it is a full
+  OVERWRITE that keeps the document's history intact, and the wrap commit
+  message gains the suffix " + primer refresh".
+# <<< end E-016
+
+# >>> block E-017 | changelog_gate_schema_tone | reader: cw | render_when: always
+changelog_gate_schema_tone: |
+  STEP 8 — CHANGELOG QUALITY GATE (PREPEND to CHANGELOG.yaml if worthy,
+  otherwise skip). Review the session for PUBLIC-WORTHY wins only. Ask:
+  would a potential customer care? Would a potential buyer (an acquiring
+  company) see value? Is it a visible, tangible improvement to the product?
+  If YES to any: include it. If NO to all: the changelog is not touched this
+  session. INCLUDE features shipped, architecture milestones, new
+  integrations, infrastructure wins. EXCLUDE bug fixes, minor tweaks,
+  internal refactors, friction, failures, and anything built but not proven —
+  "shipped" means proven working, not just built. Output ONLY the new entry,
+  prepended newest-first; run the cap check (E-015) first.
+
+  GOOD entries: "PDF Export Now Available for All Reports", "Real-time
+  Collaboration Added to Editor", "Stripe Integration for Subscription
+  Billing", "Performance: Dashboard Loads 3x Faster". NOT changelog-worthy:
+  "Fixed bug where button didn't work", "Updated dependencies", "Refactored
+  database queries", "Added error handling", "Session state management
+  improvements".
+
+  changelog_schema (PREPEND the new entry to the entries list):
+    entries:
+      - date: [YYYY-MM-DD]
+        slug: [url-friendly-identifier]
+        title: "[Benefit-focused headline]"
+        summary: "[User-facing description, 1-2 sentences]"
+        category: [feature|milestone|improvement|integration|infrastructure]
+        technical: "[Architecture/implementation details for developers and buyers]"
+        tags:
+          - [keyword]
+        impact: "[Why it matters — business or user value]"
+
+  TONE, field by field:
+    title:     Confident, benefit-first, active voice. Never open with
+               "Added" or "New" — that is filler.
+    summary:   One or two sentences a non-technical person understands. The
+               "so what".
+    technical: Precise and credible. Name the tools, patterns and
+               architectural decisions; this is for developers and buyers.
+    tags:      What would someone search for? Include synonyms. 3-6 per entry.
+    impact:    Strategic. Why it matters to the business or the user.
+    voice:     Forward momentum, competence, active development — a record
+               of wins written like a company that knows where it is going.
+               No em dashes in customer-facing copy.
+# <<< end E-017
+
+# >>> block E-018 | schema_refresh_gate | reader: cw | render_when: subsystems.supabase
+schema_refresh_gate: |
+  STEP 8b — SCHEMA REFRESH GATE (CONDITIONAL REFRESH of .forge/specs/schema.yaml).
+  Ask: did this session CREATE or ALTER any tables, add or remove columns,
+  create indexes, or change constraints? If NO: the schema file is not
+  touched and not mentioned. If YES: the refresh is CLAUDE WEB'S OWN WORK,
+  run now through the Supabase connection with full-catalog visibility, and
+  written by the wrap like every other file. Never delegate it to a runner or
+  to a local Claude Code session: a runner's read-only role sees only a
+  subset of tables, and information_schema FILTERS BY PRIVILEGE, so it would
+  write a silently INCOMPLETE schema document that looks complete. A wrong
+  schema document is worse than a missing one.
+
+  PRESERVE RULE. schema.yaml is HAND-ANNOTATED and carries its own
+  verify-and-carry-forward method. Never blanket-overwrite it. Diff the live
+  catalog against the tables already documented, carry EVERY existing
+  annotation forward, add only what is genuinely new, and report what was
+  added versus preserved. Repo migration filenames do not match Supabase
+  version numbers — match migrations by NAME. The wrap commit message gains
+  the suffix " + schema refresh".
+
+  The refresh is DISCOVERY-BASED: never assume a fixed set of table names.
+  Discover the base tables in the public schema first, then run the six
+  detail queries against exactly those tables (enums are schema-wide). If the
+  discovered list is empty, write tables: {} and skip queries 1-5. Policy
+  queries need a ::text cast on polcmd.
+
+  Discovery query (run FIRST):
+    SELECT table_name
+    FROM information_schema.tables
+    WHERE table_schema = 'public' AND table_type = 'BASE TABLE'
+    ORDER BY table_name;
+  Let DISCOVERED_TABLES be the list returned and use it in the IN (...)
+  clause of queries 1-5.
+
+  Query 1 — All columns:
+    SELECT t.table_name, c.column_name, c.ordinal_position, c.data_type,
+      c.udt_name, c.is_nullable, c.column_default, c.character_maximum_length
+    FROM information_schema.tables t
+    JOIN information_schema.columns c
+      ON t.table_name = c.table_name AND t.table_schema = c.table_schema
+    WHERE t.table_schema = 'public' AND t.table_type = 'BASE TABLE'
+      AND t.table_name IN (DISCOVERED_TABLES)
+    ORDER BY t.table_name, c.ordinal_position;
+
+  Query 2 — Indexes:
+    SELECT tablename, indexname, indexdef FROM pg_indexes
+    WHERE schemaname = 'public'
+      AND tablename IN (DISCOVERED_TABLES)
+    ORDER BY tablename, indexname;
+
+  Query 3 — Check constraints:
+    SELECT tc.table_name, tc.constraint_name, tc.constraint_type, cc.check_clause
+    FROM information_schema.table_constraints tc
+    LEFT JOIN information_schema.check_constraints cc
+      ON tc.constraint_name = cc.constraint_name
+    WHERE tc.table_schema = 'public'
+      AND tc.table_name IN (DISCOVERED_TABLES)
+    ORDER BY tc.table_name, tc.constraint_type;
+
+  Query 4 — Foreign keys:
+    SELECT tc.table_name, kcu.column_name,
+      ccu.table_name AS foreign_table, ccu.column_name AS foreign_column
+    FROM information_schema.table_constraints tc
+    JOIN information_schema.key_column_usage kcu
+      ON tc.constraint_name = kcu.constraint_name
+    JOIN information_schema.constraint_column_usage ccu
+      ON tc.constraint_name = ccu.constraint_name
+    WHERE tc.constraint_type = 'FOREIGN KEY' AND tc.table_schema = 'public'
+      AND tc.table_name IN (DISCOVERED_TABLES)
+    ORDER BY tc.table_name;
+
+  Query 5 — RLS status:
+    SELECT relname AS table_name,
+      relrowsecurity AS rls_enabled, relforcerowsecurity AS rls_forced
+    FROM pg_class
+    WHERE relnamespace = 'public'::regnamespace
+      AND relname IN (DISCOVERED_TABLES)
+    ORDER BY relname;
+
+  Query 6 — Custom enum types:
+    SELECT t.typname AS enum_name, e.enumlabel AS enum_value, e.enumsortorder
+    FROM pg_type t JOIN pg_enum e ON t.oid = e.enumtypid
+    WHERE t.typnamespace = 'public'::regnamespace
+    ORDER BY t.typname, e.enumsortorder;
+
+  schema_structure:
+    meta:
+      generated: "[YYYY-MM-DD]"
+      source: "Supabase live database — information_schema queries"
+      tables_documented: [DISCOVERED_TABLES]
+    enums:
+      [enum_name]:
+        values: [list in order]
+    tables:
+      [table_name]:
+        purpose: "[one plain-English sentence inferred from columns; keep the existing annotation]"
+        rls_enabled: [true/false]
+        columns:
+          - name: [column_name]
+            type: [data_type]
+            nullable: [true/false]
+            default: [value or null]
+            notes: "[fk reference if applicable]"
+        indexes:
+          - name: [index_name]
+            columns: [columns]
+            unique: [true/false]
+        constraints:
+          - name: [constraint_name]
+            type: [CHECK/UNIQUE/FK]
+            definition: [clause or reference]
+  For purpose: infer from the table name and columns; if genuinely unclear,
+  write "# REVIEW: purpose unclear from schema alone".
+# <<< end E-018
+
+# >>> block E-019 | rulings_confirm_landed | reader: cw | render_when: always
+rulings_confirm_landed: |
+  STEP 8c — RULINGS (CONFIRM, then APPEND to .forge/rulings.yaml only for
+  misses). Rulings are written the moment they are made, in the turn Matt
+  makes them, not at the wrap. At the wrap, list every ruling Matt made in
+  chat this session and confirm each exists in .forge/rulings.yaml by reading
+  the file now. Any ruling that is missing is appended now with the next
+  unused {{ids.ruling_prefix}}NNN id, the date, the subject, the ruling in
+  Matt's plain words, what it supersedes (if anything) and a source path to
+  the governing file — and the miss is recorded in the wrap report, because
+  it means the write-when-made rule failed. The register is append-only: a
+  reversal is a new entry carrying supersedes: {{ids.ruling_prefix}}NNN; an
+  entry is never rewritten or softened. A ruling that is not in the repo does
+  not exist to the next session. Any backlog item at needs-ruling whose
+  question is answered here is corrected in STEP 6.
+# <<< end E-019
+
+# >>> block E-020 | relay_assessment_and_write | reader: cw | render_when: companion_repos non-empty
+relay_assessment_and_write: |
+  STEP 8d — COMPANION REPO ASSESSMENT AND WRITE. This repo declares companion
+  repos: {{companion_repos}}. At EVERY wrap, assess whether anything crossed a
+  repo seam this session: a cross-repo contract created or changed; a new
+  obligation placed on another repo; an inbound ripple resolved (with
+  evidence); a question raised or answered; the companion's state snapshot
+  gone stale. A wrap that is silent on the companion is defective.
+
+  If NOTHING crossed a seam, the wrap report and the handoff status carry the
+  exact sentence: "No relay update needed this session — nothing crossed a
+  repo seam."
+
+  If SOMETHING did, Claude Web writes the companion repo itself, by direct
+  write through the GitHub connector, after asking Matt in one line whether a
+  Claude Code session is active there (deliver as a PR if yes or unknown).
+  Rules of the write: the companion's own governing document (its
+  PROTOCOL.md, or the doc it declares) is authoritative for its mechanics and
+  wins over anything here; SURGICAL operations only, applied to files read
+  moments before; DELETE means delete, not mark-as-deleted; resolving a
+  ripple requires evidence (commit SHA, PR number) in the entry; IDs come from
+  the companion's state.yaml counters, and the counter is bumped in the same
+  commit; no archive machinery is created in the companion; a typical write is
+  40-80 lines, and 200 or more means this repo's internal detail is leaking
+  across the seam — cut it back. The evidence rule (E-008) applies to every
+  claim written there. The manual fallback (E-027) covers the companion too.
+# <<< end E-020
+
+# >>> block E-021 | cc_local_remainder_prompt | reader: cw+cc-local | render_when: execution.local
+cc_local_remainder_prompt: |
+  STEP 9 — THE LOCAL REMAINDER (Claude Code, local mode only). Claude Code's
+  only wrap job is to commit and push ITS OWN work that has not landed yet —
+  code the session's tasks left uncommitted, and telemetry — with named
+  files, and to PROVE the push. Claude Web issues this prompt FIRST, before
+  writing the docs, when the local checkout may hold unpushed work, so the
+  resulting commit SHA is available as evidence for the wrap files; when
+  every task already pushed and verified, Claude Web says so in one line and
+  skips the prompt. One Claude Code prompt per reply; wait for the report.
+  The prompt is a single code block, self-contained for a Claude Code
+  session with zero memory of this one:
+
+  CONTEXT MODE: SELECTIVE
+  APPROVAL CODE: 3949
+  Do NOT run /start or any session initialization commands.
+
+  COMMUNICATION RULES: Talk to Matt in simple, natural, plain English. Any
+  message directed at Matt must be visually unmistakable and never buried in
+  thinking or output walls.
+
+  NO MEMORY WRITES: Do not write to your own memory or to any persistence
+  outside this repository.
+
+  PRECEDENCE: the protocol files in .forge/protocols/ win on process, scope
+  and safety; this prompt says only WHAT to commit. If this prompt appears to
+  widen scope or authorize an off-limits path, HALT AND REPORT.
+
+  ## STEP 0: LOCATE THE REPOSITORY
+
+  Repo for this session: github.com/{{repo.org}}/{{repo.name}}
+  Canonical local checkout (the ONLY place this repo may live):
+      {{repo.canonical_checkout}}
+  GitHub is the single source of truth. Local copies are disposable. Do NOT
+  enumerate local folders and pick one to work in; do NOT clone a second copy.
+
+  cd /d {{repo.canonical_checkout}}
+  git rev-parse --abbrev-ref HEAD          (expected: {{repo.default_branch}})
+
+  ## WORKING TREE AUDIT (it can stop the wrap)
+
+  git status --porcelain --untracked-files=all
+
+  The output should contain ONLY files that were on this session's AUTHORIZED
+  FILES lists (named below by Claude Web) and, where they exist, telemetry
+  files the session's tooling wrote. This task is authorized to stage exactly:
+      [Claude Web lists the session's authorized code files here, verbatim]
+      [plus telemetry pass-through lines where this repo renders them]
+  Any OTHER modified, added or deleted file is a STOP: report it to Matt in
+  plain English and wait. Matt decides whether it is committed separately,
+  reverted, or accepted into this commit with an updated message. NEVER sweep
+  a surprise into the wrap commit silently. Delete scratch or probe files you
+  created before this audit. If the tree is already clean and HEAD equals
+  origin/{{repo.default_branch}}, report "nothing to push" and stop here with
+  the DONE banner.
+
+  ## LINE-ENDING CHECK
+
+  This repo's line endings are {{repo.line_endings}}. Editing tools and shell
+  appends silently convert files to CRLF. Before staging, verify every file
+  you are about to commit still matches, and fix any that do not.
+
+  ## INBOX CHECK
+
+  This run's observation file .forge/inbox/<run-id>.yaml must exist for every
+  task of this session that changed code. If one is missing, state "INBOX
+  MISSING" and write it now, before committing — a task is not complete
+  without it.
+
+  ## COMMIT AND PUSH — NAMED FILES ONLY
+
+  git fetch origin
+  git add [each authorized file, named]
+  git commit -m "[message Claude Web supplies]"
+  git push origin {{repo.default_branch}}
+
+  git add -A and git add . are FORBIDDEN. The staged list matches the
+  authorized list exactly. The fetch first is mandatory — Claude Web may have
+  pushed documentation, or another session may have pushed code; if
+  origin/{{repo.default_branch}} moved, rebase onto it and push again. Never
+  force-push, never reset. Write the commit message with a bash heredoc, not
+  a PowerShell here-string (which leaks characters), and verify it with:
+  git log -1 --format=%B | cat -A
+
+  ## VERIFY PUSH — MANDATORY (the run is NOT done until all three pass)
+
+  1. Working tree is clean:   git status --porcelain      (expected: no output)
+  2. Local is not ahead:      git status -sb              (expected: no "[ahead N]")
+  3. HEAD matches origin:     git fetch origin
+                              git rev-parse HEAD
+                              git rev-parse origin/{{repo.default_branch}}
+                              (expected: identical hashes)
+  If all three pass, print the proven state so it is recorded, not assumed:
+  "Verified: GitHub matches local at commit [short hash]. Working tree clean."
+  If ANY check fails, the run is NOT done: report which check failed and what
+  git showed, fix it, and re-run all three. An unverified push is exactly
+  the condition under which the next session's refresh of this checkout
+  loses tonight's work.
+
+  ## OUTPUT FORMAT
+
+  When VERIFY PUSH has passed, announce in PLAIN TEXT (no color codes —
+  Matt's terminal does not render them):
+
+  *** DONE: code and telemetry committed and push verified at [short hash] ***
+
+  The banner describes this task; it never implies the session or the project
+  is finished.
+
+  ## CONSTRAINTS
+  - Do NOT propose next steps or recommended actions.
+  - Do NOT show intermediate outputs.
+  - Do NOT write, edit or generate any .forge/ documentation file; Claude Web
+    writes those.
+  - Use NAMED FILES in git add, never git add -A or git add .
+  - Verify line endings before staging.
+  - The push is mandatory AND must be VERIFIED.
+
+  ## REPORT
+
+  After completion, report in plain English:
+  - What went wrong (if anything):
+  - Workarounds used:
+  - Files committed: [list] at [short hash]
+  - PUSH VERIFICATION: [all three checks passed / FAILED — which check, what
+    git showed, how resolved]
+  - Working tree audit: [clean / unexpected files — list and how handled]
+  - Line endings: [verified / fixed N files]
+  - INBOX: [present for every run / written now for: ...]
+  - SCOPE DISCLOSURE: Did you stage or modify any file outside the authorized
+    list above? [Yes/No + detail]
+  - ARTIFACT PATHS: Did this prompt ask you to write any file whose exact path
+    was not stated? [Yes/No. If yes, name it — that is a protocol defect to
+    log, not your error.]
+  Write "No issues encountered" where a line is clean.
+# <<< end E-021
+
+# >>> block E-040 | cc_remainder_chromaqa_lines | reader: cw+cc-local | render_when: execution.local and subsystems.chromaqa
+cc_remainder_chromaqa_lines: |
+  Telemetry pass-through lines for the local remainder (this repo runs
+  ChromaQA). These files are written by ChromaQA during the session and are
+  NEVER generated or edited by the wrap; they are committed only if git
+  status shows them modified, added to the named-file list as:
+      .chromaqa/CQA-runs.jsonl          (pass-through, if modified)
+      .chromaqa/CQA-debt.jsonl          (pass-through, if modified)
+      .chromaqa/CQA-showstoppers.jsonl  (pass-through, if modified)
+  The report adds: "- ChromaQA telemetry: [committed — list / skipped]".
+# <<< end E-040
+
+# >>> block E-046 | cc_remainder_secrets_guard | reader: cw+cc-local | render_when: execution.local and protected.never_touch_paths non-empty
+cc_remainder_secrets_guard: |
+  SECRETS GUARD for the local remainder. These paths are never staged, never
+  committed, never printed, and never listed as modified in any report:
+  {{protected.never_touch_paths}}. If one appears in git status it is
+  expected (gitignored or local-only) and is NOT a working-tree-audit
+  surprise; if git add would stage it, STOP. The report adds one line:
+  "- Secret never staged: confirmed".
+# <<< end E-046
+
+# >>> block E-022 | dispatch_wrap_verification | reader: cw | render_when: execution.dispatch.enabled
+dispatch_wrap_verification: |
+  DISPATCHED SESSIONS AND PR-DELIVERED WRAPS. When the session's work ran
+  through the dispatch pipeline, Claude Code needs nothing further at the
+  wrap — its work already landed through merged pull requests, and runners
+  are disposable, so the local VERIFY PUSH does not apply to them. Ground
+  truth for files_modified is the MERGED PR DIFFS; an unmerged PR at wrap
+  time is in_progress in the backlog and session-state, never completed. A
+  session may mix modes (some tasks dispatched, one local): run the local
+  remainder for the local part and take files_modified from both the merged
+  PR diffs and the local commits.
+
+  When Claude Web delivers the wrap docs as a PULL REQUEST (the split rule,
+  or a Claude Code session active on this repo), the session is wrapped only
+  when THE DOCS PR IS MERGED and {{repo.default_branch}} shows every wrap file
+  at its new content. An unmerged wrap PR at walk-away is SAFE — nothing is
+  lost, it is on GitHub — but it is the first item of the next session,
+  named in the PR description, because leaving it open means redoing the
+  wrap. Before the docs PR merges, confirm {{repo.default_branch}} has not
+  moved on any wrap file since the PR branched; if it has, re-land the same
+  operations on a fresh branch from current {{repo.default_branch}} (the copy
+  pattern) — never force-push, never hand-splice a conflict. CI verdicts on
+  the PR are read from the PR page and recorded in reported form unless a
+  run ID is fetched. Matt taps Squash-and-merge; Claude Web's recommendation
+  is implicit, because Claude Web authored the contents.
+# <<< end E-022
+
+# >>> block E-023 | deploy_step | reader: cw | render_when: build.deploy != none
+deploy_step: |
+  STEP 10 — DEPLOY. This repo deploys via {{build.deploy}}. Documentation-only
+  wrap commits need no deploy of their own. For Vercel, {{repo.default_branch}}
+  deploys automatically on every push or merge; no manual step. For a custom
+  method, the session's code work was deployed by its own completion steps.
+  Deploy proof is always {{build.deploy_verify}} — a deployment record for the
+  exact SHA; CI green is not deploy proof, and a merged PR proves nothing
+  about buildability. If a session's code landed and no deployment record
+  exists for its SHA, that is a blocker recorded in session-state and the
+  handoff, not a wrap item to skip.
+# <<< end E-023
+
+# >>> block E-024 | inbox_consumption | reader: cw | render_when: always
+inbox_consumption: |
+  STEP 11 — CONSUME THE OBSERVATION INBOX. Reconcile against RUNS, not
+  against the directory: list every run of the session (each prompt issued
+  locally, each issue dispatched) and state, per run, CONSUMED or MISSING.
+  For each .forge/inbox/<run-id>.yaml: fold its reflection answers into the
+  handoff and GOTCHAS as they apply; append its discovered-GOTCHA lines
+  (already in final form) in STEP 7; use its SCOPE DISCLOSURE and ARTIFACT
+  PATHS as STEP 0 evidence; then MOVE the file to
+  .forge/archive/inbox/<run-id>.yaml — create it at the archive path and
+  delete it from .forge/inbox/ in the same docs commit, content byte-identical.
+  A run with no inbox file is a missing disclosure: it is named in the
+  handoff's watch_out_for as "no inbox — observations lost for run <id>" and
+  the wrap report says so. Any inbox file the wrap cannot consume is named as
+  a loose end in the handoff, never silently left behind. A needs_ruling
+  entry that reaches the wrap unanswered is a PROTOCOL FAILURE — it should
+  have been surfaced on the first board advance — and the handoff names it as
+  such, with the question and Claude Web's recommendation, so the next
+  session opens on it.
+# <<< end E-024
+
+# >>> block E-025 | north_star_question | reader: cw | render_when: always
+north_star_question: |
+  STEP 12 — THE NORTH-STAR QUESTION. Claude Web answers, in ONE sentence in
+  the handoff's north_star field: "Did today's work make the product better,
+  or only move the board?" Where the repo declares a north-star document, the
+  answer is measured against it, not against the backlog. Moving the board
+  (files reorganized, tasks re-filed, docs reshaped) is a legitimate answer
+  when it is the honest one; the point is that it is written down as such.
+# <<< end E-025
+
+# >>> block E-026 | project_position_statement | reader: cw | render_when: always
+project_position_statement: |
+  STEP 13 — OVERALL PROJECT POSITION. When the wrap is done, Claude Web
+  states the OVERALL PROJECT POSITION to Matt in one plain sentence — where
+  the product or effort stands as a whole, not where the session stands. The
+  same sentence closes the handoff's status field. A finished session, a
+  green DONE banner or a completed milestone must never read as a finished
+  project; if a milestone is complete but the project is not, say both in
+  that sentence. The reply then ends, as every reply does, with the next step
+  as a verb and who holds the ball.
+# <<< end E-026
+
+# >>> block E-027 | manual_fallback | reader: cw | render_when: always
+manual_fallback: |
+  MANUAL FALLBACK — when the GitHub connector is down or a write is refused
+  and cannot be retried this session, Claude Web gives Matt EXPLICIT web-editor
+  instructions, one file at a time, one action per reply, waiting for his
+  confirmation between files. FORMAT:
+
+  "The connector isn't cooperating. Here's how to land this one file by hand:
+   1. Go to: https://github.com/{{repo.org}}/{{repo.name}}/blob/{{repo.default_branch}}/.forge/session-state.yaml
+      (If the file does not exist, go to
+       https://github.com/{{repo.org}}/{{repo.name}}/new/{{repo.default_branch}}/.forge
+       and name the file session-state.yaml)
+   2. Click the pencil icon (Edit this file) at the top right
+   3. Select ALL existing content and DELETE it
+   4. Paste this EXACT content: [complete file content]
+   5. Click Commit changes (green button), then in the dialog type this commit
+      message exactly: docs: update session-state
+   6. Click Commit changes again to finish"
+  Then confirm the commit landed (fetch the file; blob SHA equals the content
+  given) before offering the next file.
+
+  RULES: full GitHub URLs, never an assumed path; COMPLETE file content for
+  every file, never "add this to the existing file"; every click named; one
+  file at a time; exact commit message; an uncompleted commit dialog silently
+  loses the change, so each commit is confirmed before moving on; offer to
+  verify the whole set at the end. A GitHub-web commit is on the source of
+  truth by construction — there is nothing local to verify. Never instruct
+  pasting any credential, token or real GUID anywhere. Where a deploy exists,
+  the redeploy step follows the last file: go to the project's deploy target,
+  click Redeploy on the latest deployment, wait for READY.
+# <<< end E-027
+
+# >>> block E-028 | file_behaviors_summary | reader: cw | render_when: always
+file_behaviors:
+  forge_directory:
+    path: .forge/
+    action: CREATE IF MISSING
+  forge_archive_directory:
+    path: .forge/archive/
+    action: CREATE IF MISSING
+  inbox_directory:
+    path: .forge/inbox/
+    action: CREATE IF MISSING (written by Claude Code per run; emptied by the wrap)
+  inbox_archive_directory:
+    path: .forge/archive/inbox/
+    action: CREATE IF MISSING (consumed inbox files move here)
+  session_state:
+    path: .forge/session-state.yaml
+    action: OVERWRITE
+    claude_web_writes: complete file content
+  active_bugs:
+    path: .forge/active-bugs.yaml
+    action: SURGICAL EDIT
+    claude_web_writes: the result of REMOVE / KEEP / ADD operations, diff-checked
+  session_history:
+    path: .forge/session-history.yaml
+    action: APPEND
+    claude_web_writes: only the new entry
+    cap: "{{thresholds.session_history_cap}} sessions"
+    archive_destination: .forge/archive/session-history-archive.yaml
+    ordering: oldest-first in both files
+  backlog:
+    path: .forge/backlog.yaml
+    action: SURGICAL EDIT
+    claude_web_writes: the result of REMOVE / UPDATE / MOVE / ADD operations, diff-checked
+    sections: prioritized / in_progress / completed
+    archive_destination: .forge/archive/backlog-archive.yaml
+    archive_rule: "completed entries older than {{thresholds.backlog_completed_archive_after_days}} days, oldest-first"
+  gotchas:
+    path: .forge/GOTCHAS.yaml
+    action: APPEND
+    claude_web_writes: only new entries, at column zero (bare top-level list)
+    consolidation_trigger: "{{thresholds.gotcha_consolidation.trigger_count}} entries or {{thresholds.gotcha_consolidation.or_every}}, run as {{thresholds.gotcha_consolidation.runs_as}}"
+    archive_destination: .forge/archive/GOTCHAS-archive.yaml
+    ordering: oldest-first, original numbering preserved
+  rulings:
+    path: .forge/rulings.yaml
+    action: APPEND (written when made; the wrap confirms and back-fills misses)
+    claude_web_writes: only missing entries
+  handoff:
+    path: .forge/handoff.yaml
+    action: OVERWRITE (create if missing)
+    claude_web_writes: complete file content per handoff_schema, with written_at_commit and written_at_utc
+  changelog:
+    path: CHANGELOG.yaml
+    action: PREPEND (only when an entry passes the quality gate)
+    claude_web_writes: only the new entry
+    cap: "{{thresholds.changelog_cap}} entries"
+    archive_destination: .forge/archive/CHANGELOG-archive.yaml
+    ordering: newest-at-top in both files
+  session_history_archive:
+    path: .forge/archive/session-history-archive.yaml
+    action: APPEND
+    ordering: oldest-first
+  gotchas_archive:
+    path: .forge/archive/GOTCHAS-archive.yaml
+    action: APPEND
+    ordering: oldest-first, original numbering preserved
+    canonical: true
+    warning: the only GOTCHAS archive; an archive at any other path is a defect to surface, never a place to write
+  changelog_archive:
+    path: .forge/archive/CHANGELOG-archive.yaml
+    action: APPEND
+    ordering: newest-at-top
+  backlog_archive:
+    path: .forge/archive/backlog-archive.yaml
+    action: APPEND
+    ordering: oldest-first
+# <<< end E-028
+
+# >>> block E-041 | file_behaviors_schema | reader: cw | render_when: subsystems.supabase
+file_behaviors_schema:
+  schema:
+    path: .forge/specs/schema.yaml
+    action: CONDITIONAL REFRESH (only if migrations ran) — preserve annotations, never blanket overwrite
+    claude_web_writes: the refreshed document, from its own full-catalog queries
+    skip_condition: not touched and not mentioned when no migrations were applied
+# <<< end E-041
+
+# >>> block E-042 | file_behaviors_chromaqa | reader: cw | render_when: subsystems.chromaqa
+file_behaviors_chromaqa:
+  chromaqa_runs:
+    path: .chromaqa/CQA-runs.jsonl
+    action: PASS-THROUGH (committed by the local remainder only if modified; never generated or edited)
+  chromaqa_debt:
+    path: .chromaqa/CQA-debt.jsonl
+    action: PASS-THROUGH (committed by the local remainder only if modified; never generated or edited)
+    note: "read at session start; alert threshold {{thresholds.chromaqa_debt_alert}}"
+  chromaqa_showstoppers:
+    path: .chromaqa/CQA-showstoppers.jsonl
+    action: PASS-THROUGH (committed by the local remainder only if modified; never generated or edited)
+# <<< end E-042
+
+# >>> block E-029 | initialization_templates | reader: cw | render_when: always
+initialization_templates:
+  session_state_init: |
+    session_date: null
+    project: null
+    milestones: []
+    decisions: []
+    blockers: []
+    next_steps: []
+    context: ""
+  active_bugs_init: |
+    schema_version: "1.0"
+    session_date: null
+    project: null
+    active_bugs: []
+  session_history_init: |
+    sessions: []
+  backlog_init: |
+    prioritized: []
+    in_progress: []
+    completed: []
+  gotchas_init: |
+    # GOTCHAS.yaml
+    # Lessons learned for future sessions in this repo. Bare top-level list; append only.
+  rulings_init: |
+    # .forge/rulings.yaml
+    # Append-only register of decisions Matt has made about this repo, so no future
+    # session re-asks them. Search here BEFORE putting any question to Matt.
+    # Never rewrite or soften an entry — supersede it with a new one.
+    rulings: []
+  changelog_init: |
+    # CHANGELOG.yaml — Public-facing record of wins, features, and milestones
+    entries: []
+  handoff_init: |
+    # .forge/handoff.yaml
+    # Pass-the-baton briefing — written by the outgoing session to the next
+    # generated: null
+    # session: null
+    written_at_commit: null
+    written_at_utc: null
+    status: ""
+    first_thing: ""
+    watch_out_for: []
+    next_up: []
+    north_star: ""
+    tone: ""
+  inbox_directory_init: |
+    # .forge/inbox/ holds one observation file per run, .forge/inbox/<run-id>.yaml,
+    # written by Claude Code as the last action of the run. The wrap consumes each
+    # file and moves it to .forge/archive/inbox/<run-id>.yaml. Create the directory
+    # with a .gitkeep file at .forge/inbox/.gitkeep; never a README.
+  session_history_archive_init: |
+    # .forge/archive/session-history-archive.yaml
+    # Historical session log — entries moved here when the live file reaches its
+    # cap. Oldest-first.
+    sessions: []
+  gotchas_archive_init: |
+    # .forge/archive/GOTCHAS-archive.yaml
+    # THE ONLY GOTCHAS ARCHIVE. Retired entries, oldest-first, original numbering
+    # preserved. Never create a second archive at another path.
+  changelog_archive_init: |
+    # .forge/archive/CHANGELOG-archive.yaml
+    # Full changelog history — entries moved here when the live file reaches its
+    # cap. Newest-at-top.
+    entries: []
+  backlog_archive_init: |
+    # .forge/archive/backlog-archive.yaml
+    # Completed backlog items rotated out of the live file. Oldest-first.
+    completed: []
+# <<< end E-029
+
+# >>> block E-043 | initialization_template_schema | reader: cw | render_when: subsystems.supabase
+initialization_templates_schema:
+  schema_init: |
+    # .forge/specs/schema.yaml
+    # Source of truth: live Supabase database
+    # HAND-ANNOTATED — carry annotations forward on every refresh
+    meta:
+      generated: null
+      source: "Supabase live database — information_schema queries"
+      tables_documented: []
+    enums: {}
+    tables: {}
+# <<< end E-043
+
+# >>> block E-044 | initialization_template_relay | reader: cw | render_when: companion_repos non-empty
+initialization_templates_relay:
+  companion_repo_card: |
+    # Companion repo card — carried in this repo's session-state context when a
+    # companion write happened this session. Names the companion repo, the
+    # files touched there, the IDs created or resolved, and the commit or PR
+    # that landed it. One card per companion per session; omitted when the
+    # wrap recorded "No relay update needed this session — nothing crossed a
+    # repo seam."
+    companion: [name]
+    files_touched: []
+    ids_created: []
+    ids_resolved: []
+    landed_as: [commit SHA or PR number]
+# <<< end E-044
+
+# >>> block E-030 | wrap_commit_message_and_evidence_count | reader: cw | render_when: always
+wrap_commit_message_and_evidence_count: |
+  THE DOCS COMMIT MESSAGE (or the PR title, when delivered as a PR):
+    docs: end session YYYY-MM-DD — N milestones
+  Append " + schema refresh" if the schema was refreshed; " + archive
+  maintenance" if any archive move ran; " + primer refresh" if the phase
+  authority was refreshed; " + inbox" naming the count of inbox files
+  consumed. The message ENDS with the computed evidence line, exactly as the
+  companion check printed it:
+    N claims verified by ID, M reported unverified.
+  M is the one wrap metric Matt looks at. The count is never typed by hand.
+
+  THE WRAP REPORT to Matt, in plain English, after the push is proven:
+  - Overall project position (one sentence — E-026)
+  - What landed: commit SHA or PR number; one line per file written
+  - Claims: N verified by ID, M reported unverified (and what could not be
+    verified, and why)
+  - Scope reconciliation: clean / drift handled as — [describe]
+  - Inbox: consumed / missing, per run
+  - Archive operations: ran (each Destination) / none needed
+  - Schema refresh, phase authority, companion write: ran / untouched, as
+    they apply to this repo
+  - Rulings: all present / back-filled [ids]
+  - Connector errors and workarounds, if any; "No issues encountered" when
+    clean
+  Then the next step as a verb and who holds the ball.
+# <<< end E-030
+
+# >>> block E-045 | compliance_canary_wrap | reader: cw | render_when: always
+compliance_canary_wrap: |
+  COMPLIANCE CANARY. This is the last section of the wrap protocol, and it is
+  the cheap proof that the tail was read: the FIRST line of the wrap report
+  to Matt ends with " · wrap protocol N blocks", where N is the included count
+  in this file's BLOCK MANIFEST header. When the canary stops appearing, the
+  tail of the protocol has stopped being read — that is a master bug to file
+  in forgeflow, learned in one session instead of thirty.
+# <<< end E-045
