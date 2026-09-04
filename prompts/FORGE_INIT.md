@@ -1,3 +1,5 @@
+> **SUPERSEDED (2026-09-04).** This document describes the legacy Forge Flow 10 methodology. The live system is the **ForgeFlow Master** in [`master/`](../master/) — one master rendered per repo by `master/render.py`; see `master/BLUEPRINT.yaml`, `master/RENDER_PROCEDURE.md` and `master/registered-repos.yaml`. This file is kept for the record and is not maintained.
+
 # FORGE_INIT Prompt
 
 This prompt initializes the `.forge/` structure in any project repo. It is non-destructive — it only creates files and folders that don't already exist.
