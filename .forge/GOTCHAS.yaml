@@ -1,2 +1,23 @@
 # GOTCHAS.yaml
 # Lessons learned for future Claude Code sessions in this repo
+
+- id: GOTCHA-001
+  date: 2026-09-04
+  summary: "render.py read the render_when literal 'none' as YAML null, so every '== none' block silently never rendered"
+  detail: |
+    build.validation and build.deploy are ENUMS whose legal values include the STRING "none".
+    parse_literal() treated the condition token "none" as None, so "build.validation == none"
+    (S-083) and "build.deploy == none" (S-085) were always false, and "build.deploy != none"
+    (E-023) was always true — a no-deploy repo received a wrap step reading "deploys via none"
+    and no local validation/deploy steps at all. The fixture tests were green because every
+    fixture that exercised those blocks was on the standard profile (npm-build/vercel). Found
+    on the first real render (seogeo, docs-only). Fixed in commit 1f0d1d0: only "null"/"None"
+    mean null. Lesson: before rendering a repo, diff old-vs-new renders for THAT repo's profile
+    and read the block manifest against the repo's real shape; a green fixture suite proves
+    only the shapes the fixtures cover.
+  source: "first real render, 2026-09-04 (forgeflow commits 1f0d1d0, 90209d0)"
+  applies_to:
+    - master/render.py (parse_literal, eval_condition)
+    - master/start-protocol.master.yaml (S-083, S-085)
+    - master/end-protocol.master.yaml (E-023)
+    - master/tests/test_render.py
