@@ -234,7 +234,7 @@ def detect(tree):
         out["build.deploy"] = "vercel"
     wf = list(t.glob(".github/workflows/*.yml"))
     out["subsystems.ci_quality_gate"] = any(re.search(r"quality|gate|ci", p.name, re.I) for p in wf)
-    out["subsystems.chromaqa"] = (t / ".chromaqa").is_dir()
+    out["subsystems.chromaqa"] = (t / "chromaqa-check.sh").is_file() or (t / ".chromaqa").is_dir()  # 7.0: a fresh install with no findings and no profiles.json has no .chromaqa/ on GitHub yet
     out["subsystems.ui_inventory"] = (t / ".forge" / "specs" / "ui-inventory.yaml").exists()
     out["subsystems.artifact_register"] = (t / ".forge" / "protocols" / "artifact-register.yaml").exists()
     out["architecture.tsx_lib_rule"] = any(t.glob("src/**/*.tsx")) or any(t.glob("app/**/*.tsx"))
