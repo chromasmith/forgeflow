@@ -1,9 +1,9 @@
 # =============================================================================
 # FORGEFLOW MASTER — UNIFIED SESSION-PROTOCOL SYSTEM
-# Blueprint v1.0 — 2026-09-04
+# Blueprint v1.1 — 2026-09-04 (revised after nine-seat board review, same day)
 # Author: Claude Web (planning session with Matt Fleming, Chromasmith LLC)
 # Status: DESIGN FOR COMMITTEE REVIEW. Nothing here is built yet.
-# Intended home once approved: github.com/chromasmith/forgeflow  master/BLUEPRINT.yaml
+# Home: github.com/chromasmith/forgeflow  master/BLUEPRINT.yaml
 # =============================================================================
 #
 # HOW TO READ THIS DOCUMENT (for reviewers who cannot see the repos):
@@ -15,8 +15,24 @@
 
 meta:
   name: ForgeFlow Master
-  version: "1.0-blueprint"
+  version: "1.1-blueprint"
   date: 2026-09-04
+  revision_history:
+    - version: "1.0"
+      note: Initial design from the planning session.
+    - version: "1.1"
+      note: >
+        Folds in the board review (Phases 0-8). Accepted: M1 observation inbox (mapped
+        onto the existing CC-reports/ convention), M2 lineage reconciliation gate, M3
+        handoff staleness stamp, M4 evidence rule, M5 deterministic renderer
+        (render.py — CW's sandbox DOES have code execution alongside the GitHub MCP),
+        M6 rulings written when made, S1 pushed drift (replaces the per-session
+        poll), S2 profile-based config, S3 precedence rule, S4 prune cadence
+        (ceiling number deferred to after M2), S5 one rendered file per reader
+        (replaces P7), S6 dispatch-reading canary, atomic propagation, compliance
+        canary, 8-line summary ceiling, north-star pointer + wrap question.
+        Rejected: deleting the config schema (board rejected it too); reverting wrap
+        direct-write (M1 + M4 recover the witness).
   problem_in_one_sentence: >
     Matt runs the same start/wrap session protocol across many repos, but each repo
     holds a hand-forked copy, so fixes made in one never reach the others and the
@@ -210,23 +226,59 @@ principles:
     text: Repo copies carry a "DO NOT EDIT — rendered from forgeflow/master vN" header.
       Any session that notices a protocol bug files it against the master.
   - id: P6
-    name: Stale copies announce themselves
-    text: Every rendered file carries master_version and config_hash. The start
-      protocol's first step compares the repo copy's stamp to forgeflow/master and
-      states plainly "this repo is on protocol vN; master is vM" when they differ.
+    name: Drift is pushed, not polled
+    text: >
+      A start protocol reads only files inside its own repo — never forgeflow. When a
+      propagation pass leaves a repo behind, the pass writes a protocol_drift line
+      into that repo's handoff.yaml; the next session states it in one line. There
+      is no per-session cross-repo read. (Board S1; supersedes the v1.0 poll.)
   - id: P7
-    name: One session, one file per bookend
-    text: Each repo holds exactly ONE start file and ONE wrap file. Where dispatch is
-      enabled, the rendered start file contains both the LOCAL and DISPATCH sections
-      with an explicit mode_selection block, because mode is a per-task choice made
-      inside a session, not a per-session choice made before it. (Convergible-sandbox
-      currently splits these into four files; the merge is an open question for the
-      committee — see Section 13, Q1.)
+    name: One rendered file per READER
+    text: >
+      Each repo holds one start file and one wrap file per reader. Repos without
+      dispatch hold one of each (read by CW). Repos with dispatch also hold
+      start-protocol.dispatch.yaml and end-protocol.dispatch.yaml, rendered from the
+      SAME master blocks with the runner-irrelevant blocks excluded — a cold runner
+      with a shallow clone must not spend its attention on Surface checkouts, hard
+      reset vs gentle pull, or typed-confirmation banners it cannot execute. Mode is
+      still a per-task choice inside a session; the choice selects which file the
+      task's prompt points at. One master, one edit point; the split is output-side.
+      The block manifest (Section 6) proves the two files cannot drift from each
+      other. (Board S5; answers v1.0 Q1.)
   - id: P8
     name: Chat rulings become repo text
     text: Any durable behavioral rule Matt states in chat is added to the master in the
       same or next session, or it does not exist to the next session. CW's memory is a
       side channel, not a source of truth.
+  - id: P9
+    name: The renderer is code, not discipline
+    text: >
+      Block resolution, substitution, the standalone check, the block manifest,
+      schema validation and the config hash are performed by master/render.py,
+      executed in CW's sandbox on content fetched via the GitHub MCP. CW's judgment
+      is applied to the DIFF and to the plain-English summary for Matt — never to
+      the transformation itself. A hand render is permitted only as a fallback, is
+      stamped render_method: manual, and is never propagated to more than one repo
+      without a verified code re-render. (Board M5; CW confirmed it has code
+      execution.)
+  - id: P10
+    name: Evidence, not belief
+    text: >
+      Every factual claim CW writes into a .forge/ file carries the identifier of the
+      artifact it fetched to check it (commit SHA, PR number, CI run ID, deployment
+      ID, query result). A claim without an identifier is written in the "reported"
+      form, never the "verified" form. (Board M4.)
+  - id: P11
+    name: Rules have a budget and a sunset
+    text: >
+      Adding a rule to the master that breaches the rendered-file ceiling requires
+      naming the rule it replaces or retires. Every 200 sessions a PRUNE SESSION
+      reviews the master: a rule not cited, triggered or violated in 200 sessions is
+      deleted or demoted to a reference document no session must read. A compliance
+      canary near the end of every rendered protocol detects when the tail has
+      stopped being read. The ceiling NUMBER is set after the lineage reconciliation
+      shows the real size — 400 lines was the board's guess, not a measurement.
+      (Board S4 + pre-mortem 1.)
 
 # =============================================================================
 # 4. ARTIFACT SET
@@ -264,6 +316,26 @@ artifacts:
         verify, update registered-repos.
     - path: master/CHANGELOG.yaml
       purpose: Version history of the master itself (what changed in v1 → v2 → ...).
+    - path: master/render.py
+      purpose: >
+        The deterministic renderer (Board M5). Inputs: master files + a repo's
+        protocol-config.yaml. Outputs: the rendered files, byte-exact, with header
+        stamp, block manifest and real config hash. Owns block resolution,
+        substitution, standalone grep, schema validation. Roughly 200 lines. Run by
+        CW in its sandbox; a GitHub Action wrapper is a later option, not a
+        requirement.
+    - path: master/LINEAGE_RECONCILIATION.yaml
+      purpose: >
+        Board M2. Every behavioral rule found in any of the four legacy lineages,
+        each with exactly one disposition — folded (names the master block ID),
+        knobbed (names the config field), or dropped (one-sentence reason). A rule
+        with no disposition blocks the first render. Matt reads only the dropped
+        list.
+    - path: master/profiles/
+      purpose: >
+        Board S2. Named profile defaults — standard, legacy-local, docs-only — that a
+        repo's ~10-line config selects and overrides. The full schema in Section 5 is
+        the renderer's internal contract; profiles are the repo-facing surface.
   rendered_into_each_repo:
     - path: .forge/protocol-config.yaml
       purpose: The repo's declared and detected knobs. Small (under ~60 lines).
@@ -272,6 +344,24 @@ artifacts:
       purpose: Rendered, standalone start protocol. DO NOT EDIT header.
     - path: .forge/protocols/end-protocol.yaml
       purpose: Rendered, standalone wrap protocol. DO NOT EDIT header.
+    - path: .forge/protocols/start-protocol.dispatch.yaml
+      purpose: Dispatch-reader start file (only when execution.dispatch.enabled). Same
+        master blocks, runner-irrelevant blocks excluded. See P7.
+    - path: .forge/protocols/end-protocol.dispatch.yaml
+      purpose: Dispatch-reader wrap file (only when execution.dispatch.enabled).
+    - path: .forge/inbox/<run-id>.yaml
+      purpose: >
+        Board M1 — the OBSERVATION INBOX. Written by CC on its own branch as the LAST
+        action of every task, before any prose report: reflection answers verbatim,
+        SCOPE DISCLOSURE (every file touched), ARCHITECTURE DISCLOSURE, discovered
+        GOTCHAs in final line form, and needs_ruling entries for any decision CC
+        could not make (a dispatched run writes needs_ruling and STOPS — it never
+        chooses; this is dispatch's substitute for a human gate). One file per run,
+        never shared, so parallel runs cannot collide. CW's wrap consumes every
+        inbox file into the .forge/ documents and moves it to .forge/archive/inbox/;
+        an unconsumed inbox file is a named loose end. This formalizes the existing
+        CC-reports/<ISSUE-ID>.md convention; the artifact register records the
+        rename.
     - path: CLAUDE.md   (house block only, between markers)
       markers:
         open: "<!-- FORGEFLOW HOUSE BLOCK — rendered from forgeflow/master vN — do not edit inside markers -->"
@@ -303,11 +393,42 @@ artifacts:
 
 protocol_config_schema:
   schema_version: "1"
+  two_forms: >
+    Board S2. The REPO-FACING form is short: a profile name plus explicit overrides.
+    The EXPANDED form below is the renderer's internal contract; render.py expands
+    profile + overrides into it, validates it, and writes the effective values back
+    into the repo config as a trailing comment block so the true values are readable
+    without consulting the master. Every deviation from house standard is therefore
+    visible as an explicit override, never buried among inherited defaults.
+  repo_facing_form_example: |
+    # .forge/protocol-config.yaml
+    profile: standard          # standard | legacy-local | docs-only
+    repo: { org: chromasmith, name: convergible-sandbox }
+    overrides:
+      execution.dispatch.enabled: true
+      subsystems.database_access_doc: ".forge/protocols/database-access.yaml"
+      north_star_doc: ".forge/specs/convergible-2.5-vision.yaml"
+    # --- effective values (written by render.py, do not edit) ---
+  profiles:
+    standard:     { mirror.github_is_complete_mirror: true,  build.validation: npm-build, execution.local: true, execution.dispatch.enabled: false }
+    legacy-local: { mirror.github_is_complete_mirror: false, build.validation: py-compile, execution.local: true, execution.dispatch.enabled: false }
+    docs-only:    { mirror.github_is_complete_mirror: true,  build.validation: none,      execution.local: true, execution.dispatch.enabled: false }
   fields:
     protocol:
       master_version: { type: string, set_by: renderer, example: "v1.0" }
       rendered_on:    { type: date,   set_by: renderer }
-      config_hash:    { type: string, set_by: renderer }
+      config_hash:    { type: string, set_by: renderer, note: "SHA-256 of the expanded config, computed by render.py — real, not narrated" }
+      render_method:  { type: enum, values: [code, manual], set_by: renderer, note: "manual renders never propagate beyond one repo" }
+    north_star_doc:
+      type: string
+      declared: true
+      example: ".forge/specs/convergible-2.5-vision.yaml"
+      note: >
+        Board pre-mortem 2. A pointer to the repo's existing product-truth document
+        (vision/spec), read at session start before the backlog. No new artifact is
+        created where one exists; a repo with none may add a 30-line
+        .forge/north-star.yaml. The wrap gains one CW-answered question: "Did today's
+        work make the product better, or only move the board?"
     repo:
       org:                { type: string, declared: true, example: chromasmith }
       name:               { type: string, declared: true, example: convergible-sandbox }
@@ -410,10 +531,14 @@ protocol_config_schema:
 # =============================================================================
 
 rendering:
-  who_renders: Claude Web, in a session Matt directs, using the GitHub MCP to read the
-    master and the target repo and to push the rendered files. No build tooling is
-    required on day one; a script or GitHub Action can automate this later if the repo
-    count grows.
+  who_renders: >
+    Claude Web executes master/render.py in its sandbox (Board M5): it fetches the
+    master files and the repo's config via the GitHub MCP, runs the renderer as code,
+    and pushes the byte-exact output. CW's judgment is applied to the DIFF and to
+    Matt's plain-English summary, never to the transformation. If code execution is
+    unavailable in a given session, CW may render by hand, stamps the output
+    render_method: manual, and never propagates a manual render to more than one repo
+    without a subsequent verified code re-render.
   conditional_blocks:
     syntax_in_master: >
       Each optional section in a master file is wrapped in
@@ -431,11 +556,23 @@ rendering:
     ("see the local variant", "inherited from", "as in end-protocol", "refer to master")
     and for any leftover `{{` or `render_when`. Any hit fails the render.
   header_stamp: >
-    Every rendered file begins with a fixed header: rendered from
-    chromasmith/forgeflow master/<file> at version vN on <date>, config hash <hash>,
-    "DO NOT EDIT THIS FILE — edit the master and re-render." followed by a one-line
-    summary of the resolved knobs (mirror, refresh mode, shape, validation, dispatch,
-    companions) so a human can see at a glance what this copy assumes.
+    Every rendered file begins with a fixed header: source
+    (chromasmith/forgeflow master/<file>), master version, render date,
+    render_method, config hash, "DO NOT EDIT THIS FILE — edit the master and
+    re-render.", and a one-line summary of the resolved knobs. It then carries a
+    BLOCK MANIFEST (Board F4): the ordered list of every master block ID included, and
+    every block ID excluded with the config condition that excluded it. Master blocks
+    carry stable IDs (B-001, B-002, ...) that are never changed or reused. A render
+    is valid only if included + excluded == the master's full block list and every
+    excluded block's condition evaluates false against this repo's config. render.py
+    enforces this; an invalid render is not pushed.
+  compliance_canary: >
+    Board pre-mortem 1. Near the END of every rendered protocol sits one cheap,
+    observable instruction ("state the block-manifest count in your first output
+    line"). When the canary stops appearing in session output, the tail of the
+    protocol has stopped being read — learned in one session, not thirty. The same
+    canary is the S6 test for whether dispatched runners read the protocol file at
+    all (Section 11, step 3).
   claude_md_rendering: >
     The renderer locates the marker pair in the repo's CLAUDE.md, replaces only the
     text between them, and leaves everything else byte-identical. If the markers are
@@ -476,10 +613,25 @@ propagation:
     A repo may deliberately lag (e.g. ChromaControl). registered-repos.yaml records
     "pinned: vN — reason" so the drift flag at session start reads as intentional.
   drift_detection: >
-    Step 1 of every rendered start protocol: read the repo copy's header stamp, read
-    forgeflow/master/registered-repos.yaml, and state the versions. If they differ and
-    the repo is not pinned, CW says so in the Session Context Summary and offers a
-    re-render as an option — it does NOT re-render unprompted mid-session.
+    Drift is PUSHED, not polled (Board S1). When a propagation pass renders some repos
+    and pins or defers others, CW writes a single field into each lagging repo's
+    handoff.yaml in the same pass: protocol_drift: "repo on v1.2; master is v1.4 —
+    <reason>". Start protocols read only files inside their own repo. If the field is
+    present, the Session Context Summary states it in one line and offers a re-render
+    as an option; it never re-renders mid-session. Re-rendering removes the field. No
+    start protocol ever reads forgeflow.
+  atomic_propagation: >
+    Board pre-mortem 3. A master version bump is not complete until every registered
+    repo is either rendered to it or explicitly pinned with a written reason. A
+    propagation that cannot finish in its session is REVERTED — the master version
+    rolls back rather than being left half-landed. registered-repos.yaml has exactly
+    two states per repo: current, or pinned-with-reason. "Mostly propagated" does not
+    exist.
+  delivery_rule: >
+    A propagation is never a direct commit — PR per repo, always (Board, Release
+    Engineer). A bad render caught in PRs is eight closed tabs; caught in commits it
+    is eight reverts Matt must authorize. Direct commit remains available for a
+    single-repo small change per the 2026-09-02 ruling.
 
 # =============================================================================
 # 8. SESSION FLOW UNDER THE NEW SYSTEM (what Matt experiences)
@@ -496,9 +648,22 @@ session_flow:
       GOTCHAS, artifact register and database-access doc if declared, companion repo
       files if declared).
     - >
-      CW performs the drift check (Section 7), the ChromaQA debt check if the
-      subsystem exists, and gives the 6-8 line Session Context Summary ending with
-      the ONE first_thing from the handoff. Then "Ready for tasks."
+      HANDOFF STALENESS CHECK (Board M3 — the board's single highest-leverage
+      amendment). handoff.yaml carries written_at_commit (HEAD SHA when written) and
+      written_at_utc. Step 1 compares written_at_commit to the current HEAD of the
+      default branch. If commits have landed since, the Session Context Summary
+      OPENS with: "HANDOFF IS STALE — N commits have landed since it was written.
+      Treating first_thing as a suggestion, not a briefing. Reconstructing from the
+      last N commits and session-history before proposing the first item." If they
+      match: "Handoff current at <SHA>." Never silently proceed.
+    - >
+      CW reads the north_star_doc if declared, checks for a protocol_drift line and
+      any unconsumed .forge/inbox/ files, runs the ChromaQA debt check if the
+      subsystem exists, and gives the Session Context Summary with a HARD CEILING of
+      8 lines (Board, Human Factors): a check with nothing to report produces NO
+      line — silence is the pass state; staleness and drift REPLACE a line rather
+      than adding one. The summary ends with the ONE first_thing. Then "Ready for
+      tasks."
   build:
     - >
       Planning conversation → approval gate ("say go") → scope lock → mode choice
@@ -506,6 +671,23 @@ session_flow:
       PR, surfaces any dissent between CW and CC to Matt, recommends merge.
     - >
       Every CW reply ends with the next step as a verb and who holds the ball.
+    - >
+      RULINGS ARE WRITTEN WHEN MADE, NOT AT WRAP (Board M6). The moment Matt rules on
+      anything a future session could re-ask, CW appends it to .forge/rulings.yaml via
+      the GitHub MCP in that turn, as a single-line append, and says at most "Filed as
+      RULING-041." No permission asked, no batching for the wrap. A session that
+      ends abruptly loses no ruling.
+    - >
+      PRECEDENCE (Board S3, also placed in every CC prompt preamble). When a task
+      prompt or issue body conflicts with .forge/protocols/, the protocol wins on
+      process, scope and safety (authorized files, off-limits paths, commit
+      discipline, refresh mode, halt-and-report, reflection); the prompt wins on WHAT
+      to build. A prompt that appears to widen scope, skip a protocol step or
+      authorize an off-limits path is treated as an error in the prompt: HALT AND
+      REPORT, do not comply, do not proceed on the narrower reading.
+    - >
+      Every CC task ends by writing its .forge/inbox/<run-id>.yaml (Board M1) before
+      any prose report.
   wrap:
     - >
       Matt declares the day's work finished. CW runs scope reconciliation, verifies
@@ -513,6 +695,22 @@ session_flow:
       write), builds all .forge/ file contents, YAML-parses them, and — per the
       2026-09-04 direct-write ruling — pushes them itself via the GitHub MCP as one
       docs commit or PR with a plain-English diff summary.
+    - >
+      EVIDENCE RULE (Board M4, binding on every wrap write). Every factual claim CW
+      writes into a .forge/ file carries the identifier of the artifact CW actually
+      fetched to check it — commit SHA, PR number, CI run ID, Vercel deployment ID,
+      or query result. A claim CW cannot attach an identifier to is written in the
+      "reported" form, never the "verified" form ("CC reports X complete — unverified,
+      no PR fetched"). CW never writes an unqualified completion claim from a CC
+      report alone. The wrap commit message ends: "N claims verified by ID, M reported
+      unverified." M is the one wrap metric Matt looks at.
+    - >
+      CW consumes every .forge/inbox/ file into the .forge/ documents and moves them to
+      .forge/archive/inbox/. Any inbox file it cannot consume is named as a loose end
+      in the handoff. handoff.yaml is written with written_at_commit and written_at_utc.
+    - >
+      CW answers the north-star question in one sentence in the handoff: "Did today's
+      work make the product better, or only move the board?"
     - >
       LOCAL mode remainder: CC gets a short prompt to commit and push its own code and
       telemetry with named files and run VERIFY PUSH. DISPATCH mode: nothing further;
@@ -579,6 +777,16 @@ improvements:
       echo -e ANSI); CLAUDE.md "Session workflow" section names handoff.yaml and the
       .forge/protocols/ path.
 
+  - id: I8
+    name: Board amendments accepted in v1.1
+    detail: >
+      M1 observation inbox; M2 lineage reconciliation gate; M3 handoff staleness
+      stamp; M4 evidence rule; M5 deterministic renderer; M6 rulings written when
+      made; S1 pushed drift; S2 profile config; S3 precedence rule; S4 prune cadence
+      + replace-to-add (ceiling number deferred); S5 one file per reader; S6 dispatch
+      canary; atomic propagation; compliance canary; 8-line summary ceiling;
+      north-star pointer + wrap question. Each is placed in the section it amends.
+
 # =============================================================================
 # 10. REPO EXCEPTIONS EXPRESSED AS CONFIG (proof the knobs cover the variants)
 # =============================================================================
@@ -622,7 +830,7 @@ variant_mapping:
     subsystems: all detected true; database_access_doc declared
     note: First render target. The master is built FROM this repo's four protocol
       files, so its first render should diff nearly zero apart from the Section 9
-      additions and the local/dispatch merge (Q1).
+      additions and the per-reader split (P7), which its four files already resemble.
   convergible_final_and_future_repos:
     note: Rendered from the saas-starter template's baked-in config, so a new repo is
       born on the current master version with dispatch pre-wired except the
@@ -638,16 +846,35 @@ rollout:
     done_when: Matt has fed back the committee's notes and we have revised v1.x.
   - step: 2
     name: Build the master in forgeflow
-    detail: Create master/ with the eight artifacts in Section 4, seeded from
+    detail: Create master/ with the artifacts in Section 4 — including render.py
+      with stable block IDs and the block manifest, and the profiles — seeded from
       convergible-sandbox's four protocol files plus the Section 9 additions, and the
       config schema. Add the legacy banners to the old forgeflow docs and repoint the
       README. Register convergible-sandbox as the first repo.
-    done_when: A cold CW session can read RENDER_PROCEDURE.md and render a repo.
+    done_when: A cold CW session can read RENDER_PROCEDURE.md, run render.py, and
+      render a repo.
+  - step: 2a
+    name: Lineage reconciliation (BLOCKING gate on step 3 — Board M2)
+    detail: >
+      CW reads all four legacy lineages (STANDARD 2026-08-08, SYNCLIPS-SYSTEM
+      2026-07-04, CHROMACONTROL v2 2026-06-20/25, CONVERGIBLE-SANDBOX
+      2026-08-29/09-03) and produces master/LINEAGE_RECONCILIATION.yaml: every
+      behavioral rule found in any lineage with exactly one disposition — folded
+      (master block ID), knobbed (config field), or dropped (one-sentence reason). A
+      rule with no disposition blocks the render. Matt reviews ONLY the dropped list,
+      in plain English, one screen. This also sets the S4 ceiling number from the
+      measured size of the folded set.
+    done_when: The dropped list is read to Matt and he says go.
   - step: 3
     name: Render convergible-sandbox (proof)
-    detail: Diff against its current four files; every difference must be explainable
-      as a Section 9 addition or the Q1 merge. Run one real session on the rendered
-      copy before proceeding.
+    detail: >
+      Diff against its current four files; every difference must be explainable as a
+      Section 9 addition or the per-reader split (P7). Run one real local session and
+      three dispatched tasks on the rendered copies; the dispatch canary (S6) must
+      surface in all three. If it does not, the dispatch essentials — scope lock,
+      off-limits, halt-and-report, inbox path — are inlined into the issue body by
+      CW at dispatch time and the dispatch file becomes reference only; the
+      issue-body template then comes under master control as a rendered artifact.
   - step: 4
     name: Update saas-starter
     detail: Bake protocol-config.yaml defaults and rendered protocols into the house
@@ -669,7 +896,7 @@ rollout:
 
 rollout_rule: >
   Each step is its own session with its own go from Matt. A "go" on the
-  blueprint is not a go on step 2.
+  blueprint is not a go on step 2. Step 2a blocks step 3.
 
 # =============================================================================
 # 12. RISKS AND DOWNSIDES (honest)
@@ -688,10 +915,11 @@ risks:
       Principle P4 — default false; the pre-refresh safety check remains in
       every rendered copy regardless of mode and stops on any dirty or unpushed state.
   - risk: >
-      Rendered files get long (dispatch + local in one start file).
+      Rendered files get long and cross the reader's attention horizon.
     mitigation: >
-      CW reads via MCP, not paste, so length costs tokens not ceremony; the
-      committee is asked to weigh one-file vs two-file (Q1).
+      One rendered file per reader (P7) keeps runner-irrelevant blocks out of the
+      dispatch file; P11 rule budget and prune cadence; compliance canary detects
+      when the tail stops being read.
   - risk: >
       Wrap direct-write means CW is writing to repos more often; concurrent CC
       sessions could collide.
@@ -707,8 +935,27 @@ risks:
   - risk: >
       Over-engineering — a renderer and config schema for ~8 repos.
     mitigation: >
-      Day-one renderer is a written procedure CW follows, not software.
-      Automation is deferred until the repo count or change frequency justifies it.
+      render.py is ~200 lines run in CW's sandbox, not a CI system; the repo-facing
+      config is a ~10-line profile + overrides (S2). If the active-repo count turns
+      out to be two or three, dormant repos get a stamped, pinned copy and the
+      propagation set is small by design (Section 13, open item).
+  - risk: >
+      Wrap direct-write turns transcription errors into EVAPORATION — an observation CW
+      skims past leaves no trace (Board, worst seam).
+    mitigation: >
+      M1 observation inbox: CC's observations are written by CC, as a file, on its
+      branch, before any prose; CW consumes files, not recollection. M4 evidence
+      rule makes every wrap claim carry an ID or be marked unverified.
+  - risk: >
+      The protocol thickens until agents skim it (Board pre-mortem 1).
+    mitigation: >
+      P11 rule budget, prune session every 200 sessions, compliance canary.
+  - risk: >
+      Propagation quietly stops because dormant repos have no advocate (Board
+      pre-mortem 3).
+    mitigation: >
+      Atomic propagation — current or pinned-with-reason, nothing in between; a bump
+      that cannot finish is reverted.
   - risk: >
       ChromaQA 7.0 and the SEO/GEO tool may need knobs not anticipated here.
     mitigation: >
@@ -716,10 +963,25 @@ risks:
       propagation procedure exists precisely for this.
 
 # =============================================================================
-# 13. OPEN QUESTIONS FOR THE COMMITTEE
+# 13. COMMITTEE QUESTIONS — RESOLVED IN v1.1, PLUS WHAT REMAINS OPEN
 # =============================================================================
 
-committee_questions:
+committee_resolutions:
+  Q1: One rendered file per READER (P7). Not one-per-repo, not one-per-mode.
+  Q2: Comment-fence render_when blocks stay, but resolved by render.py with stable block IDs and a manifest — the fences are now a machine format, not a discipline.
+  Q3: Evaporation is the new failure mode; answered by M1 (inbox) + M4 (evidence rule). Manual fallback keeps the GitHub-web-edit form.
+  Q4: Drift is pushed into the lagging repo's handoff at propagation time; no start protocol reads forgeflow.
+  Q5: Mirror completeness is DECLARED, never inferred; shape and subsystem presence are detected; profiles carry the defaults.
+  Q6: Subtree/submodule rejected — a shallow-clone runner cannot resolve them and they violate the standalone constraint.
+  board_Q_code_execution: YES — CW has deterministic code execution alongside the GitHub MCP (confirmed 2026-09-04 by parse-validating this file in-session). M5 is in.
+  board_Q_dispatch_reads_protocol: UNCONFIRMED — tested by the S6 canary in rollout step 3.
+  board_Q_active_repo_count: OPEN — Matt to state how many registered repos have had a session in the last ~100. If it is two or three, dormant repos get a stamped, pinned copy and the propagation set is small by design.
+
+still_open:
+  - S4 ceiling number for rendered protocol length — set after step 2a measures the folded set.
+  - Active repo count (above).
+
+committee_questions_v1_0_for_the_record:
   - id: Q1
     question: >
       One rendered start file containing both LOCAL and DISPATCH sections (mode
