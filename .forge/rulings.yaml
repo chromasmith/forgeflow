@@ -17,3 +17,18 @@ rulings:
       until Matt names it.
     supersedes: BLUEPRINT.yaml v1.2 Section 11 steps 4-9 and rollout_rule (amended to v1.3 in the same commit)
     stated_by: Matt, in chat, at the step-3a session close
+  - id: RULING-002
+    date: 2026-09-04
+    subject: First repo to render from the ForgeFlow Master
+    ruling: >-
+      chromasmith/seogeo is the FIRST repo rendered from the master, in its own
+      fresh session with its own go. It was chosen as the lowest-risk pilot (small
+      docs-plus-scripts repo, no build, deploy, database or dispatch, no concurrent
+      Claude Code sessions). chromaqa is the likely second, in a later session of
+      its own; when it is rendered its config must override subsystems.chromaqa to
+      false, because render.py would otherwise detect the tool's own script at the
+      repo root as a repo running ChromaQA. The housekeeping bundle deferred by
+      RULING-001 (PROPAGATION_PROCEDURE.md, registered-repos.yaml, legacy banners,
+      README repoint, CHANGELOG v1.0.0) lands in the seogeo render session.
+    supersedes: nothing — RULING-001 said Matt names the repo; this is him naming it
+    stated_by: Matt, in chat, at the close of the SEO/GEO master-change session ("I will start with SEO/GEO, per your recommendation")

@@ -1,10 +1,10 @@
 # .forge/handoff.yaml — chromasmith/forgeflow
 # Pass-the-baton briefing written BY the outgoing Claude Web session TO the next.
 # A WARNING LETTER, not a summary. The blueprint holds the design; this holds the feel.
-# generated: 2026-09-04T22:10:00Z
+# generated: 2026-09-04T22:30:00Z
 # session: 2026-09-04 (SEO/GEO 1.0 master change — second tool-driven change to the master)
-# written_at_commit: a0e26554ee5bc5bad4add95ccfe57773cf20bac6
-# written_at_utc: 2026-09-04T22:10:00Z
+# written_at_commit: 3ac32c3e24d0b19acf95cb7106d86e9b6a05cbeb
+# written_at_utc: 2026-09-04T22:30:00Z
 
 status: |
   ForgeFlow Master is at v0.3.0-build (HEAD a0e2655): the second TOOL-DRIVEN master
@@ -33,18 +33,24 @@ status: |
   seogeo repo, per its INSTALL.md).
 
 first_thing: |
-  WAIT. There is no ForgeFlow work to start on your own. The master covers
-  both tools and RULING-001 forbids rendering any repo until Matt names it by
-  name. Open with the one-line position ("master v0.3.0-build describes ChromaQA
-  7.0 and SEO/GEO 1.0; no repo runs on it yet") and ask Matt what he wants. If he
-  names a repo to render: follow RENDER_PROCEDURE.md, and land the housekeeping
-  bundle in next_up in that same session. If he names a third tool: same shape as
-  the last two sessions — read its repo, impact assessment BEFORE editing, then one
-  fenced master change with per-file blob-SHA proof.
+  RENDER chromasmith/seogeo from the master — Matt named it (RULING-002) as the first
+  and lowest-risk repo; do it in THIS fresh session after asking in one line whether a
+  Claude Code session is active on seogeo. Follow master/RENDER_PROCEDURE.md exactly:
+  write seogeo's .forge/protocol-config.yaml (docs-only profile is the likely fit; the
+  repo has no build, deploy, database or dispatch), shallow-clone seogeo for detection,
+  render twice and diff, check the S4 ceilings, push the rendered files plus the
+  CLAUDE.md house block, prove every blob SHA, run render.py check against the fetched
+  copies. In the SAME session land the housekeeping bundle: PROPAGATION_PROCEDURE.md,
+  legacy banners + README repoint in forgeflow, CHANGELOG bump to v1.0.0, and
+  registered-repos.yaml written LAST with seogeo's row. While in seogeo, also make the
+  small doc touch already owed there (see watch_out_for item 2). Verify: seogeo holds
+  rendered protocols whose header names master v1.0.0 and a config hash, and
+  registered-repos.yaml lists it.
 
 watch_out_for:
-  - "STOP POINT (RULING-001) still holds: do NOT render, install, or prepare a render for
-     any repo — not convergible-sandbox, not saas-starter — until Matt names it by name.
+  - "STOP POINT (RULING-001) still holds for every repo EXCEPT seogeo, which Matt named
+     (RULING-002): do NOT render, install, or prepare a render for any other repo — not
+     convergible-sandbox, not saas-starter, not chromaqa — until he names it by name.
      A master change is NOT a render."
   - "TWO FOLLOW-UPS OWED IN OTHER REPOS — Matt asked to be reminded and these are NOT
      this repo's work. (1) chromasmith/seogeo, small doc touch: .forge/protocol-pointer.md
@@ -124,6 +130,6 @@ north_star: |
 tone: |
   Productive, closed-out. Matt named the tool, asked the right questions about ripple
   and coexistence (answer: none, and the friction was ours, not the tools'), said GO,
-  and the change is on GitHub at a0e2655 with proof. The next move is his: name a repo
-  to render, or a third tool. Open with the one-line position and the two owed
-  follow-ups in seogeo and chromaqa, in that order.
+  and the change is on GitHub at a0e2655 with proof. He then NAMED seogeo as the first
+  render (RULING-002). Open with the one-line position and go straight to the render,
+  asking only whether a Claude Code session is active on seogeo.
