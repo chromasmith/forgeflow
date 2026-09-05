@@ -24,21 +24,32 @@ through the GitHub MCP), because render.py reads the `--allowed-tools` list out 
 Dispatch defaults ON. If the tree has no `.github/workflows/claude.yml`, the render will come out dispatch-OFF with
 a header shout and S-092 — legal, but it is the exact state v1.1.0 exists to end, so install first unless Matt says
 this repo is dispatch-off by choice (then `execution.dispatch.enabled: false` goes in the config, with the reason).
-Three Matt-side steps, one at a time, each confirmed before the next:
-1. **Workflow file.** Matt creates `.github/workflows/claude.yml` via the GitHub web editor. Claude Web gives him
-   the pre-filled link `https://github.com/<org>/<repo>/new/main?filename=.github/workflows/claude.yml` and the
-   COMPLETE content of `master/assets/claude.yml` (never "copy from line X"). The connector cannot write workflows.
-   Confirm the commit landed (blob SHA equals `git hash-object master/assets/claude.yml`) — an uncompleted web-editor
-   commit dialog is silently lost. A repo needing extra runner tools (database reads) OVERLAYS on the asset at the
-   marked lines; it never forks the generic part.
-2. **Secret.** `CLAUDE_CODE_OAUTH_TOKEN` in the repo's Actions secrets. Preferred: ONE Claude Code prompt on Matt's
-   machine that reads the token from 1Password (`op read`) and sets it with `gh secret set` for every named repo, so
-   Matt never handles the token. Fallback: the link `https://github.com/<org>/<repo>/settings/secrets/actions/new`,
-   name and value pasted by Matt. The token is NEVER committed into any repo. `chromasmith` is a personal account:
-   there are no organization-level secrets; every repo needs its own.
-3. **Branch protection** on the default branch, with "include administrators" UNTICKED (RULING-011): runners cannot
-   push main; Matt, his local Claude Code and Claude Web's connector (acting as Matt) still can. Claude Web proves the
-   bypass with a one-line docs commit before the first dispatch; a rejection means the box is ticked.
+THIS IS THE STANDARD FOR EVERY REPO THAT JOINS THE MASTER, new or existing: no repo is rendered dispatch-off by
+accident again. Three steps, one at a time, each confirmed before the next. Matt does 1 and 3 himself; step 2 is
+one Claude Code prompt and Matt never handles the token.
+
+1. **Workflow file (Matt, GitHub web editor).** Claude Web hands him the pre-filled link
+   `https://github.com/<org>/<repo>/new/main?filename=.github/workflows/claude.yml` and the COMPLETE content of
+   `master/assets/claude.yml` in one copyable block (never "copy from line X"). The connector cannot write workflows.
+   Confirm the commit landed: the file's blob SHA on GitHub must equal `git hash-object master/assets/claude.yml`
+   (an uncompleted web-editor commit dialog is silently lost). A repo needing extra runner tools (database reads)
+   OVERLAYS on the asset at the marked lines; it never forks the generic part.
+2. **Secret — ONE command, from 1Password, in a Claude Code prompt.** The token lives in vault "Chromasmith Keys",
+   item `CLAUDE_CODE_OAUTH_TOKEN`, field `credential` (created 2026-09-05 with `claude setup-token`; a Claude
+   subscription token, NEVER `ANTHROPIC_API_KEY`, which bills per token). The prompt runs, in PowerShell:
+       (op read "op://Chromasmith Keys/CLAUDE_CODE_OAUTH_TOKEN/credential").Trim() | gh secret set CLAUDE_CODE_OAUTH_TOKEN --repo chromasmith/<repo>
+   then proves it with `gh secret list --repo chromasmith/<repo>` (name and UTC date only; values are never shown).
+   Readiness checks: `gh auth status` (signed in as chromasmith, repo scope) and `op vault list` — NEVER `op whoami`,
+   which reports "not signed in" on Surface 12 even when the CLI works. Several repos can be done in one prompt, one
+   attempt each, no retries without Matt's word. The value is never printed, echoed or written into a repo. `chromasmith`
+   is a personal GitHub account: there are no organization-level secrets; every repo needs its own. To ROTATE the token
+   later: `claude setup-token` again, `op item edit CLAUDE_CODE_OAUTH_TOKEN --vault "Chromasmith Keys" credential=<new>`
+   (Matt pastes into the Claude Code prompt, which passes it on without displaying it), then re-run the one command per
+   repo — `gh secret set` overwrites.
+3. **Branch protection (Matt, GitHub web).** On the default branch, with "include administrators" UNTICKED
+   (RULING-011): runners cannot push main; Matt, his local Claude Code and Claude Web's connector (acting as Matt)
+   still can. Claude Web proves the bypass with a one-line docs commit before the first dispatch; a rejection means the
+   box is ticked.
 Then re-list the tree, confirm the workflow is there, and continue at step 1.
 
 ## 1. Fetch the master into the sandbox
