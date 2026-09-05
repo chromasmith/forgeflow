@@ -103,3 +103,33 @@ repos:
       north_star_doc = .forge/plans/chromaqa-modernization-plan.yaml (BRIEF.yaml is superseded),
       backlog prefix CQA-. House block APPENDED to CLAUDE.md (no markers). Its legacy backlog
       shape migrates at the repo's first wrap on the rendered protocol, not at the render.
+  - repo: chromasmith/synclips-platform
+    config: .forge/protocol-config.yaml
+    profile: standard
+    master_version: "v1.0.0"
+    rendered_on: 2026-09-04
+    config_hash: 1cf0a0d5e29b8b5669e8c00099c0f0b237718febd094e77d9f62e4f2b22e398c
+    state: current
+    files:
+      - .forge/protocols/start-protocol.yaml
+      - .forge/protocols/end-protocol.yaml
+      - .forge/protocol-config.yaml
+      - CLAUDE.md
+    landed: "commits 814578a (config), c383bd2 (start), 09d6c1e (end), 4c54dd5 (CLAUDE.md), all 2026-09-04; blob SHAs equal; render.py check OK from a fresh forgeflow clone"
+    notes: >-
+      Fifth repo rendered (Matt named it 2026-09-04, RULING-007) — the first Synclips-system
+      repo and the first MONOREPO. companion_repos declares synclips-relay (role relay,
+      PROTOCOL.md confirmed present in that repo's tree), so S-015/S-055 and E-020/E-044
+      render in. Private repo: detection ran on a tree skeleton rebuilt from the GitHub
+      listing. Detected: supabase, chromaqa (chromaqa-check.sh + .chromaqa/, a real running
+      gate), ci_quality_gate (quality-gate.yml); seogeo/ui_inventory off; dispatch off. FOUR
+      OVERRIDES, all because P3 detection reads a monorepo tree wrong: shape.kind monorepo +
+      shape.build_location apps/admin (root package.json is only the workspaces root);
+      subsystems.vercel true + build.deploy vercel (vercel.json lives in apps/admin);
+      architecture.tsx_lib_rule true (.tsx tree is apps/admin/src). Also repo.line_endings
+      mixed (CLAUDE.md standing rule), build.deploy_verify pinned to the one true Vercel
+      project/team IDs from CLAUDE.md, north_star_doc = .forge/blueprint/MANIFEST.yaml (the
+      53 KB platform blueprint is marked do-not-read), backlog prefix SC-. House block
+      APPENDED to CLAUDE.md (no markers). Legacy .forge/ shape (backlog on the old schema,
+      no rulings.yaml, no artifact register, no inbox/, GOTCHAS at 140 KB) migrates at the
+      repo's first wrap on the rendered protocol, not at the render.
