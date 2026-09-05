@@ -87,3 +87,22 @@ rulings:
       Claude Web's error: the override was filed before the repo was inspected.
     supersedes: the subsystems.chromaqa override clause of RULING-002 and RULING-005 (repo choice and concurrency statements unchanged)
     stated_by: Matt, in chat ("go" on the corrected plan, opening the chromaqa render)
+  - id: RULING-007
+    date: 2026-09-04
+    subject: Fifth repo to render from the ForgeFlow Master
+    ruling: >-
+      chromasmith/synclips-platform — the Synclips system's main repo — is the FIFTH repo
+      rendered from the master, in its own session with its own go ("synclips-platform
+      please"). It is the first Synclips-system repo and the first repo with a declared
+      companion (synclips-relay, role relay, governing doc PROTOCOL.md, per blueprint
+      Section 10 variant_mapping); the relay stays as-is. Tree inspected BEFORE this ruling
+      (GOTCHA-003): pnpm/turbo monorepo (apps/admin, apps/marketplace, packages/), root
+      package.json, supabase/ present, .chromaqa/ + chromaqa-check.sh + quality-gate.yml
+      (this repo runs the gate on itself), vercel.json in apps/admin, no
+      .forge/protocols/, no .forge/rulings.yaml, no artifact register, GOTCHAS.yaml at
+      140 KB. No subsystem override is filed in this ruling; the config is written from
+      what render.py detects on the real tree, and any override lands in the config
+      commit with its reason. Matt's answer on concurrent Claude Code / Claude Web sessions
+      is taken before any push and recorded in the session notes.
+    supersedes: nothing — RULING-001 said Matt names the repo; this is him naming it
+    stated_by: Matt, in chat, in this session ("synclips-platform please"), recorded in the turn it was made per W-002
