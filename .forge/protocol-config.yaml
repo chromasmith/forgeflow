@@ -14,12 +14,16 @@ ids:
 # build.build_command: "npm run build"
 # build.deploy: "none"
 # build.deploy_verify: "Vercel deployment record READY for the exact SHA"
+# build.python_interpreter: "python"
+# build.secondary_validation: null
 # build.surfaces: ["desktop"]
 # build.validation: "none"
 # companion_repos: []
-# execution.dispatch.allowed_tools: []
-# execution.dispatch.enabled: false
-# execution.dispatch.requires: [".github/workflows/claude.yml", "CLAUDE_CODE_OAUTH_TOKEN secret", "branch protection on main", "artifact register", "mirror.github_is_complete_mirror: true"]
+# execution.dispatch.allowed_tools: ["WebFetch", "WebSearch", "Bash(curl:*)", "Bash(gh run list:*)", "Bash(gh run view:*)", "Bash(gh api:*)", "Bash(gh pr list:*)", "Bash(gh pr view:*)", "Bash(gh --version)", "Bash(npm audit:*)", "Bash(npx depcheck:*)"]
+# execution.dispatch.enabled: true
+# execution.dispatch.harness_installed: true
+# execution.dispatch.off_reason: null
+# execution.dispatch.requires: [".github/workflows/claude.yml (master/assets/claude.yml, installed by Matt via the GitHub web editor)", "CLAUDE_CODE_OAUTH_TOKEN repo Actions secret", "mirror.github_is_complete_mirror: true", "branch protection on the default branch with administrators bypassing (RULING-011) — recommended, not a render precondition"]
 # execution.local: true
 # execution.local_report_desktop_copy: true
 # execution.max_parallel: 3
@@ -35,10 +39,10 @@ ids:
 # protected.phase_authority_doc: null
 # protected.spec_dirs_off_limits: [".forge/specs/"]
 # protected.tombstone_gotchas: []
-# protocol.config_hash: "427225a67a50a3d1475cef13eade7b3e8fb2cbe5cbabbf277cf0d3634e63b001"
-# protocol.master_version: "v1.0.0"
+# protocol.config_hash: "8a1ce594fd06de0905b6b29e59401e058ab9f55664478912302829875d0b82b5"
+# protocol.master_version: "v1.1.0"
 # protocol.render_method: "code"
-# protocol.rendered_on: "2026-09-04"
+# protocol.rendered_on: "2026-09-05"
 # repo.alternate_machines: []
 # repo.canonical_checkout: "C:\\Chromasmith\\forgeflow"
 # repo.canonical_machine: "Surface 12"
