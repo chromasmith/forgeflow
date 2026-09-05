@@ -1,0 +1,58 @@
+# .github/workflows/claude.yml — the ForgeFlow dispatch harness (generic)
+# SOURCE: chromasmith/forgeflow master/assets/claude.yml (ForgeFlow Master asset, v1.1.0)
+# Installed by Matt via the GitHub web editor — the Claude Web connector cannot write workflows.
+# Repo-specific additions (database env, extra allowlist entries) go BELOW the marked lines,
+# never by editing the generic part; a repo that needs them overlays, it does not fork.
+#
+# Requires ONE repo Actions secret: CLAUDE_CODE_OAUTH_TOKEN (Matt's Claude subscription token,
+# set per repo in Settings -> Secrets and variables -> Actions). NEVER add ANTHROPIC_API_KEY.
+name: Claude Code
+
+on:
+  issue_comment:
+    types: [created]
+  pull_request_review_comment:
+    types: [created]
+  issues:
+    types: [opened, assigned]
+  pull_request_review:
+    types: [submitted]
+
+jobs:
+  claude:
+    if: |
+      (github.event_name == 'issue_comment' && contains(github.event.comment.body, '@claude')) ||
+      (github.event_name == 'pull_request_review_comment' && contains(github.event.comment.body, '@claude')) ||
+      (github.event_name == 'pull_request_review' && contains(github.event.review.body, '@claude')) ||
+      (github.event_name == 'issues' && (contains(github.event.issue.body, '@claude') || contains(github.event.issue.title, '@claude')))
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      pull-requests: read
+      issues: read
+      id-token: write
+      actions: read # Required for Claude to read CI results on PRs
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 1
+
+      - name: Run Claude Code
+        id: claude
+        # REPO OVERLAY (optional): an `env:` block for read-only service access goes here,
+        # e.g. libpq PG* variables backed by a repo secret. Never put a secret value inline.
+        uses: anthropics/claude-code-action@v1
+        with:
+          claude_code_oauth_token: ${{ secrets.CLAUDE_CODE_OAUTH_TOKEN }}
+
+          # Lets Claude read CI results on PRs
+          additional_permissions: |
+            actions: read
+
+          # Read-only diagnostic tools for dispatched sessions. Write-capable gh commands
+          # (merge, secret changes) remain blocked. Bash(env) is deliberately absent: with
+          # credentials in the job environment an env dump could copy one into a PR comment.
+          # REPO OVERLAY (optional): append repo-specific entries (e.g. Bash(psql:*)) to this
+          # ONE line; render.py reads the list from here into the rendered protocol.
+          claude_args: '--allowed-tools "WebFetch,WebSearch,Bash(curl:*),Bash(gh run list:*),Bash(gh run view:*),Bash(gh api:*),Bash(gh pr list:*),Bash(gh pr view:*),Bash(gh --version),Bash(npm audit:*),Bash(npx depcheck:*)"'
