@@ -216,3 +216,22 @@ rulings:
       nothing changes in how he works.
     supersedes: S-072 "Branch protection is the pipeline's switch" framing; the "branch protection on main" entry in execution.dispatch.requires; the 2026-09-05 defect-report caution that protection is its own separate decision (it is now a fixed part of harness install)
     stated_by: Matt, in chat, in this session ("go" on the simplified version), recorded in the turn per W-002
+  - id: RULING-012
+    date: 2026-09-05
+    subject: Rollout order for the v1.1.0 re-renders (and convergible-sandbox named)
+    ruling: >-
+      After seogeo, the order is chromasmith/chromasmith-saas-starter NEXT, then
+      chromasmith/convergible-sandbox, then the remaining repos in the order Claude Web sees
+      fit (synclips-platform, chromasync, dv-captain). This supersedes the RULING-009 clause
+      that saas-starter goes LAST; the concurrency check still applies — before saas-starter
+      is touched, Matt confirms in one line that the SEO/GEO install session there has
+      finished. convergible-sandbox is a FIRST render, not a re-render: it is the lineage
+      source of the dispatch blocks, it already carries the harness (claude.yml, secret,
+      branch protection) and the old four-file protocol set, and it is not in the registry.
+      Matt naming it here satisfies RULING-001; its step-4 prerequisites recorded in the
+      forgeflow handoff (repo-rules.yaml for the DOC-FOLD-1 items, CC-reports to .forge/inbox
+      rename) are checked against the tree before its config is written (GOTCHA-003), and
+      any override lands in the config commit with its reason. Its claude.yml carries the
+      Convergible overlay (PG env, psql, bunx) and is NOT replaced by the generic asset.
+    supersedes: the "saas-starter LAST" ordering clause of RULING-009 (its concurrency condition stands)
+    stated_by: Matt, in chat, in this session ("lets do the sass starter repo next followed by convergible sandbox, then continue as you see fit"), recorded in the turn per W-002
