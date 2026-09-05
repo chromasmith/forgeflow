@@ -48,30 +48,37 @@ repos:
   - repo: chromasmith/chromasmith-saas-starter
     config: .forge/protocol-config.yaml
     profile: standard
-    master_version: "v1.0.0"
-    rendered_on: 2026-09-04
-    config_hash: b6411bcfb93ed775c8d4348fa97af39907bf2b3cfab6ac5f3b5d612205876fa2
+    master_version: "v1.1.0"
+    rendered_on: 2026-09-05
+    config_hash: 194675567d22e994b7acab67b21ae6eb0fd397a6449d0cc6a048d500415c2c82
     state: current
     files:
       - .forge/protocols/start-protocol.yaml
+      - .forge/protocols/start-protocol.dispatch.yaml
       - .forge/protocols/end-protocol.yaml
+      - .forge/protocols/end-protocol.dispatch.yaml
       - .forge/protocol-config.yaml
       - CLAUDE.md
-    landed: "first render commits a296c13 (config), 10bb67e (start), 60c0906 (end), c97a49a (CLAUDE.md); RE-RENDERED same day after the SEO/GEO install (config_hash was f362bf02fcdf): b750941 (config), 060c1c5 (CLAUDE.md), c6920b1 (start), 7b84b45 (end); blob SHAs equal to the sandbox output; byte-stable double render; render.py check OK from a fresh forgeflow clone"
+    landed: "v1.1.0 re-render 2026-09-05: commits 1f42125 (config), b742dd2 (CLAUDE.md), fda3547 (end.dispatch NEW), 028eea9 (start.dispatch NEW), d96fd69 (end), f3110b0 (start); blob SHAs equal to the sandbox output. Previous renders: v1.0.0 first render a296c13/10bb67e/60c0906/c97a49a, v1.0.0 re-render after SEO/GEO b750941/060c1c5/c6920b1/7b84b45 (2026-09-04)"
     notes: >-
       Second repo rendered (Matt named it 2026-09-04). This repo IS THE TEMPLATE, so its
       rendered files are inherited by every project spawned from it; a child must re-render
       with its own config (repo.name, and drop the build.deploy override once linked to
-      Vercel). Private repo: detection ran on a tree skeleton rebuilt from the GitHub listing.
-      Detected: single-app, npm-build, supabase, ci_quality_gate (quality-gate.yml), chromaqa
-      (chromaqa-check.sh, a real running gate here), tsx_lib_rule, and — since the re-render
-      that closed FF-002 — seogeo (.seogeo/config.json present after SEO/GEO v1.0 landed at
-      1915293), so S-089/S-090, E-048..E-051 and the two house-block bullets render in;
-      vercel off. Override build.deploy: none because the template itself is deployed nowhere.
-      The house block replaced the placeholder "Session workflow" section of CLAUDE.md
-      (TPL-030). Note: .chromaqa/profiles.json is still absent there (the seogeo generator
-      does not yet emit the keys ChromaQA 7.0 reads — tracked in seogeo's handoff), so the
-      S-090 generated-profile rule describes a state the template has not reached yet.
+      Vercel) AND install its own harness (claude.yml is inherited by the clone, but the
+      CLAUDE_CODE_OAUTH_TOKEN secret and branch protection are per-repo settings that do not
+      copy). FOURTH repo re-rendered from v1.1.0 (RULING-012 moved it ahead of the Synclips
+      trio; its SEO/GEO install session was confirmed wrapped first): claude.yml installed by
+      Matt via the web editor (blob 4cccfbf = master/assets/claude.yml), CLAUDE_CODE_OAUTH_TOKEN
+      set from 1Password, branch protection on main with admin bypass (RULING-011). Private
+      repo: detection ran on a tree skeleton rebuilt from the GitHub listing, carrying the REAL
+      claude.yml and CLAUDE.md (blob SHAs matched before render). Detected: single-app,
+      npm-build, supabase, ci_quality_gate (quality-gate.yml), chromaqa (chromaqa-check.sh, a
+      real running gate here), seogeo (.seogeo/config.json), tsx_lib_rule, dispatch=on with
+      allowed_tools read from the workflow; vercel off. Override build.deploy: none because the
+      template itself is deployed nowhere. Note: .chromaqa/profiles.json is still absent there
+      (the seogeo generator does not yet emit the keys ChromaQA 7.0 reads — tracked in seogeo's
+      handoff), so the S-090 generated-profile rule describes a state the template has not
+      reached yet. north_star_doc = START_HERE.md, backlog prefix OBS-.
   - repo: chromasmith/forgeflow
     config: .forge/protocol-config.yaml
     profile: docs-only
