@@ -51,3 +51,27 @@ sessions:
       - .forge/backlog.yaml
       - .forge/GOTCHAS.yaml
     blockers_remaining: []
+  - date: 2026-09-04
+    duration: ~1hr
+    completed:  # evidence: 33a7192
+      - "Rendered chromasmith/chromaqa from master v1.0.0 (docs-only profile with ChromaQA and CI-gate blocks in, config_hash c75a6cf4048f, start 1072 / end 1079 lines) — chromaqa commits 2d9980e (config), ac7faac (start), de3f45f (end), 8f52dc8 (CLAUDE.md house block appended); blob SHAs equal to the sandbox output; render.py check OK from a fresh forgeflow clone"
+      - "RULING-005 written in the turn Matt named the repo (e909725); RULING-006 written on his go (f0e348b), withdrawing the RULING-002 'override chromaqa to false' clause"
+      - "Registry row added last: master/registered-repos.yaml @ 33a7192"
+      - "Deferred follow-ups filed as FF-001 and FF-002 in the backlog (this commit)"
+    commits:
+      - message: "rulings: RULING-005 — chromasmith/chromaqa named as the fourth repo to render from the master (e909725)"
+      - message: "rulings: RULING-006 — chromaqa renders with ChromaQA blocks IN; RULING-002/005 override clause withdrawn (f0e348b)"
+      - message: "registry: add chromasmith/chromaqa — fourth rendered repo (33a7192)"
+      - message: "docs: end session 2026-09-04 — fourth render (this commit)"
+    key_changes:
+      - "No master or renderer change this session; first render of a docs-only repo with chromaqa and ci_quality_gate both TRUE was byte-stable and check-clean"
+      - "Claude Web filed RULING-005 restating a wrong override before inspecting the target repo, then corrected it with RULING-006 — see GOTCHA-003"
+    files_modified:
+      - .forge/rulings.yaml
+      - master/registered-repos.yaml
+      - .forge/handoff.yaml
+      - .forge/session-state.yaml
+      - .forge/session-history.yaml
+      - .forge/backlog.yaml
+      - .forge/GOTCHAS.yaml
+    blockers_remaining: []

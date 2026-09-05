@@ -37,3 +37,22 @@
   applies_to:
     - master/RENDER_PROCEDURE.md (step 0 / step 7 concurrency question)
     - .forge/handoff.yaml (watch_out_for)
+- id: GOTCHA-003
+  date: 2026-09-04
+  summary: "A knob override recorded in an earlier ruling was filed into a new ruling before the target repo was inspected — and it was wrong"
+  detail: |
+    RULING-002 predicted that chromaqa's config must override subsystems.chromaqa to false
+    because render.py would "mis-detect" the tool's own chromaqa-check.sh. When Matt named
+    chromaqa (RULING-005), Claude Web restated that override in the ruling text from memory
+    of RULING-002, then inspected the repo and found it genuinely RUNS ChromaQA on itself
+    (.github/workflows/quality-gate.yml, a committed .chromaqa/CQA-debt.jsonl, and a CLAUDE.md
+    decision of 2026-09-03 saying so). Detection was correct; the override would have
+    stripped the debt check, push-gate rule and CI-reading blocks from a repo that needs
+    them. Corrected by RULING-006 in the same session. Lesson: a render_when knob prediction
+    made about a repo in an earlier session is a hypothesis, not a fact — list the target
+    tree (workflows, .chromaqa/, CLAUDE.md) BEFORE writing any ruling or config that names
+    a subsystem override, and write only what the tree shows.
+  source: "chromaqa render session, 2026-09-04 (RULING-005 e909725, RULING-006 f0e348b)"
+  applies_to:
+    - master/RENDER_PROCEDURE.md (step 0 preconditions — inspect before configuring)
+    - .forge/rulings.yaml (RULING-002 clause superseded by RULING-006)

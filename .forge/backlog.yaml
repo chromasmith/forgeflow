@@ -1,6 +1,34 @@
 # Work queue — prioritized tasks (unified ForgeFlow schema: prioritized / in_progress / completed)
 # Status vocabulary: ready | blocked | needs-ruling | in_progress | deferred | completed | superseded
 # Migrated from the legacy empty shape at the 2026-09-04 wrap (first wrap on the rendered end protocol).
-prioritized: []
+prioritized:
+  - id: FF-001
+    name: House block line assumes an installer-pasted ChromaQA section exists
+    priority: P3
+    estimate: 15 min
+    spec_ref: master/claude-md.house-block.master.md
+    description: |
+      The chromaqa-fenced house-block line reads "ChromaQA's own section lower in this
+      file is binding." In chromasmith/chromaqa that section is deliberately absent
+      (CLAUDE.md decision 2026-09-03, CQA-042), so the rendered sentence points at nothing.
+      Reword the master line so it holds whether or not the installer section exists,
+      then re-render chromaqa (and saas-starter, whose CLAUDE.md also carries the line).
+      Land inside the next master change, not alone.
+    status: deferred
+    blocked_by: null
+  - id: FF-002
+    name: saas-starter re-render once SEO/GEO is installed there
+    priority: P2
+    estimate: 1 session
+    spec_ref: master/RENDER_PROCEDURE.md
+    description: |
+      Matt is installing the SEO/GEO tool into chromasmith-saas-starter in a concurrent
+      session. When .seogeo/config.json lands there, render.py detects subsystems.seogeo
+      true and the template's committed render (config_hash f362bf02fcdf) is stale: S-089,
+      S-090, E-048..E-051 and the fenced house-block line are missing from it and from
+      every child spawned from it. Re-render saas-starter on Matt's word after the install
+      is finished; do not re-render mid-install.
+    status: deferred
+    blocked_by: SEO/GEO install into saas-starter completing (other session)
 in_progress: []
 completed: []  # evidence: 63fb9c4 (empty at migration)

@@ -4,26 +4,25 @@ project: forgeflow (ForgeFlow Master — unified start/wrap protocols rendered p
 milestones:
   - "master v1.0.0 released; chromasmith/seogeo rendered (first repo) — earlier 2026-09-04, wrap @ 3145732"
   - "chromasmith/chromasmith-saas-starter rendered (second repo, the house template) — registry row @ e856a72, wrap @ 827dba9"
-  - "chromasmith/forgeflow rendered FROM ITS OWN MASTER (third repo) — commits 0f7ec5e (config + RULING-004), 5e1f463 (start), 56f2389 (end), b9046e2 (CLAUDE.md); render.py check OK from a fresh clone; registry row @ 63fb9c4"
+  - "chromasmith/forgeflow rendered from its own master (third repo) — registry row @ 63fb9c4, wrap @ 54296f3"
+  - "chromasmith/chromaqa rendered (fourth repo, RULING-005) — chromaqa commits 2d9980e (config), ac7faac (start), de3f45f (end), 8f52dc8 (CLAUDE.md); render.py check OK from a fresh clone; registry row @ 33a7192"
 decisions:
-  - decision: "forgeflow itself is the third repo rendered from the master (RULING-004)"
-    rationale: "Matt named it by name; the master's home should run on the master (dogfooding), and there is no loop because a render never reads .forge/protocols/."
-    impact: "forgeflow sessions now start and wrap on rendered protocols; this wrap is the first built from its own end-protocol.yaml."
-  - decision: "forgeflow's protocol-config declares north_star_doc = master/BLUEPRINT.yaml and backlog prefix FF-"
-    rationale: "The blueprint is the product-truth document for this effort; the prefix keeps forgeflow backlog IDs distinct from BL-."
-    impact: "S-053 renders in; future backlog items are FF-NNN."
-  - decision: "Wait for a concurrent Claude Web session's wrap to land before writing to forgeflow"
-    rationale: "A wrap on another repo also writes forgeflow's own .forge/ docs when forgeflow is the render source; two Claude Web writers collided in prospect."
-    impact: "GOTCHA-002; the concurrency question now covers Claude Web sessions mid-wrap, not only Claude Code."
-  - decision: "Backlog moved to the unified schema (prioritized / in_progress / completed) at this wrap — docs commit on top of 63fb9c4"
-    rationale: "E-012 requires a one-time migration in the first wrap on the rendered protocol; the file held the legacy empty shape."
-    impact: "Future surgical edits name the unified sections."
+  - decision: "chromaqa is the fourth repo rendered from the master (RULING-005 @ e909725)"
+    rationale: "Matt named it by name; no Claude Code session on it, and his other session (saas-starter, SEO/GEO install) is not a render, so no forgeflow wrap collision."
+    impact: "chromaqa sessions now start and wrap on .forge/protocols/; four repos run on v1.0.0."
+  - decision: "chromaqa renders WITH the ChromaQA blocks — subsystems.chromaqa true, not overridden (RULING-006 @ f0e348b)"
+    rationale: "The repo genuinely runs ChromaQA on itself (quality-gate.yml, committed .chromaqa/ telemetry, CLAUDE.md decision closing CQA-042); RULING-002's mis-detection premise was wrong and was filed before the repo was inspected."
+    impact: "S-014/S-045/S-087/S-071/S-088 and E-036/E-037/E-040/E-042/E-047 render in for chromaqa; the RULING-002 override clause is withdrawn."
+  - decision: "chromaqa config: docs-only profile, north_star_doc = .forge/plans/chromaqa-modernization-plan.yaml, backlog prefix CQA-"
+    rationale: "Bash script + docs, no build or deploy; BRIEF.yaml is superseded and BLUEPRINT.yaml is 378 KB, so the modernization plan is the readable governing doc."
+    impact: "S-053 renders in pointing at the plan; future chromaqa backlog items are CQA-NNN."
 blockers: []
 next_steps:
   - priority: high
-    task: "WAIT — render no repo until Matt names it by name (RULING-001); chromaqa is the likely next, with subsystems.chromaqa overridden false."
+    task: "WAIT — render no repo until Matt names it by name (RULING-001)."
 context: |
-  Three repos of different shape now run on master v1.0.0 with no renderer defect on the
-  second or third render; forgeflow itself is one of them. forgeflow's CLAUDE.md still
-  carries the unfilled Chromasmith template text above the rendered house block. Every
-  other repo waits on Matt's naming. Housekeeping deferrals are in the handoff's next_up.
+  Four repos of two shapes now run on master v1.0.0 with no renderer change this session
+  (chromaqa's render was byte-stable and check-clean). Two master follow-ups were filed as
+  deferred backlog items FF-001 and FF-002, not acted on. chromaqa's legacy backlog shape and
+  its own .forge/rulings.yaml are created or migrated at chromaqa's first wrap on the rendered
+  protocol, not here.
