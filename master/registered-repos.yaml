@@ -80,3 +80,26 @@ repos:
       The house block was APPENDED to CLAUDE.md (the file had no markers); the rest of that
       CLAUDE.md is still the unfilled Chromasmith template. north_star_doc = master/BLUEPRINT.yaml,
       backlog prefix FF-.
+  - repo: chromasmith/chromaqa
+    config: .forge/protocol-config.yaml
+    profile: docs-only
+    master_version: "v1.0.0"
+    rendered_on: 2026-09-04
+    config_hash: c75a6cf4048f9433cb9af4a18769655a2311c614d35e3f75ff7669e3821bd5a1
+    state: current
+    files:
+      - .forge/protocols/start-protocol.yaml
+      - .forge/protocols/end-protocol.yaml
+      - .forge/protocol-config.yaml
+      - CLAUDE.md
+    landed: "commits 2d9980e (config), ac7faac (start), de3f45f (end), 8f52dc8 (CLAUDE.md), all 2026-09-04; blob SHAs equal; render.py check OK from a fresh forgeflow clone"
+    notes: >-
+      Fourth repo rendered (Matt named it 2026-09-04, RULING-005). The ChromaQA tool's own
+      repo, which RUNS ChromaQA ON ITSELF (quality-gate.yml, live .chromaqa/ telemetry) — so
+      subsystems.chromaqa is detected TRUE and deliberately NOT overridden; RULING-006 withdrew
+      the RULING-002 "override to false" clause. Private repo: detection ran on a tree skeleton
+      rebuilt from the GitHub listing. Detected: single-app, no build (bash script + docs),
+      ci_quality_gate, chromaqa; supabase/vercel/seogeo/ui_inventory off; dispatch off.
+      north_star_doc = .forge/plans/chromaqa-modernization-plan.yaml (BRIEF.yaml is superseded),
+      backlog prefix CQA-. House block APPENDED to CLAUDE.md (no markers). Its legacy backlog
+      shape migrates at the repo's first wrap on the rendered protocol, not at the render.
