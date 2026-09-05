@@ -168,3 +168,27 @@ rulings:
       forgeflow) — saas-starter is re-rendered LAST, after that install is finished.
     supersedes: the "WAIT" first_thing of the 2026-09-05 handoff; RULING-001's stop point (the effort is reopened for this repair); the profile default execution.dispatch.enabled false
     stated_by: Matt, in chat, in this session ("This is now our confirmed list of duties"; "There is no question that I want my Claude Web sessions to be able to dispatch work"), recorded in the turn per W-002
+  - id: RULING-010
+    date: 2026-09-05
+    subject: Claude Web's direct-edit boundary is drawn around RISK, not folder (FFD-002)
+    ruling: >-
+      S-006/S-007 are redrawn. The purpose of the role boundary is verification: Claude Web
+      cannot run a build, so it must not touch anything whose breakage a build would catch.
+      The test is therefore about risk, not file category. Claude Web may edit a repo file
+      DIRECTLY through the GitHub connector only when ALL of these hold: (a) the file is not
+      compiled, imported, executed or type-checked by the build; (b) it is not a dependency
+      manifest or lockfile; (c) it is not under .github/workflows/ (Matt-only, unchanged);
+      (d) it holds no credentials or identity material (never_touch_paths, unchanged); (e) it
+      is not a rendered protocol file under .forge/protocols/ (master-only, unchanged); and
+      (f) the change is a single spot, not a restructure. This PERMITS direct edits to README,
+      LICENSE, docs/*.md, the .forge/ documentation layer, comment-only changes, and copy or
+      link fixes in files the build does not compile. It still FORBIDS direct edits to any
+      .ts/.tsx/.js/.py source, package.json, lockfiles, migrations, workflows and anything
+      .env — including a copy-only change inside a compiled file such as a footer href in a
+      .tsx: the file is compiled, so it stays prompt-only; the bright line is worth more than
+      the convenience. Claude Code remains the main build flow; direct edits are for changes
+      where the prompt ceremony is not worth it (Matt: "perhaps there was something misspelled
+      somewhere"). The master text of S-006 and S-007 is rewritten to this test in the v1.1.0
+      master change.
+    supersedes: the folder/category wording of S-006 ("never edits repo APPLICATION files") and S-007 ("Application code, migrations, config and workflows remain prompt-only") — the risk test replaces it; the .github/workflows/, secrets and rendered-protocol prohibitions are unchanged
+    stated_by: Matt, in chat, in this session ("go" on Claude's recommended test), recorded in the turn per W-002
