@@ -72,3 +72,18 @@ rulings:
       session mid-render, so no forgeflow wrap collision (GOTCHA-002).
     supersedes: nothing — RULING-001 said Matt names the repo; this is him naming it
     stated_by: Matt, in chat, opening the render session (recorded in the turn it was made, per W-002)
+  - id: RULING-006
+    date: 2026-09-04
+    subject: chromaqa renders WITH the ChromaQA blocks (subsystems.chromaqa true)
+    ruling: >-
+      The "override subsystems.chromaqa to false" clause of RULING-002 (repeated in
+      RULING-005) is WITHDRAWN. Its premise was wrong: chromasmith/chromaqa genuinely runs
+      ChromaQA on itself — .github/workflows/quality-gate.yml, a live .chromaqa/CQA-debt.jsonl,
+      and the CLAUDE.md decision of 2026-09-03 (closing CQA-042) saying "this repo runs
+      ChromaQA on itself". Detection is therefore correct, not a mis-detection, and the
+      ChromaQA start/wrap blocks (debt check, push-gate rule, CI reading) render IN. The
+      rest of RULING-005 stands. Profile docs-only; backlog prefix CQA-; north_star_doc =
+      .forge/plans/chromaqa-modernization-plan.yaml (BRIEF.yaml is superseded). Recorded as
+      Claude Web's error: the override was filed before the repo was inspected.
+    supersedes: the subsystems.chromaqa override clause of RULING-002 and RULING-005 (repo choice and concurrency statements unchanged)
+    stated_by: Matt, in chat ("go" on the corrected plan, opening the chromaqa render)
