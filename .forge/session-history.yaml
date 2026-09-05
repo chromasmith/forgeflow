@@ -103,3 +103,54 @@ sessions:
       - .forge/backlog.yaml
       - .forge/GOTCHAS.yaml
     blockers_remaining: []
+  - date: 2026-09-05
+    duration: ~6hr
+    completed:  # evidence: forgeflow c8b3960, d78ad4c, aef8b12, 38af6dc, 43146f8, b421783, ab19c0e, a2d0b4f, be2d757, 19d2999, d41dc67, c942f14, 426cea5, 5d27774
+      - "Master v1.0.0 defect repair confirmed and closed for debate (RULING-009 @ c8b3960); RULING-010 risk boundary @ d78ad4c; RULING-011 branch protection @ aef8b12; RULING-012 rollout order + convergible-sandbox named @ c942f14"
+      - "Master v1.1.0 landed: renderer/schema/profiles/asset/tests @ 38af6dc, render.py repair @ 43146f8, seven text files via Claude Code patch @ b421783, RENDER_PROCEDURE 0b @ ab19c0e, PROPAGATION 2b @ a2d0b4f; tests 47/47"
+      - "CLAUDE_CODE_OAUTH_TOKEN created, stored in 1Password, set on all seven v1.0.0 repos — reported by the SETUP-TOKEN Claude Code run and gh secret list; no repo commit"
+      - "forgeflow harness (claude.yml 4cccfbf, protection, bypass proof be2d757) and v1.1.0 re-render: e60eff5, 94a5247, 5de80fc, a0aa16a, 173aa3d, f9b8d33; render.py check OK from a fresh clone; registry @ 19d2999"
+      - "chromaqa harness + v1.1.0 re-render: 3fb7e4f, ab9364b, 67031b3, b9152c4, a868ed2, 9263d5b; registry @ d41dc67"
+      - "seogeo harness + v1.1.0 re-render: 1746d6c, ff60fc1, b504fb8, 40e9040, 30be55b, a94d846; registry @ 426cea5"
+      - "chromasmith-saas-starter harness + v1.1.0 re-render: 1f42125, b742dd2, fda3547, 028eea9, d96fd69, f3110b0; registry @ 5d27774"
+      - "convergible-sandbox inspected (read-only) and found not up to spec — filed as FF-007, next session's one item; FF-005 (defect repair) and FF-001 closed; FF-003/FF-004 moved to in_progress pending the last re-renders (FF-006)"
+    commits:
+      - message: "rulings: RULING-009 (c8b3960), RULING-010 (d78ad4c), RULING-011 (aef8b12), RULING-012 (c942f14)"
+      - message: "master: v1.1.0 code half (38af6dc), render.py backslash repair (43146f8), text half via Claude Code patch (b421783), RENDER_PROCEDURE step 0b (ab19c0e), PROPAGATION step 2b (a2d0b4f)"
+      - message: "docs: branch-protection bypass proof — one-line direct commit (be2d757)"
+      - message: "protocols: forgeflow re-render 1/6..6/6 (e60eff5, 94a5247, 5de80fc, a0aa16a, 173aa3d, f9b8d33); registry (19d2999)"
+      - message: "registry: chromaqa (d41dc67), seogeo (426cea5), saas-starter (5d27774) re-rendered from v1.1.0 — rows written after each repo's six commits landed"
+      - message: "docs: end session 2026-09-05 — 8 milestones + inbox (this commit; the consumed inbox file is deleted in the commit that follows)"
+    key_changes:
+      - "Master v1.1.0: dispatch ON by default with a loud harness-absent notice (S-092), allowed_tools read from the workflow file, S-091 start gate + capability line, W-004 offer rule, S-006/S-007 risk boundary, S-072/E-002 protection reframe, FF-001/003/004 text fixes; 96 start blocks, 51 end blocks"
+      - "Four repos re-rendered with dispatch genuinely available; each rendered set is now SIX files (two dispatch readers added)"
+      - "Landing lessons filed as GOTCHA-005..008 (op whoami, push_files escaping at 38af6dc, master-landed-is-not-rendered, connector size limits)"
+    files_modified:
+      - master/render.py
+      - master/protocol-config.schema.yaml
+      - master/profiles/standard.yaml
+      - master/profiles/docs-only.yaml
+      - master/assets/claude.yml
+      - master/tests/test_render.py
+      - master/start-protocol.master.yaml
+      - master/end-protocol.master.yaml
+      - master/claude-md.house-block.master.md
+      - master/BLUEPRINT.yaml
+      - master/CHANGELOG.yaml
+      - master/RENDER_PROCEDURE.md
+      - master/PROPAGATION_PROCEDURE.md
+      - master/registered-repos.yaml
+      - .forge/rulings.yaml
+      - .forge/protocol-config.yaml
+      - .forge/protocols/start-protocol.yaml
+      - .forge/protocols/start-protocol.dispatch.yaml
+      - .forge/protocols/end-protocol.yaml
+      - .forge/protocols/end-protocol.dispatch.yaml
+      - CLAUDE.md
+      - .forge/inbox/FF-V110-MASTER.yaml (written by the Claude Code patch run; consumed to .forge/archive/inbox/ at this wrap)
+      - .forge/handoff.yaml
+      - .forge/session-state.yaml
+      - .forge/session-history.yaml
+      - .forge/backlog.yaml
+      - .forge/GOTCHAS.yaml
+    blockers_remaining: []
