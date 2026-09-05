@@ -72,3 +72,64 @@
   applies_to:
     - .forge/rulings.yaml (W-002 write-when-made appends)
     - master/RENDER_PROCEDURE.md (step 0 concurrency question)
+- id: GOTCHA-005
+  date: 2026-09-05
+  summary: "On Surface 12 `op whoami` reports 'not signed in' while every 1Password data command works — use `op vault list` as the readiness check; secrets piped from `op read` need .Trim()"
+  detail: |
+    The 1Password CLI's whoami lies on Matt's Surface 12 (reports no session while op read /
+    op item edit / op vault list all succeed). A prompt that gates on whoami stalls for
+    nothing. Also: `op read` emits a trailing newline, and `gh secret set` stores it — the
+    working install line is
+      (op read "op://Chromasmith Keys/CLAUDE_CODE_OAUTH_TOKEN/credential").Trim() | gh secret set CLAUDE_CODE_OAUTH_TOKEN --repo chromasmith/<repo>
+    Never use the vault's ANTHROPIC_API_KEY for the dispatch harness (per-token billing);
+    the harness wants the subscription token (sk-ant-oat*) created by `claude setup-token`.
+  source: "secrets install for the v1.1.0 rollout, 2026-09-05 (Claude Code run SETUP-TOKEN; RENDER_PROCEDURE step 0b @ ab19c0e)"
+  applies_to:
+    - master/RENDER_PROCEDURE.md (step 0b)
+    - master/PROPAGATION_PROCEDURE.md (step 2b)
+- id: GOTCHA-006
+  date: 2026-09-05
+  summary: "The GitHub connector's push_files JSON-escapes backslashes — it doubled every backslash in render.py (38af6dc); the repair is 43146f8"
+  detail: |
+    push_files landed master/render.py (38af6dc) with `\\n` where the source had `\n`, so the first
+    v1.1.0 code commit shipped a renderer (38af6dc) that ran but produced wrong output. Caught only
+    because the sandbox blob SHA was compared to GitHub's after the push. Lesson: prefer
+    create_or_update_file (one file per call) for any file containing backslashes, and ALWAYS
+    prove a landing by `git hash-object <sandbox file>` == the blob SHA GitHub returns —
+    never by "the commit exists". Large text sets that will not fit the connector at all go
+    through ONE Claude Code prompt carrying a gzip+base64 patch and a blob-SHA table
+    (b421783 landed seven master files that way).
+  source: "master v1.1.0 landing, 2026-09-05 (38af6dc broken, 43146f8 repaired, b421783 patch route)"
+  applies_to:
+    - master/render.py
+    - master/RENDER_PROCEDURE.md (landing step)
+- id: GOTCHA-007
+  date: 2026-09-05
+  summary: "A landed master change (e.g. b421783) updates NOTHING any repo reads until that repo is re-rendered; and the renderer's 'DISPATCH OFF - harness not installed' line is a correct message, not a failure"
+  detail: |
+    After b421783 every rendered repo still carried v1.0.0 text until its own re-render
+    landed (forgeflow e60eff5..f9b8d33 was the first); a session that reads the new master and then a rendered protocol sees a mismatch
+    that is expected. Report protocol behaviour as changed only for repos whose registry row
+    says v1.1.0. Separately: rendering a repo whose tree has no .github/workflows/claude.yml
+    prints "DISPATCH OFF - harness not installed" on stderr and renders S-092 — that is the
+    v1.1.0 design (FFD-001), not a broken renderer; the fix is Matt installing the workflow
+    file, never a config override.
+  source: "FF-V110-MASTER inbox reflections + the four re-renders, 2026-09-05"
+  applies_to:
+    - master/PROPAGATION_PROCEDURE.md
+    - master/render.py (dispatch detection)
+- id: GOTCHA-008
+  date: 2026-09-05
+  summary: "create_or_update_file can ABORT with no result on a ~80-90 KB file and fails outright near 110 KB — retry, then prove by blob SHA; a start protocol that renders above ~100 KB needs a Claude Code prompt to land"
+  detail: |
+    seogeo's 78 KB start protocol aborted once mid-call with no tool result, then landed (a94d846) on
+    the identical retry; an earlier ~110 KB attempt failed outright, which is why
+    v1.1.0's text half went through a Claude Code patch (GOTCHA-006). The call is idempotent
+    (same content, same target SHA), so a retry is safe; the landing (e.g. a94d846) is proven by comparing
+    the returned blob SHA to git hash-object of the sandbox file. Today's largest rendered
+    file was saas-starter's 93 KB start protocol (f3110b0) — repos with more subsystems
+    (synclips-platform with the monorepo + companion blocks) may cross the line; check
+    `wc -c` on the render output before choosing the landing route.
+  source: "seogeo and saas-starter re-renders, 2026-09-05 (a94d846, f3110b0)"
+  applies_to:
+    - master/RENDER_PROCEDURE.md (landing step)
