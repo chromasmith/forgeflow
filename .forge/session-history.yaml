@@ -21,3 +21,33 @@ sessions:
       - .forge/session-history.yaml
       - .forge/rulings.yaml
     blockers_remaining: []
+  - date: 2026-09-04
+    duration: ~1hr
+    completed:  # evidence: 63fb9c4
+      - "Rendered chromasmith/forgeflow from its own master v1.0.0 (docs-only profile, config_hash 427225a67a50, start 956 / end 994 lines) — commits 0f7ec5e (protocol-config + RULING-004), 5e1f463 (start-protocol), 56f2389 (end-protocol), b9046e2 (CLAUDE.md house block); blob SHAs equal to the sandbox output; render.py check OK from a fresh clone at b9046e2"
+      - "RULING-004 written in the turn Matt named the repo (W-002 applied) — commit 0f7ec5e"
+      - "Registry row added last: master/registered-repos.yaml @ 63fb9c4"
+      - "Backlog migrated to the unified schema at this wrap (this commit)"
+    commits:
+      - message: "render: forgeflow self-render — protocol-config (docs-only, config_hash 427225a67a50) + RULING-004 (0f7ec5e)"
+      - message: "render: forgeflow self-render — .forge/protocols/start-protocol.yaml (5e1f463)"
+      - message: "render: forgeflow self-render — .forge/protocols/end-protocol.yaml (56f2389)"
+      - message: "render: forgeflow self-render — CLAUDE.md house block appended (b9046e2)"
+      - message: "registry: add chromasmith/forgeflow — third rendered repo (63fb9c4)"
+      - message: "docs: end session 2026-09-04 — third render, first wrap on forgeflow's own rendered protocol (this commit)"
+    key_changes:
+      - "No master or renderer change this session; a docs-only render of the master's own home repo was byte-stable and check-clean"
+      - "The render waited for a concurrent Claude Web session's wrap (827dba9) to land first — see GOTCHA-002"
+    files_modified:
+      - .forge/protocol-config.yaml
+      - .forge/protocols/start-protocol.yaml
+      - .forge/protocols/end-protocol.yaml
+      - CLAUDE.md
+      - .forge/rulings.yaml
+      - master/registered-repos.yaml
+      - .forge/handoff.yaml
+      - .forge/session-state.yaml
+      - .forge/session-history.yaml
+      - .forge/backlog.yaml
+      - .forge/GOTCHAS.yaml
+    blockers_remaining: []

@@ -3,22 +3,27 @@ session_date: 2026-09-04
 project: forgeflow (ForgeFlow Master — unified start/wrap protocols rendered per repo)
 milestones:
   - "master v1.0.0 released; chromasmith/seogeo rendered (first repo) — earlier 2026-09-04, wrap @ 3145732"
-  - "chromasmith/chromasmith-saas-starter rendered (second repo, the house template) — saas-starter commits a296c13 / 10bb67e / 60c0906 / c97a49a; render.py check OK; registry row @ e856a72"
+  - "chromasmith/chromasmith-saas-starter rendered (second repo, the house template) — registry row @ e856a72, wrap @ 827dba9"
+  - "chromasmith/forgeflow rendered FROM ITS OWN MASTER (third repo) — commits 0f7ec5e (config + RULING-004), 5e1f463 (start), 56f2389 (end), b9046e2 (CLAUDE.md); render.py check OK from a fresh clone; registry row @ 63fb9c4"
 decisions:
-  - decision: "saas-starter is the second repo rendered from the master (RULING-003)"
-    rationale: "Matt named it by name; it is the base every future product is cloned from, and RULING-001 requires it before the Convergible final repo."
-    impact: "The saas-starter-before-convergible-final constraint is satisfied; children inherit rendered files and must re-render with their own config."
-  - decision: "The template renders with build.deploy overridden to none"
-    rationale: "The template has no Vercel project and no vercel.json; the profile default would make every wrap demand a deployment record that cannot exist."
-    impact: "Children linked to Vercel drop the override; documented in the template's config, START_HERE and the registry row."
-  - decision: "House-block markers may be pre-placed in CLAUDE.md so the render lands in a chosen spot"
-    rationale: "render.py appends at the end when no markers exist; the template's placeholder 'Session workflow' section was the right home."
-    impact: "Procedure note for future renders (recorded in the handoff)."
+  - decision: "forgeflow itself is the third repo rendered from the master (RULING-004)"
+    rationale: "Matt named it by name; the master's home should run on the master (dogfooding), and there is no loop because a render never reads .forge/protocols/."
+    impact: "forgeflow sessions now start and wrap on rendered protocols; this wrap is the first built from its own end-protocol.yaml."
+  - decision: "forgeflow's protocol-config declares north_star_doc = master/BLUEPRINT.yaml and backlog prefix FF-"
+    rationale: "The blueprint is the product-truth document for this effort; the prefix keeps forgeflow backlog IDs distinct from BL-."
+    impact: "S-053 renders in; future backlog items are FF-NNN."
+  - decision: "Wait for a concurrent Claude Web session's wrap to land before writing to forgeflow"
+    rationale: "A wrap on another repo also writes forgeflow's own .forge/ docs when forgeflow is the render source; two Claude Web writers collided in prospect."
+    impact: "GOTCHA-002; the concurrency question now covers Claude Web sessions mid-wrap, not only Claude Code."
+  - decision: "Backlog moved to the unified schema (prioritized / in_progress / completed) at this wrap — docs commit on top of 63fb9c4"
+    rationale: "E-012 requires a one-time migration in the first wrap on the rendered protocol; the file held the legacy empty shape."
+    impact: "Future surgical edits name the unified sections."
 blockers: []
 next_steps:
   - priority: high
     task: "WAIT — render no repo until Matt names it by name (RULING-001); chromaqa is the likely next, with subsystems.chromaqa overridden false."
 context: |
-  Two repos of different shape (docs-only private, standard private with ChromaQA) now run
-  on master v1.0.0 with no renderer defect on the second render. Every other repo waits on
-  Matt's naming. Housekeeping deferred items are listed in the handoff's next_up.
+  Three repos of different shape now run on master v1.0.0 with no renderer defect on the
+  second or third render; forgeflow itself is one of them. forgeflow's CLAUDE.md still
+  carries the unfilled Chromasmith template text above the rendered house block. Every
+  other repo waits on Matt's naming. Housekeeping deferrals are in the handoff's next_up.

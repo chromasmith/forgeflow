@@ -1,4 +1,6 @@
-# Work queue — prioritized tasks
-# Updated each session: completed items removed, new items added
+# Work queue — prioritized tasks (unified ForgeFlow schema: prioritized / in_progress / completed)
+# Status vocabulary: ready | blocked | needs-ruling | in_progress | deferred | completed | superseded
+# Migrated from the legacy empty shape at the 2026-09-04 wrap (first wrap on the rendered end protocol).
+prioritized: []
 in_progress: []
-backlog: []
+completed: []  # evidence: 63fb9c4 (empty at migration)

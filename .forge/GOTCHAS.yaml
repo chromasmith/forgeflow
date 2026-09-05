@@ -21,3 +21,19 @@
     - master/start-protocol.master.yaml (S-083, S-085)
     - master/end-protocol.master.yaml (E-023)
     - master/tests/test_render.py
+- id: GOTCHA-002
+  date: 2026-09-04
+  summary: "A Claude Web session rendering ANOTHER repo writes forgeflow's own .forge/ docs at its wrap — a second Claude Web session on forgeflow can collide with it"
+  detail: |
+    forgeflow is the render SOURCE, so a Claude Web session that renders saas-starter (or any
+    repo) also commits to forgeflow at its wrap: registered-repos.yaml, handoff.yaml,
+    session-state.yaml, session-history.yaml, rulings.yaml. Matt reported the other session as
+    "read-only, just using the repo" — true mid-render, false at its wrap. The self-render
+    session paused until that wrap (827dba9) landed, then re-cloned. Lesson: the concurrency
+    question before writing to forgeflow is "is any OTHER CLAUDE WEB session mid-render or
+    about to wrap?", not only "is a Claude Code session active?". Re-clone after it lands;
+    a clone taken before the other wrap is stale.
+  source: "forgeflow self-render session, 2026-09-04 (RULING-004; wait for 827dba9)"
+  applies_to:
+    - master/RENDER_PROCEDURE.md (step 0 / step 7 concurrency question)
+    - .forge/handoff.yaml (watch_out_for)
