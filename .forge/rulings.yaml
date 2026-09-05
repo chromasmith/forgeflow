@@ -58,3 +58,17 @@ rulings:
       (827dba9) had landed, because a wrap writes forgeflow's own .forge/ docs.
     supersedes: nothing — RULING-001 said Matt names the repo; this is him naming it
     stated_by: Matt, in chat, opening the render session (recorded in the turn it was made, per the RULING-003 W-002 lesson)
+  - id: RULING-005
+    date: 2026-09-04
+    subject: Fourth repo to render from the ForgeFlow Master
+    ruling: >-
+      chromasmith/chromaqa — the ChromaQA quality-gate tool's own repo — is the FOURTH
+      repo rendered from the master, in its own session with its own go ("I would like to
+      install our protocol prompt system into the ChromaQA repo"). Per RULING-002 its
+      config MUST override subsystems.chromaqa to false, because render.py would otherwise
+      detect the tool's own chromaqa-check.sh at the repo root as a repo running the gate.
+      Matt stated the only other active session is on chromasmith-saas-starter (installing
+      the SEO/GEO tool there) — no Claude Code session on chromaqa, and no other Claude Web
+      session mid-render, so no forgeflow wrap collision (GOTCHA-002).
+    supersedes: nothing — RULING-001 said Matt names the repo; this is him naming it
+    stated_by: Matt, in chat, opening the render session (recorded in the turn it was made, per W-002)
