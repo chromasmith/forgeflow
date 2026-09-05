@@ -128,3 +128,43 @@ rulings:
       (GOTCHA-003), never from this ruling.
     supersedes: the "each its own session" clause of RULING-001, for chromasync and dv-captain only
     stated_by: Matt, in chat, in this session ("i agree. go"), recorded in the turn it was made per W-002
+  - id: RULING-009
+    date: 2026-09-05
+    subject: Master v1.0.0 is FLAWED — confirmed repair list, order, and rollout rule (the "fix session")
+    ruling: >-
+      Matt confirmed the FORGEFLOW MASTER DEFECT REPORT (raised 2026-09-05 in the saas-starter
+      session) and closed debate on it: ALL FOUR defects are repaired in the master, plus two
+      QC findings from this session and the three open backlog items, in ONE master change.
+      (1) FFD-001 dispatch harness never rolled out: none of the seven rendered repos has
+      .github/workflows/claude.yml, so every rendered protocol is dispatch-off. Matt's
+      requirement, in his words: all three ways of working — Claude Web direct, a pasted Claude
+      Code prompt, and dispatch incl. parallel runs — must be available at his discretion in ANY
+      repo at any time. Correction to the report: execution.dispatch.enabled is a DECLARED knob
+      (default false in all three profiles), not derived; the root cause is that every render
+      accepted the profile default without asking him or installing the harness. Fix: ship a
+      generic claude.yml as a master asset, default dispatch ON in the profiles, renderer says
+      loudly when dispatch is off because the harness is absent, harness install becomes a named
+      rollout step. (2) FFD-002 S-006/S-007 boundary redrawn around RISK, not folder (Matt:
+      a misspelling needs no prompt ceremony) — Matt still owes the ruling on the exact test and
+      on copy-only edits inside compiled files (.tsx). (3) FFD-003 the start protocol read is
+      not enforced and the S-075 canary cannot catch a session that never started: Session
+      Context Summary becomes mandatory before any work, with a stop-and-restart rule.
+      (4) FFD-004 no working method is offered that the repo cannot do or the protocol forbids;
+      verify from the rendered header, never memory. QC findings accepted as work: (5) the
+      schema's allowed_tools promise ("copied from claude.yml at render time; renderer warns on
+      mismatch") is NOT implemented in render.py; (6) S-072 (branch protection = the dispatch
+      switch) collides with E-002 (wrap pushes docs directly to main) — Matt owes the design
+      ruling; dispatch-available must not mean protection permanently on. Riding along:
+      FF-001, FF-003, FF-004. FF-002 is already closed (afce4c9). ORDER: FFD-003 -> FFD-004 ->
+      FFD-002 -> FFD-001 (with 5 and 6), one master change, version bump, byte-stable fixture
+      proof. ROLLOUT RULE: the master is fixed and proven FIRST; no rendered repo is touched
+      until then; then CLAUDE_CODE_OAUTH_TOKEN is installed per repo (chromasmith is a personal
+      account — no org secrets; preferred route: one Claude Code prompt using `op read` +
+      `gh secret set` across all seven repos so Matt never handles the token; fallback: one
+      "New secret" link per repo, interview style); Matt creates claude.yml per repo via the web
+      editor (connector cannot write workflows); then the seven repos re-render one at a time.
+      The token is NEVER committed into a repo. Concurrency at this ruling: Matt's only other
+      session is the SEO/GEO install into chromasmith-saas-starter (no Claude Code on
+      forgeflow) — saas-starter is re-rendered LAST, after that install is finished.
+    supersedes: the "WAIT" first_thing of the 2026-09-05 handoff; RULING-001's stop point (the effort is reopened for this repair); the profile default execution.dispatch.enabled false
+    stated_by: Matt, in chat, in this session ("This is now our confirmed list of duties"; "There is no question that I want my Claude Web sessions to be able to dispatch work"), recorded in the turn per W-002
