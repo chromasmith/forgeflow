@@ -1,74 +1,80 @@
 # .forge/handoff.yaml — chromasmith/forgeflow
 # Pass-the-baton briefing written BY the outgoing Claude Web session TO the next.
 # A WARNING LETTER, not a summary. The other .forge/ files hold state; this holds feel.
-# generated: 2026-09-05T02:28:58Z
-# session: 2026-09-04 (FIFTH, SIXTH, SEVENTH RENDERS — the Synclips trio; RULING-007/008)
-written_at_commit: 8fd050693f23c4e34ea2b05608564504fa88a991
-written_at_utc: 2026-09-05T02:28:58Z
+# generated: 2026-09-05T18:22:00Z
+# session: 2026-09-05 (MASTER v1.1.0 DEFECT REPAIR + FIRST FOUR v1.1.0 RE-RENDERS; RULING-009..012)
+written_at_commit: 5d2777409c1a7f8f381ac78be319b782f0792016
+written_at_utc: 2026-09-05T18:22:00Z
 
 status: |
-  ForgeFlow Master is RELEASED at v1.0.0 and SEVEN repos run on it: seogeo (docs-only),
-  chromasmith-saas-starter (standard), forgeflow (docs-only), chromaqa (docs-only + ChromaQA
-  blocks), and as of this session the whole Synclips trio — synclips-platform (standard
-  monorepo @ apps/admin, config_hash 1cf0a0d5e29b, registry @ 56978f9), chromasync (standard,
-  Python + Next.js, 72ae2c59e531, registry @ 5119307) and dv-captain (docs-only knob values
-  on a pure-Python no-CI repo, 14900a353f32, registry @ 8fd0506). Every one of the twelve
-  target commits has a blob SHA equal to the sandbox output and a render.py check OK from a
-  fresh clone. No master or renderer change this session; nothing is unmerged. Filed and
-  deferred, not done: FF-003 (a Python validation knob that does not assume a .venv) and
-  FF-004 (S-014's committed-debt assumption vs ChromaQA v6.1's gitignored .chromaqa/), plus
-  the older FF-001/FF-002.
-  Overall position: the master is released (v1.0.0 @ 90209d0) and runs on seven repos of four shapes (registry 8fd0506);
-  every other repo still runs old protocols under RULING-001 until Matt names it.
+  Master v1.1.0 is complete on GitHub (text half b421783, code half 43146f8, tests 47/47) and
+  FOUR of the seven registered repos run it with dispatch ON: forgeflow (registry 19d2999),
+  chromaqa (d41dc67), seogeo (426cea5), chromasmith-saas-starter (5d27774). Each has the full
+  harness — claude.yml (blob 4cccfbf = master/assets/claude.yml), CLAUDE_CODE_OAUTH_TOKEN from
+  1Password, branch protection on main with admin bypass. THREE repos still run v1.0.0 with the
+  secret set but NO claude.yml and NO protection: synclips-platform, chromasync, dv-captain.
+  convergible-sandbox was inspected and is NOT up to spec (old four-file protocols, CC-reports/
+  at the root, no repo-rules.yaml, hand-written claude.yml overlay) — nothing of it was changed.
+  Nothing is unmerged anywhere.
+  Overall position: the master is repaired and released at v1.1.0; the rollout is four of seven re-rendered plus one first render (convergible-sandbox) and three re-renders still to do, and every repo not in the registry still runs old protocols under RULING-001.
 
 first_thing: |
-  WAIT. Do not render any repo until Matt names it by name in this session (RULING-001;
-  RULING-002..008 cover seogeo, saas-starter, forgeflow, chromaqa, synclips-platform,
-  chromasync and dv-captain — all done; synclips-relay is NEVER rendered). When he names
-  one: follow master/RENDER_PROCEDURE.md; LIST THE TARGET TREE FIRST (.github/workflows/,
-  .chromaqa/, .seogeo/, package.json, vercel.json, .gitattributes, CLAUDE.md) and write the
-  ruling and config from what the tree shows (GOTCHA-003); ask in one line whether a Claude
-  Code session is active on that repo and whether another Claude Web session is mid-render or
-  about to wrap (GOTCHA-002); RE-READ rulings.yaml's blob SHA before appending the RULING-nnn
-  in the same turn he names the repo (W-002, GOTCHA-004). If he instead says the SEO/GEO
-  install into saas-starter is done, FF-002 is the item: re-render saas-starter on his go.
+  FF-007 — render convergible-sandbox from master v1.1.0 (named by Matt, RULING-012 @ c942f14).
+  Do it in this order and nothing else first. (1) Ask in one line whether a Claude Code session
+  is active on convergible-sandbox and whether another Claude Web session is mid-render on
+  forgeflow (GOTCHA-002). (2) Matt opens
+  https://github.com/chromasmith/convergible-sandbox/settings/branches and confirms the main
+  rule has "Require a pull request before merging" ON, "Require approvals" OFF, "Do not allow
+  bypassing" OFF — the connector cannot read this. (3) ONE Claude Code prompt (local, standard
+  start-protocol formatting): git mv every file in CC-reports/ to .forge/inbox/ (named files,
+  no git add -A), create .forge/repo-rules.yaml holding the DOC-FOLD-1 items the sandbox's own
+  .forge/handoff.yaml names, write .forge/inbox/<run-id>.yaml, push, VERIFY PUSH. (4) Write
+  .forge/protocol-config.yaml from the tree: profile standard; north_star_doc from the
+  sandbox's .forge/ (check START_HERE.md and .forge/strategy/ before choosing); ids
+  backlog_prefix from its backlog; subsystems.database_access_doc
+  .forge/protocols/database-access.yaml; subsystems.repo_rules_doc .forge/repo-rules.yaml;
+  artifact_register detected true; vercel true (vercel.json at root); supabase true;
+  ui_inventory only if .forge/specs/ui-inventory.yaml exists — check. Keep its claude.yml
+  (PG env, Bash(psql:*), Bash(bunx depcheck:*)) — the renderer reads allowed_tools from it; do
+  NOT replace it with the generic asset (RULING-012). (5) Render twice, diff, check ceilings,
+  push the six files one per call with blob-SHA proof, then delete the four old files
+  .forge/protocols/start-protocol-local.yaml, start-protocol-dispatch.yaml,
+  end-protocol-local.yaml, end-protocol-dispatch.yaml (keep artifact-register.yaml,
+  database-access.yaml, DISPATCH_PIPELINE_BLUEPRINT.yaml), prove admin bypass with a one-line
+  docs commit, add the registry row LAST. Verify when done: render.py check OK against a fresh
+  read of the tree, dispatch=on in the header, house block present in CLAUDE.md.
 
 watch_out_for:
-  - "STOP POINT (RULING-001) holds for every unnamed repo: do NOT render, install, or prepare a render until Matt names it by name. RULING-008's back-to-back relaxation applied to chromasync and dv-captain ONLY and is spent."
-  - "GOTCHA-004: a cut-off instance of your OWN chat may already have written what you are about to write (RULING-007 landed that way, 220a70e). A changed blob SHA on rulings.yaml or registered-repos.yaml means re-read and reconcile, never overwrite and never double-file."
-  - "TWO CLAUDE WEB SESSIONS CAN COLLIDE ON THIS REPO (GOTCHA-002): any render of another repo ends with a wrap that writes forgeflow's .forge/ docs and registry. Ask before pushing here; re-clone after the other wrap lands."
-  - "The rendered dv-captain start protocol says (S-083) 'this repo has no build or interpreter step' — that wording is WRONG for a Python repo and is FF-003; until it lands, dv-captain task prompts must name their own py_compile/import check and the interpreter (system Python312 on Surface 12, .venv on Anvil)."
-  - "chromasync's ChromaQA telemetry is gitignored (v6.1), so S-014's session-start debt read finds nothing on GitHub for it — that is FF-004, not a broken gate. Do not tell Matt the debt is zero; say the file is not on GitHub."
-  - "All three Synclips repos are LEGACY-SHAPED in .forge/: old backlog schema (BACKLOG-nnn / CS- / SC- items), no rulings.yaml, no artifact register, no inbox/, GOTCHAS at 140 KB (platform) / 93 KB (chromasync) / 182 KB (dv-captain) — all over the 100-entry consolidation trigger. Every bit of that is each repo's FIRST WRAP's job (E-012 migration, E-015 says-so), not a render task and not this repo's."
-  - "dv-captain line endings are MIXED on purpose: .gitattributes forces LF everywhere except *.ps1 (CRLF, Task Scheduler wrappers). Never let a prompt 'normalise' .ps1 files."
-  - "saas-starter's committed render goes STALE the moment .seogeo/config.json lands there (Matt's concurrent session is installing SEO/GEO into it) — FF-002, on his word, never mid-install."
-  - "House-block line 'ChromaQA's own section lower in this file is binding' renders in every chromaqa-true repo and is false for chromaqa itself (FF-001) — fix in the master inside the next master change, then re-render chromaqa, saas-starter, synclips-platform and chromasync."
-  - "Private-repo renders (all but forgeflow) use a tree skeleton rebuilt from the GitHub listing; the CLAUDE.md is transcribed and its git hash-object compared to the GitHub blob SHA before render. Say so in the report."
-  - "The rendered start protocols name C:\\Chromasmith\\<repo> and Surface 12 — schema defaults, not verified facts (dv-captain's CLAUDE.md does confirm C:\\Chromasmith\\dv-captain). Confirm with Matt before the first Claude Code prompt on any newly rendered repo."
-  - "Landing procedure that worked (seven renders now): clone forgeflow (public) into the sandbox; render twice and diff; push ONE FILE PER CALL via create_or_update_file (FULL 40-char blob SHA for existing files; none for new); prove each landing by blob SHA; run render.py check from a fresh clone; registry row LAST."
-  - "Renderer condition language: only 'null' and 'None' mean null in a render_when; 'none' is the enum VALUE (GOTCHA-001). YAML traps: ': ' mid-scalar and commas in flow-mapping values — quote them."
-  - "ChromaQA is never installed by a protocol or folded into another task; SEO/GEO is never retrofitted into an existing repo (seogeo SC-01). Do not propose either."
-  - "Matt's communication rules (blueprint Section 9 I4 / W-001): four sentences or less, recommendation not options, one action item at a time, end every reply with the next verb and who holds the ball, state the overall project position at every milestone."
+  - "convergible-sandbox (RULING-012 @ c942f14) is the LINEAGE SOURCE of the dispatch blocks and has live scheduled workflows (ingest-*, waterworks-*, synthetics, classify, blindspot) plus a live database: never touch anything under .github/workflows/, never replace claude.yml, and its protocol swap must not break a run in flight — ask about active dispatched runs too, not only local Claude Code sessions."
+  - "Its old protocol files have DIFFERENT NAMES from the rendered set (start-protocol-local.yaml vs start-protocol.yaml, etc.), so the render does not overwrite them — they must be DELETED explicitly (delete_file, one commit each) or two protocol sets will coexist and a session may read the wrong one."
+  - "The three remaining v1.0.0 repos (synclips-platform, chromasync, dv-captain) each need the same three Matt steps forgeflow/chromaqa/seogeo/saas-starter got: web-editor link https://github.com/chromasmith/<repo>/new/main?filename=.github/workflows/claude.yml pasting master/assets/claude.yml VERBATIM (check blob = 4cccfbf via get_file_contents before rendering), classic branch protection on main (PR required, approvals OFF, bypass allowed), then render + six pushes + registry row. Secret is already set on all three (Claude Code run 2026-09-05)."
+  - "synclips-platform is a MONOREPO with four overrides in its config (shape monorepo @ apps/admin, vercel true + deploy vercel, tsx_lib_rule true); chromasync needs the two-language knobs (FF-003: build.python_interpreter now exists in v1.1.0 — set it); dv-captain has alternate machines and mixed line endings. Read each repo's CURRENT protocol-config.yaml (the knobs above the effective-values marker are the source) before rendering — never retype them from memory."
+  - "Private-repo renders use a tree skeleton: fetch the real claude.yml, CLAUDE.md and protocol-config.yaml through the connector, transcribe them, and prove each with git hash-object == GitHub blob SHA BEFORE rendering. Detection files (package.json, supabase/, .chromaqa/, .seogeo/config.json, quality-gate.yml, chromaqa-check.sh, src/**/*.tsx, vercel.json) need only exist as empty stubs."
+  - "GOTCHA-008: a create_or_update_file call on a ~80-90 KB file can ABORT with no result (it happened once on seogeo's start protocol); a ~110 KB file fails outright. The call is idempotent — retry it, then prove the landing by blob SHA. Every rendered file today was under 94 KB; a repo whose start protocol renders above ~100 KB needs a Claude Code prompt to land it."
+  - "GOTCHA-006: push_files JSON-escapes backslashes (it doubled them in render.py at 38af6dc; 43146f8 repaired it). Use create_or_update_file for any file containing backslashes (render.py, Windows paths in YAML are fine — they are inside comments/strings and were verified) and ALWAYS compare the landed blob SHA to git hash-object of the sandbox file."
+  - "GOTCHA-005: on Surface 12 `op whoami` says 'not signed in' while every data command works — the readiness check is `op vault list`. The secret install line needs .Trim(): (op read \"op://Chromasmith Keys/CLAUDE_CODE_OAUTH_TOKEN/credential\").Trim() | gh secret set CLAUDE_CODE_OAUTH_TOKEN --repo chromasmith/<repo>. Never the vault's ANTHROPIC_API_KEY (per-token billing)."
+  - "Every rendered start protocol now opens with S-091 (start gate) and the summary's second line is the CAPABILITY LINE from the knobs header — a forgeflow session that skips the protocol will be caught by the missing canary count on line one; if you notice you skipped it, STOP and run it (re-entry rule)."
+  - "A finished master (b421783) changed NOTHING any repo reads until that repo was re-rendered; three repos still read v1.0.0 text (GOTCHA-007). Do not report protocol behaviour as changed for them."
+  - "The wrap docs for THIS session (written at 5d27774) landed as ONE COMMIT PER FILE via create_or_update_file (six files) plus a delete_file commit removing .forge/inbox/FF-V110-MASTER.yaml once its archive copy was in place — deliberately not push_files, because of GOTCHA-006 (backslashes in GOTCHAS.yaml) and because the connector cannot delete inside push_files. E-002 wants one docs commit; this is the connector-imposed exception, stated here so nobody hunts for a missing single commit. The setup-token Claude Code run touched no repo and has no inbox file by design."
+  - "TWO CLAUDE WEB SESSIONS CAN COLLIDE ON THIS REPO (GOTCHA-002/004): any render of another repo ends by writing forgeflow's registry and .forge/ docs; a cut-off instance of your own chat may have written first. Re-read blob SHAs before every append."
+  - "Matt's communication rules (W-001): four sentences or less, recommendation not options, one action item at a time, end every reply with the next verb and who holds the ball, state the overall project position at every milestone, ask before touching another repo, and never install/propose ChromaQA inside other work."
 
 next_up:
-  - "Deferred (FF-003, backlog): Python validation knob without a .venv assumption + S-083 rewording — inside the next master change; then re-render dv-captain and chromasync."
-  - "Deferred (FF-004, backlog): S-014 debt read vs gitignored .chromaqa/ (ChromaQA v6.1) — inside the next master change; then re-render chromasync."
-  - "Deferred (FF-002, backlog): re-render saas-starter once Matt confirms the SEO/GEO install there is finished — on his go."
-  - "Deferred (FF-001, backlog): reword the chromaqa-fenced house-block line — inside the next master change."
-  - "Deferred, not next: fill forgeflow's own CLAUDE.md (project description, stack, key paths — currently template placeholders) — only if Matt asks."
-  - "Deferred, not next: banner prompts/INSTALL_REPAIR.md; decide whether SolutionPatterns.yaml (malformed YAML) is worth fixing or archiving."
-  - "Deferred, not next: master/BLUEPRINT.yaml knob-table line (chromaqa detected by chromaqa-check.sh too; seogeo line missing) — inside the next master change."
-  - "Deferred, not next: candidate master changes — E-009 guidance for a fat legacy session-state at a repo's first ForgeFlow wrap; RENDER_PROCEDURE step 0/7 widened to other Claude Web sessions AND cut-off instances of the same chat (GOTCHA-002/004); RENDER_PROCEDURE step 0 'inspect the tree before configuring' (GOTCHA-003)."
-  - "Deferred, not next: drift_ci — precondition met since the first render; still its own decision by Matt."
+  - "Deferred (FF-006, in_progress): re-render synclips-platform, chromasync, dv-captain from v1.1.0 after Matt installs claude.yml + protection on each — after FF-007, in the order Claude Web sees fit (RULING-012)."
+  - "Deferred (FF-003/FF-004, in_progress): the master half landed in v1.1.0 @ b421783 (build.python_interpreter knob, S-083 wording, S-014/E-036/E-040 gitignored-telemetry wording); they close when chromasync and dv-captain are re-rendered (part of FF-006)."
+  - "Deferred, not next: forgeflow's own CLAUDE.md above the house block is still the unfilled Chromasmith template — only if Matt asks."
+  - "Deferred, not next: a rulings register in Matt's ForgeFlow base (he mentioned adding one 2026-09-02) — the per-repo .forge/rulings.yaml already exists in every rendered repo; nothing to build unless he names it."
+  - "Deferred, not next: master/assets/claude.yml says 'Bash(npx depcheck:*)' while convergible-sandbox's overlay says 'Bash(bunx depcheck:*)' — harmless (render reads the repo's own file); decide at the next master change whether the asset should document the bunx variant."
+  - "Deferred, not next: drift_ci — precondition met; still its own decision by Matt."
 
 north_star: |
-  Board-movement, honestly — three more repos on the master is rollout, not product — but
-  the whole Synclips system now starts and wraps on one protocol with the relay declared as
-  a companion, and the Python side exposed two real master gaps (FF-003/FF-004) before they
-  could hurt a session.
+  Product-better, not board-movement: the master's four structural flaws are fixed (b421783) and proven
+  on four repos of three shapes (registry 5d27774), and dispatch is genuinely available in those four repos for
+  the first time — the thing v1.0.0 promised and did not deliver.
 
 tone: |
-  Long, clean, three-render session with one near-miss (almost double-filing a ruling a
-  cut-off instance of the same chat had already landed at 220a70e). Open with the one-line position
-  (v1.0.0; seven repos rendered; everything else waits on his naming) and then WAIT — do not
-  propose the next repo. If his saas-starter SEO/GEO install has finished, FF-002 is the one item.
+  Long, deliberate, clean session — one master repair, one secrets install, four re-renders,
+  every landing blob-SHA checked (registry 5d27774), no drift. Matt asked for the wrap himself so we resume fresh.
+  Open with the one-line position (v1.1.0; four of seven re-rendered; convergible-sandbox
+  first render is the one item) and go straight to FF-007's step (1); do not offer the other
+  repos until the sandbox is done.
