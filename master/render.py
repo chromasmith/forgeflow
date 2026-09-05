@@ -7,8 +7,8 @@ into complete, standalone protocol files for ONE repo — byte-exact, with a
 header stamp, a block manifest and a real config hash.
 
 Usage
-  python3 render.py render  --config <repo>/.forge/protocol-config.yaml \
-                            --master-dir master --out <dir> [--tree <repo checkout>] \
+  python3 render.py render  --config <repo>/.forge/protocol-config.yaml \\
+                            --master-dir master --out <dir> [--tree <repo checkout>] \\
                             [--date YYYY-MM-DD] [--claude-md <repo>/CLAUDE.md]
   python3 render.py check   ... same flags ...  --against <dir with current rendered files>
   python3 render.py evidence <file-or-diff> [...]        # wrap companion check (M4/N3)
@@ -63,12 +63,12 @@ FORBIDDEN_PHRASES = [
     "see the local variant", "see the dispatch variant", "inherited from", "as in end-protocol",
     "as in start-protocol", "refer to master", "see the master", "see forgeflow", "render_when", ">>> block", "<<< end", "{{",
 ]
-BLOCK_OPEN  = re.compile(r"^\s*#\s*>>>\s*block\s+(?P<id>[A-Z]-\d{3})\s*\|\s*(?P<name>[^|]+?)\s*\|\s*reader:\s*(?P<reader>[^|]+?)\s*\|\s*render_when:\s*(?P<cond>.+?)\s*$")
-BLOCK_CLOSE = re.compile(r"^\s*#\s*<<<\s*end\s+(?P<id>[A-Z]-\d{3})\s*$")
-ORDER_DIRECTIVE = re.compile(r"^\s*#\s*@reader-order\s+(?P<reader>[\w-]+)\s*:\s*(?P<ids>.+)$")
-PLACEHOLDER = re.compile(r"\{\{\s*([a-zA-Z0-9_.]+)\s*\}\}")
-MD_FENCE_OPEN  = re.compile(r"^\s*<!--\s*>>>\s*render_when:\s*(?P<cond>.+?)\s*-->\s*$")
-MD_FENCE_CLOSE = re.compile(r"^\s*<!--\s*<<<\s*end render_when\s*-->\s*$")
+BLOCK_OPEN  = re.compile(r"^\\s*#\\s*>>>\\s*block\\s+(?P<id>[A-Z]-\\d{3})\\s*\\|\\s*(?P<name>[^|]+?)\\s*\\|\\s*reader:\\s*(?P<reader>[^|]+?)\\s*\\|\\s*render_when:\\s*(?P<cond>.+?)\\s*$")
+BLOCK_CLOSE = re.compile(r"^\\s*#\\s*<<<\\s*end\\s+(?P<id>[A-Z]-\\d{3})\\s*$")
+ORDER_DIRECTIVE = re.compile(r"^\\s*#\\s*@reader-order\\s+(?P<reader>[\\w-]+)\\s*:\\s*(?P<ids>.+)$")
+PLACEHOLDER = re.compile(r"\\{\\{\\s*([a-zA-Z0-9_.]+)\\s*\\}\\}")
+MD_FENCE_OPEN  = re.compile(r"^\\s*<!--\\s*>>>\\s*render_when:\\s*(?P<cond>.+?)\\s*-->\\s*$")
+MD_FENCE_CLOSE = re.compile(r"^\\s*<!--\\s*<<<\\s*end render_when\\s*-->\\s*$")
 
 # --------------------------------------------------------------------------- helpers
 class RenderError(Exception):
@@ -200,10 +200,27 @@ def expand_config(repo_cfg, schema, master_dir, tree=None):
         fail("config: execution.dispatch.enabled requires mirror.github_is_complete_mirror: true")
     if not get_path(eff, "build.surfaces"):
         fail("config: build.surfaces must contain at least one entry")
-    if get_path(eff, "execution.dispatch.enabled") and tree:
-        missing = [r for r in [".github/workflows/claude.yml"] if not (Path(tree) / r).exists()]
-        if missing:
-            fail(f"config: dispatch enabled but the tree lacks {missing} (one-time install still owed)")
+    # RULING-009/011: dispatch defaults ON and is Matt's switch; the harness decides whether it is
+    # ACTIVE. Missing harness => dispatch off with off_reason harness-not-installed, printed in the
+    # header and rendered as block S-092 — never a silent off, never a hard fail.
+    if tree:
+        real = (Path(tree) / ".github" / "workflows" / "claude.yml").is_file()
+        if get_path(eff, "execution.dispatch.harness_installed") and not real:
+            fail("config: execution.dispatch.harness_installed is true but the tree has no .github/workflows/claude.yml — the tree wins; drop the override")
+        declared_tools = (repo_cfg.get("overrides") or {}).get("execution.dispatch.allowed_tools")
+        tree_tools = harness_allowed_tools((Path(tree) / ".github" / "workflows" / "claude.yml").read_text(encoding="utf-8", errors="replace")) if real else None
+        if real and declared_tools is not None and tree_tools is not None and declared_tools != tree_tools:
+            fail("config: execution.dispatch.allowed_tools override differs from the --allowed-tools list in .github/workflows/claude.yml — the workflow is the source; drop the override or edit the workflow (Matt, web editor)")
+    if not get_path(eff, "execution.dispatch.enabled"):
+        set_path(eff, "execution.dispatch.off_reason", "declared-off")
+    elif not get_path(eff, "execution.dispatch.harness_installed"):
+        set_path(eff, "execution.dispatch.enabled", False)
+        set_path(eff, "execution.dispatch.off_reason", "harness-not-installed")
+        print("DISPATCH OFF — harness not installed: .github/workflows/claude.yml is absent from this repo, so the "
+              "dispatch blocks are excluded and S-092 renders the install notice. Install master/assets/claude.yml "
+              "(Matt, GitHub web editor) + the CLAUDE_CODE_OAUTH_TOKEN secret, then re-render.", file=sys.stderr)
+    else:
+        set_path(eff, "execution.dispatch.off_reason", None)
     gi = set(get_path(eff, "mirror.gitignored_local_only_paths") or [])
     for p in get_path(eff, "protected.never_touch_paths") or []:
         if p not in gi:
@@ -238,8 +255,21 @@ def detect(tree):
     out["subsystems.seogeo"] = (t / ".seogeo" / "config.json").is_file()  # SEO/GEO 1.0: the tool's own "installed" test is this one file
     out["subsystems.ui_inventory"] = (t / ".forge" / "specs" / "ui-inventory.yaml").exists()
     out["subsystems.artifact_register"] = (t / ".forge" / "protocols" / "artifact-register.yaml").exists()
+    harness = t / ".github" / "workflows" / "claude.yml"
+    out["execution.dispatch.harness_installed"] = harness.is_file()   # RULING-009: the harness is a shipped asset (master/assets/claude.yml); its absence turns dispatch off LOUDLY, never silently
+    if harness.is_file():
+        tools = harness_allowed_tools(harness.read_text(encoding="utf-8", errors="replace"))
+        if tools is not None:
+            out["execution.dispatch.allowed_tools"] = tools            # the schema's promise, now kept: the rendered allowlist is read from the workflow, not typed
     out["architecture.tsx_lib_rule"] = any(t.glob("src/**/*.tsx")) or any(t.glob("app/**/*.tsx"))
     return out
+
+def harness_allowed_tools(text):
+    """Parse the --allowed-tools "a,b,c" list out of claude.yml. None when the file carries no such flag."""
+    m = re.search(r'--allowed-tools\\s+"([^"]*)"', text)
+    if not m:
+        return None
+    return [x.strip() for x in m.group(1).split(",") if x.strip()]
 
 def config_hash(eff):
     canon = json.dumps(eff, sort_keys=True, separators=(",", ":"), ensure_ascii=False)
@@ -258,8 +288,8 @@ def parse_literal(tok):
     if tok in ("true", "True"):  return True
     if tok in ("false", "False"): return False
     if tok in ("null", "None"): return None   # NOT "none": it is a legal enum VALUE (build.validation/build.deploy: none) and must compare as the string
-    if re.fullmatch(r"-?\d+", tok): return int(tok)
-    return tok.strip("'\"")
+    if re.fullmatch(r"-?\\d+", tok): return int(tok)
+    return tok.strip("'\\"")
 
 def eval_condition(cond, eff):
     """
@@ -274,18 +304,18 @@ def eval_condition(cond, eff):
         return all(eval_condition(c, eff) for c in cond.split(" and "))
     if cond == "always": return True
     if cond == "never":  return False
-    m = re.fullmatch(r"len\(([a-zA-Z0-9_.]+)\)\s*(>=|==|>|<|<=)\s*(\d+)", cond)
+    m = re.fullmatch(r"len\\(([a-zA-Z0-9_.]+)\\)\\s*(>=|==|>|<|<=)\\s*(\\d+)", cond)
     if m:
         v = get_path(eff, m.group(1)); n = len(v) if isinstance(v, (list, dict, str)) else 0; k = int(m.group(3))
         return {">": n > k, ">=": n >= k, "==": n == k, "<": n < k, "<=": n <= k}[m.group(2)]
-    m = re.fullmatch(r"([a-zA-Z0-9_.]+)\s+(non-empty|empty)", cond)
+    m = re.fullmatch(r"([a-zA-Z0-9_.]+)\\s+(non-empty|empty)", cond)
     if m:
         return truthy(get_path(eff, m.group(1))) == (m.group(2) == "non-empty")
-    m = re.fullmatch(r"([a-zA-Z0-9_.]+)\s*(==|!=)\s*(.+)", cond)
+    m = re.fullmatch(r"([a-zA-Z0-9_.]+)\\s*(==|!=)\\s*(.+)", cond)
     if m:
         lhs = get_path(eff, m.group(1)); rhs = parse_literal(m.group(3))
         return (lhs == rhs) if m.group(2) == "==" else (lhs != rhs)
-    m = re.fullmatch(r"not\s+([a-zA-Z0-9_.]+)", cond)
+    m = re.fullmatch(r"not\\s+([a-zA-Z0-9_.]+)", cond)
     if m:
         return not truthy(get_path(eff, m.group(1), KeyError if False else None))
     if re.fullmatch(r"[a-zA-Z0-9_.]+", cond):
@@ -304,12 +334,12 @@ class Block:
 def parse_master(path):
     """Returns (blocks_in_order, reader_orders{reader: [ids]}, preamble_comment_lines)."""
     text = Path(path).read_text(encoding="utf-8")
-    if "\r" in text:
+    if "\\r" in text:
         fail(f"{path}: contains CR characters — the master must be pure LF")
     blocks, orders, preamble = [], {}, []
     cur = None
     seen = set()
-    for n, line in enumerate(text.split("\n"), 1):
+    for n, line in enumerate(text.split("\\n"), 1):
         mo = BLOCK_OPEN.match(line)
         mc = BLOCK_CLOSE.match(line)
         md = ORDER_DIRECTIVE.match(line)
@@ -363,7 +393,7 @@ def knob_summary(eff):
     d = eff
     return (f"mirror={'complete(hard-reset)' if get_path(d,'mirror.github_is_complete_mirror') else 'partial(gentle-pull)'} "
             f"shape={get_path(d,'shape.kind')}@{get_path(d,'shape.build_location')} build={get_path(d,'build.validation')} "
-            f"deploy={get_path(d,'build.deploy')} dispatch={'on' if get_path(d,'execution.dispatch.enabled') else 'off'} "
+            f"deploy={get_path(d,'build.deploy')} dispatch={'on' if get_path(d,'execution.dispatch.enabled') else 'OFF(' + str(get_path(d,'execution.dispatch.off_reason')) + ')'} "
             f"surfaces={len(get_path(d,'build.surfaces') or [])} companions={len(get_path(d,'companion_repos') or [])} "
             f"supabase={get_path(d,'subsystems.supabase')} chromaqa={get_path(d,'subsystems.chromaqa')} seogeo={get_path(d,'subsystems.seogeo')} "
             f"ui_inventory={get_path(d,'subsystems.ui_inventory')} tsx_lib_rule={get_path(d,'architecture.tsx_lib_rule')}")
@@ -403,6 +433,17 @@ def render_file(kind, reader, blocks, orders, eff, version, date, chash, method=
         f"# companion_file: .forge/protocols/{companion}",
         "# DO NOT EDIT THIS FILE — edit the master and re-render. A bug found here is a master bug.",
         f"# knobs:          {knob_summary(eff)}",
+    ] + ([
+        "#",
+        "# !!! DISPATCH IS OFF IN THIS REPO — HARNESS NOT INSTALLED !!!",
+        "# !!! .github/workflows/claude.yml is absent, so the dispatch blocks below are EXCLUDED.",
+        "# !!! This is a MISSING CAPABILITY, not a choice: install master/assets/claude.yml (Matt, GitHub web",
+        "# !!! editor) + the CLAUDE_CODE_OAUTH_TOKEN secret, then re-render. Claude Web states this in the",
+        "# !!! capability line of every Session Context Summary until it is fixed.",
+    ] if get_path(eff, "execution.dispatch.off_reason") == "harness-not-installed" else ([
+        "#",
+        "# NOTE: dispatch is OFF BY MATT'S CHOICE in this repo (execution.dispatch.enabled: false).",
+    ] if get_path(eff, "execution.dispatch.off_reason") == "declared-off" else [])) + [
         "#",
         f"# BLOCK MANIFEST — included {len(inc_ids)}, excluded {len(exc_ids)}, master total {len(all_ids)}",
         "# included (in this file's order): " + ", ".join(inc_ids),
@@ -415,14 +456,14 @@ def render_file(kind, reader, blocks, orders, eff, version, date, chash, method=
     body = []
     for b in ordered:
         body.append(f"# --- {b.id} {b.name} " + "-" * max(3, 70 - len(b.id) - len(b.name)))
-        body.extend(substitute("\n".join(b.lines), eff, where=f"{kind} block {b.id}").split("\n"))
+        body.extend(substitute("\\n".join(b.lines), eff, where=f"{kind} block {b.id}").split("\\n"))
         body.append("")
-    out = "\n".join(head + body).rstrip("\n") + "\n"
+    out = "\\n".join(head + body).rstrip("\\n") + "\\n"
     standalone_check(out, f"{kind}/{reader}", skip_header_lines=len(head))
     return out, inc_ids, exc_ids
 
 def standalone_check(text, label, skip_header_lines=0):
-    lines = text.split("\n")
+    lines = text.split("\\n")
     for n, line in enumerate(lines, 1):
         if n <= skip_header_lines:
             continue
@@ -434,10 +475,10 @@ def standalone_check(text, label, skip_header_lines=0):
 def resolve_md_fences(text, eff, label):
     """Markdown counterpart of the YAML block fences: keep a fenced run of lines when its
     render_when condition is true, drop the run AND its fence lines when false. No nesting."""
-    if "\r" in text:
+    if "\\r" in text:
         fail(f"{label}: contains CR characters — the master must be pure LF")
     out, cond, depth_line = [], None, 0
-    for n, line in enumerate(text.split("\n"), 1):
+    for n, line in enumerate(text.split("\\n"), 1):
         mo = MD_FENCE_OPEN.match(line); mc = MD_FENCE_CLOSE.match(line)
         if mo:
             if cond is not None:
@@ -452,33 +493,33 @@ def resolve_md_fences(text, eff, label):
             out.append(line)
     if cond is not None:
         fail(f"{label}: render_when fence opened at line {depth_line} never closed")
-    return "\n".join(out)
+    return "\\n".join(out)
 
 def render_claude_md(master_dir, existing_text, eff, version, date):
     src = Path(master_dir) / CLAUDE_MD_MASTER
     if not src.exists():
         return None
-    block = resolve_md_fences(src.read_text(encoding="utf-8"), eff, CLAUDE_MD_MASTER).strip("\n")
+    block = resolve_md_fences(src.read_text(encoding="utf-8"), eff, CLAUDE_MD_MASTER).strip("\\n")
     block = substitute(block, eff, where=CLAUDE_MD_MASTER)
     standalone_check(block, "CLAUDE.md house block")
     open_line = CLAUDE_MD_OPEN.format(version=version)
-    rendered_block = f"{open_line}\n{block}\n{CLAUDE_MD_CLOSE}"
+    rendered_block = f"{open_line}\\n{block}\\n{CLAUDE_MD_CLOSE}"
     if existing_text is None:
-        return rendered_block + "\n"
-    pat = re.compile(r"<!-- FORGEFLOW HOUSE BLOCK — rendered from forgeflow/master [^\n]*-->\n.*?\n" + re.escape(CLAUDE_MD_CLOSE), re.S)
+        return rendered_block + "\\n"
+    pat = re.compile(r"<!-- FORGEFLOW HOUSE BLOCK — rendered from forgeflow/master [^\\n]*-->\\n.*?\\n" + re.escape(CLAUDE_MD_CLOSE), re.S)
     if pat.search(existing_text):
         return pat.sub(lambda m: rendered_block, existing_text, count=1)
     print("note: CLAUDE.md had no house-block markers — block appended at the end; Matt may want to reorder it", file=sys.stderr)
-    return existing_text.rstrip("\n") + "\n\n" + rendered_block + "\n"
+    return existing_text.rstrip("\\n") + "\\n\\n" + rendered_block + "\\n"
 
 def effective_config_text(repo_cfg_text, eff):
     """Repo config with the effective values written back as a trailing comment block (S2)."""
     marker = "# --- effective values (written by render.py, do not edit) ---"
-    base = repo_cfg_text.split(marker)[0].rstrip("\n")
+    base = repo_cfg_text.split(marker)[0].rstrip("\\n")
     lines = [base, "", marker]
     for k, v in sorted(flatten(eff).items()):
         lines.append(f"# {k}: {json.dumps(v, ensure_ascii=False)}")
-    return "\n".join(lines) + "\n"
+    return "\\n".join(lines) + "\\n"
 
 # --------------------------------------------------------------------------- commands
 def cmd_render(a, check_only=False):
@@ -519,7 +560,7 @@ def cmd_render(a, check_only=False):
             if not cur.exists() or cur.read_text(encoding="utf-8") != text:
                 drift.append(rel)
         if drift:
-            print("DRIFT — committed files differ from the render of the committed config:\n  " + "\n  ".join(drift))
+            print("DRIFT — committed files differ from the render of the committed config:\\n  " + "\\n  ".join(drift))
             return 1
         print(f"OK — {len(outputs)} files byte-identical to the render (config_hash {chash[:12]})")
         return 0
@@ -527,7 +568,7 @@ def cmd_render(a, check_only=False):
     out = Path(a.out)
     for rel, text in outputs.items():
         p = out / rel; p.parent.mkdir(parents=True, exist_ok=True)
-        p.write_text(text, encoding="utf-8", newline="\n")
+        p.write_text(text, encoding="utf-8", newline="\\n")
     print(f"rendered {len(outputs)} files to {out} — master {version}, config_hash {chash[:12]}")
     return 0
 
@@ -544,16 +585,16 @@ def cmd_explain(a):
                 print(f"{kind} {b.id} {'IN ' if eval_condition(b.cond, eff) else 'out'} [{'/'.join(sorted(b.readers))}] {b.cond}")
     return 0
 
-STATE_WORDS = re.compile(r"\b(complete|completed|shipped|merged|deployed|fixed|passing|landed|proven|live)\b", re.I)
-ID_PATTERNS = re.compile(r"(\b[0-9a-f]{7,40}\b|#\d{2,}|\bPR\s*#?\d+|\brun[ _-]?id[:\s]*\S+|\bdpl_\w+|\bdeployment\s+\S*\d\S*|\bquery result\b|\bcommit\s+[0-9a-f]{7,})", re.I)
-REPORTED = re.compile(r"\b(reported|unverified|not verified|claims)\b", re.I)
+STATE_WORDS = re.compile(r"\\b(complete|completed|shipped|merged|deployed|fixed|passing|landed|proven|live)\\b", re.I)
+ID_PATTERNS = re.compile(r"(\\b[0-9a-f]{7,40}\\b|#\\d{2,}|\\bPR\\s*#?\\d+|\\brun[ _-]?id[:\\s]*\\S+|\\bdpl_\\w+|\\bdeployment\\s+\\S*\\d\\S*|\\bquery result\\b|\\bcommit\\s+[0-9a-f]{7,})", re.I)
+REPORTED = re.compile(r"\\b(reported|unverified|not verified|claims)\\b", re.I)
 
 def cmd_evidence(a):
     """M4/N3 — count state-change lines and whether each carries an artifact identifier."""
     total = with_id = reported = 0
     offenders = []
     for f in a.files:
-        for n, line in enumerate(Path(f).read_text(encoding="utf-8", errors="replace").split("\n"), 1):
+        for n, line in enumerate(Path(f).read_text(encoding="utf-8", errors="replace").split("\\n"), 1):
             if line.startswith("-") and not line.startswith("---"):
                 continue                      # diff removals do not count
             s = line[1:] if line.startswith("+") else line
@@ -571,7 +612,7 @@ def cmd_evidence(a):
     print(f"{with_id} claims verified by ID, {reported} reported unverified, {len(offenders)} unmarked")
     if offenders:
         print("FAIL — state-change lines with neither an identifier nor a 'reported' marker:")
-        print("\n".join("  " + o for o in offenders))
+        print("\\n".join("  " + o for o in offenders))
         return 1
     if total == 0 and not a.allow_empty:
         print("WARNING — no state-change lines found; a wrap for a session that produced commits should record some (use --allow-empty to accept)")

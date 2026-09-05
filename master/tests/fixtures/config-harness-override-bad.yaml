@@ -1,0 +1,5 @@
+# fixture: claims the harness is installed while the tree has no claude.yml — the tree wins, render fails
+profile: standard
+repo: { org: chromasmith, name: fixture-harness-bad }
+overrides:
+  execution.dispatch.harness_installed: true

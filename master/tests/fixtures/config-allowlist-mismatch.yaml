@@ -1,0 +1,5 @@
+# fixture: declared allowlist differs from the workflow's --allowed-tools — the workflow is the source, render fails
+profile: standard
+repo: { org: chromasmith, name: fixture-allowlist-bad }
+overrides:
+  execution.dispatch.allowed_tools: ["WebFetch"]

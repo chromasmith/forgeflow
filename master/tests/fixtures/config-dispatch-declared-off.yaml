@@ -1,0 +1,5 @@
+# fixture: Matt turned dispatch off by choice (off_reason declared-off) — no loud notice, no S-092
+profile: standard
+repo: { org: chromasmith, name: fixture-declared-off }
+overrides:
+  execution.dispatch.enabled: false

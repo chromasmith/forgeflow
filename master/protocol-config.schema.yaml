@@ -54,6 +54,8 @@ shape:
 
 build:
   validation:     { type: enum, values: [npm-build, py-compile, none], detected: true, default: none }
+  python_interpreter: { type: string, declared: true, default: "python", note: "FF-003: the interpreter S-082 names — e.g. python (system Python on the canonical machine), py -3.12, or .venv\\Scripts\\python.exe when the repo genuinely carries a venv; never assumed" }
+  secondary_validation: { type: string, declared: true, default: null, note: "FF-003: a two-language repo's second bar, stated as a command in prose (e.g. 'npm run build from web/'); rendered into S-081/S-082 when set" }
   build_command:  { type: string, default: "npm run build" }
   deploy:         { type: enum, values: [vercel, none, custom], detected: true, default: none }
   deploy_verify:  { type: string, declared: true, default: "Vercel deployment record READY for the exact SHA" }
@@ -65,11 +67,17 @@ architecture:
 execution:
   local:    { type: boolean, default: true }
   dispatch:
-    enabled:       { type: boolean, declared: true, default: false }
+    # RULING-009/011 (2026-09-05): dispatch is Matt's discretion and defaults ON. The renderer
+    # turns it off only when the harness file is absent from the tree (off_reason
+    # harness-not-installed) or when Matt overrides enabled: false (off_reason declared-off);
+    # either way the rendered header and S-092 say so LOUDLY. It is never silently off.
+    enabled:       { type: boolean, declared: true, default: true, note: "Matt's switch; false = dispatch off by choice (off_reason declared-off)" }
+    harness_installed: { type: boolean, detected: true, declared: true, default: false, note: "true when .github/workflows/claude.yml exists in the tree; overridable only for fixture renders — with a tree, the tree wins" }
+    off_reason:    { type: enum, values: [harness-not-installed, declared-off], set_by: renderer, note: "null when dispatch is on; the header and S-092 print the reason otherwise" }
     requires:
       type: list
-      default: [".github/workflows/claude.yml", "CLAUDE_CODE_OAUTH_TOKEN secret", "branch protection on main", "artifact register", "mirror.github_is_complete_mirror: true"]
-    allowed_tools: { type: list, declared: true, default: [], note: "copied from .github/workflows/claude.yml at render time; renderer warns on mismatch" }
+      default: [".github/workflows/claude.yml (master/assets/claude.yml, installed by Matt via the GitHub web editor)", "CLAUDE_CODE_OAUTH_TOKEN repo Actions secret", "mirror.github_is_complete_mirror: true", "branch protection on the default branch with administrators bypassing (RULING-011) — recommended, not a render precondition"]
+    allowed_tools: { type: list, detected: true, declared: true, default: ["WebFetch", "WebSearch", "Bash(curl:*)", "Bash(gh run list:*)", "Bash(gh run view:*)", "Bash(gh api:*)", "Bash(gh pr list:*)", "Bash(gh pr view:*)", "Bash(gh --version)", "Bash(npm audit:*)", "Bash(npx depcheck:*)"], note: "read from the --allowed-tools list in .github/workflows/claude.yml when a tree is given; the default equals master/assets/claude.yml; a declared list that differs from the tree is a hard fail" }
   max_parallel:   { type: integer, default: 3 }
   local_report_desktop_copy: { type: boolean, default: true }
 

@@ -108,6 +108,22 @@ with tempfile.TemporaryDirectory() as td:
     f = bad2 / "start-protocol.master.yaml"; f.write_text(read(f).replace("{{repo.org}}", "{{repo.orgg}}"), encoding="utf-8")
     r = run("render", "--config", str(FIX/"config-standard.yaml"), "--master-dir", str(bad2), "--out", str(td/"x4"), "--date", DATE, expect=1)
     checks[-1] = (r.returncode == 1 and "unresolved placeholder" in r.stderr, "fails on unresolved placeholder", r.stderr.strip()[-120:])
+    # 10. FFD-001 (RULING-009/011): dispatch defaults ON; a missing harness turns it off LOUDLY, never silently
+    checks.append(("HARNESS NOT INSTALLED" in sp and "dispatch=OFF(harness-not-installed)" in sp, "dispatch: header shouts when the harness is absent", ""))
+    checks.append(("# --- S-092" in sp, "dispatch: S-092 install notice renders when the harness is absent", ""))
+    checks.append(("# --- S-092" not in cw and "dispatch=on" in cw, "dispatch: S-092 absent and dispatch=on when the harness is declared", ""))
+    render("config-dispatch-declared-off.yaml", td / "doff")
+    doff = read(td/"doff"/".forge/protocols/start-protocol.yaml")
+    checks.append(("OFF BY MATT'S CHOICE" in doff and "# --- S-092" not in doff and "HARNESS NOT INSTALLED" not in doff, "dispatch: declared-off renders a NOTE, no S-092, no shout", ""))
+    # a real tree carrying master/assets/claude.yml: harness detected, allowlist read from the workflow
+    tree = td / "tree"; (tree / ".github" / "workflows").mkdir(parents=True); (tree / "package.json").write_text("{}", encoding="utf-8")
+    shutil.copy(REAL / "assets" / "claude.yml", tree / ".github" / "workflows" / "claude.yml")
+    render("config-standard.yaml", td / "tr", extra=("--tree", str(tree)))
+    trs = read(td/"tr"/".forge/protocols/start-protocol.yaml"); trc = read(td/"tr"/".forge/protocol-config.yaml")
+    checks.append(("dispatch=on" in trs and (td/"tr"/".forge/protocols/start-protocol.dispatch.yaml").exists(), "dispatch: harness in the tree turns dispatch on and renders the runner file", ""))
+    checks.append(("Bash(npx depcheck:*)" in trc and "harness_installed: true" in trc, "dispatch: allowed_tools read from claude.yml into the effective config", trc[-300:]))
+    r = render("config-harness-override-bad.yaml", td / "hb", extra=("--tree", str(td / "a"))); checks[-1] = (r.returncode == 1 and "the tree wins" in r.stderr, "dispatch: harness_installed override without the file in the tree fails", r.stderr.strip()[-120:])
+    r = render("config-allowlist-mismatch.yaml", td / "am", extra=("--tree", str(tree))); checks[-1] = (r.returncode == 1 and "allowed_tools override differs" in r.stderr, "dispatch: declared allowlist that differs from the workflow fails", r.stderr.strip()[-120:])
     # 9. evidence companion check
     r = run("evidence", str(FIX/"wrap-good.yaml"), expect=0); checks[-1] = (r.returncode == 0 and "2 claims verified by ID, 1 reported unverified" in r.stdout, "evidence: good wrap counts 2 verified / 1 reported", r.stdout.strip())
     r = run("evidence", str(FIX/"wrap-bad.yaml"), expect=1); checks[-1] = (r.returncode == 1 and "unmarked" in r.stdout, "evidence: bare 'shipped' line fails", r.stdout.strip()[:80])

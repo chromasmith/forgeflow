@@ -4,4 +4,4 @@ mirror.github_is_complete_mirror: true
 build.validation: npm-build
 build.deploy: vercel
 execution.local: true
-execution.dispatch.enabled: false
+execution.dispatch.enabled: true   # RULING-009: dispatch is available by default; off only when the harness is absent (S-092) or Matt overrides

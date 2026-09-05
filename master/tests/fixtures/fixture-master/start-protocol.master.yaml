@@ -6,6 +6,11 @@ standalone_rule: >-
   This file is complete. Repo {{repo.org}}/{{repo.name}} at {{repo.canonical_checkout}}.
 # <<< end S-001
 
+# >>> block S-092 | dispatch_unavailable_notice | reader: cw | render_when: execution.dispatch.off_reason == harness-not-installed
+dispatch_unavailable_notice: |
+  DISPATCH IS OFF IN THIS REPO BECAUSE THE HARNESS IS NOT INSTALLED (fixture).
+# <<< end S-092
+
 # >>> block S-002 | mode_selection_local_vs_dispatch | reader: cw | render_when: execution.dispatch.enabled
 mode_selection: choose local or dispatch per task; linear is the default.
 # <<< end S-002

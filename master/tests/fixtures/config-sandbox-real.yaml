@@ -9,6 +9,7 @@ ids:
   backlog_prefix: "CV-"
 overrides:
   execution.dispatch.enabled: true
+  execution.dispatch.harness_installed: true   # fixture stand-in for .github/workflows/claude.yml in the tree
   subsystems.supabase: true
   subsystems.vercel: true
   subsystems.ci_quality_gate: true

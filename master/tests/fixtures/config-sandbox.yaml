@@ -3,5 +3,6 @@ profile: standard
 repo: { org: chromasmith, name: fixture-sandbox }
 overrides:
   execution.dispatch.enabled: true
+  execution.dispatch.harness_installed: true   # fixture stand-in for .github/workflows/claude.yml in the tree
   subsystems.supabase: true
   subsystems.database_access_doc: ".forge/protocols/database-access.yaml"
