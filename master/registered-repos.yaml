@@ -133,3 +133,33 @@ repos:
       APPENDED to CLAUDE.md (no markers). Legacy .forge/ shape (backlog on the old schema,
       no rulings.yaml, no artifact register, no inbox/, GOTCHAS at 140 KB) migrates at the
       repo's first wrap on the rendered protocol, not at the render.
+  - repo: chromasmith/chromasync
+    config: .forge/protocol-config.yaml
+    profile: standard
+    master_version: "v1.0.0"
+    rendered_on: 2026-09-04
+    config_hash: 72ae2c59e53145bd891668f0ea2654d2e4fd39f87865aea6d000c8da93f2849d
+    state: current
+    files:
+      - .forge/protocols/start-protocol.yaml
+      - .forge/protocols/end-protocol.yaml
+      - .forge/protocol-config.yaml
+      - CLAUDE.md
+    landed: "commits 0d5efb3 (config), 3fd099b (start), 6f726cd (end), e4b455e (CLAUDE.md), all 2026-09-04; blob SHAs equal; render.py check OK from a fresh forgeflow clone"
+    notes: >-
+      Sixth repo rendered (Matt named it 2026-09-04, RULING-008) — second Synclips-system
+      repo, companion synclips-relay. A TWO-LANGUAGE repo: Python desktop agent (src/, built
+      into ChromaSync.exe by the watcher on push, swapped per machine by hand — never a
+      session step) plus a Next.js web UI (web/, on Vercel; root package.json delegates to
+      web/, root vercel.json carries the ignoreCommand). Private repo: detection ran on a
+      tree skeleton rebuilt from the GitHub listing. Detected: single-app at root,
+      npm-build, vercel, chromaqa (chromaqa-check.sh, v6.1 — its .chromaqa/ telemetry is
+      GITIGNORED here, so S-014's session-start debt read finds nothing on GitHub; a v6.1
+      fact, noted in the config), ci_quality_gate; supabase/seogeo/ui_inventory off (no
+      supabase/ dir — the repo uses Supabase at runtime only); dispatch off. One override:
+      architecture.tsx_lib_rule true (the .tsx tree is web/, invisible to P3's root
+      src/ glob). No north_star_doc — the only vision doc (60 KB blueprint) is marked
+      do-not-read. Backlog prefix CS-, line endings lf (probed: .forge/handoff.yaml hashes
+      LF). House block APPENDED to CLAUDE.md (no markers). Master follow-up worth filing:
+      no validation knob fits a Python+web repo (npm-build runs the web build for
+      Python-only changes; py-compile's block assumes a .venv this repo does not have).
