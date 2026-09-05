@@ -22,21 +22,29 @@ repos:
   - repo: chromasmith/seogeo
     config: .forge/protocol-config.yaml
     profile: docs-only
-    master_version: "v1.0.0"
-    rendered_on: 2026-09-04
-    config_hash: 81ca6a54d712181be0d895f1411d7e4c88887ecde64ed8237800c4eeb4a7e23c
+    master_version: "v1.1.0"
+    rendered_on: 2026-09-05
+    config_hash: b0e8e9f26da9620f9d5a6ffe474b5f2138a1206b4ccf417f068015504b7ef5b0
     state: current
     files:
       - .forge/protocols/start-protocol.yaml
+      - .forge/protocols/start-protocol.dispatch.yaml
       - .forge/protocols/end-protocol.yaml
+      - .forge/protocols/end-protocol.dispatch.yaml
       - .forge/protocol-config.yaml
       - CLAUDE.md
-    landed: "commits 042427f, 6c792a0, 14f1614 (2026-09-04); render.py check OK from a fresh forgeflow clone"
+    landed: "v1.1.0 re-render 2026-09-05: commits 1746d6c (config), ff60fc1 (CLAUDE.md), b504fb8 (end.dispatch NEW), 40e9040 (start.dispatch NEW), 30be55b (end), a94d846 (start); blob SHAs equal to the sandbox output. Previous v1.0.0 render: 042427f, 6c792a0, 14f1614 (2026-09-04)"
     notes: >-
-      First repo ever rendered from the master (RULING-002). Private repo: detection ran on a
-      tree skeleton rebuilt from the GitHub listing (see RENDER_PROCEDURE.md STATUS). No
-      subsystems detected; dispatch off; the repo's own SEO/GEO template payload under
-      template/.seogeo/ is correctly NOT treated as an installed tool.
+      First repo ever rendered from the master (RULING-002). THIRD repo re-rendered from
+      v1.1.0 with the full harness: claude.yml installed by Matt via the web editor (blob
+      4cccfbf = master/assets/claude.yml), CLAUDE_CODE_OAUTH_TOKEN set from 1Password, branch
+      protection on main with admin bypass (RULING-011). Private repo: detection ran on a tree
+      skeleton rebuilt from the GitHub listing, carrying the REAL claude.yml and CLAUDE.md
+      (blob SHAs matched before render). No subsystems detected; dispatch=on with
+      allowed_tools read from the workflow; the repo's own SEO/GEO template payload under
+      template/.seogeo/ is correctly NOT treated as an installed tool. CLAUDE.md is the house
+      block alone (no repo notes outside the markers). north_star_doc = .forge/BLUEPRINT.yaml,
+      backlog prefix BL-.
   - repo: chromasmith/chromasmith-saas-starter
     config: .forge/protocol-config.yaml
     profile: standard
