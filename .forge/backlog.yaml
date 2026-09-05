@@ -16,20 +16,6 @@ prioritized:
       Land inside the next master change, not alone.
     status: deferred
     blocked_by: null
-  - id: FF-002
-    name: saas-starter re-render once SEO/GEO is installed there
-    priority: P2
-    estimate: 1 session
-    spec_ref: master/RENDER_PROCEDURE.md
-    description: |
-      Matt is installing the SEO/GEO tool into chromasmith-saas-starter in a concurrent
-      session. When .seogeo/config.json lands there, render.py detects subsystems.seogeo
-      true and the template's committed render (config_hash f362bf02fcdf) is stale: S-089,
-      S-090, E-048..E-051 and the fenced house-block line are missing from it and from
-      every child spawned from it. Re-render saas-starter on Matt's word after the install
-      is finished; do not re-render mid-install.
-    status: deferred
-    blocked_by: SEO/GEO install into saas-starter completing (other session)
   - id: FF-003
     name: Python validation knob that does not assume a .venv (and a two-language knob)
     priority: P2
@@ -62,4 +48,16 @@ prioritized:
     status: deferred
     blocked_by: null
 in_progress: []
-completed: []  # evidence: 63fb9c4 (empty at migration)
+completed:
+  - id: FF-002
+    name: saas-starter re-render once SEO/GEO is installed there
+    priority: P2
+    spec_ref: master/RENDER_PROCEDURE.md
+    description: |
+      saas-starter re-rendered 2026-09-04 (night) after the SEO/GEO install landed there:
+      subsystems.seogeo detected true, config_hash b6411bcfb93e (was f362bf02fcdf).
+      saas-starter commits b750941 (config) / 060c1c5 (CLAUDE.md) / c6920b1 (start) /
+      7b84b45 (end); registry row updated @ forgeflow c729db2.
+    status: completed
+    completed_at: 2026-09-05
+    evidence: c729db2
