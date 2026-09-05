@@ -51,6 +51,8 @@ one Claude Code prompt and Matt never handles the token.
    still can. Claude Web proves the bypass with a one-line docs commit before the first dispatch; a rejection means the
    box is ticked.
 Then re-list the tree, confirm the workflow is there, and continue at step 1.
+FIRST PROOF (2026-09-05): chromasmith/forgeflow — secret set, claude.yml blob 4cccfbf = asset, protection on main with
+admin bypass; this very line landed as a direct docs commit through the connector with protection active.
 
 ## 1. Fetch the master into the sandbox
 ```
