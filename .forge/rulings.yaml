@@ -192,3 +192,27 @@ rulings:
       master change.
     supersedes: the folder/category wording of S-006 ("never edits repo APPLICATION files") and S-007 ("Application code, migrations, config and workflows remain prompt-only") — the risk test replaces it; the .github/workflows/, secrets and rendered-protocol prohibitions are unchanged
     stated_by: Matt, in chat, in this session ("go" on Claude's recommended test), recorded in the turn per W-002
+  - id: RULING-011
+    date: 2026-09-05
+    subject: Branch protection is a guard against runners, not the dispatch switch (S-072 / E-002 collision)
+    ruling: >-
+      Dispatch availability is decoupled from branch protection. A repo's dispatch is "on"
+      when the harness is installed — .github/workflows/claude.yml present and the
+      CLAUDE_CODE_OAUTH_TOKEN Actions secret set — and the config knob says so; "branch
+      protection on main" is REMOVED from execution.dispatch.requires and S-072 no longer
+      calls protection "the pipeline's switch". Branch protection on the default branch stays
+      ON permanently in every repo that carries the harness, configured so that repository
+      administrators bypass it: Matt is the owner, and both his local Claude Code pushes and
+      Claude Web's connector pushes act as Matt, so wraps, rulings and direct edits keep
+      landing on main exactly as today, while a runner's token cannot push main and must go
+      through a PR that Claude Web opens and Matt approves. The collision with E-002 (wrap
+      pushes docs directly to main) is therefore resolved by configuration, and E-002 gains
+      one fallback line: if a direct docs push is ever rejected by protection, deliver the
+      same content as a PR — no ceremony, no re-planning. Per-repo step at rollout: after
+      Matt turns protection on (a GitHub web action), Claude Web proves the bypass with a
+      one-line docs commit before any dispatch; a rejection means "include administrators"
+      is ticked and Matt unticks it. Matt's plain-English summary he approved: dispatch is
+      simply on once the harness is installed; main stays locked only against the robots;
+      nothing changes in how he works.
+    supersedes: S-072 "Branch protection is the pipeline's switch" framing; the "branch protection on main" entry in execution.dispatch.requires; the 2026-09-05 defect-report caution that protection is its own separate decision (it is now a fixed part of harness install)
+    stated_by: Matt, in chat, in this session ("go" on the simplified version), recorded in the turn per W-002
