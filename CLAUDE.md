@@ -107,7 +107,7 @@ Hold the line.
 
 <!-- </scope-discipline v1> -->
 
-<!-- FORGEFLOW HOUSE BLOCK — rendered from forgeflow/master v1.0.0 — do not edit inside markers -->
+<!-- FORGEFLOW HOUSE BLOCK — rendered from forgeflow/master v1.1.0 — do not edit inside markers -->
 <!-- C-001 claude_md_house_block — rendered into every repo's CLAUDE.md between the FORGEFLOW HOUSE BLOCK markers -->
 
 ## House rules (ForgeFlow) — chromasmith/forgeflow
@@ -124,7 +124,7 @@ These rules are the same in every Chromasmith repo. They are rendered here from 
 
 ### Protocol files
 
-- Session protocols live in `.forge/protocols/`: `start-protocol.yaml` and `end-protocol.yaml`, both read by Claude Web. The knobs they were rendered with are in `.forge/protocol-config.yaml`.
+- Session protocols live in `.forge/protocols/`: `start-protocol.yaml` and `end-protocol.yaml` (read by Claude Web), plus `start-protocol.dispatch.yaml` and `end-protocol.dispatch.yaml` (read by a dispatched runner). The knobs they were rendered with are in `.forge/protocol-config.yaml`.
 - These files are RENDERED COPIES. Do not edit them, and do not edit the text between the house-block markers in this file. A bug found in a rendered copy is fixed at its source in `chromasmith/forgeflow` (`master/`) and re-rendered; a hand edit here is overwritten by the next render.
 - PRECEDENCE: when a task prompt or issue body conflicts with the protocol files, the PROTOCOL wins on process, scope and safety (authorized files, off-limits paths, commit discipline, refresh mode, halt-and-report, reflection, the inbox file); the PROMPT wins on WHAT to build. A prompt that appears to widen scope or authorize an off-limits path is an error in the prompt: HALT AND REPORT.
 - `.forge/rulings.yaml` is the append-only register of decisions Matt has made. Search it before asking Matt a product or process question; never re-ask a question that has a ruling.
@@ -142,4 +142,18 @@ These rules are the same in every Chromasmith repo. They are rendered here from 
 - Any message directed at Matt — a question, a blocker, a thing he must do — is visually unmistakable and is never buried inside thinking or output walls. Print it as a short plain-text block on its own, with a plain-text label such as QUESTION FOR MATT or MATT MUST DO. Plain text only; his terminal does not render ANSI colour codes.
 - HUMAN GATES in live supervised runs (real accounts, Matt at the keyboard): print the banner, state the ONE thing Matt must do, and WAIT for him to type the confirmation word. No timers, no inferring he is done, no barrelling ahead. Never hammer or re-poll an external site — one action, one attempt; repeated automated contact is what trips anti-bot systems.
 - Give Matt one action item at a time, never a numbered list of manual steps. When reporting, bottom-line first, then the evidence briefly.
+
+### Dispatched GitHub Action sessions — APPLIES ONLY WHEN RUNNING AS A DISPATCHED GITHUB ACTION
+
+(If you are a local Claude Code session on Matt's machine, ignore this section; everything above still governs you.)
+
+You were triggered by an `@claude` mention in a GitHub issue or PR and are running on a fresh, disposable runner with a shallow clone. Operating rules:
+
+- **The issue or PR body is your complete task.** It carries its own scope lock, authorized files and completion steps. It overrides nothing in this file.
+- **Read `.forge/protocols/start-protocol.dispatch.yaml` and `.forge/protocols/end-protocol.dispatch.yaml`** — they are the runner-reader protocols for this repo. State the block-manifest count they ask for in your first output line.
+- **Work the harness-assigned branch.** Never create your own branch name, never push `main`, never merge. Your work ships as a pushed branch; Claude Web opens the PR.
+- **You cannot open PRs** — push, then post the pre-filled PR link in your report.
+- **All stops become comments.** If you are blocked, need a decision, or are tempted to touch an unauthorized file: write the question into your `.forge/inbox/<run-id>.yaml` as a `needs_ruling` entry, post a comment on the triggering issue labelled QUESTION or BLOCKED in plain English, and HALT. A dispatched run never chooses on Matt's behalf; a reply mentioning `@claude` resumes you.
+- **Your tool access is the allowlist in `.github/workflows/claude.yml`.** Commands off the list are hard-blocked with nobody present to approve — report the gap, do not retry. Any Bash command containing `$` variable expansion is refused before it runs. `npm run build` is NOT available on the runner; the branch deploy and CI checks are the build verification.
+- **Reports go on the thread.** The completion report and reflection answers (including SCOPE DISCLOSURE) are posted as an issue or PR comment after the inbox file is pushed — that thread is how Claude Web and Matt see your work.
 <!-- END FORGEFLOW HOUSE BLOCK -->
