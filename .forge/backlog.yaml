@@ -2,20 +2,43 @@
 # Status vocabulary: ready | blocked | needs-ruling | in_progress | deferred | completed | superseded
 # Migrated from the legacy empty shape at the 2026-09-04 wrap (first wrap on the rendered end protocol).
 prioritized:
-  - id: FF-001
-    name: House block line assumes an installer-pasted ChromaQA section exists
-    priority: P3
-    estimate: 15 min
-    spec_ref: master/claude-md.house-block.master.md
+  - id: FF-007
+    name: convergible-sandbox FIRST render from master v1.1.0 (named by Matt, RULING-012)
+    priority: P1
+    estimate: 1 session
+    spec_ref: master/RENDER_PROCEDURE.md; .forge/rulings.yaml RULING-012
     description: |
-      The chromaqa-fenced house-block line reads "ChromaQA's own section lower in this
-      file is binding." In chromasmith/chromaqa that section is deliberately absent
-      (CLAUDE.md decision 2026-09-03, CQA-042), so the rendered sentence points at nothing.
-      Reword the master line so it holds whether or not the installer section exists,
-      then re-render chromaqa (and saas-starter, whose CLAUDE.md also carries the line).
-      Land inside the next master change, not alone.
-    status: deferred
+      Inspected 2026-09-05 and NOT up to spec: old four-file protocol set with different names
+      (start-protocol-local.yaml, start-protocol-dispatch.yaml, end-protocol-local.yaml,
+      end-protocol-dispatch.yaml), CC-reports/ still at the repo root with no .forge/inbox/,
+      no .forge/repo-rules.yaml, claude.yml is the hand-written 2026-08-29 overlay (PG env,
+      psql, bunx depcheck — KEEP it, do not replace with the generic asset), protection state
+      unreadable through the connector. Order: concurrency question; Matt confirms protection
+      (PR required, approvals OFF, bypass allowed); ONE Claude Code prompt moves CC-reports/ to
+      .forge/inbox/ (git mv, named files) and writes .forge/repo-rules.yaml from the DOC-FOLD-1
+      items in the sandbox handoff; config from the tree (standard, database_access_doc
+      .forge/protocols/database-access.yaml, repo_rules_doc .forge/repo-rules.yaml,
+      artifact_register true, vercel true, supabase true); render, push six files, DELETE the
+      four old protocol files, prove bypass, registry row last.
+    status: ready
     blocked_by: null
+  - id: FF-006
+    name: v1.1.0 rollout — remaining re-renders (synclips-platform, chromasync, dv-captain)
+    priority: P1
+    estimate: 3 renders
+    spec_ref: master/RENDER_PROCEDURE.md step 0b; master/PROPAGATION_PROCEDURE.md
+    description: |
+      Secret CLAUDE_CODE_OAUTH_TOKEN already set on all three (2026-09-05). Each still needs:
+      Matt pastes master/assets/claude.yml via the web editor (blob must equal 4cccfbf),
+      Matt turns on classic branch protection on main (PR required, approvals OFF, bypass
+      allowed), then Claude Web renders from the repo's CURRENT protocol-config.yaml knobs
+      (synclips-platform: four monorepo overrides; chromasync: set build.python_interpreter;
+      dv-captain: alternate machines, mixed line endings), pushes six files one per call with
+      blob-SHA proof, proves bypass, updates the registry row. Order after FF-007 is Claude
+      Web's choice (RULING-012). Closing FF-006 also closes FF-003 and FF-004.
+    status: in_progress
+    blocked_by: "FF-007 first (RULING-012 order)"
+in_progress:
   - id: FF-003
     name: Python validation knob that does not assume a .venv (and a two-language knob)
     priority: P2
@@ -31,8 +54,8 @@ prioritized:
       the detected npm-build. Add an interpreter knob (or a py-compile variant that names
       the interpreter from config), reword S-083 to "no per-task validation step is
       configured", then re-render dv-captain and chromasync inside the next master change.
-    status: deferred
-    blocked_by: null
+    status: in_progress
+    blocked_by: "master half landed in v1.1.0 (b421783: build.python_interpreter knob, S-083 reworded); closes when chromasync and dv-captain are re-rendered (FF-006)"
   - id: FF-004
     name: ChromaQA debt read assumes committed telemetry; v6.1 repos gitignore .chromaqa/
     priority: P3
@@ -45,10 +68,39 @@ prioritized:
       make S-014 say plainly that a gitignored .chromaqa/ means the debt read is not
       available on GitHub (and where to read it instead), or add a knob for the telemetry
       location. Land inside the next master change; re-render chromasync after.
-    status: deferred
-    blocked_by: null
-in_progress: []
-completed:
+    status: in_progress
+    blocked_by: "master half landed in v1.1.0 (b421783: S-014/E-036/E-040 gitignored-telemetry wording); closes when chromasync is re-rendered (FF-006)"
+
+completed:  # evidence per item: b421783, 67031b3, c729db2
+  - id: FF-005
+    name: Master v1.1.0 defect repair (FFD-001..004, QC-5, QC-6)
+    priority: P0
+    spec_ref: master/CHANGELOG.yaml v1.1.0; .forge/rulings.yaml RULING-009..011
+    description: |
+      All four confirmed defects repaired in one master change: dispatch harness as a master
+      asset with dispatch ON by default and a loud off-notice (S-092), role boundary redrawn
+      around risk (S-006/S-007, RULING-010), start gate S-091 + capability line, W-004
+      working-method offer rule; QC-5 allowed_tools read from the workflow file; QC-6 branch
+      protection reframed (S-072, E-002 fallback, RULING-011). Code half 38af6dc + 43146f8,
+      text half b421783, procedures ab19c0e + a2d0b4f; tests 47/47.
+    status: completed  # b421783
+    completed_at: 2026-09-05
+    evidence: b421783
+  - id: FF-001
+    name: House block line assumes an installer-pasted ChromaQA section exists
+    priority: P3
+    estimate: 15 min
+    spec_ref: master/claude-md.house-block.master.md
+    description: |
+      The chromaqa-fenced house-block line reads "ChromaQA's own section lower in this
+      file is binding." In chromasmith/chromaqa that section is deliberately absent
+      (CLAUDE.md decision 2026-09-03, CQA-042), so the rendered sentence points at nothing.
+      Reword the master line so it holds whether or not the installer section exists,
+      then re-render chromaqa (and saas-starter, whose CLAUDE.md also carries the line).
+      Land inside the next master change, not alone.
+    status: completed  # 67031b3
+    completed_at: 2026-09-05
+    evidence: 67031b3 (chromaqa CLAUDE.md re-rendered with the corrected line); b742dd2 (saas-starter)
   - id: FF-002
     name: saas-starter re-render once SEO/GEO is installed there
     priority: P2
