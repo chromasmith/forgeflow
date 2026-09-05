@@ -31,12 +31,15 @@ The version to propagate is the top entry of `master/CHANGELOG.yaml`. It is alre
 registry still names the OLD version for every row — that is correct until step 5.
 
 ## 2b. Install the dispatch harness in each repo BEFORE its render (v1.1.0, RULING-009/011)
-A propagation whose repos re-render without a harness reproduces the v1.0.0 defect with a louder
-header. For each repo, run RENDER_PROCEDURE.md step 0b — workflow file (Matt, web editor, complete
-content of `master/assets/claude.yml`), `CLAUDE_CODE_OAUTH_TOKEN` secret (one Claude Code prompt with
-`op read` + `gh secret set` across all named repos is preferred), branch protection with administrators
-bypassing — and confirm the workflow blob landed before rendering. A repo Matt declares dispatch-off by
-choice gets `execution.dispatch.enabled: false` in its config with the reason, and skips this step.
+A propagation whose repos re-render without a harness reproduces the v1.0.0 defect with a louder header. For each
+repo, run RENDER_PROCEDURE.md step 0b — workflow file (Matt, web editor, complete content of `master/assets/claude.yml`,
+blob SHA confirmed), the secret (ONE command per repo inside a Claude Code prompt, read from 1Password
+`op://Chromasmith Keys/CLAUDE_CODE_OAUTH_TOKEN/credential`, never displayed — several repos per prompt is fine),
+branch protection with administrators bypassing — and confirm the workflow blob landed before rendering. A repo Matt
+declares dispatch-off by choice gets `execution.dispatch.enabled: false` in its config with the reason, and skips this
+step. STATUS 2026-09-05: the secret is ALREADY SET on all seven v1.0.0 repos (seogeo, chromasmith-saas-starter,
+forgeflow, chromaqa, synclips-platform, chromasync, dv-captain — verified by `gh secret list`); each still needs its
+workflow file and protection before its re-render.
 
 ## 3. Render every registered repo
 For each row of `master/registered-repos.yaml` whose `state` is `current`, run RENDER_PROCEDURE.md
