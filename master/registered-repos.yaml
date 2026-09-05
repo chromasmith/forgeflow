@@ -93,26 +93,31 @@ repos:
   - repo: chromasmith/chromaqa
     config: .forge/protocol-config.yaml
     profile: docs-only
-    master_version: "v1.0.0"
-    rendered_on: 2026-09-04
-    config_hash: c75a6cf4048f9433cb9af4a18769655a2311c614d35e3f75ff7669e3821bd5a1
+    master_version: "v1.1.0"
+    rendered_on: 2026-09-05
+    config_hash: 7f47dc5a2a20d450ab93d8b98719302a7312e03bcdcf1622b260e512ede892cb
     state: current
     files:
       - .forge/protocols/start-protocol.yaml
+      - .forge/protocols/start-protocol.dispatch.yaml
       - .forge/protocols/end-protocol.yaml
+      - .forge/protocols/end-protocol.dispatch.yaml
       - .forge/protocol-config.yaml
       - CLAUDE.md
-    landed: "commits 2d9980e (config), ac7faac (start), de3f45f (end), 8f52dc8 (CLAUDE.md), all 2026-09-04; blob SHAs equal; render.py check OK from a fresh forgeflow clone"
+    landed: "v1.1.0 re-render 2026-09-05: commits 3fb7e4f (config), ab9364b (end.dispatch NEW), 67031b3 (CLAUDE.md), b9152c4 (start.dispatch NEW), a868ed2 (end), 9263d5b (start); blob SHAs equal to the sandbox output. Previous v1.0.0 render: 2d9980e / ac7faac / de3f45f / 8f52dc8 (2026-09-04)"
     notes: >-
-      Fourth repo rendered (Matt named it 2026-09-04, RULING-005). The ChromaQA tool's own
-      repo, which RUNS ChromaQA ON ITSELF (quality-gate.yml, live .chromaqa/ telemetry) — so
-      subsystems.chromaqa is detected TRUE and deliberately NOT overridden; RULING-006 withdrew
-      the RULING-002 "override to false" clause. Private repo: detection ran on a tree skeleton
-      rebuilt from the GitHub listing. Detected: single-app, no build (bash script + docs),
-      ci_quality_gate, chromaqa; supabase/vercel/seogeo/ui_inventory off; dispatch off.
-      north_star_doc = .forge/plans/chromaqa-modernization-plan.yaml (BRIEF.yaml is superseded),
-      backlog prefix CQA-. House block APPENDED to CLAUDE.md (no markers). Its legacy backlog
-      shape migrates at the repo's first wrap on the rendered protocol, not at the render.
+      Fourth repo rendered (RULING-005/006) — the ChromaQA tool's own repo, which RUNS ChromaQA
+      ON ITSELF, so subsystems.chromaqa is detected TRUE and not overridden. SECOND repo
+      re-rendered from v1.1.0 with the full harness: claude.yml installed by Matt via the web
+      editor (blob 4cccfbf = master/assets/claude.yml), CLAUDE_CODE_OAUTH_TOKEN set from
+      1Password, branch protection on main with admin bypass (RULING-011). Private repo:
+      detection ran on a tree skeleton rebuilt from the GitHub listing, carrying the REAL
+      claude.yml and CLAUDE.md (blob SHAs matched before render). Detected: single-app, no
+      build (bash script + docs), ci_quality_gate, chromaqa, dispatch=on with allowed_tools
+      read from the workflow; supabase/vercel/seogeo/ui_inventory off. The house-block ChromaQA
+      line now reads correctly for a repo with no installer section (FF-001 closed here).
+      north_star_doc = .forge/plans/chromaqa-modernization-plan.yaml, backlog prefix CQA-.
+      Its legacy backlog shape migrates at the repo's first wrap on the rendered protocol.
   - repo: chromasmith/synclips-platform
     config: .forge/protocol-config.yaml
     profile: standard
