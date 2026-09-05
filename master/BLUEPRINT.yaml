@@ -15,9 +15,25 @@
 
 meta:
   name: ForgeFlow Master
-  version: "1.4-blueprint"
-  date: 2026-09-04
+  version: "1.5-blueprint"
+  date: 2026-09-05
   revision_history:
+    - version: "1.5"
+      note: >
+        DEFECT REPAIR (master v1.1.0, RULING-009/010/011). The v1.0.0 rollout shipped every
+        repo dispatch-OFF because dispatch defaulted false in every profile and the harness
+        (claude.yml) was never installed anywhere but convergible-sandbox; nothing said so.
+        Now: dispatch defaults ON (Matt's switch), the harness is a SHIPPED MASTER ASSET
+        (master/assets/claude.yml) with install as a named rollout step, the renderer turns
+        dispatch off only for a missing harness or an explicit override and shouts the reason
+        in the header, S-092 and the CLAUDE.md house block; allowed_tools is read from the
+        workflow (the schema's promise, now implemented); branch protection guards main
+        against runners with administrators bypassing (not the dispatch switch — RULING-011).
+        Role boundary redrawn around RISK, not folder (S-006/S-007, RULING-010). Start
+        protocol made unskippable (S-091 session start gate, capability line reserved in the
+        summary, re-entry rule). W-004: never offer a way of working the repo cannot do.
+        FF-001 (house-block ChromaQA line), FF-003 (python_interpreter + secondary_validation
+        knobs; S-083 reworded), FF-004 (gitignored .chromaqa/ debt read) folded in.
     - version: "1.0"
       note: Initial design from the planning session.
     - version: "1.1"
@@ -455,9 +471,9 @@ protocol_config_schema:
       north_star_doc: ".forge/specs/convergible-2.5-vision.yaml"
     # --- effective values (written by render.py, do not edit) ---
   profiles:
-    standard:     { mirror.github_is_complete_mirror: true,  build.validation: npm-build, execution.local: true, execution.dispatch.enabled: false }
-    legacy-local: { mirror.github_is_complete_mirror: false, build.validation: py-compile, execution.local: true, execution.dispatch.enabled: false }
-    docs-only:    { mirror.github_is_complete_mirror: true,  build.validation: none,      execution.local: true, execution.dispatch.enabled: false }
+    standard:     { mirror.github_is_complete_mirror: true,  build.validation: npm-build, execution.local: true, execution.dispatch.enabled: true }   # v1.5: ON by default (RULING-009)
+    legacy-local: { mirror.github_is_complete_mirror: false, build.validation: py-compile, execution.local: true, execution.dispatch.enabled: false }  # structurally off: not a complete mirror
+    docs-only:    { mirror.github_is_complete_mirror: true,  build.validation: none,      execution.local: true, execution.dispatch.enabled: true }   # v1.5: ON by default (RULING-009)
   fields:
     protocol:
       master_version: { type: string, set_by: renderer, example: "v1.0" }
@@ -518,17 +534,24 @@ protocol_config_schema:
     execution:
       local:    { type: boolean, default: true }
       dispatch:
-        enabled:   { type: boolean, declared: true, default: false }
-        requires:  [".github/workflows/claude.yml", "CLAUDE_CODE_OAUTH_TOKEN secret", "branch protection on main", "artifact register", "mirror.github_is_complete_mirror: true"]
+        enabled:   { type: boolean, declared: true, default: true }        # v1.5 (RULING-009): Matt's switch, ON by default
+        harness_installed: { type: boolean, detected: true, default: false }  # .github/workflows/claude.yml present in the tree
+        off_reason: { type: enum, values: [harness-not-installed, declared-off], set_by: renderer }
+        allowed_tools: { type: list, detected: true, default: "the list in master/assets/claude.yml" }  # read from the workflow at render
+        requires:  [".github/workflows/claude.yml (master/assets/claude.yml, Matt installs via web editor)", "CLAUDE_CODE_OAUTH_TOKEN repo Actions secret", "mirror.github_is_complete_mirror: true", "branch protection with administrators bypassing (RULING-011) — recommended, not a render precondition"]
         note: >
-          The renderer refuses dispatch: true when any requirement is absent and
-          says which one, so Matt knows the one-time install step still owed.
+          v1.5: the harness is a SHIPPED ASSET, not a detected precondition. A missing
+          harness turns dispatch off LOUDLY (header shout, S-092, house-block line,
+          capability line of every summary) — never silently and never as a hard fail.
+          A declared allowed_tools that differs from the workflow is a hard fail: the
+          workflow is the source. Dispatch on a non-complete-mirror repo is still refused.
       max_parallel: { type: integer, default: 3 }
     subsystems:            # each: detected + overridable
       supabase:        { detected_by: "supabase/ directory" }
       vercel:          { detected_by: ".vercel/project.json or vercel.json" }
       ci_quality_gate: { detected_by: ".github/workflows/*.yml naming a quality gate" }
-      chromaqa:        { detected_by: ".chromaqa/ directory", debt_threshold: 25 }
+      chromaqa:        { detected_by: "chromaqa-check.sh at the repo root OR .chromaqa/ directory (7.0: a fresh install may have no .chromaqa/ on GitHub yet)", debt_threshold: 25 }
+      seogeo:          { detected_by: ".seogeo/config.json (the tool's own installed test)" }
       ui_inventory:    { detected_by: ".forge/specs/ui-inventory.yaml" }
       artifact_register: { detected_by: ".forge/protocols/artifact-register.yaml" }
       database_access_doc: { declared: true, example: ".forge/protocols/database-access.yaml" }

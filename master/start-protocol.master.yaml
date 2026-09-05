@@ -21,6 +21,9 @@
 #   S-087 chromaqa_push_gate_rule       S-088 reading_ci_chromaqa
 # ADDED v0.3.0-build (SEO/GEO master change, 2026-09-04):
 #   S-089 seogeo_standard_pointer       S-090 chromaqa_profile_generated_by_seogeo
+# ADDED v1.1.0 (defect-repair master change, 2026-09-05, RULING-009):
+#   S-091 session_start_gate (FFD-003)    W-004 working_method_offer_rule (FFD-004)
+#   S-092 dispatch_unavailable_notice (FFD-001; off_reason set by the renderer)
 # Reader deviation from the index: S-049 (human gates) is cw+cc-local, not all —
 # P7 says a cold runner must not read typed-confirmation banners it cannot run.
 #
@@ -47,6 +50,70 @@ standalone_rule: |
   repo declares them, the database-access doc and the repo-rules doc). The
   companion wrap protocol is named in the header.
 # <<< end S-001
+
+# >>> block S-091 | session_start_gate | reader: cw | render_when: always
+session_start_gate: |
+  THE START PROTOCOL IS MANDATORY AND UNSKIPPABLE. Read this before anything
+  else in this file. A Claude Web session on this repo may not answer any task
+  question, propose any plan, offer any way of working, write any prompt, or
+  push any file until it has (1) read .forge/protocol-config.yaml and this
+  whole file, (2) done the reads this file names in the order it names them,
+  and (3) posted the Session Context Summary with the compliance canary count
+  on its first line. The handoff alone is NOT the protocol; a session that read
+  only the handoff has not started. No exception for a small task, a repeat
+  visit, a repo Claude Web believes it knows, or a session that resumes an
+  earlier chat — every session starts cold from the repo.
+
+  THE CAPABILITY LINE. The summary's second line is reserved and states, from
+  the knobs header at the top of this file and never from memory: which ways
+  of working this repo supports right now (Claude Web direct edits within the
+  role boundary; a pasted Claude Code prompt; dispatch — and when dispatch is
+  off, WHY: harness not installed, or turned off by Matt), the role boundary
+  in one clause, and the repo's build and deploy shape. Matt reads this line
+  to know what he can ask for; a way of working the repo cannot do is not
+  mentioned as available.
+
+  RE-ENTRY RULE. If a session realises at ANY point that it did not run this
+  protocol — it went straight to work from the handoff, from memory, or from
+  Matt's opening message — it STOPS the task mid-sentence, says in one plain
+  line "I did not run the start protocol; running it now", performs the full
+  start, posts the summary, and only then resumes. No quiet catch-up, no
+  reading the protocol "as we go", no finishing the current step first.
+
+  MATT'S TELL. The canary count on the first line of the first reply is the
+  visible proof that the protocol ran. If it is missing, the session did not
+  start properly; "start protocol" from Matt is a complete instruction and is
+  obeyed before any other reply.
+# <<< end S-091
+
+# >>> block S-092 | dispatch_unavailable_notice | reader: cw | render_when: execution.dispatch.off_reason == harness-not-installed
+dispatch_unavailable_notice: |
+  DISPATCH IS OFF IN THIS REPO BECAUSE THE HARNESS IS NOT INSTALLED. This is a
+  missing capability, not a choice, and the master says so out loud: Matt's
+  standing requirement is that all three ways of working — Claude Web direct
+  edits within the role boundary, a pasted Claude Code prompt, and dispatch to
+  a GitHub runner (including parallel runs) — are available at his discretion
+  in every repo. Until the harness lands, only the first two are available here,
+  and the capability line of every Session Context Summary says exactly that:
+  "dispatch OFF — harness not installed".
+
+  What installing it means, in plain terms (a rollout step, not a build task;
+  Matt does the first two himself, one at a time, with Claude Web handing him
+  each link and the complete file content):
+    1. Matt creates .github/workflows/claude.yml in this repo via the GitHub
+       web editor, with the content of forgeflow master/assets/claude.yml
+       (Claude Web's connector cannot write workflow files).
+    2. Matt adds the CLAUDE_CODE_OAUTH_TOKEN repo Actions secret (or a Claude
+       Code prompt sets it from 1Password with the gh CLI so he never handles
+       the token). The token is NEVER committed into the repo.
+    3. Branch protection on the default branch is turned on with administrators
+       bypassing it (RULING-011) — it guards main against runners, not against
+       Matt or Claude Web.
+    4. Claude Web re-renders this repo from the master; the dispatch blocks
+       come in and this notice goes away.
+  Claude Web never proposes dispatch, dispatches, or drafts an issue body in
+  this repo while this notice is present.
+# <<< end S-092
 
 # >>> block S-002 | mode_selection_local_vs_dispatch | reader: cw | render_when: execution.dispatch.enabled
 mode_selection: |
@@ -139,18 +206,37 @@ claude_web_role_boundary: |
   judge code. Claude Code (CC) executes tasks with minimal context and reports
   friction.
 
-  Claude Web is NOT the builder. It reads the repo for reconnaissance — to
-  understand the codebase well enough to write a precise prompt. Claude Web
-  never edits repo APPLICATION files. Not on disk, not in its sandbox, not
-  even temporarily to verify that a fix would work. A sandbox edit reaches no
-  one and dies with the session; it is a dead end that LOOKS like progress,
-  which is worse than doing nothing. Claude Web's deliverable for application
-  work is a prompt. If sandbox experimentation would help CW understand a
-  problem, the only legitimate output of that experimentation is a better
-  prompt.
+  Claude Web is NOT the builder. The reason is verification, not ceremony:
+  Claude Web cannot run a build, a type-check or a test, so it must never
+  touch anything whose breakage a build would catch. It reads the repo for
+  reconnaissance — to understand the codebase well enough to write a precise
+  prompt — and its deliverable for BUILT work is a prompt. Not on disk, not in
+  its sandbox, not even temporarily to verify that a fix would work: a sandbox
+  edit reaches no one and dies with the session; it is a dead end that LOOKS
+  like progress, which is worse than doing nothing. If sandbox experimentation
+  would help CW understand a problem, the only legitimate output of that
+  experimentation is a better prompt.
 
-  THE TELL: reaching for a file-write on a repo application path. If CW finds
-  itself about to run any edit or write against an application file, that
+  THE BOUNDARY IS DRAWN AROUND RISK, NOT FOLDER (RULING-010). Claude Web may
+  edit a repo file directly through its GitHub connector only when ALL of
+  these hold:
+    - the file is not compiled, imported, executed or type-checked by the
+      build (no .ts/.tsx/.js/.jsx/.py/.mjs source, no styles the build
+      bundles, no schema or migration);
+    - it is not a dependency manifest or lockfile (package.json, lockfiles,
+      requirements, pyproject);
+    - it is not under .github/workflows/ (Matt-only, always);
+    - it holds no credentials or identity material (the never-touch paths);
+    - it is not a rendered protocol file under .forge/protocols/ (master-only);
+    - the change is a single spot, not a restructure.
+  This permits README, LICENSE, docs, the .forge/ documentation layer,
+  comment-only edits, and copy or link fixes in files the build does not
+  compile. A copy-only change inside a compiled file — a footer href in a
+  .tsx — is STILL prompt-only: the file is compiled, and the bright line is
+  worth more than the convenience. Anything that fails one test is a prompt.
+
+  THE TELL: reaching for a file-write on a path that fails the test above. If
+  CW finds itself about to run any edit or write against such a file, that
   action IS the symptom of role confusion. STOP, do not make the edit, and
   convert the intended change into prompt instructions. Diligence makes this
   slip MORE likely, not less: a focused, hard-working session slides from
@@ -159,15 +245,17 @@ claude_web_role_boundary: |
 
 # >>> block S-007 | documentation_layer_direct_write | reader: cw | render_when: always
 documentation_layer_direct_write: |
-  The role boundary covers APPLICATION code. With a live GitHub connector,
-  Claude Web writes the .forge/ DOCUMENTATION layer directly: the wrap's
-  .forge/ files (Claude Web pushes them itself as one docs commit or PR),
-  rulings appended when made, and small one-spot .forge edits when the prompt
-  ceremony is not worth it. Application code, migrations, config and workflows
-  remain prompt-only, always. Protocol files under .forge/protocols/ are never
-  hand-edited in any repo: they are rendered from the master, and a bug found
-  in one is a master bug. Claude Code remains the main build flow; direct
-  edits are the outlier, not the norm.
+  With a live GitHub connector, Claude Web writes directly, within the risk
+  test above: the wrap's .forge/ files (Claude Web pushes them itself as one
+  docs commit or PR), rulings appended when made, and one-spot fixes — a
+  misspelling, a stale sentence, a broken link in a document the build never
+  compiles — when the prompt ceremony is not worth it. Compiled source,
+  manifests, lockfiles, migrations, workflows and secrets remain prompt-only,
+  always. Protocol files under .forge/protocols/ are never hand-edited in any
+  repo: they are rendered from the master, and a bug found in one is a master
+  bug. Claude Code remains the main build flow; direct edits are the outlier,
+  not the norm, and every direct edit is a single-file commit on current HEAD
+  that Claude Web names in plain words as it makes it.
 # <<< end S-007
 
 # >>> block S-008 | concurrency_rule | reader: cw | render_when: always
@@ -256,10 +344,14 @@ north_star_doc_read: |
 # >>> block S-012 | session_context_summary | reader: cw | render_when: always
 session_context_summary: |
   After the reads, give Matt a Session Context Summary with a HARD CEILING of
-  EIGHT lines. Two lines are RESERVED and no check may displace them: the ONE
-  first_thing, and a one-sentence overall project position (where the project
+  EIGHT lines. Three lines are RESERVED and no check may displace them: the
+  ONE first_thing; a one-sentence overall project position (where the project
   stands, not where the last session stopped — a finished session must never
-  read as a finished project). Line one is the handoff staleness result.
+  read as a finished project); and the CAPABILITY LINE (the ways of working
+  this repo supports right now, with the reason when dispatch is off — see the
+  session start gate near the top of this file). Line one is the handoff
+  staleness result carrying the compliance canary count; line two is the
+  capability line.
 
   The remaining lines are competed for by checks that only produce a line when
   they have something to say — silence is the pass state: protocol_drift,
@@ -292,7 +384,12 @@ chromaqa_debt_check: |
   .chromaqa/CQA-debt.jsonl from GitHub and count its lines. If the count
   exceeds {{thresholds.chromaqa_debt_alert}}, alert Matt in one plain line and
   wait for his decision before saying "Ready for tasks." At or under the
-  threshold, say nothing. A debt line whose message begins "BROKEN GATE:" is a
+  threshold, say nothing. IF THE FILE IS NOT ON GITHUB — ChromaQA v6.1 repos
+  gitignore .chromaqa/ entirely — the debt read is NOT AVAILABLE here, and the
+  summary says so in those words ("ChromaQA debt: not on GitHub for this
+  repo"); never report the debt as zero, and never treat the absence as a
+  broken gate. The debt for such a repo is read only from the local machine
+  (a Claude Code prompt can print the line count) or from the CI job log. A debt line whose message begins "BROKEN GATE:" is a
   check that could not run, not a finding about the code — name it separately
   if any exist.
 
@@ -1085,27 +1182,36 @@ validation_step: |
   proceeding to Step 2. Do NOT commit broken code.
   NOTE: "Compiled successfully" prints BEFORE the type-check runs — never
   grep-filter the build output and conclude success from that line.
+  Secondary validation bar for this repo, when one is declared:
+  {{build.secondary_validation}}.
 # <<< end S-081
 
 # >>> block S-082 | validation_step_py_compile | reader: cc-local | render_when: execution.local and build.validation == py-compile
 validation_step: |
   Step 1 — Validation (run BEFORE committing):
 
-  Run the project's virtual-environment interpreter (.venv\Scripts\python.exe,
-  never system python) with -m py_compile on every changed .py file, then an
-  import check of each changed module. Expected: no errors. Fix all errors
-  before proceeding to Step 2. A compile pass proves syntax, not behavior;
-  where this repo has more than one surface, the surface's own validation
-  bar applies as well.
+  Run this repo's interpreter, {{build.python_interpreter}}, with -m py_compile
+  on every changed .py file, then an import check of each changed module with
+  the same interpreter. Use exactly that interpreter — it is the one the repo's
+  code actually runs under on this machine; do not substitute another Python
+  because it is on PATH. Expected: no errors. Fix all errors before proceeding
+  to Step 2. A compile pass proves syntax, not behavior; where this repo has
+  more than one surface, the surface's own validation bar applies as well.
+  Secondary validation bar for this repo, when one is declared:
+  {{build.secondary_validation}}.
 # <<< end S-082
 
 # >>> block S-083 | validation_step_none | reader: cc-local | render_when: execution.local and build.validation == none
 validation_step: |
   Step 1 — Validation (run BEFORE committing):
 
-  This repo has no build or interpreter step. Docs and YAML tasks validate by
-  manual structural review — indentation, block scalars, no stray colon-space
-  inside a plain scalar — and the report says so in one line.
+  No per-task validation step is configured for this repo (build.validation:
+  none). That is a statement about the config, not a claim that nothing here
+  runs: if the task touched code, the prompt names its own check (an
+  interpreter compile, a script's dry run) and the interpreter to use. Docs
+  and YAML tasks validate by manual structural review — indentation, block
+  scalars, no stray colon-space inside a plain scalar — and the report says
+  so in one line.
 # <<< end S-083
 
 # >>> block S-084 | deploy_steps_vercel | reader: cc-local | render_when: execution.local and build.deploy == vercel
@@ -1642,12 +1748,20 @@ reading_ci_chromaqa: |
 
 # >>> block S-072 | rollback_branch_protection | reader: cw | render_when: execution.dispatch.enabled
 rollback_branch_protection: |
-  Branch protection on {{repo.default_branch}} is the pipeline's switch.
-  Toggling it off restores the local workflow instantly; staged pipeline files
-  are inert. Mid-task failure: flip it off, finish the task the local way,
-  debug later. This is also the escape hatch when a task turns out to need a
-  build, a database write, or an ordering guarantee the pipeline cannot give.
-  Switching modes mid-session is normal and costs nothing.
+  BRANCH PROTECTION GUARDS MAIN AGAINST RUNNERS, NOTHING ELSE (RULING-011).
+  It is not the dispatch switch and not a mode: dispatch is on because the
+  harness is installed, and protection on {{repo.default_branch}} stays ON
+  with administrators bypassing it, so Matt's local Claude Code pushes and
+  Claude Web's connector pushes (both act as Matt, the owner) land on main
+  exactly as in a repo without dispatch, while a runner's token cannot push
+  main and must go through a PR that Claude Web opens and Matt approves. If a
+  direct docs push is ever rejected by protection, "include administrators"
+  has been ticked: tell Matt in one line, deliver the same content as a PR,
+  and have him untick it. FALLING BACK TO LOCAL costs nothing and needs no
+  settings change: a task that turns out to need a build, a database write or
+  an ordering guarantee the pipeline cannot give is simply written as a local
+  prompt instead; staged pipeline files are inert. Switching modes mid-session
+  is normal.
 # <<< end S-072
 
 # >>> block S-073 | issue_body_template | reader: cw+cc-dispatch | render_when: execution.dispatch.enabled
@@ -1773,6 +1887,23 @@ claude_web_communication_rules: |
     work; an install is a session Matt initiates by name.
 # <<< end W-001
 
+# >>> block W-004 | working_method_offer_rule | reader: cw | render_when: always
+working_method_offer_rule: |
+  NEVER OFFER A WAY OF WORKING THIS REPO CANNOT DO. Before Claude Web puts any
+  choice of working method to Matt — direct edit, pasted Claude Code prompt,
+  dispatch, parallel dispatch — it first establishes which of them THIS repo
+  supports right now, from this file's knobs header and the role boundary,
+  never from memory or from how another repo works. A method the protocol
+  forbids, or that the repo is not equipped for (dispatch with no harness, a
+  build step on a runner, a database write in dispatch), is not presented as
+  an option — not even to be dismissed, not even with a caveat. If exactly one
+  method fits the task there is no choice to offer: state it in one clause and
+  proceed. If more than one fits, W-001 still applies: ONE recommendation,
+  with the reason, not a menu. A round Matt spends choosing between options
+  that were never real is the most expensive kind of wasted turn, because it
+  looks like progress to both sides.
+# <<< end W-004
+
 # >>> block W-002 | rulings_written_when_made | reader: cw | render_when: always
 rulings_written_when_made: |
   RULINGS ARE WRITTEN WHEN MADE, NOT AT WRAP. The moment Matt rules on
@@ -1802,7 +1933,9 @@ precedence_rule: |
 # >>> block S-075 | compliance_canary | reader: all | render_when: always
 compliance_canary: |
   COMPLIANCE CANARY. This is the last section of the protocol, and it is the
-  cheap proof that the tail was read. Claude Web: append " · protocol N blocks"
+  cheap proof that the tail was read. It proves nothing about a session that
+  never produced a summary at all; that case is the session start gate's job
+  near the top of this file. Claude Web: append " · protocol N blocks"
   to the FIRST line of the Session Context Summary, where N is the included
   count in this file's BLOCK MANIFEST header. Claude Code on a runner: the
   first line of your first comment states "protocol N blocks read" with the

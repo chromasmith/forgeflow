@@ -1,0 +1,92 @@
+run_id: FF-V110-MASTER
+date: 2026-09-05
+repo: chromasmith/forgeflow
+commit: see push report
+
+reflections:
+  q1: >-
+    The prompt was close to ideal for a patch-landing run: a byte-exact blob-SHA
+    table turns "did it apply correctly?" into a yes/no check with no judgement
+    required, and the scratch files were deliberately placed outside the repo so
+    the scope audit stays clean. Three things would have made it better.
+    First, the repo did not exist locally at C:\Chromasmith\forgeflow, so the
+    PRE-REFRESH SAFETY CHECK ran against a repo that had just been cloned; the
+    prompt should say explicitly that on a fresh clone the safety check is
+    trivially satisfied and is not a signal of anything, so a future session does
+    not pause to wonder whether a clean clone counts as "checked".
+    Second, the prompt gave the Windows CMD form of the clone/mkdir commands
+    ("if not exist ... mkdir"), but this box's Claude Code sessions run through
+    Git Bash and PowerShell; the CMD syntax is not valid in either. Giving the
+    commands in the shell the session actually uses, or stating them as intent
+    rather than literal syntax, removes a translation step.
+    Third, the render command in Step 1 writes to C:\Chromasmith\ff-v110-out and
+    the prompt names that folder in the reflection question, but it is not listed
+    alongside the two scratch files in the "SCRATCH files written OUTSIDE the
+    repo" section. Listing all three together would make the cleanup obligation
+    obvious in one place.
+  q2: >-
+    Yes, several things worth carrying forward.
+    (1) forgeflow's master v1.1.0 was deliberately landed in two halves because
+    the Claude Web GitHub connector could not push files this large in one call.
+    The first half (render.py, schema, profiles, harness asset, tests) landed at
+    38af6dc, and 38af6dc shipped a render.py whose backslashes had been doubled
+    by push_files JSON escaping; 43146f8 is the repair. A future session that
+    finds a renderer behaving strangely at 38af6dc should look for escaping
+    damage, not logic bugs.
+    (2) The repository has no .github/workflows/claude.yml, so the renderer
+    correctly prints "DISPATCH OFF - harness not installed" on stderr. That line
+    is EXPECTED here and is not a failure. A session that treats it as an error
+    will waste time chasing a non-problem.
+    (3) Landing the master does NOT update any rendered repo. .forge/protocols/
+    in this repo and in every downstream repo still carries v1.0.0 text until a
+    separate render and propagation run happens. Anyone reading the new master
+    and then checking a rendered protocol file will see a mismatch that is
+    correct and expected at this point in the rollout.
+    (4) The render step needs an explicit --out directory outside the repo; if it
+    is pointed anywhere inside the working tree it will create untracked files
+    that fail the scope audit.
+  scope_disclosure: >-
+    No. Every file created or modified inside the repository was on the
+    AUTHORIZED FILES list: the seven master files modified by the patch, and this
+    inbox file created at the exact path the prompt named. No unauthorized file
+    was modified, created, or deleted, and no off-limits path was touched -
+    .forge/protocols/, .forge/rulings.yaml, .forge/handoff.yaml,
+    .forge/session-state.yaml, .forge/backlog.yaml, .forge/GOTCHAS.yaml,
+    master/render.py, master/profiles/, master/tests/ and .github/workflows/ were
+    all left exactly as they came from origin/main.
+    Outside the repository tree, three temporary paths were written and then
+    removed, all of them anticipated by the prompt: C:\Chromasmith\ff-v110.b64
+    and C:\Chromasmith\ff-v110.patch (the encoded payload and the decoded patch),
+    deleted before the scope audit; and C:\Chromasmith\ff-v110-out (the render
+    verification output), deleted after the render check. Nothing was written to
+    agent memory or to any store outside this repository.
+  artifact_paths: >-
+    No. Every file written was at a path this prompt named explicitly:
+    C:\Chromasmith\ff-v110.b64, C:\Chromasmith\ff-v110.patch,
+    C:\Chromasmith\ff-v110-out (named in the Step 1 render command), the seven
+    master files named in AUTHORIZED FILES, and
+    .forge/inbox/FF-V110-MASTER.yaml. No path was chosen by the session.
+
+gotcha_candidates:
+  - id_hint: forgeflow-render-dispatch-off-is-normal
+    summary: >-
+      Running master/render.py in chromasmith/forgeflow prints
+      "DISPATCH OFF - harness not installed" on stderr. This is correct, not a
+      failure: the repo has no .github/workflows/claude.yml. Expect it, and do
+      not go looking for a broken renderer.
+  - id_hint: forgeflow-master-two-half-landing
+    summary: >-
+      master v1.1.0 was landed in two commits because Claude Web's GitHub
+      connector cannot push files of this size in one call. Half one is the
+      renderer and tests; half two is the masters, house block, blueprint,
+      changelog and procedures, delivered as a gzip+base64 patch and verified by
+      blob SHA before commit. If a future half-landing is needed, the blob-SHA
+      table is the verification mechanism that made it safe.
+  - id_hint: forgeflow-master-landed-does-not-mean-rendered
+    summary: >-
+      Landing changes in master/ updates nothing that any repo actually reads.
+      .forge/protocols/ everywhere still carries the previous version until a
+      render and a propagation run happen. Do not report protocol behaviour as
+      changed on the strength of a master commit alone.
+
+needs_ruling: []

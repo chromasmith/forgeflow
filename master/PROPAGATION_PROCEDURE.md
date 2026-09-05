@@ -5,8 +5,10 @@ delivery_rule) and Board N5. Written so a fresh Claude Web session can execute i
 A render of ONE repo follows RENDER_PROCEDURE.md; this file is for the pass that follows a
 master change and touches EVERY registered repo.
 
-STATUS (2026-09-04): first written at master v1.0.0, when the registry held one repo
-(chromasmith/seogeo). No propagation pass has run yet.
+STATUS (2026-09-05): master v1.1.0 is the first change that MUST propagate — every one of the seven
+v1.0.0 repos in the registry was rendered dispatch-OFF (RULING-009). The v1.1.0 pass is the first
+propagation and it is NOT render-only: each repo gets the harness installed FIRST (step 2b), then
+re-renders. Matt names the order; saas-starter goes LAST (its SEO/GEO install session must be finished).
 
 ## 0. What a propagation is, and is not
 - A propagation is the act of taking every repo in `master/registered-repos.yaml` from the master
@@ -27,6 +29,14 @@ STATUS (2026-09-04): first written at master v1.0.0, when the registry held one 
 ## 2. Bump
 The version to propagate is the top entry of `master/CHANGELOG.yaml`. It is already pushed. The
 registry still names the OLD version for every row — that is correct until step 5.
+
+## 2b. Install the dispatch harness in each repo BEFORE its render (v1.1.0, RULING-009/011)
+A propagation whose repos re-render without a harness reproduces the v1.0.0 defect with a louder
+header. For each repo, run RENDER_PROCEDURE.md step 0b — workflow file (Matt, web editor, complete
+content of `master/assets/claude.yml`), `CLAUDE_CODE_OAUTH_TOKEN` secret (one Claude Code prompt with
+`op read` + `gh secret set` across all named repos is preferred), branch protection with administrators
+bypassing — and confirm the workflow blob landed before rendering. A repo Matt declares dispatch-off by
+choice gets `execution.dispatch.enabled: false` in its config with the reason, and skips this step.
 
 ## 3. Render every registered repo
 For each row of `master/registered-repos.yaml` whose `state` is `current`, run RENDER_PROCEDURE.md

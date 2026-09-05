@@ -17,6 +17,9 @@ These rules are the same in every Chromasmith repo. They are rendered here from 
 <!-- >>> render_when: not execution.dispatch.enabled -->
 - Session protocols live in `.forge/protocols/`: `start-protocol.yaml` and `end-protocol.yaml`, both read by Claude Web. The knobs they were rendered with are in `.forge/protocol-config.yaml`.
 <!-- <<< end render_when -->
+<!-- >>> render_when: execution.dispatch.off_reason == harness-not-installed -->
+- **Dispatch is OFF here because the harness is not installed** (`.github/workflows/claude.yml` absent). Only Claude Web direct edits and pasted Claude Code prompts are available until Matt installs `forgeflow master/assets/claude.yml` + the `CLAUDE_CODE_OAUTH_TOKEN` secret and the protocols are re-rendered. Nobody proposes dispatch in this repo until then.
+<!-- <<< end render_when -->
 <!-- >>> render_when: execution.dispatch.enabled -->
 - Session protocols live in `.forge/protocols/`: `start-protocol.yaml` and `end-protocol.yaml` (read by Claude Web), plus `start-protocol.dispatch.yaml` and `end-protocol.dispatch.yaml` (read by a dispatched runner). The knobs they were rendered with are in `.forge/protocol-config.yaml`.
 <!-- <<< end render_when -->
@@ -30,7 +33,7 @@ These rules are the same in every Chromasmith repo. They are rendered here from 
 - `{{subsystems.repo_rules_doc}}` holds this repo's own standing rules and is binding alongside this file.
 <!-- <<< end render_when -->
 <!-- >>> render_when: subsystems.chromaqa -->
-- This repo runs ChromaQA as a pre-push gate (`./chromaqa-check.sh`, also the `quality-gate` job in CI). ChromaQA's own section lower in this file is binding. Exit 2 (CAPTAIN REVIEW) means STOP: do not push, do not fix it to make it pass, report the finding as printed and wait. Never `--no-verify`; never delete, empty or edit `.chromaqa/profiles.json`. `.chromaqa/CQA-debt.jsonl` and `CQA-showstoppers.jsonl` showing modified right after a push is the gate working, not a scope breach — the wrap commits them.
+- This repo runs ChromaQA as a pre-push gate (`./chromaqa-check.sh`, also the `quality-gate` job in CI). Where this file carries a ChromaQA section installed by the tool, that section is binding too; a repo without one (the ChromaQA tool repo itself) runs on this line alone. Exit 2 (CAPTAIN REVIEW) means STOP: do not push, do not fix it to make it pass, report the finding as printed and wait. Never `--no-verify`; never delete, empty or edit `.chromaqa/profiles.json`. `.chromaqa/CQA-debt.jsonl` and `CQA-showstoppers.jsonl` showing modified right after a push is the gate working, not a scope breach — the wrap commits them.
 <!-- <<< end render_when -->
 <!-- >>> render_when: subsystems.seogeo -->
 - **SEO/GEO:** if `.seogeo/config.json` exists in this repo, read `.seogeo/STANDARD.md` before writing pages. New route groups must be declared in `.seogeo/config.json` in the same session that creates them, or they ship unindexed.

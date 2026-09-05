@@ -2,6 +2,42 @@
 # The top entry's `version` is the master version render.py stamps into every render.
 # Newest first.
 entries:
+  - version: "v1.1.0"
+    date: 2026-09-05
+    status: RELEASED — defect-repair change (RULING-009/010/011); every v1.0.0 repo re-renders from this version on Matt's go
+    changed: >-
+      FFD-001 DISPATCH: v1.0.0 shipped all seven rendered repos dispatch-OFF and silent about it —
+      dispatch defaulted false in every profile and .github/workflows/claude.yml existed only in
+      convergible-sandbox. Now dispatch defaults ON in standard and docs-only (Matt's switch);
+      the harness is a shipped asset (master/assets/claude.yml, generic — Convergible's PG env,
+      psql and bunx entries stripped); NEW knob execution.dispatch.harness_installed (detected
+      from the tree); NEW renderer-set execution.dispatch.off_reason (harness-not-installed |
+      declared-off); the renderer no longer fails on a missing harness — it turns dispatch off
+      and SHOUTS (header banner, knobs line dispatch=OFF(reason), NEW block S-092
+      dispatch_unavailable_notice, house-block line) so a rendered protocol can never be silent
+      about a missing capability. allowed_tools is now READ from the workflow's --allowed-tools
+      at render (the v1.0.0 schema promised this and render.py never did it); a declared list
+      that differs from the workflow is a hard fail. RULING-011: branch protection is a guard
+      against runners with administrators bypassing, not the dispatch switch — dropped from
+      dispatch.requires as a precondition, S-072 rewritten, E-002 gains the PR fallback line.
+      FFD-002 ROLE BOUNDARY (RULING-010): S-006/S-007 rewritten around RISK (not compiled /
+      not a manifest or lockfile / not a workflow / no secrets / not a rendered protocol / one
+      spot) — README, LICENSE, docs, .forge/, comments and copy in non-built files are direct
+      edits; any compiled file (incl. copy inside a .tsx), manifests, migrations, workflows stay
+      prompt-only. E-002's boundary line aligned. FFD-003 START GATE: NEW S-091
+      session_start_gate (mandatory, unskippable; capability line reserved as summary line 2;
+      re-entry rule; Matt's tell), S-012 reserves three lines, S-075 says what it cannot prove.
+      FFD-004: NEW W-004 working_method_offer_rule — never offer a way of working the repo
+      cannot do; verify from the header, never memory. FF-001: house-block ChromaQA line no
+      longer assumes an installer section exists. FF-003: NEW knobs build.python_interpreter
+      (default "python") and build.secondary_validation; S-082 names the interpreter from
+      config; S-083 says "no per-task validation step is configured" instead of "no
+      interpreter". FF-004: S-014/E-036/E-040 handle a gitignored .chromaqa/ (v6.1) — "not on
+      GitHub", never "zero". Tests 47/47 (ten new: shout, S-092, declared-off note, tree
+      detection, allowlist read, two hard fails). Ceilings measured on the real sandbox knob
+      set: start 1532/1650, dispatch start 574/650, end 1219/1400, dispatch end 95/150.
+      Blueprint amended to v1.5. Rollout: master first (this), then per repo — secret,
+      claude.yml (Matt, web editor), protection with admin bypass, re-render; saas-starter last.
   - version: "v1.0.0"
     date: 2026-09-04
     status: RELEASED — first repo rendered from this master (chromasmith/seogeo, RULING-002)

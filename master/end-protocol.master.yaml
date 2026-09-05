@@ -90,6 +90,11 @@ wrap_direct_write_delivery: |
   ASK FIRST: before the push, ask Matt in one line whether a Claude Code
   session is active on this repo. Matt runs concurrent sessions; if the answer
   is yes or unknown, deliver as a PR.
+  PROTECTION FALLBACK (RULING-011): branch protection on
+  {{repo.default_branch}} lets administrators bypass, so a direct docs commit
+  normally lands. If the push is rejected by protection anyway, do not
+  re-plan: say so in one line, deliver the identical content as a PR, and tell
+  Matt to untick "include administrators" on the rule.
 
   WRITE DISCIPLINE. Read each target file's current content and blob SHA
   immediately before writing it; the write names that SHA so a concurrent
@@ -111,11 +116,13 @@ wrap_direct_write_delivery: |
   wrap is not done. Report to Matt in plain English: what changed in each
   file, in one line per file, then the commit SHA or PR number.
 
-  DIRECT EDITS ARE FOR THE DOCUMENTATION LAYER ONLY. Application code,
-  migrations, configuration and workflow files remain Claude Code's work
-  through prompts; the wrap never touches them. Protocol files under
-  .forge/protocols/ are never edited here — a protocol bug is a master bug,
-  filed against the master and re-rendered.
+  THE WRAP WRITES THE DOCUMENTATION LAYER ONLY. The start protocol's risk
+  test (RULING-010) governs what Claude Web may ever edit directly; the wrap
+  is narrower still and touches only the .forge/ files named in the manifest
+  below. Compiled source, manifests, lockfiles, migrations, configuration and
+  workflow files remain Claude Code's work through prompts; the wrap never
+  touches them. Protocol files under .forge/protocols/ are never edited here
+  — a protocol bug is a master bug, filed against the master and re-rendered.
 # <<< end E-002
 
 # >>> block E-003 | wrap_file_manifest | reader: cw | render_when: always
@@ -169,6 +176,10 @@ wrap_file_manifest_chromaqa: |
                                       appends to them during the push)
     .chromaqa/CQA-runs.jsonl          LOCAL ONLY — gitignored, never committed,
                                       never on GitHub
+  In a ChromaQA v6.1 repo the whole .chromaqa/ directory is gitignored: then
+  none of these paths is on GitHub, the pass-through lines never appear in
+  git status, and the wrap says "ChromaQA telemetry: local only in this repo"
+  rather than "skipped" (FF-004).
 # <<< end E-036
 
 # >>> block E-050 | wrap_manifest_seogeo_lines | reader: cw | render_when: subsystems.seogeo
@@ -1056,7 +1067,8 @@ cc_remainder_chromaqa_lines: |
   .chromaqa/profiles.json is PROTECTED CONFIG: it is never on the staged list
   and never edited; if it shows as modified or deleted, that is a STOP —
   report it and wait.
-  The report adds: "- ChromaQA telemetry: [committed — list / skipped]".
+  The report adds: "- ChromaQA telemetry: [committed — list / skipped /
+  local only (gitignored .chromaqa/, ChromaQA v6.1)]".
 # <<< end E-040
 
 # >>> block E-047 | cc_remainder_push_gate | reader: cw+cc-local | render_when: execution.local and subsystems.chromaqa

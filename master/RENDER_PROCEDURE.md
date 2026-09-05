@@ -3,24 +3,49 @@
 Blueprint v1.2, Section 6 and Principle P9. Written so a fresh Claude Web session can execute it cold.
 Claude Web runs `master/render.py` in its own sandbox; GitHub is only ever read and written through the GitHub MCP.
 
-STATUS (2026-09-04, master v1.0.0): the first real render is DONE — chromasmith/seogeo (docs-only profile,
-config_hash 81ca6a54d712) holds rendered protocols from v1.0.0 and is row one of `registered-repos.yaml`. The
-master (93 start blocks, 51 end blocks, the CLAUDE.md house block) renders byte-stable for every fixture and for
-seogeo; fixture test 37/37. S4 ceilings are in BLUEPRINT.yaml `rendering.file_ceilings` (commit 104a402).
-`PROPAGATION_PROCEDURE.md` and `registered-repos.yaml` exist. Per RULING-001/002 no OTHER repo is rendered until
-Matt names it by name. Lesson from the first render, kept here because it will recur: a repo the sandbox cannot
-clone (private, no credential) is detected from a tree skeleton rebuilt from the GitHub listing — create the exact
-paths render.py's detect() looks for, nothing else — and the report says so.
+STATUS (2026-09-05, master v1.1.0): the master is REPAIRED (RULING-009/010/011 — see CHANGELOG v1.1.0). The seven
+repos rendered from v1.0.0 (seogeo, chromasmith-saas-starter, forgeflow, chromaqa, synclips-platform, chromasync,
+dv-captain) all came up dispatch-OFF because no harness was installed and nothing said so; each RE-RENDERS from
+v1.1.0 on Matt's go, AFTER its harness is installed (step 0b). Fixture test 47/47. Lesson from the first render,
+kept here because it will recur: a repo the sandbox cannot clone (private, no credential) is detected from a tree
+skeleton rebuilt from the GitHub listing — create the exact paths render.py's detect() looks for, nothing else —
+and since v1.1.0 the skeleton MUST carry the real content of `.github/workflows/claude.yml` when it exists (fetch it
+through the GitHub MCP), because render.py reads the `--allowed-tools` list out of it; the report says so.
 
 ## 0. Preconditions
-- The GitHub MCP is connected. Ask Matt whether a Claude Code session is active on the TARGET repo before step 7.
+- The GitHub MCP is connected. Ask Matt whether a Claude Code session is active on the TARGET repo, and whether
+  another Claude Web session is mid-render or about to wrap (GOTCHA-002/004), before step 7.
+- LIST THE TARGET TREE FIRST (GOTCHA-003): `.github/workflows/`, `.chromaqa/`, `.seogeo/`, `package.json`,
+  `vercel.json`, `.gitattributes`, `CLAUDE.md`. Write the ruling and the config from what the tree shows.
 - The target repo has `.forge/protocol-config.yaml` (repo-facing form: `profile` + `repo` + `overrides`). If it
   does not, write one from the profile that fits (`standard`, `legacy-local`, `docs-only`) and commit it FIRST.
+
+## 0b. Dispatch harness — INSTALL BEFORE RENDERING (v1.1.0, RULING-009/011)
+Dispatch defaults ON. If the tree has no `.github/workflows/claude.yml`, the render will come out dispatch-OFF with
+a header shout and S-092 — legal, but it is the exact state v1.1.0 exists to end, so install first unless Matt says
+this repo is dispatch-off by choice (then `execution.dispatch.enabled: false` goes in the config, with the reason).
+Three Matt-side steps, one at a time, each confirmed before the next:
+1. **Workflow file.** Matt creates `.github/workflows/claude.yml` via the GitHub web editor. Claude Web gives him
+   the pre-filled link `https://github.com/<org>/<repo>/new/main?filename=.github/workflows/claude.yml` and the
+   COMPLETE content of `master/assets/claude.yml` (never "copy from line X"). The connector cannot write workflows.
+   Confirm the commit landed (blob SHA equals `git hash-object master/assets/claude.yml`) — an uncompleted web-editor
+   commit dialog is silently lost. A repo needing extra runner tools (database reads) OVERLAYS on the asset at the
+   marked lines; it never forks the generic part.
+2. **Secret.** `CLAUDE_CODE_OAUTH_TOKEN` in the repo's Actions secrets. Preferred: ONE Claude Code prompt on Matt's
+   machine that reads the token from 1Password (`op read`) and sets it with `gh secret set` for every named repo, so
+   Matt never handles the token. Fallback: the link `https://github.com/<org>/<repo>/settings/secrets/actions/new`,
+   name and value pasted by Matt. The token is NEVER committed into any repo. `chromasmith` is a personal account:
+   there are no organization-level secrets; every repo needs its own.
+3. **Branch protection** on the default branch, with "include administrators" UNTICKED (RULING-011): runners cannot
+   push main; Matt, his local Claude Code and Claude Web's connector (acting as Matt) still can. Claude Web proves the
+   bypass with a one-line docs commit before the first dispatch; a rejection means the box is ticked.
+Then re-list the tree, confirm the workflow is there, and continue at step 1.
 
 ## 1. Fetch the master into the sandbox
 ```
 mkdir -p /home/claude/ff && cd /home/claude/ff
-for f in render.py protocol-config.schema.yaml CHANGELOG.yaml start-protocol.master.yaml end-protocol.master.yaml claude-md.house-block.master.md; do
+mkdir -p master/profiles master/assets
+for f in render.py protocol-config.schema.yaml CHANGELOG.yaml start-protocol.master.yaml end-protocol.master.yaml claude-md.house-block.master.md assets/claude.yml; do
   curl -sfL https://raw.githubusercontent.com/chromasmith/forgeflow/main/master/$f -o master/$f || echo "MISSING $f"
 done
 for p in standard legacy-local docs-only; do curl -sfL https://raw.githubusercontent.com/chromasmith/forgeflow/main/master/profiles/$p.yaml -o master/profiles/$p.yaml; done
@@ -39,7 +64,8 @@ python3 master/render.py render --config /home/claude/target/.forge/protocol-con
         --out /home/claude/out --date $(date -u +%F)
 ```
 render.py refuses to write when: an unknown config field is present, a required field has no value, dispatch is
-enabled without a complete mirror, a `{{placeholder}}` cannot be resolved, a block fence is malformed, the block
+enabled without a complete mirror, `execution.dispatch.harness_installed` is overridden true while the tree has no
+workflow, a declared `allowed_tools` differs from the workflow's `--allowed-tools`, a `{{placeholder}}` cannot be resolved, a block fence is malformed, the block
 manifest does not partition the master, or a forbidden cross-reference phrase survives. Read the one-line reason,
 fix the CONFIG or the MASTER (never the output), re-run.
 
@@ -59,6 +85,8 @@ renderer bug; for SYN/CC2-lineage repos an additive diff of the eleven promoted 
 
 ## 7. Push
 - Ask whether a Claude Code session is active on the target repo. If yes, deliver as a PR; if no, a direct commit is allowed for a single-repo render.
+- Read the rendered header's `knobs:` line aloud to Matt in one sentence before pushing — especially `dispatch=`.
+  `dispatch=OFF(harness-not-installed)` on a repo Matt expects to dispatch from means go back to step 0b, not push.
 - Push exactly these files: `.forge/protocol-config.yaml` (now carrying the effective-values comment block),
   `.forge/protocols/start-protocol.yaml`, `.forge/protocols/end-protocol.yaml`, and — only when dispatch is enabled —
   `.forge/protocols/start-protocol.dispatch.yaml`, `.forge/protocols/end-protocol.dispatch.yaml`; plus `CLAUDE.md` if the house block changed.
