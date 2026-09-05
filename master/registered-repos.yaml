@@ -16,7 +16,7 @@
 # Matt naming the repo; there is no queue here and no implied order.
 # =============================================================================
 
-master_version_current: "v1.0.0"
+master_version_current: "v1.1.0"
 
 repos:
   - repo: chromasmith/seogeo
@@ -67,24 +67,29 @@ repos:
   - repo: chromasmith/forgeflow
     config: .forge/protocol-config.yaml
     profile: docs-only
-    master_version: "v1.0.0"
-    rendered_on: 2026-09-04
-    config_hash: 427225a67a50a3d1475cef13eade7b3e8fb2cbe5cbabbf277cf0d3634e63b001
+    master_version: "v1.1.0"
+    rendered_on: 2026-09-05
+    config_hash: 8a1ce594fd06de0905b6b29e59401e058ab9f55664478912302829875d0b82b5
     state: current
     files:
       - .forge/protocols/start-protocol.yaml
+      - .forge/protocols/start-protocol.dispatch.yaml
       - .forge/protocols/end-protocol.yaml
+      - .forge/protocols/end-protocol.dispatch.yaml
       - .forge/protocol-config.yaml
       - CLAUDE.md
-    landed: "commits 0f7ec5e (config + RULING-004), 5e1f463 (start), 56f2389 (end), b9046e2 (CLAUDE.md), all 2026-09-04; blob SHAs equal; render.py check OK from a fresh clone at b9046e2"
+    landed: "v1.1.0 re-render 2026-09-05: commits e60eff5 (config), 94a5247 (end.dispatch NEW), 5de80fc (CLAUDE.md), a0aa16a (start.dispatch NEW), 173aa3d (end), f9b8d33 (start); blob SHAs equal; render.py check OK from a fresh clone at f9b8d33. Previous v1.0.0 render: 0f7ec5e / 5e1f463 / 56f2389 / b9046e2 (2026-09-04)"
     notes: >-
-      Third repo rendered (Matt named it 2026-09-04, RULING-004) and the master's own home:
-      master/ is the source, .forge/protocols/ the output, and a render never reads
-      .forge/protocols/, so rendering the repo from itself is not circular. Public repo, so
-      detection ran on the real tree: no package.json/pyproject, no subsystems, dispatch off.
-      The house block was APPENDED to CLAUDE.md (the file had no markers); the rest of that
-      CLAUDE.md is still the unfilled Chromasmith template. north_star_doc = master/BLUEPRINT.yaml,
-      backlog prefix FF-.
+      Third repo rendered (RULING-004) and the master's own home: master/ is the source,
+      .forge/protocols/ the output; a render never reads .forge/protocols/, so rendering the
+      repo from itself is not circular. FIRST repo re-rendered from v1.1.0 (RULING-009) and
+      the first with the full dispatch harness: .github/workflows/claude.yml installed by Matt
+      via the web editor (blob 4cccfbf = master/assets/claude.yml), CLAUDE_CODE_OAUTH_TOKEN
+      set from 1Password, branch protection on main with admin bypass (RULING-011, bypass
+      proven by direct docs commit be2d757). Public repo, detection on the real tree:
+      dispatch=on, allowed_tools read from the workflow, no build/deploy/subsystems. The rest
+      of CLAUDE.md above the house block is still the unfilled Chromasmith template.
+      north_star_doc = master/BLUEPRINT.yaml, backlog prefix FF-.
   - repo: chromasmith/chromaqa
     config: .forge/protocol-config.yaml
     profile: docs-only
