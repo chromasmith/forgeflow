@@ -163,3 +163,35 @@ repos:
       LF). House block APPENDED to CLAUDE.md (no markers). Master follow-up worth filing:
       no validation knob fits a Python+web repo (npm-build runs the web build for
       Python-only changes; py-compile's block assumes a .venv this repo does not have).
+  - repo: chromasmith/dv-captain
+    config: .forge/protocol-config.yaml
+    profile: docs-only
+    master_version: "v1.0.0"
+    rendered_on: 2026-09-04
+    config_hash: 14900a353f32ee637e80df49c50b5d32e29d59b7ca55412f41dce69355187097
+    state: current
+    files:
+      - .forge/protocols/start-protocol.yaml
+      - .forge/protocols/end-protocol.yaml
+      - .forge/protocol-config.yaml
+      - CLAUDE.md
+    landed: "commits eab16f9 (config), 0a03a56 (start), 4444fa6 (end), 4f7a128 (CLAUDE.md), all 2026-09-04; blob SHAs equal; render.py check OK from a fresh forgeflow clone at 5119307"
+    notes: >-
+      Seventh repo rendered (Matt named it 2026-09-04, RULING-008) — third and last of the
+      Synclips trio, companion synclips-relay (the relay itself is never rendered). PURE
+      PYTHON code repo with NO CI by design (CLAUDE.md standing rule), no ChromaQA, no
+      Vercel, no package.json. Profile docs-only chosen ONLY for its knob values (complete
+      mirror, hard reset, validation none, deploy none); it is not a docs repo. Private
+      repo: detection ran on a tree skeleton rebuilt from the GitHub listing; nothing
+      detected, dispatch off. build.validation none is deliberate — the master's py-compile
+      block (S-082) demands a .venv interpreter and this repo runs on system Python312 on
+      the canonical machine (install.py), so task prompts name their own compile/import
+      check. build.deploy none because Anvil daemons are redeployed by hand from
+      deploy/anvil-wrappers and LodeKeep workers are not a session step. Declared:
+      repo.alternate_machines [BM-Anvil, LodeKeep]; repo.line_endings mixed (.gitattributes
+      forces LF everywhere except *.ps1 = CRLF, so "lf" would invite a fix); north_star_doc
+      .forge/VISION.md; backlog prefix BACKLOG-. House block APPENDED to CLAUDE.md (no
+      markers). Legacy .forge/ shape (GOTCHAS 182 KB, old backlog schema, no rulings.yaml,
+      no artifact register, no inbox/) migrates at the repo's first wrap. Master follow-up
+      (same as chromasync): a Python validation knob that works without a .venv, and the
+      S-083 "no build or interpreter step" wording is wrong for a Python repo on this knob.
