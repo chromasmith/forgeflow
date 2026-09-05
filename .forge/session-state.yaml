@@ -5,24 +5,34 @@ milestones:
   - "master v1.0.0 released; chromasmith/seogeo rendered (first repo) — earlier 2026-09-04, wrap @ 3145732"
   - "chromasmith/chromasmith-saas-starter rendered (second repo, the house template) — registry row @ e856a72, wrap @ 827dba9"
   - "chromasmith/forgeflow rendered from its own master (third repo) — registry row @ 63fb9c4, wrap @ 54296f3"
-  - "chromasmith/chromaqa rendered (fourth repo, RULING-005) — chromaqa commits 2d9980e (config), ac7faac (start), de3f45f (end), 8f52dc8 (CLAUDE.md); render.py check OK from a fresh clone; registry row @ 33a7192"
+  - "chromasmith/chromaqa rendered (fourth repo, RULING-005/006) — registry row @ 33a7192, wrap @ 9e394fd"
+  - "chromasmith/synclips-platform rendered (fifth repo, RULING-007 @ 220a70e; first monorepo, first companion-repo render) — synclips-platform commits 814578a (config), c383bd2 (start), 09d6c1e (end), 4c54dd5 (CLAUDE.md); render.py check OK from a fresh clone; registry row @ 56978f9"
+  - "chromasmith/chromasync rendered (sixth repo, RULING-008 @ 751a909; two-language Python + Next.js) — chromasync commits 0d5efb3 (config), 3fd099b (start), 6f726cd (end), e4b455e (CLAUDE.md); render.py check OK from a fresh clone; registry row @ 5119307"
+  - "chromasmith/dv-captain rendered (seventh repo, RULING-008; pure Python, no CI) — dv-captain commits eab16f9 (config), 0a03a56 (start), 4444fa6 (end), 4f7a128 (CLAUDE.md); render.py check OK from a fresh clone; registry row @ 8fd0506"
 decisions:
-  - decision: "chromaqa is the fourth repo rendered from the master (RULING-005 @ e909725)"
-    rationale: "Matt named it by name; no Claude Code session on it, and his other session (saas-starter, SEO/GEO install) is not a render, so no forgeflow wrap collision."
-    impact: "chromaqa sessions now start and wrap on .forge/protocols/; four repos run on v1.0.0."
-  - decision: "chromaqa renders WITH the ChromaQA blocks — subsystems.chromaqa true, not overridden (RULING-006 @ f0e348b)"
-    rationale: "The repo genuinely runs ChromaQA on itself (quality-gate.yml, committed .chromaqa/ telemetry, CLAUDE.md decision closing CQA-042); RULING-002's mis-detection premise was wrong and was filed before the repo was inspected."
-    impact: "S-014/S-045/S-087/S-071/S-088 and E-036/E-037/E-040/E-042/E-047 render in for chromaqa; the RULING-002 override clause is withdrawn."
-  - decision: "chromaqa config: docs-only profile, north_star_doc = .forge/plans/chromaqa-modernization-plan.yaml, backlog prefix CQA-"
-    rationale: "Bash script + docs, no build or deploy; BRIEF.yaml is superseded and BLUEPRINT.yaml is 378 KB, so the modernization plan is the readable governing doc."
-    impact: "S-053 renders in pointing at the plan; future chromaqa backlog items are CQA-NNN."
+  - decision: "The Synclips trio renders one repo at a time but back-to-back in ONE session (RULING-008 @ 751a909), relaxing RULING-001's 'each its own session' clause for chromasync and dv-captain only"
+    rationale: "Matt asked whether the companion repos each need a render (yes — each has its own tree, config and companion knob; the relay is never rendered) and agreed to run them consecutively rather than open three chats."
+    impact: "Seven repos now run on v1.0.0; 'Matt names the repo' and 'one repo at a time' are unchanged, so nothing renders after dv-captain until he names it."
+  - decision: "synclips-relay is declared as companion_repos (role relay, PROTOCOL.md) in all three Synclips configs and is itself never rendered"
+    rationale: "Blueprint Section 10 already models the Synclips system this way; the relay is a contract/communication repo, not a session repo."
+    impact: "S-015/S-055 and E-020/E-044 render into all three; relay writes happen only at those repos' wraps."
+  - decision: "Two-language and pure-Python repos take the closest knob values with the mismatch written into the config comments: chromasync keeps detected npm-build/vercel (web half) with tsx_lib_rule overridden true; dv-captain takes docs-only knob values with build.validation none"
+    rationale: "The master's py-compile block (S-082) demands a .venv interpreter that neither repo has on the canonical machine, and no knob covers a Python+web repo; a wrong knob is worse than an honest none."
+    impact: "Filed as FF-003 (Python validation knob) — the S-083 'no build or interpreter step' wording is wrong for dv-captain until it lands."
+  - decision: "chromasync's chromaqa detection stays TRUE even though its .chromaqa/ telemetry is gitignored (ChromaQA v6.1)"
+    rationale: "The gate genuinely runs locally and in CI; the master's committed-debt assumption (S-014 reading .chromaqa/CQA-debt.jsonl from GitHub) is a master limitation, not a mis-detection."
+    impact: "S-014 reads nothing on GitHub for chromasync; filed as FF-004."
 blockers: []
 next_steps:
   - priority: high
-    task: "WAIT — render no repo until Matt names it by name (RULING-001)."
+    task: "WAIT — render no repo until Matt names it by name (RULING-001; the Synclips trio is done under RULING-008)."
 context: |
-  Four repos of two shapes now run on master v1.0.0 with no renderer change this session
-  (chromaqa's render was byte-stable and check-clean). Two master follow-ups were filed as
-  deferred backlog items FF-001 and FF-002, not acted on. chromaqa's legacy backlog shape and
-  its own .forge/rulings.yaml are created or migrated at chromaqa's first wrap on the rendered
-  protocol, not here.
+  Seven repos of four shapes (docs-only, standard single-app, standard monorepo, standard
+  two-language; plus a Python repo on docs-only knob values) run on master v1.0.0 with no
+  renderer change this session — every render was byte-stable and check-clean from a fresh
+  clone. Master follow-ups are filed as deferred FF-001..FF-004, not acted on. All three
+  Synclips repos are legacy-shaped in .forge/ (old backlog schema, no rulings.yaml, no
+  artifact register, no inbox/, GOTCHAS at 140 KB / 93 KB / 182 KB) — that migrates at each
+  repo's FIRST WRAP on the rendered protocol, not here. RULING-007 (220a70e) was landed by a
+  cut-off earlier instance of this same chat (Matt's page glitched); this instance found it
+  by re-reading rulings.yaml before writing (GOTCHA-004).

@@ -56,3 +56,19 @@
   applies_to:
     - master/RENDER_PROCEDURE.md (step 0 preconditions — inspect before configuring)
     - .forge/rulings.yaml (RULING-002 clause superseded by RULING-006)
+- id: GOTCHA-004
+  date: 2026-09-04
+  summary: "A cut-off earlier instance of the SAME Claude Web chat can already have landed a write (RULING-007 @ 220a70e) — re-read the target file's blob SHA before every append, even one you 'know' is first"
+  detail: |
+    Matt's page glitched and the chat restarted mid-turn. The cut-off instance had already
+    appended RULING-007 to .forge/rulings.yaml (220a70e) in the turn he named synclips-platform;
+    the resumed instance was about to append the same ruling as RULING-007 again. It was caught
+    only because the write step re-fetched rulings.yaml and its blob SHA had changed from the
+    session-start read. Lesson: GOTCHA-002's "another session may have written here" applies to
+    a previous instance of YOUR OWN conversation, not only to other chats; treat a changed blob
+    SHA as "read it again and reconcile", never as a conflict to overwrite. Check the file's
+    current tail for your own intended entry before assigning the next ID.
+  source: "Synclips trio render session, 2026-09-04 (RULING-007 at 220a70e found already landed)"
+  applies_to:
+    - .forge/rulings.yaml (W-002 write-when-made appends)
+    - master/RENDER_PROCEDURE.md (step 0 concurrency question)

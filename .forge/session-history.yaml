@@ -75,3 +75,31 @@ sessions:
       - .forge/backlog.yaml
       - .forge/GOTCHAS.yaml
     blockers_remaining: []
+  - date: 2026-09-04
+    duration: ~2.5hr
+    completed:  # evidence: forgeflow 220a70e, 56978f9, 751a909, 5119307, 8fd0506
+      - "Rendered chromasmith/synclips-platform from master v1.0.0 (standard profile, monorepo apps/admin, companion synclips-relay, config_hash 1cf0a0d5e29b, start 1207 / end 1297 lines) — synclips-platform commits 814578a (config), c383bd2 (start), 09d6c1e (end), 4c54dd5 (CLAUDE.md house block appended); blob SHAs equal to the sandbox output; render.py check OK from a fresh forgeflow clone; registry row @ 56978f9"
+      - "Rendered chromasmith/chromasync (standard profile, Python desktop agent + Next.js web UI, companion synclips-relay, config_hash 72ae2c59e531, start 1179 / end 1142 lines) — chromasync commits 0d5efb3 (config), 3fd099b (start), 6f726cd (end), e4b455e (CLAUDE.md house block appended); blob SHAs equal; render.py check OK from a fresh clone; registry row @ 5119307"
+      - "Rendered chromasmith/dv-captain (docs-only knob values on a pure-Python, no-CI repo, companion synclips-relay, alternate machines BM-Anvil + LodeKeep, config_hash 14900a353f32, start 985 / end 1034 lines) — dv-captain commits eab16f9 (config), 0a03a56 (start), 4444fa6 (end), 4f7a128 (CLAUDE.md house block appended); blob SHAs equal; render.py check OK from a fresh clone at 5119307; registry row @ 8fd0506"
+      - "RULING-007 written when Matt named synclips-platform (220a70e, landed by a cut-off earlier instance of the same chat); RULING-008 written in the turn he agreed to the back-to-back trio (751a909)"
+      - "Deferred master follow-ups filed as FF-003 and FF-004 in the backlog (this commit)"
+    commits:
+      - message: "rulings: RULING-007 — chromasmith/synclips-platform named as the fifth repo to render from the master (220a70e)"
+      - message: "registry: add chromasmith/synclips-platform — fifth rendered repo (56978f9)"
+      - message: "rulings: RULING-008 — chromasync (sixth) and dv-captain (seventh) named; back-to-back renders in one session for the Synclips trio (751a909)"
+      - message: "registry: add chromasmith/chromasync — sixth rendered repo (5119307)"
+      - message: "registry: add chromasmith/dv-captain — seventh rendered repo, Synclips trio complete (8fd0506)"
+      - message: "docs: end session 2026-09-04 — three renders (this commit)"
+    key_changes:
+      - "No master or renderer change this session; first monorepo, first companion-repo, first two-language and first pure-Python renders were all byte-stable and check-clean"
+      - "The Python side exposed two master gaps: no validation knob without a .venv (FF-003) and a committed-debt assumption that ChromaQA v6.1 repos do not meet (FF-004)"
+      - "A cut-off instance of this same chat had already landed RULING-007 (220a70e); re-reading rulings.yaml before appending caught it — see GOTCHA-004"
+    files_modified:
+      - .forge/rulings.yaml
+      - master/registered-repos.yaml
+      - .forge/handoff.yaml
+      - .forge/session-state.yaml
+      - .forge/session-history.yaml
+      - .forge/backlog.yaml
+      - .forge/GOTCHAS.yaml
+    blockers_remaining: []

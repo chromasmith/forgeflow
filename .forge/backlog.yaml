@@ -30,5 +30,36 @@ prioritized:
       is finished; do not re-render mid-install.
     status: deferred
     blocked_by: SEO/GEO install into saas-starter completing (other session)
+  - id: FF-003
+    name: Python validation knob that does not assume a .venv (and a two-language knob)
+    priority: P2
+    estimate: 1 master change
+    spec_ref: master/start-protocol.master.yaml (S-082, S-083)
+    description: |
+      S-082 (py-compile) tells Claude Code to use .venv\Scripts\python.exe and "never
+      system python", but chromasync and dv-captain run on the system Python312 on the
+      canonical machine (no .venv there; dv-captain's Anvil daemons do have one). S-083
+      (validation none) says "this repo has no build or interpreter step", which is false
+      for dv-captain — it was rendered on that knob only because py-compile would have
+      been worse. chromasync is Python + Next.js and no knob covers both halves; it kept
+      the detected npm-build. Add an interpreter knob (or a py-compile variant that names
+      the interpreter from config), reword S-083 to "no per-task validation step is
+      configured", then re-render dv-captain and chromasync inside the next master change.
+    status: deferred
+    blocked_by: null
+  - id: FF-004
+    name: ChromaQA debt read assumes committed telemetry; v6.1 repos gitignore .chromaqa/
+    priority: P3
+    estimate: 30 min
+    spec_ref: master/start-protocol.master.yaml (S-014)
+    description: |
+      S-014 reads .chromaqa/CQA-debt.jsonl from GitHub and counts lines. chromasync (ChromaQA
+      v6.1) gitignores .chromaqa/ entirely, so the read finds nothing and the debt check is
+      silently vacuous; E-036/E-040/E-047 also describe the telemetry as committed. Either
+      make S-014 say plainly that a gitignored .chromaqa/ means the debt read is not
+      available on GitHub (and where to read it instead), or add a knob for the telemetry
+      location. Land inside the next master change; re-render chromasync after.
+    status: deferred
+    blocked_by: null
 in_progress: []
 completed: []  # evidence: 63fb9c4 (empty at migration)
