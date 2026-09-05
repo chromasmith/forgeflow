@@ -106,3 +106,25 @@ rulings:
       is taken before any push and recorded in the session notes.
     supersedes: nothing — RULING-001 said Matt names the repo; this is him naming it
     stated_by: Matt, in chat, in this session ("synclips-platform please"), recorded in the turn it was made per W-002
+  - id: RULING-008
+    date: 2026-09-04
+    subject: Sixth and seventh repos to render; the "one render per session" clause relaxed for the Synclips trio
+    ruling: >-
+      After synclips-platform landed (registry 56978f9), Matt asked whether the other
+      Synclips-system repos must each be rendered individually; the answer is yes (each has
+      its own tree, config and companion knob; the relay itself is never rendered). He then
+      agreed to render them BACK-TO-BACK IN THIS SESSION ("i agree. go"): chromasmith/chromasync
+      is the SIXTH repo rendered from the master and chromasmith/dv-captain the SEVENTH, in
+      that order, each still with its own tree inspection, config, render, proof and go, but
+      without a fresh chat between them. This relaxes only the "each its own session" wording
+      of RULING-001 for these two repos; "one repo at a time" and "Matt names the repo" are
+      unchanged, and no further repo is rendered after dv-captain until he names it. Both are
+      Synclips-system repos, so each config declares synclips-relay (role relay, PROTOCOL.md)
+      as its companion. Concurrency (Matt, this session): he has not opened any Synclips repo
+      in several days; his only other Claude chats are the SEO/GEO install into
+      chromasmith-saas-starter and a GoDaddy-to-Cloudflare DNS transfer — no Claude Code
+      session on chromasync or dv-captain, no other Claude Web session mid-render.
+      Profile, knobs and every override are written from what the tree shows at render time
+      (GOTCHA-003), never from this ruling.
+    supersedes: the "each its own session" clause of RULING-001, for chromasync and dv-captain only
+    stated_by: Matt, in chat, in this session ("i agree. go"), recorded in the turn it was made per W-002
