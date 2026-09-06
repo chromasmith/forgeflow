@@ -1,47 +1,43 @@
 # Session state — overwritten each session with current snapshot
-session_date: 2026-09-05
+session_date: 2026-09-06
 project: forgeflow (ForgeFlow Master — unified start/wrap protocols rendered per repo)
 milestones:
-  - "Master v1.0.0 DEFECT REPAIR confirmed as the session's duty list (RULING-009 @ c8b3960): FFD-001 dispatch harness never rolled out, FFD-002 role boundary drawn around folder not risk, FFD-003 start protocol not enforced, FFD-004 working methods offered that a repo cannot do, plus QC-5 (allowed_tools promise unimplemented) and QC-6 (S-072 vs E-002 collision)"
-  - "RULING-010 (Claude Web direct-edit boundary drawn around RISK, .tsx copy edits stay prompt-only) @ d78ad4c and RULING-011 (branch protection guards main against runners with admins bypassing; not the dispatch switch; E-002 PR fallback) @ aef8b12"
-  - "Master v1.1.0 landed in two halves: renderer + schema + profiles (dispatch ON by default) + master/assets/claude.yml + tests 47/47 @ 38af6dc, render.py backslash repair @ 43146f8; both masters, house block, BLUEPRINT v1.5, CHANGELOG v1.1.0, RENDER_PROCEDURE and PROPAGATION_PROCEDURE via one Claude Code gzip+base64 patch with blob-SHA verification @ b421783; RENDER_PROCEDURE step 0b (secret + claude.yml + protection as the standard for every repo) @ ab19c0e; PROPAGATION step 2b @ a2d0b4f"
-  - "CLAUDE_CODE_OAUTH_TOKEN (subscription token, sk-ant-oat*) created with claude setup-token, stored in 1Password (Chromasmith Keys / CLAUDE_CODE_OAUTH_TOKEN / credential) and set as an Actions secret on all seven v1.0.0 repos — verified by gh secret list, reported by the Claude Code run (no repo commit to cite)"
-  - "forgeflow re-rendered from v1.1.0 with the full harness (claude.yml blob 4cccfbf, protection with admin bypass proven by direct docs commit be2d757): six files e60eff5 / 94a5247 / 5de80fc / a0aa16a / 173aa3d / f9b8d33, render.py check OK from a fresh clone, registry @ 19d2999"
-  - "chromaqa re-rendered from v1.1.0 (dispatch=on, chromaqa=True; FF-001 house-block line fixed): 3fb7e4f / ab9364b / 67031b3 / b9152c4 / a868ed2 / 9263d5b, registry @ d41dc67"
-  - "seogeo re-rendered from v1.1.0 (dispatch=on): 1746d6c / ff60fc1 / b504fb8 / 40e9040 / 30be55b / a94d846, registry @ 426cea5"
-  - "chromasmith-saas-starter re-rendered from v1.1.0 (dispatch=on; supabase, chromaqa, seogeo, CI gate, tsx/lib rule all detected; deploy none override kept): 1f42125 / b742dd2 / fda3547 / 028eea9 / d96fd69 / f3110b0, registry @ 5d27774"
-  - "RULING-012 (rollout order: saas-starter next after its SEO/GEO session is confirmed done, then convergible-sandbox as a FIRST render, then the rest) @ c942f14"
+  - "Session repurposed by Matt from FF-007 to a friction BUG HUNT + REPAIR; scope, internal-only landing and the propagation method recorded as RULING-013, inbox deletion as RULING-014, S-078 retirement as RULING-015 (all @ 6cbdb49)"
+  - "Fifteen findings from three 2026-09-05 friction reports (FF-FRICTION-1..4, FF-101..103, FF-R-001..006) de-duplicated into ten repairs and built as master v1.2.0 — landed @ 54c1293 (both masters, house block, schema, BLUEPRINT v1.6, CHANGELOG v1.2.0, PROPAGATION_PROCEDURE rewrite, tests 54/54)"
+  - "forgeflow re-rendered from v1.2.0 @ 8ec708c (six files + inbox FF-V120-MASTER in one local Claude Code commit; config_hash 7ccf78dfab2f; start 60 blocks / 1373 lines, end 27 / 1095, dispatch=on; S-003 excluded, S-078 gone, W-005 in); all 14 blob SHAs, render.py check and tests 54/54 re-proven from a fresh clone at 8ec708c"
+  - "Registry row for forgeflow updated and master_version_current set to v1.2.0 @ 67a91ee; the other six rows deliberately stay at v1.1.0 / v1.0.0 (RULING-013)"
+  - "Matt's pointer-URL idea (repos hold a link to one master file) evaluated and declined; propagation redesigned as ONE local Claude Code run (PROPAGATION_PROCEDURE.md v1.2.0, BLUEPRINT delivery_rule)"
 decisions:
-  - decision: "Dispatch is ON by default in every profile; a render turns it off LOUDLY only when .github/workflows/claude.yml is absent (header shout, S-092 block, house-block line), and allowed_tools is read from the workflow file, never declared by hand"
-    rationale: "Every v1.0.0 render silently accepted dispatch=false; Matt requires all three ways of working (Claude Web direct, pasted Claude Code prompt, dispatch) available in ANY repo at his discretion."
-    impact: "Harness install (workflow file by Matt via web editor, secret from 1Password, branch protection with admin bypass) is a named rollout step for every current and future repo (RENDER_PROCEDURE step 0b)."
-  - decision: "Claude Web's direct-edit boundary is drawn around risk, not folder (RULING-010)"
-    rationale: "Claude Web cannot run a build, so the line is 'anything a build would catch stays prompt-only'; README/docs/.forge one-spot fixes need no prompt ceremony."
-    impact: "S-006/S-007 rewritten in v1.1.0; a copy-only change inside a .tsx is still a prompt."
-  - decision: "Branch protection on main stays permanently ON in every harness repo, with administrators bypassing (RULING-011)"
-    rationale: "It guards main against runner tokens only; Matt's pushes and Claude Web's connector pushes act as Matt and land as before."
-    impact: "S-072 rewritten; E-002 gained a PR fallback; every harness install ends with a one-line bypass proof commit."
-  - decision: "convergible-sandbox (named in RULING-012 @ c942f14) is a FIRST render, not a re-render, and it is not up to spec yet — wrap now, make it the single first_thing of the next session (Matt: complete it then wrap; I recommended wrapping first given session length, he agreed)"
-    rationale: "Inspection found the old four-file protocol set, CC-reports/ still at the root with no .forge/inbox/, no .forge/repo-rules.yaml, and a hand-written claude.yml overlay from 2026-08-29; protection state is unreadable through the connector."
-    impact: "The next session opens on FF-007 and does nothing else first."
+  - decision: "The wrap is a NUMBERED SERIES of single-file SHA-guarded commits with the handoff written first (wrap_complete: false) and last (wrap_complete: true); the start protocol ignores the wrap's own commits for staleness and finishes an unfinished wrap before project work"
+    rationale: "The GitHub connector has no patch, no append and no delete inside a multi-file commit, and its multi-file write takes no SHA guard — six of the fifteen findings were this one root cause."
+    impact: "E-002/E-014/E-030 and S-010 rewritten; this session's own wrap is the first run of the method."
+  - decision: "Consumed inbox files are DELETED at the wrap, not archived (RULING-014); S-078 Desktop copy retired (RULING-015)"
+    rationale: "Git history already holds every inbox file; the Desktop copy contradicted the NO MEMORY WRITES clause and was overruled by every run."
+    impact: "Roughly two-thirds fewer wrap operations; nothing is ever written outside the repository tree."
+  - decision: "Large master changes travel to Matt's machine as a self-verifying APPLY SCRIPT on a temporary branch pushed through the connector — never as a base64/gzip blob inside a Claude Web reply (GOTCHA-009)"
+    rationale: "The first v1.2.0 landing attempt arrived corrupted: a token model cannot emit 31 KB of base64 reliably; a Python script of exact-match replacements with blob-SHA checks is prose the connector carries intact."
+    impact: "Route proven end-to-end from a fresh clone before the run; the run fetched blob 82288e6, reproduced all eight SHAs, and landed 54c1293 / 8ec708c first try."
+  - decision: "Propagation of a master change is ONE local Claude Code run over every registered repo, against sandbox-proven blob SHAs (RULING-013); the pointer-URL alternative is parked"
+    rationale: "Matt named rollout slowness as the biggest friction; the slow part was the connector's one-file-per-call landing, not the design."
+    impact: "FF-009 is the first run of the method; the board's PR-per-repo rule is superseded in BLUEPRINT v1.6."
 blockers: []
 next_steps:
   - priority: high
-    task: "FF-007 — convergible-sandbox first render from v1.1.0: (1) ask whether a Claude Code session is active there; (2) Matt confirms branch protection on main has 'Require a pull request' ON, 'Require approvals' OFF, 'Do not allow bypassing' OFF; (3) ONE Claude Code prompt moves CC-reports/ to .forge/inbox/ (git mv, named files) and creates .forge/repo-rules.yaml from the DOC-FOLD-1 items in the sandbox's own handoff; (4) write .forge/protocol-config.yaml from the tree (standard profile, database_access_doc .forge/protocols/database-access.yaml, artifact_register true, vercel true, keep the overlay claude.yml — never replace it with the generic asset); (5) render, prove byte-stable, push six files, delete the four old protocol files (start/end-protocol-local.yaml, start/end-protocol-dispatch.yaml), prove bypass, add the registry row LAST."
+    task: "FF-009 — propagate master v1.2.0 to the other six registered repos by the one-prompt method in master/PROPAGATION_PROCEDURE.md: Claude Web renders all six in the sandbox (private repos from tree skeletons), records blob SHAs, asks the ONE batch concurrency question, then a single local Claude Code run renders, verifies against those SHAs, commits one named-file commit per repo and pushes; synclips-platform, chromasync and dv-captain render dispatch-off (S-092) unless Matt installs claude.yml + protection first; registry rows written last by Claude Web"
 context: |
-  MASTER: v1.1.0 is complete on GitHub (b421783 for the text half; 43146f8 for the code half)
-  and 96 start blocks / 51 end blocks render cleanly; tests 47/47. ROLLOUT: four of seven
-  registered repos run v1.1.0 with dispatch ON (forgeflow, chromaqa, seogeo, saas-starter);
-  three still run v1.0.0 with the secret already set but NO claude.yml and NO protection —
-  synclips-platform, chromasync, dv-captain. For each: Matt installs claude.yml via the web
-  editor link https://github.com/chromasmith/<repo>/new/main?filename=.github/workflows/claude.yml
-  pasting master/assets/claude.yml verbatim (blob must equal 4cccfbf), turns on protection
-  (PR required, approvals OFF, bypass allowed), then Claude Web renders and pushes six files
-  and updates the registry row. convergible-sandbox is a FIRST render with prerequisites
-  (see next_steps). Private repos are rendered from a tree skeleton carrying the REAL
-  claude.yml, CLAUDE.md and config, each verified by blob SHA before render. Landing
-  procedure that worked four times today: render twice + diff, push ONE FILE PER CALL via
-  create_or_update_file (full blob SHA for existing files), prove every landing by blob SHA,
-  registry row last. The forgeflow docs for this wrap are delivered one file per commit via
-  create_or_update_file (GOTCHA-006 backslash safety) plus a delete_file commit for the consumed
-  inbox file — the connector cannot delete inside push_files.
+  MASTER: v1.2.0 complete on GitHub (54c1293); 96 start blocks (S-078 retired, W-005 new) and 51
+  end blocks; tests 54/54 from a fresh clone. Ceilings on the real sandbox knob set: start
+  1595/1650 (55 lines of headroom — the next start-protocol addition must replace something, P11),
+  dispatch start 588/650, end 1280/1400, dispatch end 95/150. RENDERED: forgeflow only (8ec708c).
+  LAGGING BY DESIGN: seogeo, chromaqa, chromasmith-saas-starter (v1.1.0, harness installed);
+  synclips-platform, chromasync, dv-captain (v1.0.0, secret set, no claude.yml, no protection).
+  convergible-sandbox (FF-007) is still an unrendered first render with its prerequisites unchanged.
+  LANDING ROUTES that work: connector create_or_update_file for files under ~80 KB (retry on an
+  aborted call, prove by blob SHA); apply script on a temporary branch + local Claude Code for
+  anything larger. Matt's Surface 12 has a main-only pre-push guard that also blocks branch
+  deletions — transport branches are deleted in the GitHub browser UI (the connector has no
+  branch-delete tool). Claude Code there runs PowerShell / Git Bash, not cmd — FF-011. First
+  halted Claude Code run (corrupted base64) left no inbox file; its report was pasted into chat
+  and consumed here. Deferred, not next: forgeflow CLAUDE.md above the house block is still the
+  unfilled template; drift_ci; the approval code and canonical paths sit in a PUBLIC repo (Matt
+  has not asked for that to change).
