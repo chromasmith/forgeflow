@@ -31,6 +31,13 @@
 # ADDED v0.3.0-build (SEO/GEO master change, 2026-09-04):
 #   E-048 cc_remainder_seogeo_profile   E-049 cc_remainder_seogeo_report
 #   E-050 wrap_manifest_seogeo_lines    E-051 file_behaviors_seogeo
+# CHANGED v1.2.0 (friction-repair master change, 2026-09-06, RULING-013/014):
+#   E-002 delivery is a numbered series of single-file SHA-guarded commits (the connector
+#   has no patch, no append, no delete-inside-a-commit); handoff written FIRST with
+#   wrap_complete: false and LAST with wrap_complete: true. E-003/E-024/E-028/E-029:
+#   consumed inbox files are DELETED, never archived. E-008 names the clone command for
+#   the evidence check (forgeflow is public). E-014 unfinished-wrap rule. E-021 path-scoped
+#   add. E-030 per-part messages. E-047 stash-rebase-restore sequence.
 # E-004 (database state invisible) also carries the STEP 0 database-state class, so
 # the index's "sub-blocks conditional" for E-005 resolves to E-004 + E-031..E-034.
 # Reader deviation from the index: E-001 is all, not cw — a cold runner must hold the
@@ -75,21 +82,42 @@ wrap_trigger: |
 wrap_direct_write_delivery: |
   DELIVERY. Claude Web builds all file contents in its sandbox, YAML-parses
   every one with a real parser, runs the evidence count (E-030), and pushes
-  them itself through the GitHub connector as ONE docs commit on
-  {{repo.default_branch}} or as ONE docs pull request. Decide which BEFORE
-  writing anything:
-    - Direct docs commit: the default for a single-repo wrap when no Claude
-      Code session may be active on this repo and the wrap is within the split
-      threshold.
-    - Pull request: when another Claude Code session may be active on this
-      repo (two writers on one repo is a collision); when the wrap exceeds
-      {{thresholds.wrap_split.lines}} lines of new content or more than
-      {{thresholds.wrap_split.edit_operations}} distinct edit operations
-      (each REMOVE / UPDATE / MOVE / ADD / ARCHIVE MOVE is one); or when Matt
-      asks for one. A PR is reviewed by diff, not re-read from memory.
-  ASK FIRST: before the push, ask Matt in one line whether a Claude Code
-  session is active on this repo. Matt runs concurrent sessions; if the answer
-  is yes or unknown, deliver as a PR.
+  them itself through the GitHub connector. THE CONNECTOR SHAPES THE WRAP:
+  it has no patch operation, no append, and no delete inside a multi-file
+  commit, and its multi-file write takes no SHA guard. So the wrap is not one
+  commit. It is a NUMBERED SERIES OF SINGLE-FILE COMMITS on
+  {{repo.default_branch}}, one file per commit, every write SHA-guarded,
+  each message reading
+    docs: end session YYYY-MM-DD (k/N) — <file or operation>
+  where N is declared before the first write and k counts up. THE SHA GUARD
+  ALWAYS WINS over any wish for fewer commits: a multi-file write is never
+  used for a wrap file. Order of the series:
+    1/N  .forge/handoff.yaml — FIRST, with wrap_complete: false,
+         wrap_parts_total: N and written_at_commit = HEAD before the wrap
+         (a stopped wrap therefore always leaves a handoff that says it
+         stopped, and names what remains — E-014)
+    …    the state files in protocol order (session-state, active-bugs,
+         session-history archive move if due then append, backlog, GOTCHAS,
+         rulings back-fill, CHANGELOG, each inbox file deletion)
+    N/N  .forge/handoff.yaml — LAST, rewritten with wrap_complete: true and
+         written_at_commit = HEAD after part N-1; its message ends with the
+         evidence line (E-030)
+  Every part is atomic and independently valid: a wrap that stops after any
+  part stops at a clean boundary, and the next session reads wrap_complete
+  and finishes it. The start protocol ignores commits whose messages begin
+  "docs: end session" when it judges handoff staleness, so the series never
+  trips the alarm.
+  PULL REQUEST INSTEAD when another Claude Code session may be active on this
+  repo (two writers on one repo is a collision) or when Matt asks for one:
+  the same series lands on a branch, one commit per part, and the PR is
+  reviewed by diff, not re-read from memory; the session is wrapped when the
+  PR is merged (E-022). The split thresholds ({{thresholds.wrap_split.lines}}
+  lines / {{thresholds.wrap_split.edit_operations}} operations) no longer
+  choose the delivery; they are the signal to say in the report that this
+  was a large wrap.
+  ASK FIRST: before the first write, ask Matt in one line whether a Claude
+  Code session is active on this repo. Matt runs concurrent sessions; if the
+  answer is yes or unknown, deliver as a PR.
   PROTECTION FALLBACK (RULING-011): branch protection on
   {{repo.default_branch}} lets administrators bypass, so a direct docs commit
   normally lands. If the push is rejected by protection anyway, do not
@@ -100,21 +128,30 @@ wrap_direct_write_delivery: |
   immediately before writing it; the write names that SHA so a concurrent
   change is rejected instead of overwritten. On a rejection, re-read and
   re-apply the operations — never overwrite blind, never force anything.
-  OVERWRITE files are written in full. SURGICAL EDIT files are read, the
-  operations applied one at a time in order, and the result written; the diff
-  of before and after must contain only the operations listed — anything else
-  in the diff is a defect that stops the write. APPEND adds only the new
-  entry at the correct location; PREPEND adds only the new entry at the top;
-  ARCHIVE MOVE appends to the named Destination FIRST, then removes from the
-  live file, in the same commit. Every path written is literal, copied from
-  the wrap file manifest below; the artifact register wins over this file if
-  they ever disagree, and this file is corrected in the master.
+  EVERY WRITE IS A WHOLE-FILE WRITE. The connector has no partial write, so
+  a SURGICAL EDIT, an APPEND and a PREPEND are all implemented as: read the
+  file, apply the operations one at a time in order in the sandbox, write
+  the whole result back. That re-transmits the entire file to change one
+  entry, and it is the single largest silent-corruption risk in this wrap,
+  so the check is mechanical, not visual: before pushing, diff the before
+  and after text in the sandbox — the diff must contain only the operations
+  listed, anything else is a defect that stops the write — and the wrap
+  report states, per such file, the entry count and byte size before and
+  after. OVERWRITE files are written in full by design. APPEND adds only the
+  new entry at the correct location; PREPEND adds only the new entry at the
+  top; ARCHIVE MOVE appends to the named Destination FIRST (one commit),
+  then removes from the live file (the next commit), consecutive parts of
+  the series, never stopping between them. Every path written is literal,
+  copied from the wrap file manifest below; where this repo declares an
+  artifact register (its start protocol carries an artifact_register_binding
+  section), the register wins over this file if they ever disagree, and this
+  file is corrected in the master.
 
-  PROOF OF LANDING. After the push, fetch each written file and compare the
-  blob SHA GitHub reports with the SHA of the content written (git
-  hash-object in the sandbox). Equal means landed; anything else means the
-  wrap is not done. Report to Matt in plain English: what changed in each
-  file, in one line per file, then the commit SHA or PR number.
+  PROOF OF LANDING. After each part, the write result reports the blob SHA;
+  it must equal the SHA of the content written (git hash-object in the
+  sandbox). Equal means landed; anything else means the wrap is not done.
+  Report to Matt in plain English: what changed in each file, in one line
+  per file with its part number and commit SHA, or the PR number.
 
   THE WRAP WRITES THE DOCUMENTATION LAYER ONLY. The start protocol's risk
   test (RULING-010) governs what Claude Web may ever edit directly; the wrap
@@ -127,8 +164,10 @@ wrap_direct_write_delivery: |
 
 # >>> block E-003 | wrap_file_manifest | reader: cw | render_when: always
 wrap_file_manifest: |
-  EVERY PATH THIS WRAP MAY WRITE. All literal, none inferred. The list must
-  agree with .forge/protocols/artifact-register.yaml; the register wins.
+  EVERY PATH THIS WRAP MAY WRITE. All literal, none inferred. Where this
+  repo declares an artifact register (.forge/protocols/artifact-register.yaml,
+  named in its start protocol), the list must agree with it and the register
+  wins; a repo without one never creates one at the wrap.
 
     .forge/session-state.yaml                      OVERWRITE
     .forge/active-bugs.yaml                        SURGICAL EDIT
@@ -142,7 +181,7 @@ wrap_file_manifest: |
     .forge/archive/GOTCHAS-archive.yaml            APPEND, oldest-first  <- the ONLY GOTCHAS archive
     .forge/archive/CHANGELOG-archive.yaml          APPEND, newest-at-top
     .forge/archive/backlog-archive.yaml            APPEND, oldest-first (completed items older than {{thresholds.backlog_completed_archive_after_days}} days)
-    .forge/archive/inbox/<run-id>.yaml             MOVE from .forge/inbox/<run-id>.yaml (consumed observation files)
+    .forge/inbox/<run-id>.yaml                     DELETE after consumption (RULING-014 — git history is the archive; nothing is copied to .forge/archive/inbox/)
 
   ONE ARCHIVE PATH PER FILE CLASS. Every archive lives under .forge/archive/
   at the path named above. An archive file for the same class at any other
@@ -384,12 +423,17 @@ verify_before_you_write_and_evidence: |
   the count. A claim with no identifier is written in reported form, never in
   verified form. Claude Web never writes an unqualified completion claim from
   a Claude Code report alone. THE COUNT IS COMPUTED, NOT ESTIMATED: before the
-  push, run the renderer's companion check (python3 render.py evidence, from
-  the forgeflow master, against the wrap's changed .forge/ files or their
-  diff) in the sandbox. It prints "N claims verified by ID, M reported
-  unverified, K unmarked". K must be 0 — fetch the artifact or rewrite the
-  line in reported form. A wrap recording no state changes at all in a
-  session that produced commits is itself flagged and must be explained.
+  final handoff write, run the renderer's companion check in the sandbox.
+  chromasmith/forgeflow is PUBLIC, so the sandbox needs no credentials:
+    git clone --depth 1 https://github.com/chromasmith/forgeflow /tmp/forgeflow
+    python3 /tmp/forgeflow/master/render.py evidence <each wrap file written>
+  It prints "N claims verified by ID, M reported unverified, K unmarked". K
+  must be 0 — fetch the artifact or rewrite the line in reported form. Only
+  if the sandbox genuinely cannot reach GitHub is the count made by hand,
+  and then the evidence line reads "... (hand-counted — renderer
+  unreachable)" so the number is never mistaken for a machine check. A wrap
+  recording no state changes at all in a session that produced commits is
+  itself flagged and must be explained.
 
   EVERY WRAP-WRITTEN YAML FILE IS PARSED BY A REAL PARSER in the sandbox
   before it is pushed; a parse failure stops the wrap. Traps: a plain scalar
@@ -584,7 +628,8 @@ tombstone_gotchas_exemption: |
 
 # >>> block E-014 | handoff_overwrite | reader: cw | render_when: always
 handoff_overwrite: |
-  STEP 7b — HANDOFF (OVERWRITE .forge/handoff.yaml, create if missing). The
+  STEP 7b — HANDOFF (OVERWRITE .forge/handoff.yaml, create if missing;
+  written TWICE — part 1/N and part N/N of the series, E-002). The
   pass-the-baton briefing for the next Claude Web session. It is NOT a summary
   of what happened — it is a WARNING LETTER to a fresh session with no memory
   of this work, written as if briefing a capable colleague about to walk into
@@ -594,10 +639,25 @@ handoff_overwrite: |
   overwrite; the file reflects right now, not history.
 
   STAMPS. written_at_commit is the HEAD SHA of {{repo.default_branch}} at the
-  moment the handoff is written (the docs commit itself will follow it; the
-  next session compares this SHA to HEAD and treats a mismatch beyond the
-  wrap's own commit as a stale handoff). written_at_utc is the write time.
-  Both are real values fetched now, never narrated.
+  moment the handoff is written: HEAD before the wrap on the first write,
+  HEAD after part N-1 on the final write. The next session ignores the
+  wrap's own "docs: end session" commits and treats any other commit beyond
+  written_at_commit as staleness. written_at_utc is the write time. Both are
+  real values fetched now, never narrated.
+
+  WRAP_COMPLETE. The first write carries wrap_complete: false and
+  wrap_parts_total: N; the final write flips wrap_complete to true. IF THE
+  WRAP STOPS EARLY — the session is out of room, the connector fails and
+  cannot be retried, Matt calls it — the outgoing session's last act is to
+  rewrite the handoff once more with wrap_complete still false and
+  first_thing naming the REMAINING WRAP PARTS in order ("finish the
+  2026-09-05 wrap: parts 5-7 — backlog edit, GOTCHAS append, delete inbox
+  X"), why it stopped, and where the prepared content is if any exists. The
+  project's own next move drops to next_up. A first_thing that names project
+  work while wrap parts are outstanding is a defect: a cold session reads
+  first_thing and acts, and an unfinished wrap it was not told about stays
+  unfinished for good. When the wrap did complete, first_thing names the
+  project's next item as always.
 
   ONE-ITEM AGENDA. first_thing names EXACTLY ONE item — a specific file,
   function or exact change, why it matters, and what to verify when done.
@@ -627,12 +687,16 @@ handoff_overwrite: |
     # session: [YYYY-MM-DD]
     written_at_commit: [full HEAD SHA at write time]
     written_at_utc: [YYYY-MM-DDThh:mm:ssZ]
+    wrap_complete: [false on the first write; true on the final write]
+    wrap_parts_total: [N — the number of commits this wrap declared]
     status: |
       [Honest 3-4 line snapshot. Name any unmerged PR. No spin. End with the
        one-sentence overall project position.]
     first_thing: |
       [The single most important thing to do — specific file, function, exact
-       change. Why it matters. What to verify when it is done.]
+       change. Why it matters. What to verify when it is done. If
+       wrap_complete is false: the remaining wrap parts, in order, and why the
+       wrap stopped — nothing else.]
     watch_out_for:
       - "[The thing most likely to waste 30 minutes if you are not ready for it]"
       - "[Scope pressure points — the file and the friction that causes drift]"
@@ -686,10 +750,10 @@ archive_maintenance: |
       Ordering: OLDEST-FIRST in the archive.
 
   OPERATION DISCIPLINE (Claude Web performs every move itself under
-  direct-write): append the full entry to the Destination FIRST, then remove
-  it from the live file, then perform the normal write — all in the same
-  commit, never stopping between the append and the removal. Create
-  .forge/archive/ if it does not exist. Before creating any archive file,
+  direct-write): append the full entry to the Destination FIRST (one part of
+  the series), then remove it from the live file and perform that file's
+  normal write (the next part) — consecutive commits, never stopping between
+  the append and the removal. Create .forge/archive/ if it does not exist. Before creating any archive file,
   grep for an existing file serving the same purpose and HALT on a
   discrepancy rather than creating a second copy; a missing archive file is
   created from its initialization template. FIDELITY: count entries before
@@ -994,8 +1058,10 @@ cc_local_remainder_prompt: |
   git commit -m "[message Claude Web supplies]"
   git push origin {{repo.default_branch}}
 
-  git add -A and git add . are FORBIDDEN. The staged list matches the
-  authorized list exactly. The fetch first is mandatory — Claude Web may have
+  The bare git add -A and git add . are FORBIDDEN; the path-scoped
+  git add -A -- <named path> is allowed only for a many-file move under a
+  directory this prompt names, after the audit above. The staged list matches
+  the authorized list exactly. The fetch first is mandatory — Claude Web may have
   pushed documentation, or another session may have pushed code; if
   origin/{{repo.default_branch}} moved, rebase onto it and push again. Never
   force-push, never reset. Write the commit message with a bash heredoc, not
@@ -1032,7 +1098,7 @@ cc_local_remainder_prompt: |
   - Do NOT show intermediate outputs.
   - Do NOT write, edit or generate any .forge/ documentation file; Claude Web
     writes those.
-  - Use NAMED FILES in git add, never git add -A or git add .
+  - Use NAMED FILES in git add, never the bare git add -A or git add .
   - Verify line endings before staging.
   - The push is mandatory AND must be VERIFIED.
 
@@ -1098,6 +1164,14 @@ cc_remainder_push_gate: |
   after the push: commit them by name with the message
   "chore: chromaqa telemetry", push again (the gate re-runs and appends
   nothing new when nothing changed), then run VERIFY PUSH.
+
+  IF THE PUSH NEEDS A REBASE (origin moved) and the ledger files are dirty,
+  git refuses to start. The sequence is fixed:
+    git stash push -- .chromaqa/CQA-debt.jsonl .chromaqa/CQA-showstoppers.jsonl
+    git rebase origin/{{repo.default_branch}}
+    git stash pop
+  then push again. Committing the ledger to get moving or discarding its
+  lines is WRONG; say which sequence you used in the report.
 
   The report adds: "- ChromaQA gate: [passed / refused, exit N, code — how
   resolved / telemetry commit at [hash]]".
@@ -1192,9 +1266,10 @@ inbox_consumption: |
   For each .forge/inbox/<run-id>.yaml: fold its reflection answers into the
   handoff and GOTCHAS as they apply; append its discovered-GOTCHA lines
   (already in final form) in STEP 7; use its SCOPE DISCLOSURE and ARTIFACT
-  PATHS as STEP 0 evidence; then MOVE the file to
-  .forge/archive/inbox/<run-id>.yaml — create it at the archive path and
-  delete it from .forge/inbox/ in the same docs commit, content byte-identical.
+  PATHS as STEP 0 evidence; then DELETE the file from .forge/inbox/ (its own
+  part of the series, RULING-014). Git history holds it byte-identical at
+  the commit that added it; nothing is copied to .forge/archive/inbox/, and
+  an existing .forge/archive/inbox/ directory is left alone.
   A run with no inbox file is a missing disclosure: it is named in the
   handoff's watch_out_for as "no inbox — observations lost for run <id>" and
   the wrap report says so. Any inbox file the wrap cannot consume is named as
@@ -1269,10 +1344,7 @@ file_behaviors:
     action: CREATE IF MISSING
   inbox_directory:
     path: .forge/inbox/
-    action: CREATE IF MISSING (written by Claude Code per run; emptied by the wrap)
-  inbox_archive_directory:
-    path: .forge/archive/inbox/
-    action: CREATE IF MISSING (consumed inbox files move here)
+    action: CREATE IF MISSING (written by Claude Code per run; each file DELETED by the wrap after consumption — RULING-014; keep .gitkeep)
   session_state:
     path: .forge/session-state.yaml
     action: OVERWRITE
@@ -1430,8 +1502,8 @@ initialization_templates:
   inbox_directory_init: |
     # .forge/inbox/ holds one observation file per run, .forge/inbox/<run-id>.yaml,
     # written by Claude Code as the last action of the run. The wrap consumes each
-    # file and moves it to .forge/archive/inbox/<run-id>.yaml. Create the directory
-    # with a .gitkeep file at .forge/inbox/.gitkeep; never a README.
+    # file into the .forge/ documents and deletes it (git history is the archive).
+    # Create the directory with a .gitkeep file at .forge/inbox/.gitkeep; never a README.
   session_history_archive_init: |
     # .forge/archive/session-history-archive.yaml
     # Historical session log — entries moved here when the live file reaches its
@@ -1484,15 +1556,17 @@ initialization_templates_relay:
 
 # >>> block E-030 | wrap_commit_message_and_evidence_count | reader: cw | render_when: always
 wrap_commit_message_and_evidence_count: |
-  THE DOCS COMMIT MESSAGE (or the PR title, when delivered as a PR):
-    docs: end session YYYY-MM-DD — N milestones
-  Append " + schema refresh" if the schema was refreshed; " + archive
-  maintenance" if any archive move ran; " + primer refresh" if the phase
-  authority was refreshed; " + inbox" naming the count of inbox files
-  consumed. The message ENDS with the computed evidence line, exactly as the
-  companion check printed it:
-    N claims verified by ID, M reported unverified.
-  M is the one wrap metric Matt looks at. The count is never typed by hand.
+  THE COMMIT MESSAGES. Each part of the series (E-002) is its own commit:
+    docs: end session YYYY-MM-DD (k/N) — <file or operation>
+  The FINAL part — the handoff rewrite with wrap_complete: true — carries the
+  summary and the evidence line:
+    docs: end session YYYY-MM-DD (N/N) — handoff; P milestones[ + schema
+    refresh][ + archive maintenance][ + primer refresh][ + inbox <count>
+    consumed]. V claims verified by ID, M reported unverified.
+  (the PR title, when delivered as a PR, is the same final message.) The
+  evidence line is exactly what the companion check printed (E-008); M is
+  the one wrap metric Matt looks at, and the count is never typed by hand
+  unless the line says "hand-counted".
 
   THE WRAP REPORT to Matt, in plain English, after the push is proven:
   - Overall project position (one sentence — E-026)
@@ -1500,8 +1574,10 @@ wrap_commit_message_and_evidence_count: |
   - Claims: N verified by ID, M reported unverified (and what could not be
     verified, and why)
   - Scope reconciliation: clean / drift handled as — [describe]
-  - Inbox: consumed / missing, per run
+  - Inbox: consumed and deleted / missing, per run
   - Archive operations: ran (each Destination) / none needed
+  - Whole-file rewrites: per surgical or append file, entries and bytes
+    before -> after
   - Schema refresh, phase authority, companion write: ran / untouched, as
     they apply to this repo
   - Rulings: all present / back-filled [ids]

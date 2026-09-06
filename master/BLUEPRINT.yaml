@@ -1,8 +1,8 @@
 # =============================================================================
 # FORGEFLOW MASTER — UNIFIED SESSION-PROTOCOL SYSTEM
-# Blueprint v1.4 — 2026-09-04 (two board passes; DESIGN CLOSED; step 3 built; rollout order amended by ruling; S4 ceilings set from measured renders)
+# Blueprint v1.6 — 2026-09-06 (two board passes; DESIGN CLOSED; master v1.2.0 friction repair; rollout order by ruling; S4 ceilings from measured renders)
 # Author: Claude Web (planning session with Matt Fleming, Chromasmith LLC)
-# Status: DESIGN CLOSED after two committee passes. Step 3 built (renderer, both masters, C-001 house block); no repo runs on the master (RULING-001).
+# Status: DESIGN CLOSED after two committee passes. Master RELEASED (v1.1.0 on seven repos, v1.2.0 on forgeflow first); repos join by Matt naming them (RULING-001).
 # Home: github.com/chromasmith/forgeflow  master/BLUEPRINT.yaml
 # =============================================================================
 #
@@ -15,9 +15,28 @@
 
 meta:
   name: ForgeFlow Master
-  version: "1.5-blueprint"
-  date: 2026-09-05
+  version: "1.6-blueprint"
+  date: 2026-09-06
   revision_history:
+    - version: "1.6"
+      note: >
+        FRICTION REPAIR (master v1.2.0, RULING-013/014/015) from the first two days of
+        running v1.1.0 in three repos. WRAP DELIVERY: the GitHub connector has no patch,
+        no append and no delete inside a commit, so the "one docs commit" promise was
+        unkeepable and every large wrap improvised a split; E-002 now defines the wrap as
+        a NUMBERED SERIES of single-file SHA-guarded commits, handoff written first
+        (wrap_complete: false) and last (wrap_complete: true), and the start protocol
+        ignores the wrap's own commits when judging staleness (S-010) and finishes an
+        unfinished wrap first (E-014). INBOX: consumed files are DELETED, not archived
+        (RULING-014) — git history is the archive. S-078 Desktop copy RETIRED
+        (RULING-015): it contradicted the NO MEMORY WRITES clause. Dead pointers: S-003
+        gated on subsystems.artifact_register. Habit collisions settled in text (inbox
+        path authorized by protocol; path-scoped git add -A -- permitted, bare forbidden;
+        plain-text banners) plus NEW W-005 prompt_writer_self_check. ChromaQA
+        stash-rebase-restore sequence (S-087/E-047). E-008 names the public clone command
+        for the evidence check. House block: spawn-window line. PROPAGATION becomes ONE
+        local Claude Code prompt (Section 7 delivery_rule amended); the pointer-URL idea
+        was considered and declined (RULING-013).
     - version: "1.5"
       note: >
         DEFECT REPAIR (master v1.1.0, RULING-009/010/011). The v1.0.0 rollout shipped every
@@ -411,7 +430,8 @@ artifacts:
         could not make (a dispatched run writes needs_ruling and STOPS — it never
         chooses; this is dispatch's substitute for a human gate). One file per run,
         never shared, so parallel runs cannot collide. CW's wrap consumes every
-        inbox file into the .forge/ documents and moves it to .forge/archive/inbox/.
+        inbox file into the .forge/ documents and DELETES it (v1.6, RULING-014 — git
+        history is the archive; the earlier move to .forge/archive/inbox/ is retired).
         A TASK IS NOT COMPLETE UNTIL ITS INBOX FILE EXISTS (v1.2, N1). LOCAL mode:
         VERIFY PUSH fails if the branch contains code changes and no inbox file for
         this run — CC states "INBOX MISSING" and writes it before reporting done.
@@ -738,10 +758,19 @@ propagation:
     correctly describes a reverted bump — and CW's next act is to remove any drift
     lines it wrote before the failure.
   delivery_rule: >
-    A propagation is never a direct commit — PR per repo, always (Board, Release
-    Engineer). A bad render caught in PRs is eight closed tabs; caught in commits it
-    is eight reverts Matt must authorize. Direct commit remains available for a
-    single-repo small change per the 2026-09-02 ruling.
+    v1.6 (RULING-013): a propagation is ONE local Claude Code run, not a per-repo
+    connector landing. CW renders every registered repo in its sandbox first and
+    proves each byte-stable; the run then clones forgeflow fresh, renders each repo
+    itself with the same render.py (deterministic — its output must match the blob
+    SHAs CW supplies, or it HALTS before pushing that repo), and pushes each repo's
+    file set with plain git as ONE named-file commit on the default branch, acting
+    as Matt (administrators bypass protection, RULING-011). The connector's size
+    ceiling and one-call-per-file landing disappear; the concurrency question is
+    asked ONCE for the whole batch. The board's PR-per-repo rule (v1.1) is
+    superseded: its protection came from the diff review, which now happens in CW's
+    sandbox before the run is dispatched, and a bad render caught there costs nothing.
+    Direct connector commit remains the method for a single-repo first render or
+    re-render (RENDER_PROCEDURE.md) and for the wrap's own docs.
 
 # =============================================================================
 # 8. SESSION FLOW UNDER THE NEW SYSTEM (what Matt experiences)
@@ -814,8 +843,12 @@ session_flow:
       Matt declares the day's work finished. CW runs scope reconciliation, verifies
       every claim it is about to write against GitHub / Supabase (verify-before-you-
       write), builds all .forge/ file contents, YAML-parses them, and — per the
-      2026-09-04 direct-write ruling — pushes them itself via the GitHub MCP as one
-      docs commit or PR with a plain-English diff summary.
+      2026-09-04 direct-write ruling — pushes them itself via the GitHub MCP as a
+      NUMBERED SERIES of single-file, SHA-guarded commits (v1.6; the connector has
+      no patch, append or in-commit delete, so one commit was never achievable):
+      handoff first with wrap_complete: false, the state files, handoff last with
+      wrap_complete: true and the evidence line. A PR carries the same series when
+      another writer may be active.
     - >
       EVIDENCE RULE (Board M4, binding on every wrap write). Every factual claim CW
       writes into a .forge/ file carries the identifier of the artifact CW actually
@@ -833,9 +866,11 @@ session_flow:
       form. Vagueness is not an escape: a wrap recording no state changes at all in a
       session that produced commits is itself flagged.
     - >
-      CW consumes every .forge/inbox/ file into the .forge/ documents and moves them to
-      .forge/archive/inbox/. Any inbox file it cannot consume is named as a loose end
-      in the handoff. handoff.yaml is written with written_at_commit and written_at_utc.
+      CW consumes every .forge/inbox/ file into the .forge/ documents and deletes it
+      (v1.6, RULING-014). Any inbox file it cannot consume is named as a loose end
+      in the handoff. handoff.yaml is written with written_at_commit, written_at_utc
+      and wrap_complete; a wrap that stops early leaves first_thing naming the
+      remaining parts, and the next session finishes them before any project work.
     - >
       CW answers the north-star question in one sentence in the handoff: "Did today's
       work make the product better, or only move the board?"

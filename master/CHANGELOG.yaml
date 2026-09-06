@@ -2,6 +2,48 @@
 # The top entry's `version` is the master version render.py stamps into every render.
 # Newest first.
 entries:
+  - version: "v1.2.0"
+    date: 2026-09-06
+    status: RELEASED — friction-repair change (RULING-013/014/015); rendered on forgeflow only, propagation to the other six registered repos is the next session's first_thing
+    changed: >-
+      Fifteen findings from the first two days of running v1.1.0 (saas-starter and
+      convergible sessions, 2026-09-05 — FF-FRICTION-1..4, FF-101..103, FF-R-001..006) plus this
+      repo's own filed items, de-duplicated into ten repairs. WRAP DELIVERY (six findings, one
+      root cause): the GitHub connector has no patch, no append and no delete inside a
+      multi-file commit, and its multi-file write takes no SHA guard, so E-002's "ONE docs
+      commit" was never achievable and the last two large wraps improvised a split. E-002 now
+      defines the wrap as a NUMBERED SERIES of single-file SHA-guarded commits ("docs: end
+      session DATE (k/N) — file"), handoff written FIRST with wrap_complete: false and LAST with
+      wrap_complete: true and the evidence line (E-030); every write is stated to be a whole-file
+      write with a mechanical before/after diff and entry/byte counts in the report (FF-R-004);
+      S-010 ignores the wrap's own commits when judging staleness (FF-FRICTION-3) and treats
+      wrap_complete: false as "finish the previous wrap first" (FF-FRICTION-1, E-014 unfinished-
+      wrap rule and schema fields). INBOX (RULING-014): consumed files are DELETED, not moved to
+      .forge/archive/inbox/ (E-003, E-015, E-024, E-028, E-029, S-048, house block) —
+      FF-FRICTION-4. S-078 Desktop copy RETIRED (RULING-015, FF-101): it contradicted the NO
+      MEMORY WRITES clause; the execution.local_report_desktop_copy knob is removed from the
+      schema (config_hash changes for every repo). DEAD POINTER (FF-R-005): S-003 now renders
+      only when subsystems.artifact_register is true; S-011, S-024, E-002 and E-003 phrase the
+      register conditionally and say a repo without one must not be given one. HABIT
+      COLLISIONS (FF-103a/b/c): the inbox path is authorized by the protocol in every run
+      (S-030 preamble, S-048); the path-scoped "git add -A -- <named path>" is permitted for a
+      many-file move after the scope audit while the bare forms stay forbidden (S-043, S-073,
+      E-021, house block); NEW block W-005 prompt_writer_self_check (plain-text banners, inbox
+      path, add form, no writes outside the tree, ChromaQA rebase lines, PRECEDENCE present).
+      CHROMAQA REBASE (FF-R-006): S-087 and E-047 carry the fixed stash-rebase-restore sequence
+      and name committing or discarding the ledger as wrong. EVIDENCE CHECK (FF-R-003): E-008
+      names the exact clone command — forgeflow is PUBLIC, the report's "private" premise was
+      wrong — and requires "(hand-counted — renderer unreachable)" on any hand count. HOUSE
+      BLOCK: spawn-window line (FF-102 — a config naming a different repo means not yet
+      rendered; do not hand-fix). PROPAGATION (RULING-013): PROPAGATION_PROCEDURE.md rewritten
+      around ONE local Claude Code run that renders every registered repo and pushes with
+      plain git against Claude Web's sandbox-proven blob SHAs; Blueprint delivery_rule amended
+      (v1.6). The pointer-URL alternative (repos hold a link to one master file) was considered
+      and declined — network fetch on every session start, silent truncation on runners,
+      repeals the standalone rule. Block counts: start 96 (S-078 out, W-005 in), end 51. Tests 54/54 (seven new: real-master
+      invariants and a real docs-only render). Ceilings on the real sandbox knob set: start
+      1595/1650, dispatch start 588/650, end 1280/1400, dispatch end 95/150 — the start file is
+      55 lines from its ceiling; the next start-protocol addition replaces something (P11).
   - version: "v1.1.0"
     date: 2026-09-05
     status: RELEASED — defect-repair change (RULING-009/010/011); every v1.0.0 repo re-renders from this version on Matt's go

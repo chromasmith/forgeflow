@@ -24,6 +24,11 @@
 # ADDED v1.1.0 (defect-repair master change, 2026-09-05, RULING-009):
 #   S-091 session_start_gate (FFD-003)    W-004 working_method_offer_rule (FFD-004)
 #   S-092 dispatch_unavailable_notice (FFD-001; off_reason set by the renderer)
+# ADDED v1.2.0 (friction-repair master change, 2026-09-06, RULING-013/014/015):
+#   W-005 prompt_writer_self_check (FF-103a/b/c habit collisions)
+# RETIRED v1.2.0: S-078 inbox_desktop_copy (RULING-015 — contradicted the NO MEMORY WRITES
+#   clause; the ID is never reused). S-003 is now conditional on subsystems.artifact_register
+#   (FF-R-005). S-010 knows the wrap's own part-commits and the wrap_complete flag.
 # Reader deviation from the index: S-049 (human gates) is cw+cc-local, not all —
 # P7 says a cold runner must not read typed-confirmation banners it cannot run.
 #
@@ -139,9 +144,10 @@ mode_selection: |
   parallel costs more than it saves. When in doubt, sequential.
 # <<< end S-002
 
-# >>> block S-003 | artifact_register_binding | reader: all | render_when: always
+# >>> block S-003 | artifact_register_binding | reader: all | render_when: subsystems.artifact_register
 artifact_register_binding: |
-  Read .forge/protocols/artifact-register.yaml before writing any prompt or
+  This repo declares an artifact register. Read
+  .forge/protocols/artifact-register.yaml before writing any prompt or
   filing any issue. Its five rules bind every prompt this protocol produces,
   including prompts that seem too small to need it:
 
@@ -285,14 +291,30 @@ session_start_ritual: |
 # >>> block S-010 | handoff_staleness_check | reader: cw | render_when: always
 handoff_staleness_check: |
   .forge/handoff.yaml carries written_at_commit (the HEAD SHA when it was
-  written) and written_at_utc. Before anything else, compare written_at_commit
-  to the current HEAD of {{repo.default_branch}}. If commits have landed
-  since, the Session Context Summary OPENS with:
+  written), written_at_utc, and wrap_complete (true or false). Before
+  anything else, compare written_at_commit to the current HEAD of
+  {{repo.default_branch}} and list the commits between them.
+
+  THE WRAP'S OWN COMMITS DO NOT COUNT. A wrap lands as a numbered series of
+  single-file commits whose messages begin "docs: end session" (E-002); the
+  handoff is written first in that series and rewritten last with the final
+  HEAD, so on the normal path the only commit after written_at_commit is the
+  handoff's own final write. Ignore every commit whose message begins
+  "docs: end session". If OTHER commits have landed since, the Session
+  Context Summary OPENS with:
   "HANDOFF IS STALE — N commits have landed since it was written. Treating
   first_thing as a suggestion, not a briefing. Reconstructing from the last N
   commits and session-history before proposing the first item."
-  If they match, the summary opens with "Handoff current at <SHA>." Never
-  silently proceed on a stale handoff.
+  If none have, the summary opens with "Handoff current at <SHA>." Never
+  silently proceed on a stale handoff, and never raise the alarm for the
+  wrap's own parts — an alarm on the normal path is an alarm nobody reads.
+
+  UNFINISHED WRAP. If wrap_complete is false, the previous session's wrap
+  stopped before its last part. The handoff's first_thing then names the
+  remaining wrap parts, in order, and THAT is this session's first item —
+  finish the previous wrap (its remaining files, from the state the handoff
+  describes, under the end protocol) before any project work, and say so in
+  the summary. A stopped wrap is never silently left unfinished.
 # <<< end S-010
 
 # >>> block S-011 | session_context_read_list | reader: cw | render_when: always
@@ -320,7 +342,9 @@ session_context_read_list: |
     .forge/session-history.yaml    the {{thresholds.session_history_cap}} most recent sessions;
                                    deeper history is in .forge/archive/ and is never read at start
     .forge/GOTCHAS.yaml            friction lessons; retired entries are in .forge/archive/
-    .forge/protocols/artifact-register.yaml   binding on every prompt; read before writing one
+    .forge/protocols/artifact-register.yaml   binding on every prompt where this file carries an
+                                   artifact_register_binding section; a repo without that section
+                                   has no register and must NOT be given one by a start or a prompt
     .forge/inbox/                  any file here is an unconsumed observation from a prior run;
                                    name it as a loose end in the summary
 
@@ -637,8 +661,8 @@ prohibited_list_defaults: |
   Claude Web also derives the OFF-LIMITS list: files explicitly forbidden for
   the task even if Claude Code believes editing them would help. It need not
   be exhaustive; it names the files most at risk of drift given the task.
-  Include by default on EVERY prompt (keep in step with the artifact
-  register's default_prohibited block):
+  Include by default on EVERY prompt (where this repo has an artifact
+  register, keep in step with its default_prohibited block):
     - {{protected.spec_dirs_off_limits}} — governing specs; a build session
       never edits a spec
     - .forge/GOTCHAS.yaml — appended only at wrap
@@ -792,7 +816,10 @@ prompt_preamble: |
   copy.
 
   NO MEMORY WRITES: Do not write to your own memory or to any persistence
-  outside this repository, ever, unless this prompt explicitly instructs it.
+  outside this repository, ever. Nothing in this protocol asks you to — no
+  Desktop copies, no files outside the tree. The one file every run WRITES
+  INSIDE the repository, .forge/inbox/[RUN-ID].yaml, is authorized by the
+  protocol itself whether or not the AUTHORIZED FILES list below names it.
 
   COLLABORATION NOTE: If you see a clearly better pattern in the codebase or a
   significant improvement that would require editing files outside the
@@ -1160,11 +1187,19 @@ completion_steps: |
   git commit -m "[your commit message]"
   git push origin {{repo.default_branch}}
 
-  Do NOT use git add -A or git add . — they are FORBIDDEN. Name every file.
-  The staged list matches the AUTHORIZED FILES list; if it does not, Step 0
-  should have caught it. The git fetch first is not optional: another session
-  may have pushed while you worked. If origin/{{repo.default_branch}} moved,
-  rebase your commit on top of it and push again — never force-push.
+  Do NOT use git add -A or git add . — the bare forms are FORBIDDEN. Name
+  every file. ONE PERMITTED EXCEPTION: the path-scoped form
+    git add -A -- <named path> [<named path> ...]
+  is allowed for a move or rename that touches many files under directories
+  this prompt names, AFTER the Step 0 scope audit has proven that nothing
+  outside those paths changed — it stages everything within the named paths
+  and nothing else. The staged list matches the AUTHORIZED FILES list; if it
+  does not, Step 0 should have caught it. The git fetch first is not
+  optional: another session may have pushed while you worked. If
+  origin/{{repo.default_branch}} moved, rebase your commit on top of it and
+  push again — never force-push. Where this file carries a PRE-PUSH GATE
+  RULE section (a ChromaQA repo), a rebase or branch switch follows the
+  stash-rebase-restore sequence stated there; nothing else.
 
   VERIFY PUSH: git fetch origin; git status -sb shows no [ahead]; git
   rev-parse HEAD equals git rev-parse origin/{{repo.default_branch}}. Do not
@@ -1317,6 +1352,19 @@ chromaqa_push_gate_rule: |
   them during the push. That is ChromaQA working, not a scope breach. The
   wrap's local remainder commits them; a task prompt leaves them alone and
   says so in its report.
+
+  REBASE OR BRANCH SWITCH ON THIS REPO. Because the gate appends to the two
+  ledger files on every push, they are nearly always dirty, and git refuses
+  to start a rebase or switch branches while a tracked file has uncommitted
+  changes. The sequence is fixed and is the only correct one:
+    git stash push -- .chromaqa/CQA-debt.jsonl .chromaqa/CQA-showstoppers.jsonl
+    git rebase origin/{{repo.default_branch}}      (or the branch switch)
+    git stash pop
+  Committing the ledger to get moving (it starts the every-push telemetry
+  loop) is WRONG; discarding its lines (it throws away gate telemetry) is
+  WRONG. Any prompt that instructs a rebase or a branch switch on this repo
+  carries these three lines; a run that meets a dirty ledger without them
+  uses them anyway and says so in its report.
 # <<< end S-087
 
 # >>> block S-046 | done_banner_plain_text | reader: all | render_when: always
@@ -1416,17 +1464,19 @@ inbox_write: |
   states "INBOX MISSING" and writes it before reporting done. Dispatch mode:
   Claude Web does not open a PR for a run with no inbox file; it comments on
   the branch asking for it, and if the run has ended, opens the PR marked
-  "no inbox — observations lost for this run" so the gap is visible. The
-  wrap consumes every inbox file into the .forge/ documents and moves it to
-  .forge/archive/inbox/. This replaces the older per-issue report file; a
-  bare report file at the repo root is FORBIDDEN in every mode.
-# <<< end S-048
+  "no inbox — observations lost for this run" so the gap is visible.
 
-# >>> block S-078 | inbox_desktop_copy | reader: cc-local | render_when: execution.local and execution.local_report_desktop_copy
-inbox_desktop_copy: |
-  Local runs also place a plain-text copy of the completion report on Matt's
-  Desktop, so he can read it without opening the terminal.
-# <<< end S-078
+  THE INBOX PATH IS AUTHORIZED BY THIS PROTOCOL in every run, whether or not
+  the prompt's AUTHORIZED FILES list names it; prompts still name it so the
+  list is complete, and a prompt that omits it is a prompt defect, not a
+  scope breach. If a task itself clears or reorganizes .forge/inbox/, the
+  run's own inbox file is written AFTER that step, as the last action. The
+  wrap consumes every inbox file into the .forge/ documents and then DELETES
+  it (RULING-014); git history is the archive, and nothing is copied to
+  .forge/archive/inbox/. This replaces the older per-issue report file; a
+  bare report file at the repo root is FORBIDDEN in every mode, and no
+  report is written anywhere outside the repository tree.
+# <<< end S-048
 
 # >>> block S-049 | live_supervised_human_gates | reader: cw+cc-local | render_when: always
 live_supervised_human_gates: |
@@ -1821,7 +1871,9 @@ issue_body_template: |
      "dir/" line and hides what is inside it). Anything unauthorized: STOP and
      post a QUESTION comment. Delete any scratch or probe files you created
      inside the repo tree before this audit.
-  1. Commit with NAMED FILES — never git add -A or git add .
+  1. Commit with NAMED FILES — never the bare git add -A or git add . (the
+     path-scoped git add -A -- <named path> is allowed only for a many-file
+     move under directories this issue names, after the scope audit).
   2. Write .forge/inbox/[RUN-ID].yaml (reflection answers, scope disclosure,
      gotcha candidates, any needs_ruling) and commit it with the rest. The
      task is not complete without it.
@@ -1903,6 +1955,33 @@ working_method_offer_rule: |
   that were never real is the most expensive kind of wasted turn, because it
   looks like progress to both sides.
 # <<< end W-004
+
+# >>> block W-005 | prompt_writer_self_check | reader: cw | render_when: always
+prompt_writer_self_check: |
+  PROMPT-WRITER SELF-CHECK. Three sessions in one day re-ruled the same three
+  collisions between a prompt-writer's habit and this protocol; each cost a
+  stop and a question. Before sending ANY Claude Code prompt or issue body,
+  Claude Web checks it against this list and fixes the prompt, never the
+  protocol:
+    - Banners and DONE lines are PLAIN TEXT. No ANSI codes, no \033[ or
+      echo -e sequences, ever — Matt's terminal does not render them.
+    - The AUTHORIZED FILES list names .forge/inbox/[RUN-ID].yaml by literal
+      path, and every other new file by literal path (S-021).
+    - Commit steps say NAMED FILES. The only permitted wide form is the
+      path-scoped git add -A -- <named path> for a many-file move under
+      named directories, after the scope audit; the bare forms are never
+      written into a prompt.
+    - The prompt asks for NO write outside the repository tree — no Desktop
+      copy, no memory, no scratch file the prompt does not name — and its
+      NO MEMORY WRITES clause is the preamble's verbatim text.
+    - Where this file carries a PRE-PUSH GATE RULE section and the task may
+      rebase or switch branches, the prompt carries the stash-rebase-restore
+      sequence from that section.
+    - The PRECEDENCE paragraph (W-003) is present verbatim, so a collision
+      the check missed resolves in the protocol's favour without a question.
+  A rule that needs re-ruling in a session belongs here, stated so the
+  prompt-writer reads it — not left for the run that hits it to rediscover.
+# <<< end W-005
 
 # >>> block W-002 | rulings_written_when_made | reader: cw | render_when: always
 rulings_written_when_made: |

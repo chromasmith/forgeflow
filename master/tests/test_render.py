@@ -5,6 +5,7 @@ Uses the miniature fixture master in master/tests/fixtures/fixture-master so the
 does not depend on the real master files being finished. Exit 0 = all checks passed.
 """
 import filecmp, os, shutil, subprocess, sys, tempfile
+sys.dont_write_bytecode = True
 from pathlib import Path
 
 HERE = Path(__file__).resolve().parent
@@ -127,6 +128,25 @@ with tempfile.TemporaryDirectory() as td:
     # 9. evidence companion check
     r = run("evidence", str(FIX/"wrap-good.yaml"), expect=0); checks[-1] = (r.returncode == 0 and "2 claims verified by ID, 1 reported unverified" in r.stdout, "evidence: good wrap counts 2 verified / 1 reported", r.stdout.strip())
     r = run("evidence", str(FIX/"wrap-bad.yaml"), expect=1); checks[-1] = (r.returncode == 1 and "unmarked" in r.stdout, "evidence: bare 'shipped' line fails", r.stdout.strip()[:80])
+    # 10. REAL master invariants (v1.2.0, RULING-013/014/015) — parse the real block files, not the fixture
+    sys.dont_write_bytecode = True; sys.path.insert(0, str(REAL)); import render as R
+    sblocks, _, _ = R.parse_master(REAL / "start-protocol.master.yaml")
+    eblocks, _, _ = R.parse_master(REAL / "end-protocol.master.yaml")
+    sids = {b.id: b for b in sblocks}; eids = {b.id: b for b in eblocks}
+    checks.append(("S-078" not in sids, "real master: S-078 (Desktop copy) is retired and absent", ""))
+    checks.append(("W-005" in sids and sids["W-005"].cond == "always", "real master: W-005 prompt_writer_self_check present, always", ""))
+    checks.append((sids["S-003"].cond == "subsystems.artifact_register", "real master: S-003 gated on subsystems.artifact_register", sids["S-003"].cond))
+    stext = "\n".join(l for b in sblocks for l in b.lines); etext = "\n".join(l for b in eblocks for l in b.lines)
+    checks.append(("copy of the completion report on Matt's" not in stext, "real master: no block asks for a Desktop copy of the report", ""))
+    checks.append(("MOVE from .forge/inbox" not in etext and "wrap_complete" in etext and "(k/N)" in etext, "real master: wrap is a numbered series with wrap_complete; inbox files are not archived", ""))
+    checks.append(("local_report_desktop_copy" not in read(REAL / "protocol-config.schema.yaml"), "real schema: local_report_desktop_copy knob removed", ""))
+    # 11. real docs-only + artifact_register off -> S-003 excluded with its condition named (FF-R-005)
+    ff = td / "ff"; (ff / ".forge").mkdir(parents=True); (ff / ".github" / "workflows").mkdir(parents=True)
+    shutil.copy(REAL / "assets" / "claude.yml", ff / ".github" / "workflows" / "claude.yml")
+    (ff / ".forge" / "protocol-config.yaml").write_text("profile: docs-only\nrepo: { org: chromasmith, name: fixture-docs }\nids:\n  backlog_prefix: \"FX-\"\n", encoding="utf-8")
+    r = run("render", "--config", str(ff / ".forge" / "protocol-config.yaml"), "--master-dir", str(REAL), "--out", str(td / "ffo"), "--tree", str(ff), "--date", DATE)
+    ffs = read(td / "ffo" / ".forge/protocols/start-protocol.yaml") if r.returncode == 0 else ""
+    checks[-1] = (r.returncode == 0 and "excluded S-003 (artifact_register_binding): render_when false: subsystems.artifact_register" in ffs and "excluded S-078" not in ffs, "real master render: docs-only repo without a register excludes S-003 and never sees S-078", (r.stdout + r.stderr).strip()[-200:])
 
 fails = [c for c in checks if not c[0]]
 for ok, name, detail in checks:

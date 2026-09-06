@@ -79,7 +79,6 @@ execution:
       default: [".github/workflows/claude.yml (master/assets/claude.yml, installed by Matt via the GitHub web editor)", "CLAUDE_CODE_OAUTH_TOKEN repo Actions secret", "mirror.github_is_complete_mirror: true", "branch protection on the default branch with administrators bypassing (RULING-011) — recommended, not a render precondition"]
     allowed_tools: { type: list, detected: true, declared: true, default: ["WebFetch", "WebSearch", "Bash(curl:*)", "Bash(gh run list:*)", "Bash(gh run view:*)", "Bash(gh api:*)", "Bash(gh pr list:*)", "Bash(gh pr view:*)", "Bash(gh --version)", "Bash(npm audit:*)", "Bash(npx depcheck:*)"], note: "read from the --allowed-tools list in .github/workflows/claude.yml when a tree is given; the default equals master/assets/claude.yml; a declared list that differs from the tree is a hard fail" }
   max_parallel:   { type: integer, default: 3 }
-  local_report_desktop_copy: { type: boolean, default: true }
 
 subsystems:
   supabase:            { type: boolean, detected: true, default: false }
