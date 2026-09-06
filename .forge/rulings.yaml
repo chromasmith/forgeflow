@@ -235,3 +235,56 @@ rulings:
       Convergible overlay (PG env, psql, bunx) and is NOT replaced by the generic asset.
     supersedes: the "saas-starter LAST" ordering clause of RULING-009 (its concurrency condition stands)
     stated_by: Matt, in chat, in this session ("lets do the sass starter repo next followed by convergible sandbox, then continue as you see fit"), recorded in the turn per W-002
+  - id: RULING-013
+    date: 2026-09-06
+    subject: Master v1.2.0 repair session — scope, internal-only landing, and the propagation method (pointer idea declined)
+    ruling: >-
+      Matt repurposed the 2026-09-06 session from FF-007 to a ForgeFlow BUG HUNT AND REPAIR:
+      three friction reports from the 2026-09-05 saas-starter and convergible sessions
+      (FF-FRICTION-1..4, FF-101..103, FF-R-001..006) plus this repo's own filed items are
+      de-duplicated into ONE master change, v1.2.0, with the ten repairs listed in the
+      session-state of this session. INTERNAL-ONLY: other Claude sessions were running, so the
+      master fix lands in forgeflow and ONLY forgeflow is re-rendered; no other repo is touched;
+      the registry rows of the other six stay at v1.1.0 so the lag is visible; propagating
+      v1.2.0 to them is the next session's single first_thing. PROPAGATION METHOD: Matt asked
+      whether repos could hold a GitHub URL pointing at one master file instead of rendered
+      copies (update once, everyone gets it). Claude Web recommended AGAINST it — it puts a
+      network fetch of an 80 KB file on the critical path of every session start including
+      runners, where a truncated or skipped read fails silently, and it repeals the ratified
+      standalone-in-repo rule — and recommended instead that propagation become ONE local
+      Claude Code prompt that clones forgeflow, renders every registered repo, and pushes each
+      repo's files with plain git (no connector, no size ceiling, one concurrency question for
+      the batch). Matt accepted ("I rely on you to lead on technical decisions like this";
+      durable and functional first, efficient second). The pointer idea is filed in the backlog
+      as revisit-only-if-the-one-prompt-propagation-is-still-too-slow, not as a plan.
+    supersedes: the 2026-09-05 handoff's first_thing (FF-007) for this session only — FF-007 and FF-006 remain open and ride the next propagation; PROPAGATION_PROCEDURE.md's connector-based per-repo landing (replaced by the one-prompt method in v1.2.0)
+    stated_by: Matt, in chat, in this session ("This session is a bug hunt and a repair effort"; "This will be an internal ForgeFlow session only"; "yes to both. go"), recorded in the turn per W-002
+  - id: RULING-014
+    date: 2026-09-06
+    subject: Consumed inbox files are DELETED at the wrap, not archived
+    ruling: >-
+      The wrap consumes each .forge/inbox/<run-id>.yaml into the .forge/ documents (handoff,
+      GOTCHAS, scope reconciliation) and then DELETES it. The former ARCHIVE MOVE to
+      .forge/archive/inbox/<run-id>.yaml is retired: git history already holds every inbox
+      file byte-identical at the commit that added it, so the copy added nothing but cost —
+      the archive moves were the largest block of wrap operations (FF-FRICTION-4, FF-R-004)
+      and each was a whole-file write plus a delete through a connector with no move
+      operation. Existing .forge/archive/inbox/ directories are left as they are; nothing new
+      is written there. The master text (E-003 manifest, E-015, E-024, E-028, E-029, the inbox
+      lines of S-048 and the house block) changes in v1.2.0.
+    supersedes: the "MOVE to .forge/archive/inbox/<run-id>.yaml" rule in E-003/E-024/E-028 and BLUEPRINT Section 4 (artifacts.rendered_into_each_repo, .forge/inbox entry)
+    stated_by: Matt, in chat, in this session ("yes to both" — item 2 of the repair plan), recorded in the turn per W-002
+  - id: RULING-015
+    date: 2026-09-06
+    subject: S-078 (Desktop copy of the completion report) is RETIRED
+    ruling: >-
+      The start-protocol block S-078, which asked every local Claude Code run to leave a
+      plain-text copy of its completion report on Matt's Desktop, is removed from the master.
+      It contradicted the NO MEMORY WRITES clause of every prompt preamble ("no persistence
+      outside this repository"), and Claude Code correctly obeyed the prompt over the block
+      in three separate convergible sessions on 2026-09-05 (FF-101), flagging the conflict each
+      time. The committed .forge/inbox/<run-id>.yaml record and the chat report are the
+      completion report; nothing is written outside the repository tree. The
+      execution.local_report_desktop_copy knob is removed from the schema and profiles.
+    supersedes: master block S-078 (inbox_desktop_copy) and the execution.local_report_desktop_copy config knob
+    stated_by: Matt, in chat, in this session ("yes to both" — item 3 of the repair plan), recorded in the turn per W-002
