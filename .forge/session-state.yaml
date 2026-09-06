@@ -17,7 +17,7 @@ decisions:
   - decision: "Large master changes travel to Matt's machine as a self-verifying APPLY SCRIPT on a temporary branch pushed through the connector — never as a base64/gzip blob inside a Claude Web reply (GOTCHA-009)"
     rationale: "The first v1.2.0 landing attempt arrived corrupted: a token model cannot emit 31 KB of base64 reliably; a Python script of exact-match replacements with blob-SHA checks is prose the connector carries intact."
     impact: "Route proven end-to-end from a fresh clone before the run; the run fetched blob 82288e6, reproduced all eight SHAs, and landed 54c1293 / 8ec708c first try."
-  - decision: "Propagation of a master change is ONE local Claude Code run over every registered repo, against sandbox-proven blob SHAs (RULING-013); the pointer-URL alternative is parked"
+  - decision: "Propagation of a master change is ONE local Claude Code run over every registered repo, against blob SHAs computed in the sandbox first (RULING-013 @ 6cbdb49); the pointer-URL alternative is parked"
     rationale: "Matt named rollout slowness as the biggest friction; the slow part was the connector's one-file-per-call landing, not the design."
     impact: "FF-009 is the first run of the method; the board's PR-per-repo rule is superseded in BLUEPRINT v1.6."
 blockers: []
