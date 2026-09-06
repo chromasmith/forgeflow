@@ -25,7 +25,6 @@ ids:
 # execution.dispatch.off_reason: null
 # execution.dispatch.requires: [".github/workflows/claude.yml (master/assets/claude.yml, installed by Matt via the GitHub web editor)", "CLAUDE_CODE_OAUTH_TOKEN repo Actions secret", "mirror.github_is_complete_mirror: true", "branch protection on the default branch with administrators bypassing (RULING-011) — recommended, not a render precondition"]
 # execution.local: true
-# execution.local_report_desktop_copy: true
 # execution.max_parallel: 3
 # hardware.devices: []
 # ids.backlog_prefix: "FF-"
@@ -39,10 +38,10 @@ ids:
 # protected.phase_authority_doc: null
 # protected.spec_dirs_off_limits: [".forge/specs/"]
 # protected.tombstone_gotchas: []
-# protocol.config_hash: "8a1ce594fd06de0905b6b29e59401e058ab9f55664478912302829875d0b82b5"
-# protocol.master_version: "v1.1.0"
+# protocol.config_hash: "7ccf78dfab2fd1a61cc67fe1d8e97cd796b6de197a1a560da45381988267b46d"
+# protocol.master_version: "v1.2.0"
 # protocol.render_method: "code"
-# protocol.rendered_on: "2026-09-05"
+# protocol.rendered_on: "2026-09-06"
 # repo.alternate_machines: []
 # repo.canonical_checkout: "C:\\Chromasmith\\forgeflow"
 # repo.canonical_machine: "Surface 12"

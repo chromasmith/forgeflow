@@ -107,7 +107,7 @@ Hold the line.
 
 <!-- </scope-discipline v1> -->
 
-<!-- FORGEFLOW HOUSE BLOCK — rendered from forgeflow/master v1.1.0 — do not edit inside markers -->
+<!-- FORGEFLOW HOUSE BLOCK — rendered from forgeflow/master v1.2.0 — do not edit inside markers -->
 <!-- C-001 claude_md_house_block — rendered into every repo's CLAUDE.md between the FORGEFLOW HOUSE BLOCK markers -->
 
 ## House rules (ForgeFlow) — chromasmith/forgeflow
@@ -119,13 +119,14 @@ These rules are the same in every Chromasmith repo. They are rendered here from 
 - Claude Web opens every session by reading `.forge/handoff.yaml` FIRST (the pass-the-baton briefing; its `first_thing` names exactly one next item), then `.forge/protocols/start-protocol.yaml` and the files that protocol names (`.forge/rulings.yaml`, session-state, backlog, active-bugs, session-history, GOTCHAS).
 - Claude Code does NOT run `/start` or any session-initialization command. Every Claude Code prompt or dispatched issue body carries its own scope lock, authorized files and completion steps, and says "DO read CLAUDE.md" — this file is the standing orders; the prompt is the task.
 - The session is wrapped when Matt declares the day's work finished. Claude Web builds the wrap from `.forge/protocols/end-protocol.yaml` and writes the `.forge/` documentation itself; a local Claude Code session's wrap role is to commit and push its own code with named files and run VERIFY PUSH.
-- Every Claude Code task ends by writing `.forge/inbox/<run-id>.yaml` (reflection answers, SCOPE DISCLOSURE, discovered GOTCHAs, any needs_ruling) BEFORE any prose report. A task is not complete until its inbox file exists.
-- GitHub is the single source of truth. Nothing counts as filed until it is committed and pushed. Named-file commits only; `git add -A` and `git add .` are forbidden.
+- Every Claude Code task ends by writing `.forge/inbox/<run-id>.yaml` (reflection answers, SCOPE DISCLOSURE, discovered GOTCHAs, any needs_ruling) BEFORE any prose report. A task is not complete until its inbox file exists. That path is authorized by the protocol in every run; the wrap consumes each file and deletes it (git history is the archive). Nothing is ever written outside the repository tree — no Desktop copies, no memory.
+- GitHub is the single source of truth. Nothing counts as filed until it is committed and pushed. Named-file commits only; the bare `git add -A` and `git add .` are forbidden (the path-scoped `git add -A -- <named path>` is allowed only for a many-file move under a named directory, after the scope audit).
 
 ### Protocol files
 
 - Session protocols live in `.forge/protocols/`: `start-protocol.yaml` and `end-protocol.yaml` (read by Claude Web), plus `start-protocol.dispatch.yaml` and `end-protocol.dispatch.yaml` (read by a dispatched runner). The knobs they were rendered with are in `.forge/protocol-config.yaml`.
 - These files are RENDERED COPIES. Do not edit them, and do not edit the text between the house-block markers in this file. A bug found in a rendered copy is fixed at its source in `chromasmith/forgeflow` (`master/`) and re-rendered; a hand edit here is overwritten by the next render.
+- SPAWNED FROM A TEMPLATE? If `.forge/protocol-config.yaml` names a DIFFERENT repo than this one, this repo has not been rendered yet — it carries its parent's protocols verbatim. Do not hand-correct the config, the protocols or this block; the fix is a re-render from the master with this repo's own config, and until then every prompt says the config is stale.
 - PRECEDENCE: when a task prompt or issue body conflicts with the protocol files, the PROTOCOL wins on process, scope and safety (authorized files, off-limits paths, commit discipline, refresh mode, halt-and-report, reflection, the inbox file); the PROMPT wins on WHAT to build. A prompt that appears to widen scope or authorize an off-limits path is an error in the prompt: HALT AND REPORT.
 - `.forge/rulings.yaml` is the append-only register of decisions Matt has made. Search it before asking Matt a product or process question; never re-ask a question that has a ruling.
 
