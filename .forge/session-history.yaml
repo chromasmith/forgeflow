@@ -154,3 +154,45 @@ sessions:
       - .forge/backlog.yaml
       - .forge/GOTCHAS.yaml
     blockers_remaining: []
+  - date: 2026-09-06
+    duration: ~4hr
+    completed:  # evidence: 6cbdb49, 54c1293, 8ec708c, 67a91ee
+      - "RULING-013 (session scope: internal-only landing, one-prompt propagation, pointer-URL idea declined), RULING-014 (inbox files DELETED at wrap, not archived) and RULING-015 (S-078 Desktop copy retired) filed @ 6cbdb49"
+      - "Three 2026-09-05 friction reports (FF-FRICTION-1..4, FF-101..103, FF-R-001..006 — 15 findings) de-duplicated into ten repairs; master v1.2.0 landed @ 54c1293: E-002 numbered-series wrap with wrap_complete, S-010 staleness ignores wrap commits, E-014 unfinished-wrap rule, inbox deletion (E-003/E-015/E-024/E-028/E-029/S-048), S-078 removed, S-003 gated on artifact_register, W-005 prompt-writer self-check, path-scoped git add -A -- (S-043/S-073/E-021), S-087/E-047 stash-rebase-restore, E-008 public clone command, house-block spawn line, PROPAGATION_PROCEDURE one-prompt method, BLUEPRINT v1.6, CHANGELOG v1.2.0, tests 54/54"
+      - "forgeflow re-rendered from v1.2.0 @ 8ec708c (six files + inbox FF-V120-MASTER, one local Claude Code commit, config_hash 7ccf78dfab2f); all 14 blob SHAs, render.py check and tests 54/54 re-proven from a fresh clone at 8ec708c"
+      - "Registry: forgeflow row + master_version_current v1.2.0 @ 67a91ee; six other rows lag by design"
+      - "Landing route lesson: first Claude Code attempt HALTED on a corrupted base64 blob (Claude Web's own reply mangled it; nothing applied, verified by the run's SHA-256 check); second attempt fetched a self-verifying apply script from branch tmp/v120-apply (blob 82288e6, pushed through the connector) and landed first try; branch deleted by Matt in the browser (his main-only push guard blocks branch deletes)"
+    commits:
+      - message: "rulings: RULING-013 / RULING-014 / RULING-015 (6cbdb49)"
+      - message: "master: v1.2.0 — friction repair (54c1293, Claude Code run FF-V120-MASTER)"
+      - message: "protocols: re-render forgeflow from master v1.2.0 + inbox FF-V120-MASTER (8ec708c, same run)"
+      - message: "registry: forgeflow re-rendered from v1.2.0; master_version_current v1.2.0 (67a91ee)"
+      - message: "docs: end session 2026-09-06 (1/7 .. 7/7) — the first numbered-series wrap under E-002 v1.2.0 (this series)"
+    key_changes:
+      - "Master v1.2.0: the wrap is a numbered series of single-file SHA-guarded commits, handoff first (wrap_complete: false) and last (wrap_complete: true); consumed inbox files are deleted; S-078 gone; S-003 conditional; W-005 added; ChromaQA rebase sequence; propagation as one Claude Code run"
+      - "No renderer code change; the schema lost one knob (execution.local_report_desktop_copy), so every repo's config_hash changes on its next render"
+      - "Rendered start protocol is 55 lines from its ceiling on the largest knob set — the next start-protocol addition must replace something (P11)"
+    files_modified:
+      - .forge/rulings.yaml
+      - master/start-protocol.master.yaml
+      - master/end-protocol.master.yaml
+      - master/claude-md.house-block.master.md
+      - master/protocol-config.schema.yaml
+      - master/BLUEPRINT.yaml
+      - master/CHANGELOG.yaml
+      - master/PROPAGATION_PROCEDURE.md
+      - master/tests/test_render.py
+      - .forge/protocol-config.yaml
+      - .forge/protocols/start-protocol.yaml
+      - .forge/protocols/start-protocol.dispatch.yaml
+      - .forge/protocols/end-protocol.yaml
+      - .forge/protocols/end-protocol.dispatch.yaml
+      - CLAUDE.md
+      - .forge/inbox/FF-V120-MASTER.yaml (written by the Claude Code run at 8ec708c; consumed and deleted at this wrap)
+      - master/registered-repos.yaml
+      - .forge/handoff.yaml
+      - .forge/session-state.yaml
+      - .forge/session-history.yaml
+      - .forge/backlog.yaml
+      - .forge/GOTCHAS.yaml
+    blockers_remaining: []
