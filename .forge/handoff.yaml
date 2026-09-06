@@ -1,44 +1,54 @@
 # .forge/handoff.yaml — chromasmith/forgeflow
 # Pass-the-baton briefing written BY the outgoing Claude Web session TO the next.
 # A WARNING LETTER, not a summary. The other .forge/ files hold state; this holds feel.
-# generated: 2026-09-06T15:05:00Z
+# generated: 2026-09-06T15:14:00Z
 # session: 2026-09-06 (MASTER v1.2.0 FRICTION REPAIR; RULING-013..015; first wrap under the v1.2.0 numbered series)
-written_at_commit: 67a91eed046d091f9a2c0ef7b7e38a51604ebc1c
-written_at_utc: 2026-09-06T15:05:00Z
-wrap_complete: false
+written_at_commit: 107d18a536878cee849b0ef3219800beb433dfe5
+written_at_utc: 2026-09-06T15:14:00Z
+wrap_complete: true
 wrap_parts_total: 7
 
 status: |
-  WRAP IN PROGRESS (part 1 of 7). Master v1.2.0 is landed (54c1293) and forgeflow is re-rendered
-  from it (8ec708c, all 14 blob SHAs + render.py check + tests 54/54 re-proven from a fresh clone);
-  registry row updated (67a91ee). The other six registered repos still run v1.1.0 (seogeo,
-  chromaqa, chromasmith-saas-starter) or v1.0.0 (synclips-platform, chromasync, dv-captain).
-  Nothing is unmerged anywhere; the transport branch tmp/v120-apply was deleted by Matt.
+  Master v1.2.0 is landed (54c1293) and forgeflow is re-rendered from it (8ec708c; all 14 blob SHAs,
+  render.py check and tests 54/54 re-proven from a fresh clone); registry row updated (67a91ee).
+  The other six registered repos still run v1.1.0 (seogeo, chromaqa, chromasmith-saas-starter — harness
+  installed) or v1.0.0 (synclips-platform, chromasync, dv-captain — secret set, no claude.yml, no
+  protection). Nothing is unmerged anywhere; the transport branch tmp/v120-apply is deleted.
   Overall position: the master is repaired at v1.2.0 and runs on ONE repo; the six others lag by design until the one-prompt propagation, and every unregistered repo still runs old protocols under RULING-001.
 
 first_thing: |
-  IF YOU ARE READING THIS WITH wrap_complete: false, the 2026-09-06 wrap stopped early. Finish it
-  first, under .forge/protocols/end-protocol.yaml, in this order: part 2 session-state (overwrite),
-  part 3 session-history (append the 2026-09-06 entry), part 4 backlog (FF-008 completed,
-  FF-009/FF-010/FF-011 added, FF-006/FF-007 re-pointed), part 5 GOTCHAS (append 009-011), part 6
-  delete .forge/inbox/FF-V120-MASTER.yaml, part 7 rewrite this file with wrap_complete: true.
-  The content of every part is derivable from the session-state written in part 2 and this file.
-  Only after that: FF-009 (see next_up) is the project's next item.
+  FF-009 — propagate master v1.2.0 to the other six registered repos by the ONE-PROMPT method in
+  master/PROPAGATION_PROCEDURE.md (steps 1-6). In order: (1) render all six in the sandbox from a fresh
+  forgeflow clone — public repos by shallow clone, private repos from a tree skeleton carrying the
+  REAL claude.yml, CLAUDE.md and protocol-config.yaml, each matched to its GitHub blob SHA — render twice, diff, check
+  ceilings, record every rendered file's blob SHA; (2) ask Matt ONE line: is any Claude Code session
+  or other Claude Web wrap active on ANY of the six, and has he installed claude.yml + protection on
+  synclips-platform / chromasync / dv-captain (if not, those three render dispatch-off with S-092 —
+  say so, do not wait); (3) write ONE local Claude Code prompt (Git Bash syntax, GOTCHA-011; W-005
+  self-check) that refreshes each canonical checkout, renders with render.py, HALTS on any SHA
+  mismatch, commits one named-file commit per repo, pushes, writes .forge/inbox/PROPAGATE-v1.2.0.yaml
+  in forgeflow; (4) re-prove every landing through the connector and write the registry rows LAST.
+  Verify when done: registered-repos.yaml shows v1.2.0 on every current row; each repo's start header
+  says master_version: v1.2.0. Do NOT start FF-007 (convergible-sandbox) in the same session.
 
 watch_out_for:
-  - "This handoff is the FIRST write of a numbered-series wrap (E-002 v1.2.0); if you see it with wrap_complete: false, parts 2-7 may not have landed — list the commits after written_at_commit whose messages begin 'docs: end session 2026-09-06' to see which parts did."
-  - "NEVER carry a large opaque blob (base64/gzip) inside a Claude Web reply — the v1.2.0 first landing attempt failed that way (GOTCHA-009). The working route: push a self-verifying apply script to a temporary branch through the connector, prove its blob SHA, have Claude Code fetch and run it."
-  - "Matt's Surface 12 has a main-only pre-push guard (C:\\Users\\chrom\\.config\\git\\hooks\\main-only-guard.sh) that also blocks branch DELETIONS; a transport branch must be deleted in the GitHub browser UI (GOTCHA-010)."
-  - "Claude Code on Surface 12 runs PowerShell / Git Bash, not cmd.exe — the master's STEP 0 (S-032/S-036) still emits cmd syntax; the run translates, but FF-011 is the master fix (GOTCHA-011)."
+  - "This was the FIRST numbered-series wrap (E-002 v1.2.0): 7 declared parts landed as 9 commits (f8e6bc7, c46725f, ce0ef59, 80881d8, a5d40d3, 004979f, 6e65889, 107d18a, plus this one) because part 5 needed a 5b — a one-character transcription slip in an existing GOTCHA line, caught by the blob-SHA check and repaired — and part 2 needed a 2b for the E-008 evidence check. The method held; the whole-file rewrite of a 15 KB file is exactly where slips happen. Diff before pushing, every time."
+  - "NEVER carry a large opaque blob (base64/gzip) inside a Claude Web reply — the v1.2.0 first landing attempt failed that way (GOTCHA-009; Claude Code reports SHA-256 mismatch — no inbox, run halted). Working route: self-verifying apply script on a temporary branch through the connector (this time blob 82288e6), rehearsed from a fresh clone, fetched and run by Claude Code."
+  - "Matt's Surface 12 main-only pre-push guard blocks branch DELETIONS too; a transport branch is deleted by Matt in the GitHub browser (GOTCHA-010) — never ask Claude Code to delete it, never --no-verify."
+  - "Claude Code on Surface 12 runs PowerShell / Git Bash, not cmd.exe; the master's STEP 0 still emits cmd syntax until FF-011 lands — write prompt commands in Git Bash form (GOTCHA-011)."
+  - "The rendered start protocol on the largest knob set is 55 lines from its 1650 ceiling: the next start-protocol block must REPLACE something (P11) — FF-011 and any FF-009 fallout land inside one master change."
+  - "The halted first Claude Code run of this session wrote no inbox file (it stopped before its commit); its report was pasted into chat and consumed here — no observations lost, but the run is recorded as inbox-missing."
+  - "Two Claude Web sessions can collide on this repo (GOTCHA-002/004): FF-009 writes forgeflow's registry and docs at its end — ask about other Claude Web sessions before writing here."
 
 next_up:
-  - "FF-009 (ready, P1): propagate v1.2.0 to the other six registered repos by the ONE-PROMPT method in master/PROPAGATION_PROCEDURE.md — Claude Web renders all six in the sandbox first, one Claude Code run pushes; synclips-platform, chromasync and dv-captain still need their claude.yml + protection from Matt or they render dispatch-off with S-092."
-  - "FF-007 (ready, P1, after FF-009): convergible-sandbox FIRST render (RULING-012), prerequisites unchanged."
-  - "FF-011 (ready, P2): master STEP 0 shell syntax → Git Bash; rides the next master change."
-  - "FF-010 (deferred): pointer-URL protocols — revisit only if one-prompt propagation is still too slow (RULING-013)."
+  - "FF-007 (ready, P1, after FF-009): convergible-sandbox FIRST render (RULING-012), prerequisites unchanged — its own session."
+  - "FF-011 (ready, P2): master STEP 0 / completion steps in Git Bash syntax; rides the next master change, never alone."
+  - "FF-006 / FF-003 / FF-004 (in_progress): all close when FF-009 re-renders the Synclips trio."
+  - "FF-010 (deferred): pointer-URL protocols — revisit only if the one-prompt propagation is still too slow (RULING-013)."
+  - "Deferred, not next: forgeflow's own CLAUDE.md above the house block is still the unfilled template; drift_ci; the approval code and canonical paths sit in a PUBLIC repo — Matt has not asked for a change."
 
 north_star: |
-  Product-better: the ten friction repairs are in the master text and proven on a real render; the board moved too (registry, backlog), but the protocol a session reads is what changed.
+  Product-better: ten friction repairs are in the master text (54c1293) and exercised by a real render (8ec708c) and this real wrap (f8e6bc7..107d18a); the board moved too, but what a session reads is what changed.
 
 tone: |
-  Long repair session with one hard lesson (the corrupted base64 transport) and a clean recovery. Matt wants the six other repos caught up next, in one trip.
+  Long repair session with one hard lesson (the corrupted base64 transport) and a clean recovery. Matt wants the six other repos caught up next, in one trip — bring the rendered SHAs and the prompt, not questions.
