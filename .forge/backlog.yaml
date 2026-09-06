@@ -2,6 +2,50 @@
 # Status vocabulary: ready | blocked | needs-ruling | in_progress | deferred | completed | superseded
 # Migrated from the legacy empty shape at the 2026-09-04 wrap (first wrap on the rendered end protocol).
 prioritized:
+  - id: FF-009
+    name: Propagate master v1.2.0 to the other six registered repos — first run of the one-prompt method
+    priority: P1
+    estimate: 1 session
+    spec_ref: master/PROPAGATION_PROCEDURE.md; .forge/rulings.yaml RULING-013
+    description: |
+      Master v1.2.0 (54c1293) runs on forgeflow only (8ec708c, registry 67a91ee). seogeo, chromaqa
+      and chromasmith-saas-starter are on v1.1.0 with the harness installed; synclips-platform,
+      chromasync and dv-captain are on v1.0.0 with the secret set but no claude.yml and no
+      protection. Steps: Claude Web renders all six in the sandbox (private repos from tree
+      skeletons carrying the real claude.yml / CLAUDE.md / config), proves byte-stability and
+      ceilings, records every blob SHA; ONE batch concurrency question to Matt; ONE local Claude
+      Code run renders each repo at its canonical checkout, verifies against the supplied SHAs,
+      commits one named-file commit per repo and pushes; Claude Web re-proves and writes the
+      registry rows LAST. Repos without a harness render dispatch-off with S-092 unless Matt
+      installs claude.yml + protection first. Closes FF-006 (and with it FF-003/FF-004).
+    status: ready
+    blocked_by: null
+  - id: FF-011
+    name: Master STEP 0 emits cmd.exe syntax; Claude Code on Surface 12 runs PowerShell / Git Bash
+    priority: P2
+    estimate: 1 master change (rides the next one)
+    spec_ref: master/start-protocol.master.yaml (S-032, S-036); GOTCHA-011
+    description: |
+      S-032 and S-036 emit `cd /d`, `if not exist ... mkdir`, `del`, `copy /Y`, `rmdir /S /Q` and
+      say the cmd forms are "safe there"; the FF-V120-MASTER run reported it had PowerShell and Git
+      Bash only and translated every command. Switch STEP 0 and the completion steps to Git Bash
+      syntax (`mkdir -p`, `cd`, `rm -f`, `cp -f`, `rm -rf`, forward slashes) and reword S-036.
+      Also note the console renders the em-dash in render.py's success line as "?" — cosmetic.
+    status: ready
+    blocked_by: "lands inside the next master change, never alone (P11 — the start file is 55 lines from its ceiling)"
+  - id: FF-010
+    name: Pointer-URL protocols (repos hold a link to one master file) — PARKED
+    priority: P3
+    estimate: n/a
+    spec_ref: .forge/rulings.yaml RULING-013
+    description: |
+      Matt's 2026-09-06 idea: instead of rendered copies, each repo carries a GitHub URL to the
+      master (or a per-repo variant) and every reader fetches it at session start. Declined for
+      now — a network fetch of an 80 KB file on the critical path of every session including
+      runners, silent truncation risk, repeals the ratified standalone-in-repo rule. Revisit ONLY
+      if the one-prompt propagation (FF-009) is still too slow in practice.
+    status: deferred
+    blocked_by: "FF-009 outcome"
   - id: FF-007
     name: convergible-sandbox FIRST render from master v1.1.0 (named by Matt, RULING-012)
     priority: P1
@@ -21,7 +65,7 @@ prioritized:
       artifact_register true, vercel true, supabase true); render, push six files, DELETE the
       four old protocol files, prove bypass, registry row last.
     status: ready
-    blocked_by: null
+    blocked_by: "FF-009 first (RULING-013: the v1.2.0 propagation lands before any first render, so the sandbox is rendered from v1.2.0 once, not twice)"
   - id: FF-006
     name: v1.1.0 rollout — remaining re-renders (synclips-platform, chromasync, dv-captain)
     priority: P1
@@ -36,8 +80,10 @@ prioritized:
       dv-captain: alternate machines, mixed line endings), pushes six files one per call with
       blob-SHA proof, proves bypass, updates the registry row. Order after FF-007 is Claude
       Web's choice (RULING-012). Closing FF-006 also closes FF-003 and FF-004.
+      2026-09-06: these three re-renders now happen INSIDE the FF-009 propagation run (one
+      prompt, all six repos); this item stays open only to track Matt's harness steps.
     status: in_progress
-    blocked_by: "FF-007 first (RULING-012 order)"
+    blocked_by: "rides FF-009; Matt's claude.yml + protection on each repo decide dispatch on/off at render time"
 in_progress:
   - id: FF-003
     name: Python validation knob that does not assume a .venv (and a two-language knob)
@@ -71,7 +117,21 @@ in_progress:
     status: in_progress
     blocked_by: "master half landed in v1.1.0 (b421783: S-014/E-036/E-040 gitignored-telemetry wording); closes when chromasync is re-rendered (FF-006)"
 
-completed:  # evidence per item: b421783, 67031b3, c729db2
+completed:  # evidence per item: 54c1293 + 8ec708c, b421783, 67031b3, c729db2
+  - id: FF-008
+    name: Master v1.2.0 friction repair (FF-FRICTION-1..4, FF-101..103, FF-R-001..006 → ten repairs)
+    priority: P0
+    spec_ref: master/CHANGELOG.yaml v1.2.0; .forge/rulings.yaml RULING-013..015
+    description: |
+      Fifteen findings from the 2026-09-05 saas-starter and convergible sessions de-duplicated into
+      ten repairs in one master change: numbered-series wrap with wrap_complete (E-002/E-014/E-030/
+      S-010), inbox deletion (RULING-014), S-078 retired (RULING-015), S-003 gated, W-005
+      prompt-writer self-check, path-scoped git add, ChromaQA stash-rebase-restore, E-008 public
+      clone command, house-block spawn line, one-prompt propagation procedure. Landed 54c1293,
+      forgeflow re-rendered 8ec708c, registry 67a91ee; tests 54/54.
+    status: completed  # 54c1293
+    completed_at: 2026-09-06
+    evidence: 54c1293 (master), 8ec708c (forgeflow re-render), 67a91ee (registry)
   - id: FF-005
     name: Master v1.1.0 defect repair (FFD-001..004, QC-5, QC-6)
     priority: P0
