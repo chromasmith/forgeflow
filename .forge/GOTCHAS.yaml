@@ -83,7 +83,7 @@
       (op read "op://Chromasmith Keys/CLAUDE_CODE_OAUTH_TOKEN/credential").Trim() | gh secret set CLAUDE_CODE_OAUTH_TOKEN --repo chromasmith/<repo>
     Never use the vault's ANTHROPIC_API_KEY for the dispatch harness (per-token billing);
     the harness wants the subscription token (sk-ant-oat*) created by `claude setup-token`.
-  source: "secrets install for the v1.1.0 rollout, 2026-09-05 (Claude Code run SETUP-TOKEN; RENDER_PROCEDURE step 0b @ ab19c0e)"
+  source: "secrets install for the v1.1.0 rollout, 2026-09-05 (Claude Code run SETUP-TOKEN; RENDER_PROCEDURE step 0b @ ab19c04)"
   applies_to:
     - master/RENDER_PROCEDURE.md (step 0b)
     - master/PROPAGATION_PROCEDURE.md (step 2b)
@@ -133,3 +133,68 @@
   source: "seogeo and saas-starter re-renders, 2026-09-05 (a94d846, f3110b0)"
   applies_to:
     - master/RENDER_PROCEDURE.md (landing step)
+- id: GOTCHA-009
+  date: 2026-09-06
+  summary: "A base64/gzip blob pasted inside a Claude Web reply arrives CORRUPTED — never transport a master change that way; push a self-verifying apply script to a temporary branch through the connector and let Claude Code fetch it"
+  detail: |
+    The first v1.2.0 landing prompt carried the master change as a 31 KB gzip+base64 block for
+    Claude Code to decode. It arrived with multi-character damage (SHA-256 mismatch; the recovered
+    payload was the right LENGTH, 70,425 bytes, but failed the gzip CRC; git apply --check rejected
+    it at line 351; an exhaustive single-character repair search found no fix). The cause is the
+    transport itself: a token model cannot emit tens of KB of opaque base64 reliably, and the
+    encoding has no redundancy, so one slip is fatal and invisible until decode. Nothing was applied
+    — the run's SHA-256 guard caught it before a byte touched the repo. The route that worked, first
+    try: write the change as a PYTHON APPLY SCRIPT of exact-match replacements (each asserts its
+    target text exists exactly once, so a wrong start state or a transcription slip fails loudly
+    before saving) that ends by printing git hash-object of every file it wrote against the expected
+    blob SHA; push that script through the connector to a temporary branch (tmp/<name>; prose
+    survives the connector, and the returned blob SHA proves the landing); have Claude Code
+    `git fetch origin tmp/<name>:refs/remotes/origin/tmp/<name>`, `git restore
+    --source=origin/tmp/<name> -- <script>`, prove the script's blob SHA, run it, delete the scratch
+    file, then commit the named files. Prove the whole route from a fresh clone in the sandbox BEFORE
+    handing the prompt over. Side lesson from the failed run: when a gzip payload fails its CRC,
+    gzip.decompress discards everything; decompressing as raw deflate (skip the 10-byte header and the
+    null-terminated name, then zlib.decompressobj(-15)) recovers the damaged bytes for diagnosis.
+  source: "v1.2.0 landing, 2026-09-06 (halted run reported in chat — no inbox file; successful run FF-V120-MASTER @ 54c1293 / 8ec708c via branch tmp/v120-apply blob 82288e6)"
+  applies_to:
+    - master/RENDER_PROCEDURE.md (landing step — anything the connector cannot carry directly)
+    - master/PROPAGATION_PROCEDURE.md (step 5)
+    - .forge/handoff.yaml (watch_out_for)
+- id: GOTCHA-010
+  date: 2026-09-06
+  summary: "Matt's Surface 12 has a main-only pre-push guard that also blocks branch DELETIONS — a transport branch is deleted in the GitHub browser UI, never by Claude Code and never with --no-verify"
+  detail: |
+    C:\Users\chrom\.config\git\hooks\main-only-guard.sh (a global pre-push hook) rejects any push
+    whose target is not main, and a `git push origin --delete <branch>` counts as a push to that
+    branch: "MAIN-ONLY GUARD: Push rejected. Attempted branch: tmp/v120-apply". Claude Code correctly
+    stopped instead of skipping the guard. The connector has no branch-delete tool either (it can
+    create a branch and write files on it, not remove it). So a prompt that creates or uses a
+    transport branch must NOT ask Claude Code to delete it; it ends with a one-line Matt action:
+    https://github.com/chromasmith/<repo>/branches, trash icon. Note the branches page lists the same
+    branch under "Your branches" and "Active branches" — one delete removes both; the second row is a
+    stale render of the page, not a second branch (verify with the connector's list_branches).
+    Dispatched runners are unaffected (they push from the runner, not this machine).
+  source: "FF-V120-MASTER run report, 2026-09-06; branch confirmed gone via list_branches"
+  applies_to:
+    - master/RENDER_PROCEDURE.md (landing step)
+    - master/PROPAGATION_PROCEDURE.md (step 5)
+    - prompts that use a tmp/ transport branch
+- id: GOTCHA-011
+  date: 2026-09-06
+  summary: "Claude Code on Surface 12 runs PowerShell / Git Bash, not cmd.exe — the master's STEP 0 and completion steps still emit cmd syntax, which every run must translate (FF-011)"
+  detail: |
+    S-032 / S-036 emit `cd /d`, `if not exist ... mkdir`, and prompts inherit `del`, `copy /Y`,
+    `rmdir /S /Q` and backslash paths; S-036 even says the cmd forms are "safe there". The
+    FF-V120-MASTER run reported that the session had PowerShell and Git Bash only, and translated
+    every command to its Git Bash equivalent (`cd`, `mkdir -p`, `rm -f`, `cp -f`, `rm -rf`, forward
+    slashes) — correctly, but that is a per-run tax and an invitation to a slip. Until FF-011 lands
+    in the master, write prompt commands for this machine in Git Bash syntax, and treat PowerShell
+    redirection (`>`) as suspect for file content (it re-encodes output; use git restore/show
+    --output or a Python one-liner instead). Cosmetic: the Windows console renders the em-dash in
+    render.py's and the apply script's success lines as a stray "?" — it is not corruption; the blob
+    SHA is the proof.
+  source: "FF-V120-MASTER inbox reflections, 2026-09-06"
+  applies_to:
+    - master/start-protocol.master.yaml (S-032, S-036, S-043)
+    - master/end-protocol.master.yaml (E-021)
+    - every local Claude Code prompt written for Surface 12
