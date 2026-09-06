@@ -16,7 +16,7 @@
 # Matt naming the repo; there is no queue here and no implied order.
 # =============================================================================
 
-master_version_current: "v1.1.0"
+master_version_current: "v1.2.0"   # landed 2026-09-06 (54c1293); rendered on forgeflow only so far (RULING-013) — every other row lags by design until the one-prompt propagation
 
 repos:
   - repo: chromasmith/seogeo
@@ -82,9 +82,9 @@ repos:
   - repo: chromasmith/forgeflow
     config: .forge/protocol-config.yaml
     profile: docs-only
-    master_version: "v1.1.0"
-    rendered_on: 2026-09-05
-    config_hash: 8a1ce594fd06de0905b6b29e59401e058ab9f55664478912302829875d0b82b5
+    master_version: "v1.2.0"
+    rendered_on: 2026-09-06
+    config_hash: 7ccf78dfab2fd1a61cc67fe1d8e97cd796b6de197a1a560da45381988267b46d
     state: current
     files:
       - .forge/protocols/start-protocol.yaml
@@ -93,7 +93,7 @@ repos:
       - .forge/protocols/end-protocol.dispatch.yaml
       - .forge/protocol-config.yaml
       - CLAUDE.md
-    landed: "v1.1.0 re-render 2026-09-05: commits e60eff5 (config), 94a5247 (end.dispatch NEW), 5de80fc (CLAUDE.md), a0aa16a (start.dispatch NEW), 173aa3d (end), f9b8d33 (start); blob SHAs equal; render.py check OK from a fresh clone at f9b8d33. Previous v1.0.0 render: 0f7ec5e / 5e1f463 / 56f2389 / b9046e2 (2026-09-04)"
+    landed: "v1.2.0 re-render 2026-09-06: ONE commit 8ec708c (all six files + inbox FF-V120-MASTER) by a local Claude Code run, right after the master change 54c1293; all six blob SHAs equal to the sandbox output; render.py check OK from a fresh clone at 8ec708c. Previous: v1.1.0 re-render e60eff5 / 94a5247 / 5de80fc / a0aa16a / 173aa3d / f9b8d33 (2026-09-05); v1.0.0 render 0f7ec5e / 5e1f463 / 56f2389 / b9046e2 (2026-09-04)"
     notes: >-
       Third repo rendered (RULING-004) and the master's own home: master/ is the source,
       .forge/protocols/ the output; a render never reads .forge/protocols/, so rendering the
@@ -104,7 +104,12 @@ repos:
       proven by direct docs commit be2d757). Public repo, detection on the real tree:
       dispatch=on, allowed_tools read from the workflow, no build/deploy/subsystems. The rest
       of CLAUDE.md above the house block is still the unfilled Chromasmith template.
-      north_star_doc = master/BLUEPRINT.yaml, backlog prefix FF-.
+      north_star_doc = master/BLUEPRINT.yaml, backlog prefix FF-. FIRST and so far ONLY repo on
+      v1.2.0 (RULING-013, internal-only session 2026-09-06): S-003 now excluded here (no
+      artifact register), S-078 gone, W-005 in; the master change and the re-render both landed
+      through a local Claude Code run reading a self-verifying apply script from a temporary
+      branch — the connector cannot carry the 110 KB start master and a base64 blob in a
+      Claude Web reply arrived corrupted (see GOTCHAS).
   - repo: chromasmith/chromaqa
     config: .forge/protocol-config.yaml
     profile: docs-only
