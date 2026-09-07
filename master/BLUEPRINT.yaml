@@ -1,8 +1,8 @@
 # =============================================================================
 # FORGEFLOW MASTER — UNIFIED SESSION-PROTOCOL SYSTEM
-# Blueprint v1.6 — 2026-09-06 (two board passes; DESIGN CLOSED; master v1.2.0 friction repair; rollout order by ruling; S4 ceilings from measured renders)
+# Blueprint v1.7 — 2026-09-07 (two board passes; DESIGN CLOSED; master v1.3.0 three-channel change; rollout order by ruling; S4 ceilings from measured renders)
 # Author: Claude Web (planning session with Matt Fleming, Chromasmith LLC)
-# Status: DESIGN CLOSED after two committee passes. Master RELEASED (v1.1.0 on seven repos, v1.2.0 on forgeflow first); repos join by Matt naming them (RULING-001).
+# Status: DESIGN CLOSED after two committee passes. Master RELEASED (v1.3.0 on forgeflow first; six registered repos lag at v1.1.0/v1.0.0 until FF-009); repos join by Matt naming them (RULING-001).
 # Home: github.com/chromasmith/forgeflow  master/BLUEPRINT.yaml
 # =============================================================================
 #
@@ -15,9 +15,27 @@
 
 meta:
   name: ForgeFlow Master
-  version: "1.6-blueprint"
-  date: 2026-09-06
+  version: "1.7-blueprint"
+  date: 2026-09-07
   revision_history:
+    - version: "1.7"
+      note: >
+        THREE-CHANNEL CHANGE (master v1.3.0, RULING-016..019), no new block IDs. Tool
+        ripples: ChromaQA 7.1's committed .chromaqa/accepted.json joins profiles.json as
+        PROTECTED config (an acceptance is Matt's by name, written by Claude Web directly
+        — RULING-017), exit 2 gains its resolution path, and the 7.2 once-per-finding debt
+        ledger changes what a dirty ledger means; SEO/GEO v1.3.0 adds CONFIG-REFERENCE.md
+        and src/lib/seo/page-metadata.ts to the byte-synced tool set and four prompt-writer
+        rules (noindexMetadataFor's name is load-bearing). Matt's workflow: the TEXT-ONLY
+        TIER (RULING-018 — a comment, sentence or word anywhere is his web edit from
+        copy-pasteable text after a sweep, no prompt), the large-file apply lane for wrap
+        files the connector cannot write, E-013 indentation fix, W-001 rewritten
+        (RULING-019: four-sentence ceiling with named exceptions, layered not dumbed down,
+        lead with the recommendation — destination his, route Claude Web's — note triage,
+        ball-holder named only when it is not him) and the CAPACITY PLAN owed at every batch
+        approval (S-019). FF-011: STEP 0 and the remainder prompt emit Git Bash syntax.
+        Section 8 build flow line "every reply ends with the next step as a verb and who holds
+        the ball" is superseded by the ball-holder rule above.
     - version: "1.6"
       note: >
         FRICTION REPAIR (master v1.2.0, RULING-013/014/015) from the first two days of
@@ -812,7 +830,8 @@ session_flow:
       (local prompt vs dispatch issue) per task → execution → CW reviews CC's report /
       PR, surfaces any dissent between CW and CC to Matt, recommends merge.
     - >
-      Every CW reply ends with the next step as a verb and who holds the ball.
+      Silence means the ball is Matt's; CW names the holder only when it is not him
+      (v1.7, RULING-019 — the earlier "end every reply with who holds the ball" became a tic).
     - >
       RULINGS ARE WRITTEN WHEN MADE, NOT AT WRAP (Board M6). The moment Matt rules on
       anything a future session could re-ask, CW appends it to .forge/rulings.yaml via

@@ -147,6 +147,13 @@ with tempfile.TemporaryDirectory() as td:
     r = run("render", "--config", str(ff / ".forge" / "protocol-config.yaml"), "--master-dir", str(REAL), "--out", str(td / "ffo"), "--tree", str(ff), "--date", DATE)
     ffs = read(td / "ffo" / ".forge/protocols/start-protocol.yaml") if r.returncode == 0 else ""
     checks[-1] = (r.returncode == 0 and "excluded S-003 (artifact_register_binding): render_when false: subsystems.artifact_register" in ffs and "excluded S-078" not in ffs, "real master render: docs-only repo without a register excludes S-003 and never sees S-078", (r.stdout + r.stderr).strip()[-200:])
+    # 12. v1.3.0 (RULING-016..019) text guards on the real masters
+    checks.append((not any(w in stext or w in etext for w in ("cd /d ", "if not exist ", "copy /Y", "rmdir /S")), "real master: no cmd.exe syntax survives (FF-011 — Git Bash forms only)", ""))
+    checks.append(("at column zero" not in etext, "real master: E-013 matches the existing entry's indentation, no 'column zero' instruction", ""))
+    checks.append(("accepted.json" in stext and "accepted.json" in etext and "accepted.json" in read(REAL / "claude-md.house-block.master.md"), "real master: .chromaqa/accepted.json named in start, end and house block (ChromaQA 7.1)", ""))
+    checks.append(("noindexMetadataFor" in stext and "CONFIG-REFERENCE.md" in etext, "real master: SEO/GEO v1.3.0 page helper and config reference carried", ""))
+    checks.append(("S-018" not in sids, "real master: S-018 prior_ruling_search retired (duplicate of S-011 + W-001, P11)", ""))
+    checks.append(("TEXT-ONLY TIER" in stext and "waiting on you" in stext and "is retired" in stext, "real master: text-only tier present; ball-holder rule retires the 'waiting on you' tic", ""))
 
 fails = [c for c in checks if not c[0]]
 for ok, name, detail in checks:

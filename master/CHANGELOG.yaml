@@ -2,6 +2,48 @@
 # The top entry's `version` is the master version render.py stamps into every render.
 # Newest first.
 entries:
+  - version: "v1.3.0"
+    date: 2026-09-07
+    status: RELEASED — three-channel change (RULING-016..019); rendered on forgeflow only; FF-009 propagates it to the other six registered repos next
+    changed: >-
+      Three channels in one change, no new block IDs, all landed as rewrites and consolidations
+      so the largest render stays under the S4 ceilings (P11). (A) CHROMAQA 7.1/7.2 (S-014,
+      S-087, E-036, E-037, E-040, E-047, house block): .chromaqa/accepted.json is a fourth,
+      PROTECTED committed config — captain-review acceptances, never written, staged or deleted
+      by a prompt, run or wrap; an acceptance is Matt's by name and Claude Web writes it directly
+      in that turn (RULING-017); exit 2 keeps its STOP and gains that resolution path; the 7.2
+      debt ledger records a finding once, so a modified debt ledger after a later push is a NEW
+      finding to diff and name, never committed blind (7.0/7.1 still append every run — both
+      behaviours are stated); the debt count skips accepted lines; upgrading voids acceptances
+      until re-confirmed; .depcheckrc is the project's own ignore list. (B) SEO/GEO v1.3.0
+      (S-089, E-050, E-051, house block): .seogeo/CONFIG-REFERENCE.md and
+      src/lib/seo/page-metadata.ts join the byte-synced tool file set; the prompt-writer rules
+      from STANDARD.md v1.3.0 — pageSeo for public pages, noindexMetadataFor for private pages
+      with its NAME load-bearing and never renamed, a differently-visible surface has its own
+      layout, surface roots partition, config.json is never moved or deleted because the
+      emitters now THROW without it. (C) MATT'S WORKFLOW (RULING-018/019, FF-011): the TEXT-ONLY
+      TIER in S-006 — a comment, a sentence or a word anywhere is Matt's web edit from
+      copy-pasteable text after a sweep for every copy, no prompt, no inbox (promotes chromaqa
+      RULING-013); S-007 and E-002 gain the large-file lane (files the connector cannot write
+      are still authored by Claude Web and delivered through one Claude Code apply prompt on a
+      temporary branch — GOTCHA-009/010); E-013 matches the existing entry's indentation instead
+      of assuming column zero (chromaqa GOTCHAS); W-001 rewritten — four-sentence ceiling with
+      its named exceptions, LAYERED not dumbed down, LEAD WITH THE RECOMMENDATION (destination
+      Matt's, route Claude Web's), NOTE TRIAGE (no trailing asides), ball-holder named only
+      when it is not Matt; S-019 owes the CAPACITY PLAN at every batch approval and S-065's
+      triage rides inside it; S-030 COMMUNICATION RULES and the house block carry the layered
+      rule into every Claude Code prompt; W-005 checks layering, Git Bash syntax and
+      "is this text-only?"; S-032/S-036/E-021 emit Git Bash forms (mkdir -p, [ -d ] ||, cd) and
+      state the Surface facts — python not python3, cwd resets per tool call, PowerShell
+      redirection re-encodes (FF-011, GOTCHA-011). S-018 prior_ruling_search RETIRED (P11 —
+      its text duplicated S-011's rulings paragraph and W-001; the one clause it added lives
+      in S-011; the ID is never reused): 95 start blocks. Schema and renderer unchanged;
+      config_hash unchanged for every repo. MEASURED on the real convergible-sandbox knob set
+      (master/tests/fixtures/config-sandbox-real.yaml): start 1648/1650, dispatch start
+      591/650, end 1302/1400, dispatch end 95/150 — the start file has TWO lines of headroom,
+      so the next start-protocol change must replace or retire before it adds.
+    rulings: [RULING-016, RULING-017, RULING-018, RULING-019]
+    closes: [FF-011]
   - version: "v1.2.0"
     date: 2026-09-06
     status: RELEASED — friction-repair change (RULING-013/014/015); rendered on forgeflow only, propagation to the other six registered repos is the next session's first_thing

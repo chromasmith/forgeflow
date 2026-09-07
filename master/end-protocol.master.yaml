@@ -153,6 +153,21 @@ wrap_direct_write_delivery: |
   Report to Matt in plain English: what changed in each file, in one line
   per file with its part number and commit SHA, or the PR number.
 
+  FILES THE CONNECTOR CANNOT WRITE. The connector aborts near 100 KB and has
+  no rename. A wrap file past that size (a GOTCHAS.yaml of 140 KB, a large
+  session-history) is STILL Claude Web's to author: it writes the complete
+  new content in its sandbox, diffs it against the current file exactly as
+  above, records the blob SHA, and delivers it through ONE Claude Code APPLY
+  prompt — a self-verifying apply script pushed to a temporary branch
+  through the connector (never an opaque blob in the reply, GOTCHA-009) that
+  Claude Code fetches, runs, proves by blob SHA, and commits as the
+  corresponding numbered part(s) of the series with named files. The prompt
+  states in its first lines that it is the wrap's documentation write under
+  this section, delivered by hand, so the run does not halt on PRECEDENCE.
+  Matt deletes the temporary branch in the GitHub browser (GOTCHA-010). The
+  parts before and after it are still Claude Web's direct commits; the
+  handoff's last part is written after the apply prompt's commit lands.
+
   THE WRAP WRITES THE DOCUMENTATION LAYER ONLY. The start protocol's risk
   test (RULING-010) governs what Claude Web may ever edit directly; the wrap
   is narrower still and touches only the .forge/ files named in the manifest
@@ -208,11 +223,19 @@ wrap_file_manifest_chromaqa: |
     .chromaqa/profiles.json           PROTECTED CONFIG — committed; never generated,
                                       edited, deleted or emptied by the wrap or any
                                       prompt (a change is Matt's decision, by name)
+    .chromaqa/accepted.json           PROTECTED CONFIG (ChromaQA 7.1+) — committed;
+                                      captain-review acceptances. Never written or
+                                      staged by the wrap or the remainder; an entry
+                                      is Matt's acceptance by name, written by
+                                      Claude Web in the turn it is made (RULING-017),
+                                      as its own single-file commit, never inside
+                                      the wrap series
     .chromaqa/CQA-debt.jsonl          PASS-THROUGH — never generated or edited by
     .chromaqa/CQA-showstoppers.jsonl  anyone; committed by the local remainder when
-                                      git status shows them modified, which is
-                                      expected right after any push (the gate
-                                      appends to them during the push)
+                                      git status shows them modified (the gate
+                                      appends to them during a push; on ChromaQA
+                                      7.2+ a modified debt ledger means a NEW
+                                      finding, named in the wrap, not committed blind)
     .chromaqa/CQA-runs.jsonl          LOCAL ONLY — gitignored, never committed,
                                       never on GitHub
   In a ChromaQA v6.1 repo the whole .chromaqa/ directory is gitignored: then
@@ -231,6 +254,11 @@ wrap_file_manifest_seogeo: |
                                       indexable_when, posture) is Matt's, by name
     .seogeo/STANDARD.md               COMMITTED, read by sessions, never edited by
                                       a wrap — 60 lines, a rule replaces a rule
+    .seogeo/CONFIG-REFERENCE.md       COMMITTED (v1.3.0), the config reference read
+                                      before any surface change; never edited here
+    src/lib/seo/page-metadata.ts      COMMITTED (v1.3.0), the page helper (pageSeo,
+                                      noindexMetadataFor); byte-synced from
+                                      chromasmith/seogeo, never edited in this repo
     .seogeo/crawlers.json             COMMITTED, dated and perishable — refreshed
                                       as its own deliberate change, never as a
                                       side effect of other work
@@ -384,6 +412,9 @@ read_state_chromaqa_telemetry: |
       .chromaqa/CQA-debt.jsonl
       .chromaqa/CQA-showstoppers.jsonl
       .chromaqa/profiles.json   (its presence means the SEO/GEO gates are live)
+      .chromaqa/accepted.json   (ChromaQA 7.1+; every entry's expires_when is a
+                                 standing question — name any acceptance whose
+                                 stated end condition this session met)
   .chromaqa/CQA-runs.jsonl is gitignored and per machine; it is not on GitHub
   and is not read by the wrap. A debt count at or above
   {{thresholds.chromaqa_debt_alert}} is stated in one line in the handoff
@@ -591,10 +622,13 @@ gotchas_append: |
   STEP 7 — GOTCHAS (APPEND to .forge/GOTCHAS.yaml if new, otherwise skip).
   Review the entries read in STEP 2 and the discovered-GOTCHA lines the inbox
   files carry in final form. If any NEW lessons were learned, append ONLY the
-  new entries; existing entries are never rewritten. FORMAT TRAP: the live
-  file is a BARE TOP-LEVEL LIST — never indent appended entries; match the
-  shape of the existing last entry rather than assuming a schema. Before
-  assigning an ID, read the file and use the next unused {{ids.gotcha_prefix}}NNN.
+  new entries; existing entries are never rewritten. FORMAT TRAP: match the
+  INDENTATION and shape of the existing last entry EXACTLY — most live files
+  are a bare top-level list whose entries start at the left margin, but some
+  (chromaqa) indent every entry two spaces, and a list with mixed indentation
+  is a file YAML rejects. Read the last entry, copy its indentation, never assume a schema.
+  Before assigning an ID, read the file and use the next unused
+  {{ids.gotcha_prefix}}NNN.
   Gotchas are rarely deleted — they are permanent lessons. If there are no
   new entries and no archive move, this file is not touched.
 
@@ -607,7 +641,8 @@ gotchas_append: |
   quirks, allowlist changes, machine paths) belong in GOTCHAS, not in
   protocol text.
 
-  gotchas_schema (append only new entries, at column zero):
+  gotchas_schema (append only new entries, at the indentation of the
+  existing last entry):
     - id: [{{ids.gotcha_prefix}}NNN]
       date: [YYYY-MM-DD]
       summary: [one-line description]
@@ -1018,8 +1053,11 @@ cc_local_remainder_prompt: |
   GitHub is the single source of truth. Local copies are disposable. Do NOT
   enumerate local folders and pick one to work in; do NOT clone a second copy.
 
-  cd /d {{repo.canonical_checkout}}
+  cd "{{repo.canonical_checkout}}"
   git rev-parse --abbrev-ref HEAD          (expected: {{repo.default_branch}})
+
+  (Git Bash syntax throughout; the working directory resets between tool
+  calls, so every call starts with the cd above. python, never python3.)
 
   ## WORKING TREE AUDIT (it can stop the wrap)
 
@@ -1130,9 +1168,11 @@ cc_remainder_chromaqa_lines: |
       .chromaqa/CQA-debt.jsonl          (pass-through, if modified)
       .chromaqa/CQA-showstoppers.jsonl  (pass-through, if modified)
   .chromaqa/CQA-runs.jsonl is gitignored and is never staged.
-  .chromaqa/profiles.json is PROTECTED CONFIG: it is never on the staged list
-  and never edited; if it shows as modified or deleted, that is a STOP —
-  report it and wait.
+  .chromaqa/profiles.json and .chromaqa/accepted.json are PROTECTED CONFIG:
+  never on the staged list and never edited; if either shows as modified or
+  deleted, that is a STOP — report it and wait. (An acceptance Matt made this
+  session was already committed by Claude Web in that turn; it is not the
+  remainder's to stage.)
   The report adds: "- ChromaQA telemetry: [committed — list / skipped /
   local only (gitignored .chromaqa/, ChromaQA v6.1)]".
 # <<< end E-040
@@ -1151,8 +1191,10 @@ cc_remainder_push_gate: |
     missing, a profiles.json that cannot be read) is a STOP: report the
     finding as printed and wait for Matt.
   - Exit 2 — CAPTAIN REVIEW. STOP. Do not push, do not "fix" it so it passes,
-    do not touch .chromaqa/profiles.json. Report the finding exactly as
-    printed and wait. It is not yours to resolve.
+    do not touch .chromaqa/profiles.json or .chromaqa/accepted.json. Report
+    the finding exactly as printed, with its code, and wait. The resolution
+    is Matt's: a code fix, or his acceptance by name recorded by Claude Web
+    in .chromaqa/accepted.json (RULING-017) — never by this run.
   Never push with --no-verify. A wrap that cannot push is NOT done and must
   not print the DONE banner.
 
@@ -1161,7 +1203,10 @@ cc_remainder_push_gate: |
   leave exactly those two files modified. This is ChromaQA working, not a
   scope breach. In this repo, WORKING TREE AUDIT and VERIFY PUSH check 1 treat
   those two paths as ALWAYS PERMITTED to be modified. If either is modified
-  after the push: commit them by name with the message
+  after the push: FIRST run git diff on it — on ChromaQA 7.2+ the debt ledger
+  records each finding once, so an added line is a NEW or CHANGED finding and
+  the report names it (gate, code, message); on 7.0/7.1 it appends every run
+  and the diff is expected noise. THEN commit them by name with the message
   "chore: chromaqa telemetry", push again (the gate re-runs and appends
   nothing new when nothing changed), then run VERIFY PUSH.
 
@@ -1370,7 +1415,7 @@ file_behaviors:
   gotchas:
     path: .forge/GOTCHAS.yaml
     action: APPEND
-    claude_web_writes: only new entries, at column zero (bare top-level list)
+    claude_web_writes: only new entries, at the indentation of the existing last entry (bare top-level list in most repos; two-space entries in some)
     consolidation_trigger: "{{thresholds.gotcha_consolidation.trigger_count}} entries or {{thresholds.gotcha_consolidation.or_every}}, run as {{thresholds.gotcha_consolidation.runs_as}}"
     archive_destination: .forge/archive/GOTCHAS-archive.yaml
     ordering: oldest-first, original numbering preserved
@@ -1445,6 +1490,12 @@ file_behaviors_seogeo:
   seogeo_standard:
     path: .seogeo/STANDARD.md
     action: "COMMITTED (read by every session that touches a page, route or layout; never edited by a wrap; 60-line cap, a rule replaces a rule)"
+  seogeo_config_reference:
+    path: .seogeo/CONFIG-REFERENCE.md
+    action: "COMMITTED (v1.3.0; read before any surface change; byte-synced from chromasmith/seogeo, never edited here)"
+  seogeo_page_helper:
+    path: src/lib/seo/page-metadata.ts
+    action: "COMMITTED (v1.3.0; pageSeo and noindexMetadataFor — the name is load-bearing, never renamed; byte-synced from chromasmith/seogeo, never edited here; prompts read and call it, never authorize it)"
   seogeo_crawlers:
     path: .seogeo/crawlers.json
     action: "COMMITTED (dated and perishable; refreshed as its own deliberate change, never as a side effect)"
