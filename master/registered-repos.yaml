@@ -16,15 +16,15 @@
 # Matt naming the repo; there is no queue here and no implied order.
 # =============================================================================
 
-master_version_current: "v1.3.0"   # landed 2026-09-07 (8db4ff2); rendered on forgeflow only so far (RULING-016) — every other row lags by design until the one-prompt propagation (FF-009)
+master_version_current: "v1.3.0"   # landed 2026-09-07 (8db4ff2) and PROPAGATED the same day (FF-009): every row below is current at v1.3.0, no repo is pinned or lagging. Two repos joined the registry in that pass — convergible-sandbox and convergible, both first renders.
 
 repos:
   - repo: chromasmith/seogeo
     config: .forge/protocol-config.yaml
     profile: docs-only
-    master_version: "v1.1.0"
-    rendered_on: 2026-09-05
-    config_hash: b0e8e9f26da9620f9d5a6ffe474b5f2138a1206b4ccf417f068015504b7ef5b0
+    master_version: "v1.3.0"
+    rendered_on: 2026-09-07
+    config_hash: 2b2e5be3e7fc2cf3a48a93a3ef255fc45f441159bfeee92ec1fd219770041412
     state: current
     files:
       - .forge/protocols/start-protocol.yaml
@@ -33,7 +33,7 @@ repos:
       - .forge/protocols/end-protocol.dispatch.yaml
       - .forge/protocol-config.yaml
       - CLAUDE.md
-    landed: "v1.1.0 re-render 2026-09-05: commits 1746d6c (config), ff60fc1 (CLAUDE.md), b504fb8 (end.dispatch NEW), 40e9040 (start.dispatch NEW), 30be55b (end), a94d846 (start); blob SHAs equal to the sandbox output. Previous v1.0.0 render: 042427f, 6c792a0, 14f1614 (2026-09-04)"
+    landed: "v1.3.0 propagation 2026-09-07: ONE commit 9b729af (all six files) by the local Claude Code run PROPAGATE-v1.3.0; every blob SHA equal to the Claude Web sandbox render and re-proven through the connector after the push. Previous: v1.1.0 re-render 2026-09-05: commits 1746d6c (config), ff60fc1 (CLAUDE.md), b504fb8 (end.dispatch NEW), 40e9040 (start.dispatch NEW), 30be55b (end), a94d846 (start); blob SHAs equal to the sandbox output. Previous v1.0.0 render: 042427f, 6c792a0, 14f1614 (2026-09-04)"
     notes: >-
       First repo ever rendered from the master (RULING-002). THIRD repo re-rendered from
       v1.1.0 with the full harness: claude.yml installed by Matt via the web editor (blob
@@ -48,9 +48,9 @@ repos:
   - repo: chromasmith/chromasmith-saas-starter
     config: .forge/protocol-config.yaml
     profile: standard
-    master_version: "v1.1.0"
-    rendered_on: 2026-09-05
-    config_hash: 194675567d22e994b7acab67b21ae6eb0fd397a6449d0cc6a048d500415c2c82
+    master_version: "v1.3.0"
+    rendered_on: 2026-09-07
+    config_hash: b77403904a76c6c81a826eb41713929bc8d37b541bdee09d73f6e48c9015f7c9
     state: current
     files:
       - .forge/protocols/start-protocol.yaml
@@ -59,7 +59,7 @@ repos:
       - .forge/protocols/end-protocol.dispatch.yaml
       - .forge/protocol-config.yaml
       - CLAUDE.md
-    landed: "v1.1.0 re-render 2026-09-05: commits 1f42125 (config), b742dd2 (CLAUDE.md), fda3547 (end.dispatch NEW), 028eea9 (start.dispatch NEW), d96fd69 (end), f3110b0 (start); blob SHAs equal to the sandbox output. Previous renders: v1.0.0 first render a296c13/10bb67e/60c0906/c97a49a, v1.0.0 re-render after SEO/GEO b750941/060c1c5/c6920b1/7b84b45 (2026-09-04)"
+    landed: "v1.3.0 propagation 2026-09-07: ONE commit 9f50d33 (all six files) by the local Claude Code run PROPAGATE-v1.3.0; every blob SHA equal to the sandbox render and re-proven through the connector after the push. Previous: v1.1.0 re-render 2026-09-05: commits 1f42125 (config), b742dd2 (CLAUDE.md), fda3547 (end.dispatch NEW), 028eea9 (start.dispatch NEW), d96fd69 (end), f3110b0 (start); blob SHAs equal to the sandbox output. Previous renders: v1.0.0 first render a296c13/10bb67e/60c0906/c97a49a, v1.0.0 re-render after SEO/GEO b750941/060c1c5/c6920b1/7b84b45 (2026-09-04)"
     notes: >-
       Second repo rendered (Matt named it 2026-09-04). This repo IS THE TEMPLATE, so its
       rendered files are inherited by every project spawned from it; a child must re-render
@@ -113,9 +113,9 @@ repos:
   - repo: chromasmith/chromaqa
     config: .forge/protocol-config.yaml
     profile: docs-only
-    master_version: "v1.1.0"
-    rendered_on: 2026-09-05
-    config_hash: 7f47dc5a2a20d450ab93d8b98719302a7312e03bcdcf1622b260e512ede892cb
+    master_version: "v1.3.0"
+    rendered_on: 2026-09-07
+    config_hash: ff50e23e6bcdbe931aa2c0943ddac222fd7f15932982284ffee26ed1270b8221
     state: current
     files:
       - .forge/protocols/start-protocol.yaml
@@ -124,7 +124,7 @@ repos:
       - .forge/protocols/end-protocol.dispatch.yaml
       - .forge/protocol-config.yaml
       - CLAUDE.md
-    landed: "v1.1.0 re-render 2026-09-05: commits 3fb7e4f (config), ab9364b (end.dispatch NEW), 67031b3 (CLAUDE.md), b9152c4 (start.dispatch NEW), a868ed2 (end), 9263d5b (start); blob SHAs equal to the sandbox output. Previous v1.0.0 render: 2d9980e / ac7faac / de3f45f / 8f52dc8 (2026-09-04)"
+    landed: "v1.3.0 propagation 2026-09-07: ONE commit e72a6a6 (all six files) by the local Claude Code run PROPAGATE-v1.3.0b; the first pass HALTED here on a config_hash mismatch (b5c5ed08 expected vs ff50e23e actual) because .forge/protocols/artifact-register.yaml was added to the repo after the sandbox snapshot was taken — Claude Web re-rendered against the current tree and the second pass matched every SHA first try. Previous: v1.1.0 re-render 2026-09-05: commits 3fb7e4f (config), ab9364b (end.dispatch NEW), 67031b3 (CLAUDE.md), b9152c4 (start.dispatch NEW), a868ed2 (end), 9263d5b (start); blob SHAs equal to the sandbox output. Previous v1.0.0 render: 2d9980e / ac7faac / de3f45f / 8f52dc8 (2026-09-04)"
     notes: >-
       Fourth repo rendered (RULING-005/006) — the ChromaQA tool's own repo, which RUNS ChromaQA
       ON ITSELF, so subsystems.chromaqa is detected TRUE and not overridden. SECOND repo
@@ -141,16 +141,16 @@ repos:
   - repo: chromasmith/synclips-platform
     config: .forge/protocol-config.yaml
     profile: standard
-    master_version: "v1.0.0"
-    rendered_on: 2026-09-04
-    config_hash: 1cf0a0d5e29b8b5669e8c00099c0f0b237718febd094e77d9f62e4f2b22e398c
+    master_version: "v1.3.0"
+    rendered_on: 2026-09-07
+    config_hash: 383fe6688ac34d45ddd0b6c022df8d5b06fb1813f2b39445ca3dde846ad4e63f
     state: current
     files:
       - .forge/protocols/start-protocol.yaml
       - .forge/protocols/end-protocol.yaml
       - .forge/protocol-config.yaml
       - CLAUDE.md
-    landed: "commits 814578a (config), c383bd2 (start), 09d6c1e (end), 4c54dd5 (CLAUDE.md), all 2026-09-04; blob SHAs equal; render.py check OK from a fresh forgeflow clone"
+    landed: "v1.3.0 propagation 2026-09-07: ONE commit 73e84a6 (four files; dispatch still OFF, no harness) by the local Claude Code run PROPAGATE-v1.3.0; blob SHAs equal and re-proven through the connector. Previous: commits 814578a (config), c383bd2 (start), 09d6c1e (end), 4c54dd5 (CLAUDE.md), all 2026-09-04; blob SHAs equal; render.py check OK from a fresh forgeflow clone"
     notes: >-
       Fifth repo rendered (Matt named it 2026-09-04, RULING-007) — the first Synclips-system
       repo and the first MONOREPO. companion_repos declares synclips-relay (role relay,
@@ -171,16 +171,16 @@ repos:
   - repo: chromasmith/chromasync
     config: .forge/protocol-config.yaml
     profile: standard
-    master_version: "v1.0.0"
-    rendered_on: 2026-09-04
-    config_hash: 72ae2c59e53145bd891668f0ea2654d2e4fd39f87865aea6d000c8da93f2849d
+    master_version: "v1.3.0"
+    rendered_on: 2026-09-07
+    config_hash: c610afefd79510fb054a9ce705c5c36ab7d559bd5fe96743322f128a8ea8b06d
     state: current
     files:
       - .forge/protocols/start-protocol.yaml
       - .forge/protocols/end-protocol.yaml
       - .forge/protocol-config.yaml
       - CLAUDE.md
-    landed: "commits 0d5efb3 (config), 3fd099b (start), 6f726cd (end), e4b455e (CLAUDE.md), all 2026-09-04; blob SHAs equal; render.py check OK from a fresh forgeflow clone"
+    landed: "v1.3.0 propagation 2026-09-07: ONE commit 8e53d33 (four files; dispatch still OFF, no harness) by the local Claude Code run PROPAGATE-v1.3.0; blob SHAs equal and re-proven through the connector. Previous: commits 0d5efb3 (config), 3fd099b (start), 6f726cd (end), e4b455e (CLAUDE.md), all 2026-09-04; blob SHAs equal; render.py check OK from a fresh forgeflow clone"
     notes: >-
       Sixth repo rendered (Matt named it 2026-09-04, RULING-008) — second Synclips-system
       repo, companion synclips-relay. A TWO-LANGUAGE repo: Python desktop agent (src/, built
@@ -201,16 +201,16 @@ repos:
   - repo: chromasmith/dv-captain
     config: .forge/protocol-config.yaml
     profile: docs-only
-    master_version: "v1.0.0"
-    rendered_on: 2026-09-04
-    config_hash: 14900a353f32ee637e80df49c50b5d32e29d59b7ca55412f41dce69355187097
+    master_version: "v1.3.0"
+    rendered_on: 2026-09-07
+    config_hash: f76726f4e7bb1ebdb4f790285fc259a9d66ce49907f2c8fa57e7e549dae73797
     state: current
     files:
       - .forge/protocols/start-protocol.yaml
       - .forge/protocols/end-protocol.yaml
       - .forge/protocol-config.yaml
       - CLAUDE.md
-    landed: "commits eab16f9 (config), 0a03a56 (start), 4444fa6 (end), 4f7a128 (CLAUDE.md), all 2026-09-04; blob SHAs equal; render.py check OK from a fresh forgeflow clone at 5119307"
+    landed: "v1.3.0 propagation 2026-09-07: ONE commit 607aeb5 (four files; dispatch still OFF, no harness) by the local Claude Code run PROPAGATE-v1.3.0b; the first pass HALTED here on a config_hash mismatch caused by a local-only .venv flipping build.validation to py-compile, so build.validation is now a DECLARED override and the file renders identically with or without it. Previous: commits eab16f9 (config), 0a03a56 (start), 4444fa6 (end), 4f7a128 (CLAUDE.md), all 2026-09-04; blob SHAs equal; render.py check OK from a fresh forgeflow clone at 5119307"
     notes: >-
       Seventh repo rendered (Matt named it 2026-09-04, RULING-008) — third and last of the
       Synclips trio, companion synclips-relay (the relay itself is never rendered). PURE
@@ -230,3 +230,74 @@ repos:
       no artifact register, no inbox/) migrates at the repo's first wrap. Master follow-up
       (same as chromasync): a Python validation knob that works without a .venv, and the
       S-083 "no build or interpreter step" wording is wrong for a Python repo on this knob.
+  - repo: chromasmith/convergible-sandbox
+    config: .forge/protocol-config.yaml
+    profile: standard
+    master_version: "v1.3.0"
+    rendered_on: 2026-09-07
+    config_hash: 75e4a365bd50137143bb482aa1da9d490384047f01065002125b7468ebbf52a8
+    state: current
+    files:
+      - .forge/protocols/start-protocol.yaml
+      - .forge/protocols/start-protocol.dispatch.yaml
+      - .forge/protocols/end-protocol.yaml
+      - .forge/protocols/end-protocol.dispatch.yaml
+      - .forge/protocol-config.yaml
+      - CLAUDE.md
+    landed: "FIRST RENDER 2026-09-07: ONE commit 2fe1cce by the local Claude Code run PROPAGATE-v1.3.0 — six rendered files, the four hand-written protocol files DELETED (start/end x local/dispatch), and CC-reports/ renamed to .forge/inbox/ with git mv in the same commit; blob SHAs equal to the sandbox render and re-proven through the connector."
+    notes: >-
+      EIGHTH repo rendered and the master's own lineage source: the dispatch blocks, the
+      artifact register, the rulings register and the one-item agenda were all reconciled
+      out of this repo's four hand-written protocol files, which this render replaces.
+      Named by Matt under RULING-012 and rendered in the FF-009 propagation rather than a
+      session of its own (his call, 2026-09-07). Private repo: detection ran on a tree
+      skeleton rebuilt from the GitHub listing carrying the REAL claude.yml — this repo's
+      claude.yml is the hand-written 2026-08-29 CONVERGIBLE OVERLAY (PG env vars for
+      read-only database access, psql and bunx depcheck on the allowlist) and is NEVER
+      replaced by master/assets/claude.yml; render.py read its allowlist from that file.
+      Detected: single-app npm-build, supabase, vercel (vercel.json at root) so
+      build.deploy vercel, ci_quality_gate, ui_inventory (.forge/specs/ui-inventory.yaml),
+      artifact_register (.forge/protocols/artifact-register.yaml), tsx_lib_rule,
+      dispatch=on. No ChromaQA and no SEO/GEO here. One override:
+      subsystems.database_access_doc = .forge/protocols/database-access.yaml, binding on
+      any dispatched task that reads data. north_star_doc =
+      .forge/specs/convergible-2.5-vision.yaml, backlog prefix CV-. STILL OWED:
+      .forge/repo-rules.yaml (the DOC-FOLD-1 items) was NOT written, so
+      subsystems.repo_rules_doc is unset and S-005 does not render; when that file exists,
+      set the knob and re-render. Legacy .forge/ shape migrates at the repo's first wrap.
+  - repo: chromasmith/convergible
+    config: .forge/protocol-config.yaml
+    profile: standard
+    master_version: "v1.3.0"
+    rendered_on: 2026-09-07
+    config_hash: 8ce56ab524944a312e4deec44eebde2f35dad6d69e56ab534e754cb51c0b22fe
+    state: current
+    files:
+      - .forge/protocols/start-protocol.yaml
+      - .forge/protocols/start-protocol.dispatch.yaml
+      - .forge/protocols/end-protocol.yaml
+      - .forge/protocols/end-protocol.dispatch.yaml
+      - .forge/protocol-config.yaml
+      - CLAUDE.md
+    landed: "FIRST RENDER 2026-09-07: ONE commit 6b08096 (all six files) by the local Claude Code run PROPAGATE-v1.3.0b, on top of 3cb595b which committed the ChromaQA debt ledger the gate had appended locally; blob SHAs equal to the sandbox render and re-proven through the connector. The first pass SKIPPED this repo because that ledger left the checkout dirty."
+    notes: >-
+      NINTH repo rendered — the production Convergible app, spawned from
+      chromasmith-saas-starter on 2026-09-05. Until this render it carried the TEMPLATE's
+      protocol-config.yaml and rendered protocols VERBATIM (blob-identical, repo.name
+      chromasmith-saas-starter, canonical checkout C:\Chromasmith\chromasmith-saas-starter,
+      OBS- prefix, north_star START_HERE.md which does not exist here), so every session
+      opening this repo was briefed about the template it came from — the spawn re-render
+      step in START_HERE was never run. Private repo: detection ran on a tree skeleton
+      rebuilt from the GitHub listing carrying the REAL claude.yml (blob 4cccfbf = the
+      generic asset, inherited by the spawn). Detected: supabase, ci_quality_gate, chromaqa
+      (7.1 here), seogeo (.seogeo/config.json), dispatch=on. THREE knobs are deliberate:
+      shape.kind monorepo + shape.build_location apps/web (the root package.json only
+      proxies scripts into the workspace, repo ruling CV-R4) and architecture.tsx_lib_rule
+      true (.tsx lives under apps/web/src, invisible to P3's root globs). NOT SET, on
+      purpose: subsystems.vercel / build.deploy — nothing is linked to Vercel yet, so this
+      repo RE-RENDERS ONCE MORE after Matt links it with Root Directory apps/web (its own
+      handoff, CV-OPEN-2/3); and north_star_doc — Convergible has no product-truth document
+      in this repo yet (.forge/specs/blueprint.md is still the template's). Backlog prefix
+      CV-. ALSO OWED BY MATT (repo handoff CV-OPEN-4): the CLAUDE_CODE_OAUTH_TOKEN secret
+      and branch protection, neither of which copies with a spawn — until the secret is set,
+      the rendered protocol offers a dispatch lane the repo cannot actually run.
