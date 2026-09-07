@@ -2,6 +2,28 @@
 # The top entry's `version` is the master version render.py stamps into every render.
 # Newest first.
 entries:
+  - version: "v1.3.1"
+    date: 2026-09-07
+    status: RELEASED — three repairs found by running v1.3.0 across all nine repos (FF-013, FF-014, FF-015); propagates to every repo in one pass
+    changed: >-
+      Text and test only; no renderer or schema change, so a repo's config_hash moves only
+      where its own knobs changed. (1) FF-015, the refresh safeguard: S-033's safety check
+      gains check 2b, a count of commits the checkout is BEHIND, because "clean" and
+      "current" are different things and check 1 alone cannot tell them apart; and S-033
+      gains the rule that a checkout which has COMMITTED anything since its last push is
+      refreshed with git rebase, never git reset --hard — "commit it first and then reset"
+      is not a safeguard, it is the deletion. W-005 gains the matching prompt-writer check.
+      Found when a local run caught exactly that instruction in a Claude Web prompt during
+      the FF-009 propagation and correctly overrode it. (2) FF-013: E-026 and E-030 still
+      told the wrap to end every reply with "the next step as a verb and who holds the
+      ball", a rule RULING-019 retired in v1.3.0; both now name the holder only when it is
+      not Matt. (3) FF-014, RULING-020: the S4 file ceilings were mis-measured on a fixture
+      carrying neither ChromaQA nor SEO/GEO, so 1650/1400 never described the real maximum
+      and the first tool-carrying repo rendered from v1.3.0 breached both. BLUEPRINT now
+      carries the re-measured 2000/1700 with the superseded measurement and why it was
+      wrong; a new maximum-by-construction fixture (config-tools-max.yaml plus its tree)
+      and a new check assert the maximum render stays under every ceiling, so a future
+      breach fails the suite instead of surfacing on a real repo.
   - version: "v1.3.0"
     date: 2026-09-07
     status: RELEASED — three-channel change (RULING-016..019); rendered on forgeflow only; FF-009 propagates it to the other six registered repos next

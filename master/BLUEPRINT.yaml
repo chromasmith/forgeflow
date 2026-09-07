@@ -673,22 +673,42 @@ rendering:
       master change that pushed it over must name the rule it replaces or retires
       (replace-to-add). RENDER_PROCEDURE.md step 5 compares wc -l against these.
     ceilings_lines:
-      start-protocol.yaml:          1650   # Claude Web reader
+      start-protocol.yaml:          2000   # Claude Web reader
       start-protocol.dispatch.yaml: 650    # runner reader
-      end-protocol.yaml:            1400   # Claude Web reader
+      end-protocol.yaml:            1700   # Claude Web reader
       end-protocol.dispatch.yaml:   150    # runner reader — one block (E-001) by design; a second block is a deliberate decision, not drift
     measurement:
-      date: 2026-09-04
-      master_commit: ecf77e5
-      config: master/tests/fixtures/config-sandbox-real.yaml (the real convergible-sandbox knob set — the largest render, every subsystem on, dispatch on)
+      date: 2026-09-07
+      master_commit: 8db4ff2
+      config: master/tests/fixtures/config-tools-max.yaml with master/tests/fixtures/tree-tools-max (the maximum knob set — standard profile, dispatch ON, ChromaQA AND SEO/GEO both installed; it reproduces the real chromasmith/convergible render)
       method: wc -l on render.py output in the Claude Web sandbox, two renders byte-identical
-      measured_lines: { start-protocol.yaml: 1436, start-protocol.dispatch.yaml: 562, end-protocol.yaml: 1207, end-protocol.dispatch.yaml: 90 }
+      measured_lines: { start-protocol.yaml: 1734, start-protocol.dispatch.yaml: 588, end-protocol.yaml: 1479, end-protocol.dispatch.yaml: 95 }
       headroom: about 15 percent over each measured file, rounded up to the nearest 50
+      superseded_measurement:
+        date: 2026-09-04
+        master_commit: ecf77e5
+        config: master/tests/fixtures/config-sandbox-real.yaml
+        ceilings_were: { start-protocol.yaml: 1650, end-protocol.yaml: 1400 }
+        why_it_was_wrong: >
+          config-sandbox-real was called "the largest render, every subsystem on" but it
+          carries NEITHER ChromaQA nor SEO/GEO, and those two tools contribute eleven
+          blocks (S-014, S-087..S-090, E-036/037/040/047/048..051). The true maximum knob
+          set is a standard repo running both, which chromasmith-saas-starter and
+          chromasmith/convergible do. The 1650/1400 numbers therefore never described the
+          real maximum and were breached by 71-134 lines the first time a tool-carrying
+          repo was rendered from v1.3.0 (FF-009). Corrected by re-measurement, not by
+          retiring protocol text: P11's replace-to-add discipline applies to a rule added
+          past a VALID ceiling; it does not apply to a ceiling that was mis-measured
+          (RULING-020).
       note: >
         The lineage reconciliation estimated 1,200 for CW-read files; the real CW
-        start file came in at 1,436, so the estimate was superseded by the
-        measurement rather than trimming content Matt has kept in every lineage.
-        A ChromaControl-shape render (config-legacy.yaml) is smaller on every file.
+        start file came in at 1,436 on the sandbox knob set and 1,734 on a
+        tool-carrying repo, so the estimate was superseded by measurement rather than
+        by trimming content Matt has kept in every lineage. A ChromaControl-shape
+        render (config-legacy.yaml) is smaller on every file. The ceiling fixture is
+        now the MAXIMUM by construction (config-tools-max.yaml) and test_render.py
+        asserts it stays under every ceiling, so a breach fails the test suite instead
+        of surfacing on a real repo.
   header_stamp: >
     Every rendered file begins with a fixed header: source
     (chromasmith/forgeflow master/<file>), master version, render date,

@@ -1,0 +1,11 @@
+# fixture: THE MAXIMUM KNOB SET — a standard repo with dispatch ON and BOTH tools
+# installed (ChromaQA and SEO/GEO). This is what the S4 file ceilings are measured on
+# (BLUEPRINT rendering.file_ceilings); it reproduces the real chromasmith/convergible
+# render. The older config-starter-tools.yaml has both tools but renders dispatch OFF,
+# so it is NOT the maximum — measuring on it, or on config-sandbox-real.yaml which has
+# neither tool, is how the 1650/1400 ceilings came to be wrong (RULING-020).
+# Rendered INSIDE forgeflow only — nothing here is written to any repo.
+profile: standard
+repo: { org: chromasmith, name: fixture-tools-max }
+overrides:
+  architecture.tsx_lib_rule: true

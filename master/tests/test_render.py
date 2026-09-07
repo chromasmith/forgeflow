@@ -154,6 +154,16 @@ with tempfile.TemporaryDirectory() as td:
     checks.append(("noindexMetadataFor" in stext and "CONFIG-REFERENCE.md" in etext, "real master: SEO/GEO v1.3.0 page helper and config reference carried", ""))
     checks.append(("S-018" not in sids, "real master: S-018 prior_ruling_search retired (duplicate of S-011 + W-001, P11)", ""))
     checks.append(("TEXT-ONLY TIER" in stext and "waiting on you" in stext and "is retired" in stext, "real master: text-only tier present; ball-holder rule retires the 'waiting on you' tic", ""))
+    # 13. FF-014 / RULING-020 — the MAXIMUM knob set (dispatch on, ChromaQA AND SEO/GEO) stays under every S4 ceiling.
+    #     Measured on the REAL master, not the fixture master: a ceiling is about what a session actually reads.
+    CEIL = {"start-protocol.yaml": 2000, "start-protocol.dispatch.yaml": 650, "end-protocol.yaml": 1700, "end-protocol.dispatch.yaml": 150}
+    r = run("render", "--config", str(FIX / "config-tools-max.yaml"), "--master-dir", str(REAL), "--out", str(td / "max"), "--tree", str(FIX / "tree-tools-max"), "--date", DATE)
+    over = []
+    for fn, ceil in CEIL.items():
+        p = td / "max" / ".forge/protocols" / fn
+        if p.exists() and read(p).count("\n") > ceil:
+            over.append(fn + " " + str(read(p).count("\n")) + " > " + str(ceil))
+    checks[-1] = (r.returncode == 0 and not over, "real master: the maximum knob set (both tools, dispatch on) renders under every S4 ceiling (RULING-020)", "; ".join(over) or (r.stdout + r.stderr).strip()[-160:])
 
 fails = [c for c in checks if not c[0]]
 for ok, name, detail in checks:

@@ -974,6 +974,14 @@ pre_refresh_safety_check: |
      git rev-list --count origin/{{repo.default_branch}}..HEAD
      (Any number greater than 0 = there are commits here that GitHub does not have.)
 
+  2b. Commits this copy is MISSING (local behind origin):
+     git rev-list --count HEAD..origin/{{repo.default_branch}}
+     (Any number greater than 0 = GitHub has moved on since this copy was last
+     refreshed. This is NOT a stop — a refresh is exactly the cure — but it is
+     reported, because "clean" and "current" are different things and check 1
+     alone cannot tell them apart. A commit made on a checkout that is behind
+     lands on a stale base.)
+
   3. Current branch (should be {{repo.default_branch}}):
      git rev-parse --abbrev-ref HEAD
      If the branch is NOT {{repo.default_branch}}, this checkout is another
@@ -992,6 +1000,18 @@ pre_refresh_safety_check: |
   Then wait. Matt decides whether to push/keep it or discard it. Only proceed
   past this point once the copy is confirmed clean (or Matt explicitly says to
   discard).
+
+  IF ANYTHING WAS COMMITTED IN THIS CHECKOUT BEFORE THE REFRESH — a telemetry
+  file the session was told to keep, a fix Matt approved mid-session — the
+  refresh is a REBASE, never a hard reset:
+     git fetch origin
+     git checkout {{repo.default_branch}}
+     git rebase origin/{{repo.default_branch}}
+  A hard reset discards every local commit that is not on GitHub, whatever
+  order it runs in; "commit it first and then reset" is not a safeguard, it is
+  the deletion. The hard-reset path below is for a checkout that has committed
+  NOTHING since its last push — which is the normal case, and is what checks 1
+  and 2 above prove.
 # <<< end S-033
 
 # >>> block S-034 | refresh_mode_hard_reset | reader: cc-local | render_when: execution.local and mirror.github_is_complete_mirror == true
@@ -2069,6 +2089,11 @@ prompt_writer_self_check: |
       (headline first, detail second); every shell line is Git Bash form
       (S-036); and the change is NOT text-only — if it is, this is not a
       prompt at all but Matt's web edit (S-006), and the prompt is discarded.
+    - NO PROMPT EVER SAYS "commit, then git reset --hard". If a prompt asks a
+      run to commit anything in a checkout before refreshing it, the refresh
+      it names is git rebase (S-033); a reset there deletes the commit the
+      prompt just asked for. Written after a run caught exactly that
+      instruction in a Claude Web prompt and correctly overrode it.
   The same check applies to Claude Web's own replies: four sentences or fewer
   unless the reply is one of W-001's named exceptions.
   A rule that needs re-ruling in a session belongs here, stated so the

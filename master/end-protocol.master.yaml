@@ -1343,8 +1343,8 @@ project_position_statement: |
   same sentence closes the handoff's status field. A finished session, a
   green DONE banner or a completed milestone must never read as a finished
   project; if a milestone is complete but the project is not, say both in
-  that sentence. The reply then ends, as every reply does, with the next step
-  as a verb and who holds the ball.
+  that sentence. The reply names who holds the ball ONLY when it is not Matt
+  (W-001); silence means it is his.
 # <<< end E-026
 
 # >>> block E-027 | manual_fallback | reader: cw | render_when: always
@@ -1634,7 +1634,8 @@ wrap_commit_message_and_evidence_count: |
   - Rulings: all present / back-filled [ids]
   - Connector errors and workarounds, if any; "No issues encountered" when
     clean
-  Then the next step as a verb and who holds the ball.
+  Then the next step, naming who holds the ball only when it is not Matt
+  (W-001).
 # <<< end E-030
 
 # >>> block E-045 | compliance_canary_wrap | reader: cw | render_when: always
