@@ -147,10 +147,10 @@
     try: write the change as a PYTHON APPLY SCRIPT of exact-match replacements (each asserts its
     target text exists exactly once, so a wrong start state or a transcription slip fails loudly
     before saving) that ends by printing git hash-object of every file it wrote against the expected
-    blob SHA; push that script through the connector to a temporary branch (tmp/<n>; prose
+    blob SHA; push that script through the connector to a temporary branch (tmp/<name>; prose
     survives the connector, and the returned blob SHA proves the landing); have Claude Code
-    `git fetch origin tmp/<n>:refs/remotes/origin/tmp/<n>`, `git restore
-    --source=origin/tmp/<n> -- <script>`, prove the script's blob SHA, run it, delete the scratch
+    `git fetch origin tmp/<name>:refs/remotes/origin/tmp/<name>`, `git restore
+    --source=origin/tmp/<name> -- <script>`, prove the script's blob SHA, run it, delete the scratch
     file, then commit the named files. Prove the whole route from a fresh clone in the sandbox BEFORE
     handing the prompt over. Side lesson from the failed run: when a gzip payload fails its CRC,
     gzip.decompress discards everything; decompressing as raw deflate (skip the 10-byte header and the
