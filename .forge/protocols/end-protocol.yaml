@@ -1,8 +1,8 @@
 # =============================================================================
 # END PROTOCOL — chromasmith/forgeflow — reader: cw
 # source:         chromasmith/forgeflow master/end-protocol.master.yaml
-# master_version: v1.2.0
-# rendered_on:    2026-09-06
+# master_version: v1.3.0
+# rendered_on:    2026-09-07
 # render_method:  code
 # config_hash:    7ccf78dfab2fd1a61cc67fe1d8e97cd796b6de197a1a560da45381988267b46d
 # config_file:    .forge/protocol-config.yaml
@@ -142,6 +142,21 @@ wrap_direct_write_delivery: |
   sandbox). Equal means landed; anything else means the wrap is not done.
   Report to Matt in plain English: what changed in each file, in one line
   per file with its part number and commit SHA, or the PR number.
+
+  FILES THE CONNECTOR CANNOT WRITE. The connector aborts near 100 KB and has
+  no rename. A wrap file past that size (a GOTCHAS.yaml of 140 KB, a large
+  session-history) is STILL Claude Web's to author: it writes the complete
+  new content in its sandbox, diffs it against the current file exactly as
+  above, records the blob SHA, and delivers it through ONE Claude Code APPLY
+  prompt — a self-verifying apply script pushed to a temporary branch
+  through the connector (never an opaque blob in the reply, GOTCHA-009) that
+  Claude Code fetches, runs, proves by blob SHA, and commits as the
+  corresponding numbered part(s) of the series with named files. The prompt
+  states in its first lines that it is the wrap's documentation write under
+  this section, delivered by hand, so the run does not halt on PRECEDENCE.
+  Matt deletes the temporary branch in the GitHub browser (GOTCHA-010). The
+  parts before and after it are still Claude Web's direct commits; the
+  handoff's last part is written after the apply prompt's commit lands.
 
   THE WRAP WRITES THE DOCUMENTATION LAYER ONLY. The start protocol's risk
   test (RULING-010) governs what Claude Web may ever edit directly; the wrap
@@ -452,10 +467,13 @@ gotchas_append: |
   STEP 7 — GOTCHAS (APPEND to .forge/GOTCHAS.yaml if new, otherwise skip).
   Review the entries read in STEP 2 and the discovered-GOTCHA lines the inbox
   files carry in final form. If any NEW lessons were learned, append ONLY the
-  new entries; existing entries are never rewritten. FORMAT TRAP: the live
-  file is a BARE TOP-LEVEL LIST — never indent appended entries; match the
-  shape of the existing last entry rather than assuming a schema. Before
-  assigning an ID, read the file and use the next unused GOTCHA-NNN.
+  new entries; existing entries are never rewritten. FORMAT TRAP: match the
+  INDENTATION and shape of the existing last entry EXACTLY — most live files
+  are a bare top-level list whose entries start at the left margin, but some
+  (chromaqa) indent every entry two spaces, and a list with mixed indentation
+  is a file YAML rejects. Read the last entry, copy its indentation, never assume a schema.
+  Before assigning an ID, read the file and use the next unused
+  GOTCHA-NNN.
   Gotchas are rarely deleted — they are permanent lessons. If there are no
   new entries and no archive move, this file is not touched.
 
@@ -468,7 +486,8 @@ gotchas_append: |
   quirks, allowlist changes, machine paths) belong in GOTCHAS, not in
   protocol text.
 
-  gotchas_schema (append only new entries, at column zero):
+  gotchas_schema (append only new entries, at the indentation of the
+  existing last entry):
     - id: [GOTCHA-NNN]
       date: [YYYY-MM-DD]
       summary: [one-line description]
@@ -710,8 +729,11 @@ cc_local_remainder_prompt: |
   GitHub is the single source of truth. Local copies are disposable. Do NOT
   enumerate local folders and pick one to work in; do NOT clone a second copy.
 
-  cd /d C:\Chromasmith\forgeflow
+  cd "C:\Chromasmith\forgeflow"
   git rev-parse --abbrev-ref HEAD          (expected: main)
+
+  (Git Bash syntax throughout; the working directory resets between tool
+  calls, so every call starts with the cd above. python, never python3.)
 
   ## WORKING TREE AUDIT (it can stop the wrap)
 
@@ -946,7 +968,7 @@ file_behaviors:
   gotchas:
     path: .forge/GOTCHAS.yaml
     action: APPEND
-    claude_web_writes: only new entries, at column zero (bare top-level list)
+    claude_web_writes: only new entries, at the indentation of the existing last entry (bare top-level list in most repos; two-space entries in some)
     consolidation_trigger: "100 entries or 1 month, run as its own session"
     archive_destination: .forge/archive/GOTCHAS-archive.yaml
     ordering: oldest-first, original numbering preserved

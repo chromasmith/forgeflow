@@ -107,7 +107,7 @@ Hold the line.
 
 <!-- </scope-discipline v1> -->
 
-<!-- FORGEFLOW HOUSE BLOCK — rendered from forgeflow/master v1.2.0 — do not edit inside markers -->
+<!-- FORGEFLOW HOUSE BLOCK — rendered from forgeflow/master v1.3.0 — do not edit inside markers -->
 <!-- C-001 claude_md_house_block — rendered into every repo's CLAUDE.md between the FORGEFLOW HOUSE BLOCK markers -->
 
 ## House rules (ForgeFlow) — chromasmith/forgeflow
@@ -139,7 +139,7 @@ These rules are the same in every Chromasmith repo. They are rendered here from 
 
 ### Communication rules
 
-- Talk to Matt in simple, natural, plain English. He is not a developer; do not assume technical knowledge. Answer "did it work?" in words first, numbers after.
+- Talk to Matt in simple, natural, plain English, LAYERED: the first line is the headline — what happened, what it means for him, the way around — then the technical detail briefly; the deep version only if he asks. He is not a developer and is learning; do not assume technical knowledge, and do not talk down to him. Answer "did it work?" in words first, numbers after.
 - Any message directed at Matt — a question, a blocker, a thing he must do — is visually unmistakable and is never buried inside thinking or output walls. Print it as a short plain-text block on its own, with a plain-text label such as QUESTION FOR MATT or MATT MUST DO. Plain text only; his terminal does not render ANSI colour codes.
 - HUMAN GATES in live supervised runs (real accounts, Matt at the keyboard): print the banner, state the ONE thing Matt must do, and WAIT for him to type the confirmation word. No timers, no inferring he is done, no barrelling ahead. Never hammer or re-poll an external site — one action, one attempt; repeated automated contact is what trips anti-bot systems.
 - Give Matt one action item at a time, never a numbered list of manual steps. When reporting, bottom-line first, then the evidence briefly.
