@@ -221,3 +221,88 @@
     - every local Claude Code prompt that renders or hashes files on Surface 12
     - master/RENDER_PROCEDURE.md (landing step)
     - master/PROPAGATION_PROCEDURE.md (step 5 — the FF-009 run hashes six repos' renders)
+- id: GOTCHA-013
+  date: 2026-09-07
+  summary: "render.py detect() reads the WORKING TREE, so a local-only file changes the render — a gitignored .venv made dv-captain render differently on Matt's machine than from a GitHub-shaped tree"
+  detail: |
+    The FF-009 propagation halted on dv-captain because the local checkout carries an
+    untracked .venv/ that GitHub does not have. detect() sets build.validation to
+    "py-compile" when it sees a .venv, so the local render produced a different
+    config_hash and different protocol text from the Claude Web sandbox render of the
+    same repo at the same master. Neither render was wrong; they were reading different
+    trees. Every detection input can do this: .venv/, .vercel/project.json, supabase/,
+    .chromaqa/, .seogeo/config.json, package.json, src/**/*.tsx. THE FIX IS THE CONFIG,
+    NOT THE RENDERER: declare the field as an override in the repo's
+    .forge/protocol-config.yaml with the reason, and the file then renders identically
+    wherever it runs (proven for dv-captain: identical output with and without .venv).
+    Before trusting a sandbox SHA table, ask whether the target checkout could hold a
+    detection input that GitHub does not.
+  source: "FF-009 propagation, 2026-09-07 (run PROPAGATE-v1.3.0 halt on dv-captain; fixed in PROPAGATE-v1.3.0b at c22d068)"
+  applies_to:
+    - master/render.py (detect)
+    - every repo's .forge/protocol-config.yaml overrides block
+    - master/PROPAGATION_PROCEDURE.md step 3
+- id: GOTCHA-014
+  date: 2026-09-07
+  summary: "A propagation SHA table is only valid against the repo snapshot it was rendered from — chromaqa gained an artifact register between the snapshot and the run, and every SHA in its row went stale"
+  detail: |
+    chromaqa acquired .forge/protocols/artifact-register.yaml on 2026-09-06, which flips
+    subsystems.artifact_register true and renders S-003 IN. The Claude Web sandbox render
+    had been taken before that landed, so the local run's config_hash (ff50e23e) did not
+    match the prompt's (b5c5ed08) and the repo correctly halted. Nothing was wrong with
+    the renderer or the master. TWO CHEAP HABITS: (1) record the per-repo origin/main SHA
+    the sandbox rendered against alongside the blob SHAs, so a mismatch is diagnosable in
+    one command instead of looking like render non-determinism; (2) when a render
+    mismatches, check the CLAUDE.md house block FIRST — if the house block matches and
+    only the .forge files differ, the cause is a detection difference in the tree, never
+    the renderer and never the master. Both halts in this propagation had that signature.
+  source: "FF-009 propagation, 2026-09-07 (runs PROPAGATE-v1.3.0 and PROPAGATE-v1.3.0b)"
+  applies_to:
+    - master/PROPAGATION_PROCEDURE.md step 3
+    - every propagation prompt Claude Web writes
+- id: GOTCHA-015
+  date: 2026-09-07
+  summary: "Refresh mechanics that bite: an ahead-only check cannot see a BEHIND checkout; reset --hard deletes a commit you were told to keep; and rebase refuses on a dirty tree, so the answer there is merge --ff-only"
+  detail: |
+    Three related traps, all found in one day of propagation prompts, all now repaired in
+    master v1.3.1 (S-033, W-005) except the last, which is FF-016.
+    (1) `git rev-list --count origin/main..HEAD` counts commits AHEAD. A checkout that is
+    eight commits BEHIND reports 0 and reads as "clean" — convergible was exactly that.
+    Count both directions: `git rev-list --count HEAD..origin/main` too.
+    (2) A prompt that says "commit this file, then git reset --hard origin/main" deletes
+    the commit it just asked for. Order does not save it. Claude Code caught this in a
+    Claude Web prompt and correctly overrode it.
+    (3) `git rebase origin/main` is the right refresh when the checkout holds local
+    commits — but git refuses to rebase with unstaged changes, and convergible ALWAYS has
+    an unstaged .chromaqa/CQA-debt.jsonl. With no local commits the correct move there is
+    `git merge --ff-only origin/main`, which is byte-identical in result and leaves the
+    dirty file alone. Claude Code made that call correctly, unprompted.
+    SHELL TRAP from the same runs: in Git Bash a Windows path in double quotes eats a
+    following variable — "C:\Chromasmith\$R" expands to the literal C:\Chromasmith$R
+    because the backslash escapes the dollar. Use forward slashes (C:/Chromasmith/$R) in
+    any loop that builds paths from a variable. It failed harmlessly here (cd errored,
+    nothing was written) but with `>` instead of `cp` it would silently write elsewhere.
+  source: "FF-009 propagation and the v1.3.1 landing, 2026-09-07 (runs PROPAGATE-v1.3.0b and FF-V131-MASTER)"
+  applies_to:
+    - master/start-protocol.master.yaml (S-033, S-036, W-005)
+    - every local Claude Code prompt written for Surface 12
+- id: GOTCHA-016
+  date: 2026-09-07
+  summary: "Three signals that look like failures and are not: the 'Bypassed rule violations' push warning, convergible's ledger dirtying after every push, and render.py's em-dash printing as a replacement character"
+  detail: |
+    A session that treats any of these as an error stops for no reason.
+    (1) On a branch-protected repo (chromaqa, forgeflow, convergible and others), a direct
+    push by Matt's own account succeeds and prints "Bypassed rule violations — changes must
+    be made through a pull request". That is protection working exactly as RULING-011
+    designed it: runners cannot push main, administrators bypass.
+    (2) Every push to convergible runs its ChromaQA gate, which appends to
+    .chromaqa/CQA-debt.jsonl AFTER staging, so the working tree is dirty immediately after
+    a successful push. On ChromaQA 7.2+ those lines are new findings: read the diff and
+    name them, never commit them blind, and never discard them.
+    (3) render.py's success line prints the em-dash as a replacement character under the
+    Windows console codepage. The rendered FILES are correct LF UTF-8 and every blob SHA
+    matched. Do not "fix" render.py for it.
+  source: "FF-009 propagation and the v1.3.1 landing, 2026-09-07 (inbox PROPAGATE-v1.3.0b, FF-V131-MASTER)"
+  applies_to:
+    - every propagation or render run on Surface 12
+    - .forge/handoff.yaml (watch_out_for)
