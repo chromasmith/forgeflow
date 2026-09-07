@@ -390,3 +390,30 @@ rulings:
       stated reason. Linear remains first-class for dependent work.
     supersedes: the W-001 lines "END EVERY REPLY with the next step stated as a VERB and who holds the ball" and "RECOMMENDATION, NOT OPTIONS" (both reworded as above); S-065's triage-only-when-dispatching-more-than-one (the plan is now owed at approval time)
     stated_by: Matt, in chat, in this session (the laundry list, items 1-6, each confirmed in turn), recorded in the turn per W-002
+  - id: RULING-020
+    date: 2026-09-07
+    subject: The S4 file ceilings were mis-measured; they are re-measured on a tool-carrying repo, not paid for by retiring protocol text
+    ruling: >-
+      At the FF-009 propagation the first two repos rendered from master v1.3.0 —
+      chromasmith-saas-starter (start 1721, end 1468) and chromasmith/convergible (start 1734,
+      end 1479) — came out over the S4 ceilings of 1650 and 1400, and synclips-platform's wrap
+      file (1424) over the end ceiling as well. CAUSE: the ceilings set on 2026-09-04 (v1.4)
+      were measured on master/tests/fixtures/config-sandbox-real.yaml, described there as "the
+      largest render, every subsystem on" — but that knob set carries NEITHER ChromaQA NOR
+      SEO/GEO, and those two tools contribute eleven blocks between them. The true maximum is a
+      standard repo running both. The 1650/1400 numbers therefore never described the real
+      maximum; they were not breached by bloat, they were wrong. FIX, approved by Matt in this
+      session ("Continue" on Claude Web's recommendation): the ceilings are re-measured on the
+      real convergible knob set and raised to start 2000 / end 1700 by the same documented
+      method (about 15 percent headroom, rounded up to the nearest 50); the dispatch ceilings
+      (650 / 150) are untouched and were never close. P11's replace-to-add discipline is
+      UNCHANGED and still binds every future addition — it governs a rule added past a VALID
+      ceiling, not a ceiling that was mis-measured. The correction is recorded in
+      master/RENDER_PROCEDURE.md step 5 in this session; master/BLUEPRINT.yaml
+      rendering.file_ceilings carries the same numbers and the superseded measurement, landing
+      with the next master change (FF-014), because the file is too large for the connector to
+      rewrite safely (GOTCHA-008). Nothing rendered into any repo reads these numbers, so no
+      re-render is owed for this change. FF-014 also adds a fixture for the chromaqa+seogeo knob
+      set so the ceilings are never again measured on a config that is not the maximum.
+    supersedes: BLUEPRINT.yaml v1.4 rendering.file_ceilings (start 1650, end 1400) and its measurement block naming config-sandbox-real.yaml as the largest render
+    stated_by: Matt, in chat, in this session ("Continue" on the recommendation to re-measure rather than retire protocol text), recorded in the turn per W-002
