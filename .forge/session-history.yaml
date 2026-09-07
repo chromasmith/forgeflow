@@ -236,3 +236,53 @@ sessions:
       - .forge/backlog.yaml
       - .forge/GOTCHAS.yaml
     blockers_remaining: []
+  - date: 2026-09-07
+    duration: ~5hr (second session of the day)
+    completed:  # evidence: 54feb39, ff4eba4, b178e91, 5664d1b, 11bcd8f
+      - "FF-009: master v1.3.0 propagated to all nine repos — PROPAGATE-v1.3.0 landed five (saas-starter 9f50d33, convergible-sandbox 2fe1cce, seogeo 9b729af, synclips-platform 73e84a6, chromasync 8e53d33) and PROPAGATE-v1.3.0b landed the three it had halted or skipped (convergible 6b08096, chromaqa e72a6a6, dv-captain 607aeb5); registry 54feb39"
+      - "convergible and convergible-sandbox joined the registry as FIRST renders; convergible had been carrying the saas-starter template's config and protocols verbatim since its 09-05 spawn, so its start protocol named the wrong checkout"
+      - "convergible-sandbox's four hand-written protocol files deleted and CC-reports/ renamed to .forge/inbox/ in the same commit (2fe1cce)"
+      - "RULING-020 filed (ff4eba4) and RENDER_PROCEDURE step 5 corrected (b178e91): the S4 ceilings were mis-measured on a fixture carrying neither ChromaQA nor SEO/GEO"
+      - "Master v1.3.1 landed (5664d1b) and propagated to all nine repos in the same run FF-V131-MASTER; 54/54 blob SHAs matched first try; tests 61/61; registry 11bcd8f"
+      - "Matt installed the dispatch harness on synclips-platform, chromasync and dv-captain (blob 4cccfbf verified on each), so all nine repos now render dispatch-ON"
+      - "convergible linked to Vercel in a separate session (project prj_YaDByQ4SmJy8GWgCY6z2mQ1ZLCYZ, team team_t36B0aZYLYFBbYAqNSi37S98, Root Directory apps/web); its deploy knobs landed as declared overrides in 264bd50 — CV-OPEN-3 closed"
+    commits:
+      - message: "rulings: RULING-020 — the S4 file ceilings were mis-measured; re-measured to start 2000 / end 1700 (ff4eba4)"
+      - message: "docs: RENDER_PROCEDURE step 5 — corrected ceilings (b178e91)"
+      - message: "registry: FF-009 complete — all nine repos current at v1.3.0 (54feb39)"
+      - message: "master: v1.3.1 — refresh safeguard (FF-015), retired ball-holder sentence (FF-013), re-measured ceilings + maximum fixture (FF-014) (5664d1b, Claude Code run FF-V131-MASTER)"
+      - message: "protocols: render from forgeflow master v1.3.1 — nine repos (7c41e86, 84fdc46, 264bd50, c66bd07, 8c91c0d, 2611905, 5363d41, 502f346, c22d068)"
+      - message: "registry: all nine repos current at master v1.3.1 (11bcd8f)"
+      - message: "docs: end session 2026-09-07 (1/9 .. 9/9) — this series"
+    key_changes:
+      - "The protocol system is unified for the first time: one master, nine repos, every row current, no repo pinned or lagging"
+      - "Master v1.3.1 repaired three defects that only appeared once v1.3.0 met real repos — the ceiling mis-measurement, the retired ball-holder sentence, and the refresh safeguard"
+      - "The ceiling is now enforced by the test suite against a maximum-by-construction fixture, so a breach fails a test run instead of surfacing mid-propagation"
+      - "Two Claude Web prompt defects were caught by Claude Code and are recorded as such: a commit-then-hard-reset instruction that would have destroyed a commit, and a rebase instruction that cannot run on a dirty tree"
+    files_modified:
+      - master/start-protocol.master.yaml
+      - master/end-protocol.master.yaml
+      - master/BLUEPRINT.yaml
+      - master/CHANGELOG.yaml
+      - master/RENDER_PROCEDURE.md
+      - master/registered-repos.yaml
+      - master/tests/test_render.py
+      - master/tests/fixtures/config-tools-max.yaml
+      - master/tests/fixtures/tree-tools-max/ (new fixture tree, 8 files)
+      - .forge/protocol-config.yaml
+      - .forge/protocols/start-protocol.yaml
+      - .forge/protocols/start-protocol.dispatch.yaml
+      - .forge/protocols/end-protocol.yaml
+      - .forge/protocols/end-protocol.dispatch.yaml
+      - CLAUDE.md
+      - .forge/rulings.yaml
+      - .forge/inbox/PROPAGATE-v1.3.0.yaml (consumed and deleted at this wrap)
+      - .forge/inbox/PROPAGATE-v1.3.0b.yaml (consumed and deleted at this wrap)
+      - .forge/inbox/FF-V131-MASTER.yaml (consumed and deleted at this wrap)
+      - .forge/handoff.yaml
+      - .forge/session-state.yaml
+      - .forge/session-history.yaml
+      - .forge/backlog.yaml
+      - .forge/GOTCHAS.yaml
+      - "eight other repos: .forge/protocol-config.yaml, four .forge/protocols/ files and the CLAUDE.md house block in each"
+    blockers_remaining: []
