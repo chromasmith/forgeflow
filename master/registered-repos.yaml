@@ -16,7 +16,7 @@
 # Matt naming the repo; there is no queue here and no implied order.
 # =============================================================================
 
-master_version_current: "v1.2.0"   # landed 2026-09-06 (54c1293); rendered on forgeflow only so far (RULING-013) — every other row lags by design until the one-prompt propagation
+master_version_current: "v1.3.0"   # landed 2026-09-07 (8db4ff2); rendered on forgeflow only so far (RULING-016) — every other row lags by design until the one-prompt propagation (FF-009)
 
 repos:
   - repo: chromasmith/seogeo
@@ -82,8 +82,8 @@ repos:
   - repo: chromasmith/forgeflow
     config: .forge/protocol-config.yaml
     profile: docs-only
-    master_version: "v1.2.0"
-    rendered_on: 2026-09-06
+    master_version: "v1.3.0"
+    rendered_on: 2026-09-07
     config_hash: 7ccf78dfab2fd1a61cc67fe1d8e97cd796b6de197a1a560da45381988267b46d
     state: current
     files:
@@ -93,7 +93,7 @@ repos:
       - .forge/protocols/end-protocol.dispatch.yaml
       - .forge/protocol-config.yaml
       - CLAUDE.md
-    landed: "v1.2.0 re-render 2026-09-06: ONE commit 8ec708c (all six files + inbox FF-V120-MASTER) by a local Claude Code run, right after the master change 54c1293; all six blob SHAs equal to the sandbox output; render.py check OK from a fresh clone at 8ec708c. Previous: v1.1.0 re-render e60eff5 / 94a5247 / 5de80fc / a0aa16a / 173aa3d / f9b8d33 (2026-09-05); v1.0.0 render 0f7ec5e / 5e1f463 / 56f2389 / b9046e2 (2026-09-04)"
+    landed: "v1.3.0 re-render 2026-09-07: ONE commit e4466c4 (all six files + inbox FF-V130-MASTER) by a local Claude Code run, right after the master change 8db4ff2 (both via apply script blob e2e23c85 on tmp/v130-apply); all six blob SHAs equal to the sandbox output; render.py check OK and tests 60/60 from a fresh clone at e4466c4. Previous: v1.2.0 re-render 8ec708c (2026-09-06); v1.1.0 re-render e60eff5 / 94a5247 / 5de80fc / a0aa16a / 173aa3d / f9b8d33 (2026-09-05); v1.0.0 render 0f7ec5e / 5e1f463 / 56f2389 / b9046e2 (2026-09-04)"
     notes: >-
       Third repo rendered (RULING-004) and the master's own home: master/ is the source,
       .forge/protocols/ the output; a render never reads .forge/protocols/, so rendering the
