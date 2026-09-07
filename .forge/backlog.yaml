@@ -2,22 +2,31 @@
 # Status vocabulary: ready | blocked | needs-ruling | in_progress | deferred | completed | superseded
 # Migrated from the legacy empty shape at the 2026-09-04 wrap (first wrap on the rendered end protocol).
 prioritized:
-  - id: FF-009
-    name: Propagate master v1.3.0 to the other six registered repos — first run of the one-prompt method
-    priority: P1
-    estimate: 1 session
-    spec_ref: master/PROPAGATION_PROCEDURE.md; .forge/rulings.yaml RULING-013
+  - id: FF-016
+    name: S-033's rebase rule does not cover a checkout that is BOTH dirty and holding local commits
+    priority: P3
+    estimate: text-only master fix (rides the next master change)
+    spec_ref: master/start-protocol.master.yaml (S-033); .forge/GOTCHAS.yaml GOTCHA-015
     description: |
-      Master v1.3.0 (8db4ff2) runs on forgeflow only (e4466c4, registry d18d446). seogeo, chromaqa
-      and chromasmith-saas-starter are on v1.1.0 with the harness installed; synclips-platform,
-      chromasync and dv-captain are on v1.0.0 with the secret set but no claude.yml and no
-      protection. Steps: Claude Web renders all six in the sandbox (private repos from tree
-      skeletons carrying the real claude.yml / CLAUDE.md / config), proves byte-stability and
-      ceilings, records every blob SHA; ONE batch concurrency question to Matt; ONE local Claude
-      Code run renders each repo at its canonical checkout, verifies against the supplied SHAs,
-      commits one named-file commit per repo and pushes; Claude Web re-proves and writes the
-      registry rows LAST. Repos without a harness render dispatch-off with S-092 unless Matt
-      installs claude.yml + protection first. Closes FF-006 (and with it FF-003/FF-004).
+      v1.3.1 added "a checkout that has committed anything since its last push is refreshed
+      with git rebase, never git reset --hard". True but incomplete: git refuses to rebase
+      while the tree is dirty, and convergible is ALWAYS dirty after a push (its ChromaQA
+      gate appends to .chromaqa/CQA-debt.jsonl). The wording needs the third case — no local
+      commits plus a dirty tree means git merge --ff-only, which is what Claude Code used on
+      convergible, correctly and unprompted. Two sentences in S-033, one line in W-005.
+    status: ready
+    blocked_by: "next master change — this is wording, not behaviour; nothing is broken today"
+  - id: FF-017
+    name: convergible-sandbox .forge/repo-rules.yaml unwritten, so subsystems.repo_rules_doc stays unset
+    priority: P3
+    estimate: 1 prompt + a single-repo re-render
+    spec_ref: master/registered-repos.yaml (convergible-sandbox row); RULING-012
+    description: |
+      The sandbox's first render (2fe1cce) landed without the DOC-FOLD-1 repo-rules file its
+      step-4 prerequisites named, so the knob is unset and S-005 does not render there. Write
+      .forge/repo-rules.yaml from the DOC-FOLD-1 items in that repo's own handoff, set
+      subsystems.repo_rules_doc in its config, and re-render that ONE repo. Not urgent: the
+      rendered protocol is correct, it simply carries no repo-rules pointer.
     status: ready
     blocked_by: null
   - id: FF-010
@@ -30,94 +39,117 @@ prioritized:
       master (or a per-repo variant) and every reader fetches it at session start. Declined for
       now — a network fetch of an 80 KB file on the critical path of every session including
       runners, silent truncation risk, repeals the ratified standalone-in-repo rule. Revisit ONLY
-      if the one-prompt propagation (FF-009) is still too slow in practice.
+      if the one-prompt propagation (FF-009) is still too slow in practice. It was not: two runs
+      covered nine repos on 2026-09-07.
     status: deferred
-    blocked_by: "FF-009 outcome"
+    blocked_by: "FF-009 outcome — answered; revisit only if propagation becomes slow again"
+
+in_progress: []
+
+completed:  # evidence per item: 5664d1b, 8db4ff2, 54c1293 + 8ec708c, b421783, 67031b3, c729db2
+  - id: FF-015
+    name: Refresh safeguard — the safety check counts AHEAD but not BEHIND, and "commit then hard reset" deletes the commit
+    priority: P1
+    spec_ref: master/start-protocol.master.yaml (S-033, W-005); master/CHANGELOG.yaml v1.3.1
+    description: |
+      Found during FF-009: a Claude Web propagation prompt told the run to commit convergible's
+      debt ledger and then git reset --hard, which would have destroyed that commit; and the
+      safety check could not tell a synced checkout from one eight commits behind. S-033 gained
+      a behind-count and the rebase rule; W-005 gained the matching prompt-writer check. Claude
+      Code caught the defect in the prompt and overrode it correctly.
+    status: completed  # 5664d1b
+    completed_at: 2026-09-07
+    evidence: 5664d1b (master v1.3.1); the remaining wording gap is filed as FF-016
+  - id: FF-014
+    name: S4 file ceilings mis-measured — re-measure on a both-tools repo and make the suite enforce it
+    priority: P1
+    spec_ref: master/BLUEPRINT.yaml (rendering.file_ceilings); .forge/rulings.yaml RULING-020
+    description: |
+      The 1650/1400 ceilings were measured on a fixture carrying neither ChromaQA nor SEO/GEO,
+      so they never described the real maximum and the first tool-carrying repo rendered from
+      v1.3.0 breached both. Re-measured to 2000/1700 on the real convergible knob set; a new
+      maximum-by-construction fixture (config-tools-max.yaml + tree-tools-max) and a new check
+      fail the suite on a breach (5664d1b) instead of letting it surface on a live repo.
+    status: completed  # 5664d1b
+    completed_at: 2026-09-07
+    evidence: 5664d1b (master v1.3.1, tests 61/61); RENDER_PROCEDURE b178e91; RULING-020 ff4eba4
+  - id: FF-009
+    name: Propagate master v1.3.0 to the other six registered repos — first run of the one-prompt method
+    priority: P1
+    estimate: 1 session
+    spec_ref: master/PROPAGATION_PROCEDURE.md; .forge/rulings.yaml RULING-013
+    description: |
+      Master v1.3.0 (8db4ff2) ran on forgeflow only. Matt named his own order — saas-starter,
+      the new convergible repo, convergible-sandbox, then Claude Web's choice — and the pass
+      landed all nine: five in PROPAGATE-v1.3.0, three in PROPAGATE-v1.3.0b after two SHA halts
+      and one dirty-checkout skip, and convergible-sandbox and convergible joined the registry as
+      first renders. Every blob SHA was re-proven through the connector before the registry was
+      written last.
+    status: completed  # 54feb39
+    completed_at: 2026-09-07
+    evidence: 9f50d33 + 6b08096 (v1.3.0 to nine repos), registry 54feb39; v1.3.1 propagation completed the set
   - id: FF-007
-    name: convergible-sandbox FIRST render from master v1.1.0 (named by Matt, RULING-012)
+    name: convergible-sandbox FIRST render from the master (named by Matt, RULING-012)
     priority: P1
     estimate: 1 session
     spec_ref: master/RENDER_PROCEDURE.md; .forge/rulings.yaml RULING-012
     description: |
-      Inspected 2026-09-05 and NOT up to spec: old four-file protocol set with different names
-      (start-protocol-local.yaml, start-protocol-dispatch.yaml, end-protocol-local.yaml,
-      end-protocol-dispatch.yaml), CC-reports/ still at the repo root with no .forge/inbox/,
-      no .forge/repo-rules.yaml, claude.yml is the hand-written 2026-08-29 overlay (PG env,
-      psql, bunx depcheck — KEEP it, do not replace with the generic asset), protection state
-      unreadable through the connector. Order: concurrency question; Matt confirms protection
-      (PR required, approvals OFF, bypass allowed); ONE Claude Code prompt moves CC-reports/ to
-      .forge/inbox/ (git mv, named files) and writes .forge/repo-rules.yaml from the DOC-FOLD-1
-      items in the sandbox handoff; config from the tree (standard, database_access_doc
-      .forge/protocols/database-access.yaml, repo_rules_doc .forge/repo-rules.yaml,
-      artifact_register true, vercel true, supabase true); render, push six files, DELETE the
-      four old protocol files, prove bypass, registry row last.
-    status: ready
-    blocked_by: "FF-009 first (RULING-013: the v1.2.0 propagation lands before any first render, so the sandbox is rendered from v1.2.0 once, not twice)"
+      Rendered in the FF-009 pass rather than a session of its own (Matt's call, 2026-09-07):
+      six rendered files, the four hand-written protocol files deleted (start/end x local/dispatch),
+      and CC-reports/ renamed to .forge/inbox/ with git mv in the same commit. Its hand-written
+      claude.yml overlay (PG env, psql, bunx) was kept and its allowlist read into the render.
+      The repo-rules prerequisite was NOT done and is filed as FF-017.
+    status: completed  # 2fe1cce
+    completed_at: 2026-09-07
+    evidence: 2fe1cce (convergible-sandbox first render, four legacy protocol files deleted, CC-reports renamed)
   - id: FF-006
     name: v1.1.0 rollout — remaining re-renders (synclips-platform, chromasync, dv-captain)
     priority: P1
     estimate: 3 renders
     spec_ref: master/RENDER_PROCEDURE.md step 0b; master/PROPAGATION_PROCEDURE.md
     description: |
-      Secret CLAUDE_CODE_OAUTH_TOKEN already set on all three (2026-09-05). Each still needs:
-      Matt pastes master/assets/claude.yml via the web editor (blob must equal 4cccfbf),
-      Matt turns on classic branch protection on main (PR required, approvals OFF, bypass
-      allowed), then Claude Web renders from the repo's CURRENT protocol-config.yaml knobs
-      (synclips-platform: four monorepo overrides; chromasync: set build.python_interpreter;
-      dv-captain: alternate machines, mixed line endings), pushes six files one per call with
-      blob-SHA proof, proves bypass, updates the registry row. Order after FF-007 is Claude
-      Web's choice (RULING-012). Closing FF-006 also closes FF-003 and FF-004.
-      2026-09-06: these three re-renders now happen INSIDE the FF-009 propagation run (one
-      prompt, all six repos); this item stays open only to track Matt's harness steps.
-    status: in_progress
-    blocked_by: "rides FF-009; Matt's claude.yml + protection on each repo decide dispatch on/off at render time"
+      Closed by the v1.3.1 propagation. Matt installed .github/workflows/claude.yml on all three
+      via the web editor (blob 4cccfbf verified on each), so they rendered dispatch-ON for the
+      first time and gained their two .dispatch.yaml reader files. Branch protection on the three
+      is still owed by Matt but is not a render precondition (RULING-011).
+    status: completed  # 5363d41
+    completed_at: 2026-09-07
+    evidence: 5363d41 / 502f346 / c22d068 (Synclips trio re-rendered, dispatch ON after Matt installed claude.yml)
   - id: FF-013
     name: E-026 / E-030 still say every reply "ends with the next step as a verb and who holds the ball"
     priority: P3
-    estimate: text-only master fix (rides the next master change)
+    estimate: text-only master fix
     spec_ref: master/end-protocol.master.yaml (E-026, E-030); .forge/rulings.yaml RULING-019
     description: |
-      v1.3.0 rewrote W-001's ball-holder rule (silence means the ball is Matt's; name the
-      holder only when it is not him) but the wrap protocol's E-026 and E-030 still carry the
-      old "ends with the next step as a verb and who holds the ball" sentence. Two-sentence
-      master fix; noticed while running the 2026-09-07 wrap. Lands inside the next master
-      change, never alone.
-    status: ready
-    blocked_by: "next master change (P11 discipline applies to the end file too, though it has room: 1302/1400)"
-in_progress:
+      RULING-019 retired the ball-holder closer in v1.3.0 but the wrap protocol still carried the
+      old sentence in two places. Both now name the holder only when it is not Matt.
+    status: completed  # 5664d1b
+    completed_at: 2026-09-07
+    evidence: 5664d1b (master v1.3.1 — E-026/E-030 ball-holder sentence retired)
   - id: FF-003
     name: Python validation knob that does not assume a .venv (and a two-language knob)
     priority: P2
     estimate: 1 master change
     spec_ref: master/start-protocol.master.yaml (S-082, S-083)
     description: |
-      S-082 (py-compile) tells Claude Code to use .venv\Scripts\python.exe and "never
-      system python", but chromasync and dv-captain run on the system Python312 on the
-      canonical machine (no .venv there; dv-captain's Anvil daemons do have one). S-083
-      (validation none) says "this repo has no build or interpreter step", which is false
-      for dv-captain — it was rendered on that knob only because py-compile would have
-      been worse. chromasync is Python + Next.js and no knob covers both halves; it kept
-      the detected npm-build. Add an interpreter knob (or a py-compile variant that names
-      the interpreter from config), reword S-083 to "no per-task validation step is
-      configured", then re-render dv-captain and chromasync inside the next master change.
-    status: in_progress
-    blocked_by: "master half landed in v1.1.0 (b421783: build.python_interpreter knob, S-083 reworded); closes when chromasync and dv-captain are re-rendered (FF-006)"
+      The master half landed in v1.1.0 (build.python_interpreter knob, S-083 reworded). Closed
+      here: dv-captain's build.validation is now a DECLARED override, which also cured a real
+      divergence — a local-only .venv made the same master render two different files depending
+      on which tree it read (GOTCHA-013) — and chromasync was re-rendered on the same pass.
+    status: completed  # c22d068
+    completed_at: 2026-09-07
+    evidence: c22d068 + 502f346 (dv-captain build.validation now a declared override; chromasync re-rendered)
   - id: FF-004
     name: ChromaQA debt read assumes committed telemetry; v6.1 repos gitignore .chromaqa/
     priority: P3
     estimate: 30 min
     spec_ref: master/start-protocol.master.yaml (S-014)
     description: |
-      S-014 reads .chromaqa/CQA-debt.jsonl from GitHub and counts lines. chromasync (ChromaQA
-      v6.1) gitignores .chromaqa/ entirely, so the read finds nothing and the debt check is
-      silently vacuous; E-036/E-040/E-047 also describe the telemetry as committed. Either
-      make S-014 say plainly that a gitignored .chromaqa/ means the debt read is not
-      available on GitHub (and where to read it instead), or add a knob for the telemetry
-      location. Land inside the next master change; re-render chromasync after.
-    status: in_progress
-    blocked_by: "master half landed in v1.1.0 (b421783: S-014/E-036/E-040 gitignored-telemetry wording); closes when chromasync is re-rendered (FF-006)"
-
-completed:  # evidence per item: 8db4ff2, 54c1293 + 8ec708c, b421783, 67031b3, c729db2
+      The master half landed in v1.1.0 (S-014/E-036/E-040 gitignored-telemetry wording). Closed
+      here by chromasync's re-render, which carries that wording.
+    status: completed  # 502f346
+    completed_at: 2026-09-07
+    evidence: 502f346 (chromasync re-rendered carrying the gitignored-telemetry wording)
   - id: FF-012
     name: Master v1.3.0 three-channel change (ChromaQA 7.1/7.2, SEO/GEO v1.3.0, text-only tier, W-001 rewrite, capacity plan)
     priority: P0
@@ -125,7 +157,7 @@ completed:  # evidence per item: 8db4ff2, 54c1293 + 8ec708c, b421783, 67031b3, c
     description: |
       Landed 8db4ff2 via apply script (blob e2e23c85 on tmp/v130-apply); forgeflow re-rendered
       e4466c4; registry d18d446; tests 60/60; S-018 retired (P11); start file 1648/1650 on the
-      largest knob set. Filed at the wrap as the record of the session's one master change.
+      largest knob set KNOWN AT THE TIME — that measurement was itself wrong, see FF-014.
     status: completed  # 8db4ff2
     completed_at: 2026-09-07
     evidence: 8db4ff2 (master), e4466c4 (forgeflow re-render), d18d446 (registry)
@@ -175,12 +207,10 @@ completed:  # evidence per item: 8db4ff2, 54c1293 + 8ec708c, b421783, 67031b3, c
     estimate: 15 min
     spec_ref: master/claude-md.house-block.master.md
     description: |
-      The chromaqa-fenced house-block line reads "ChromaQA's own section lower in this
+      The chromaqa-fenced house-block line read "ChromaQA's own section lower in this
       file is binding." In chromasmith/chromaqa that section is deliberately absent
-      (CLAUDE.md decision 2026-09-03, CQA-042), so the rendered sentence points at nothing.
-      Reword the master line so it holds whether or not the installer section exists,
-      then re-render chromaqa (and saas-starter, whose CLAUDE.md also carries the line).
-      Land inside the next master change, not alone.
+      (CLAUDE.md decision 2026-09-03, CQA-042), so the rendered sentence pointed at nothing.
+      Reworded in the master so it holds whether or not the installer section exists.
     status: completed  # 67031b3
     completed_at: 2026-09-05
     evidence: 67031b3 (chromaqa CLAUDE.md re-rendered with the corrected line); b742dd2 (saas-starter)
