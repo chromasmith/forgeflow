@@ -1,7 +1,7 @@
 # =============================================================================
 # END PROTOCOL — chromasmith/forgeflow — reader: cw
 # source:         chromasmith/forgeflow master/end-protocol.master.yaml
-# master_version: v1.3.0
+# master_version: v1.3.1
 # rendered_on:    2026-09-07
 # render_method:  code
 # config_hash:    7ccf78dfab2fd1a61cc67fe1d8e97cd796b6de197a1a560da45381988267b46d
@@ -898,8 +898,8 @@ project_position_statement: |
   same sentence closes the handoff's status field. A finished session, a
   green DONE banner or a completed milestone must never read as a finished
   project; if a milestone is complete but the project is not, say both in
-  that sentence. The reply then ends, as every reply does, with the next step
-  as a verb and who holds the ball.
+  that sentence. The reply names who holds the ball ONLY when it is not Matt
+  (W-001); silence means it is his.
 
 # --- E-027 manual_fallback --------------------------------------------------
 manual_fallback: |
@@ -1105,7 +1105,8 @@ wrap_commit_message_and_evidence_count: |
   - Rulings: all present / back-filled [ids]
   - Connector errors and workarounds, if any; "No issues encountered" when
     clean
-  Then the next step as a verb and who holds the ball.
+  Then the next step, naming who holds the ball only when it is not Matt
+  (W-001).
 
 # --- E-045 compliance_canary_wrap -------------------------------------------
 compliance_canary_wrap: |
