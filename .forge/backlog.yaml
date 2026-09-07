@@ -71,6 +71,19 @@ prioritized:
       prompt, all six repos); this item stays open only to track Matt's harness steps.
     status: in_progress
     blocked_by: "rides FF-009; Matt's claude.yml + protection on each repo decide dispatch on/off at render time"
+  - id: FF-013
+    name: E-026 / E-030 still say every reply "ends with the next step as a verb and who holds the ball"
+    priority: P3
+    estimate: text-only master fix (rides the next master change)
+    spec_ref: master/end-protocol.master.yaml (E-026, E-030); .forge/rulings.yaml RULING-019
+    description: |
+      v1.3.0 rewrote W-001's ball-holder rule (silence means the ball is Matt's; name the
+      holder only when it is not him) but the wrap protocol's E-026 and E-030 still carry the
+      old "ends with the next step as a verb and who holds the ball" sentence. Two-sentence
+      master fix; noticed while running the 2026-09-07 wrap. Lands inside the next master
+      change, never alone.
+    status: ready
+    blocked_by: "next master change (P11 discipline applies to the end file too, though it has room: 1302/1400)"
 in_progress:
   - id: FF-003
     name: Python validation knob that does not assume a .venv (and a two-language knob)
