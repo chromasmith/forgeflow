@@ -1,38 +1,47 @@
 # .forge/handoff.yaml — chromasmith/forgeflow
 # Pass-the-baton briefing written BY the outgoing Claude Web session TO the next.
 # A WARNING LETTER, not a summary. The other .forge/ files hold state; this holds feel.
-# generated: 2026-09-07T17:40:00Z
+# generated: 2026-09-07T17:45:00Z
 # session: 2026-09-07 (FF-009 propagation + master v1.3.1; RULING-020)
-written_at_commit: 11bcd8fe5ba2e3ba865614305b524b9b02b86aa4
-written_at_utc: 2026-09-07T17:40:00Z
-wrap_complete: false
+written_at_commit: be5a31927c6672509d2a1af52fc1a689a19f9b74
+written_at_utc: 2026-09-07T17:45:00Z
+wrap_complete: true
 wrap_parts_total: 9
 
 status: |
   Master v1.3.1 (5664d1b) runs on ALL NINE registered repos and the registry says so
   (11bcd8f) — no row pinned, no row lagging, nothing unmerged anywhere. Dispatch is
   genuinely available in every one of them: Matt installed the harness on
-  synclips-platform, chromasync and dv-captain today. convergible is linked to Vercel and
-  its deploy knobs are declared. Two Claude Web prompt defects were caught by Claude Code
-  during the day and both are repaired in the master at 5664d1b; one wording gap remains as FF-016.
-  Overall position: the ForgeFlow effort has reached what it was built for — one master,
-  nine repos, self-checking — but it is a living system, not a finished product: every
-  tool install or repo change still costs a re-render, and small master changes will keep
-  arriving from real use.
+  synclips-platform, chromasync and dv-captain today. convergible is linked to Vercel
+  (264bd50) and its deploy knobs are declared. Two Claude Web prompt defects were caught by
+  Claude Code during the day and both are repaired in the master at 5664d1b; one wording gap
+  remains as FF-016. Overall position: the ForgeFlow effort has reached what it was built
+  for — one master, nine repos, self-checking — but it is a living system, not a finished
+  product: every tool install or repo change still costs a re-render, and small master
+  changes will keep arriving from real use.
 
 first_thing: |
-  FINISH THIS WRAP — parts 2..9 of the 2026-09-07 series remain: session-state, session-history, backlog, GOTCHAS, the three inbox deletions, then this handoff rewritten with wrap_complete true.
+  FF-016 — the only open ForgeFlow item, and it is P3 text, not behaviour. S-033 now says a
+  checkout holding local commits refreshes with git rebase, never git reset --hard. True,
+  but git refuses to rebase on a DIRTY tree, and convergible is always dirty after a push
+  (its ChromaQA gate appends to .chromaqa/CQA-debt.jsonl). Add the third case — no local
+  commits plus a dirty tree means git merge --ff-only — to S-033, and one matching line to
+  W-005. It rides the NEXT master change: do not cut a release for it alone, and do not
+  re-render nine repos over two sentences. Verify by rendering the maximum fixture
+  (master/tests/fixtures/config-tools-max.yaml with tree-tools-max) and reading S-033 in the
+  output.
 
 watch_out_for:
   - "THE THING MOST LIKELY TO COST YOU 30 MINUTES: a render that mismatches its expected SHA is almost never the renderer. Check the CLAUDE.md house block first — if it matches and only the .forge files differ, the cause is a DETECTION difference in the tree (a local-only .venv, a newly added artifact-register, a .seogeo/config.json). Both halts today had exactly that signature. GOTCHA-013 and GOTCHA-014."
   - "Three signals that look like failures and are not (GOTCHA-016): 'Bypassed rule violations' on a successful push is branch protection letting Matt's own account through; convergible's .chromaqa/CQA-debt.jsonl is dirty immediately after every push because its gate appends after staging; render.py's em-dash prints as a replacement character in the Windows console while the files are correct."
   - "PROMPT-WRITER PRESSURE POINT: two prompts this session told a run to do something git cannot do — commit then hard reset (which deletes the commit), and rebase a dirty tree (which git refuses). Claude Code caught both and was right both times. When a prompt tells a run to preserve something AND to refresh, work out which git command actually does that before writing it."
   - "OWED BY MATT, not blocking: branch protection on synclips-platform, chromasync, dv-captain and convergible, and the CLAUDE_CODE_OAUTH_TOKEN secret on convergible. A spawn does not copy secrets, so convergible's rendered protocol currently offers a dispatch lane the repo cannot actually run."
-  - "NOT FORGEFLOW WORK, but do not let it evaporate: convergible's depcheck gate exits 127 and has never actually checked dependencies (DEP-004, reached this wrap as an unanswered needs_ruling from the FF-V131-MASTER run — it belongs to a convergible session, and Matt was told); its debt ledger is dirty again with 10 lines from the last push, to be read and named, never committed blind."
+  - "NOT FORGEFLOW WORK, but do not let it evaporate: convergible's depcheck gate exits 127 and has never actually checked dependencies (DEP-004 — it reached this wrap as an unanswered needs_ruling from the FF-V131-MASTER run, which is a protocol failure by E-024; Matt was told in chat and it belongs to a convergible session, not to ForgeFlow). Its debt ledger is also dirty again with 10 lines from the last push, to be read and named, never committed blind."
+  - "The transport branch tmp/wrap-0907 is still on GitHub — Matt deletes it in the browser (the local push guard blocks branch deletions, GOTCHA-010)."
 
 next_up:
   - "FF-017 (ready, P3): convergible-sandbox's .forge/repo-rules.yaml was never written, so subsystems.repo_rules_doc is unset and S-005 does not render there. One prompt plus a single-repo re-render."
-  - "FF-010 (deferred): pointer-URL protocols — revisit only if the one-prompt propagation proves too slow. It did not today: two runs covered nine repos."
+  - "FF-010 (deferred): pointer-URL protocols — revisit only if the one-prompt propagation proves too slow. It did not today: three runs covered nine repos twice over."
   - "Deferred, not next: forgeflow's own CLAUDE.md above the house block is still the unfilled template; drift_ci; the approval code and canonical paths sit in a PUBLIC repo — Matt has not asked for a change."
 
 north_star: |
