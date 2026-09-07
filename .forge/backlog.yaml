@@ -3,12 +3,12 @@
 # Migrated from the legacy empty shape at the 2026-09-04 wrap (first wrap on the rendered end protocol).
 prioritized:
   - id: FF-009
-    name: Propagate master v1.2.0 to the other six registered repos — first run of the one-prompt method
+    name: Propagate master v1.3.0 to the other six registered repos — first run of the one-prompt method
     priority: P1
     estimate: 1 session
     spec_ref: master/PROPAGATION_PROCEDURE.md; .forge/rulings.yaml RULING-013
     description: |
-      Master v1.2.0 (54c1293) runs on forgeflow only (8ec708c, registry 67a91ee). seogeo, chromaqa
+      Master v1.3.0 (8db4ff2) runs on forgeflow only (e4466c4, registry d18d446). seogeo, chromaqa
       and chromasmith-saas-starter are on v1.1.0 with the harness installed; synclips-platform,
       chromasync and dv-captain are on v1.0.0 with the secret set but no claude.yml and no
       protection. Steps: Claude Web renders all six in the sandbox (private repos from tree
@@ -20,19 +20,6 @@ prioritized:
       installs claude.yml + protection first. Closes FF-006 (and with it FF-003/FF-004).
     status: ready
     blocked_by: null
-  - id: FF-011
-    name: Master STEP 0 emits cmd.exe syntax; Claude Code on Surface 12 runs PowerShell / Git Bash
-    priority: P2
-    estimate: 1 master change (rides the next one)
-    spec_ref: master/start-protocol.master.yaml (S-032, S-036); GOTCHA-011
-    description: |
-      S-032 and S-036 emit `cd /d`, `if not exist ... mkdir`, `del`, `copy /Y`, `rmdir /S /Q` and
-      say the cmd forms are "safe there"; the FF-V120-MASTER run reported it had PowerShell and Git
-      Bash only and translated every command. Switch STEP 0 and the completion steps to Git Bash
-      syntax (`mkdir -p`, `cd`, `rm -f`, `cp -f`, `rm -rf`, forward slashes) and reword S-036.
-      Also note the console renders the em-dash in render.py's success line as "?" — cosmetic.
-    status: ready
-    blocked_by: "lands inside the next master change, never alone (P11 — the start file is 55 lines from its ceiling)"
   - id: FF-010
     name: Pointer-URL protocols (repos hold a link to one master file) — PARKED
     priority: P3
@@ -117,7 +104,30 @@ in_progress:
     status: in_progress
     blocked_by: "master half landed in v1.1.0 (b421783: S-014/E-036/E-040 gitignored-telemetry wording); closes when chromasync is re-rendered (FF-006)"
 
-completed:  # evidence per item: 54c1293 + 8ec708c, b421783, 67031b3, c729db2
+completed:  # evidence per item: 8db4ff2, 54c1293 + 8ec708c, b421783, 67031b3, c729db2
+  - id: FF-012
+    name: Master v1.3.0 three-channel change (ChromaQA 7.1/7.2, SEO/GEO v1.3.0, text-only tier, W-001 rewrite, capacity plan)
+    priority: P0
+    spec_ref: master/CHANGELOG.yaml v1.3.0; .forge/rulings.yaml RULING-016..019
+    description: |
+      Landed 8db4ff2 via apply script (blob e2e23c85 on tmp/v130-apply); forgeflow re-rendered
+      e4466c4; registry d18d446; tests 60/60; S-018 retired (P11); start file 1648/1650 on the
+      largest knob set. Filed at the wrap as the record of the session's one master change.
+    status: completed  # 8db4ff2
+    completed_at: 2026-09-07
+    evidence: 8db4ff2 (master), e4466c4 (forgeflow re-render), d18d446 (registry)
+  - id: FF-011
+    name: Master STEP 0 emits cmd.exe syntax; Claude Code on Surface 12 runs PowerShell / Git Bash
+    priority: P2
+    spec_ref: master/start-protocol.master.yaml (S-032, S-036); GOTCHA-011
+    description: |
+      S-032/S-036 and E-021 now emit Git Bash forms (mkdir -p, [ -d ] ||, cd, rm -f, cp -f) and
+      state the Surface facts (python not python3, cwd resets per tool call, PowerShell
+      redirection re-encodes); landed inside master v1.3.0 (8db4ff2). The em-dash "?" is
+      recorded as cosmetic in S-036.
+    status: completed  # 8db4ff2
+    completed_at: 2026-09-07
+    evidence: 8db4ff2 (master v1.3.0)
   - id: FF-008
     name: Master v1.2.0 friction repair (FF-FRICTION-1..4, FF-101..103, FF-R-001..006 → ten repairs)
     priority: P0
@@ -166,10 +176,10 @@ completed:  # evidence per item: 54c1293 + 8ec708c, b421783, 67031b3, c729db2
     priority: P2
     spec_ref: master/RENDER_PROCEDURE.md
     description: |
-      saas-starter re-rendered 2026-09-04 (night) after the SEO/GEO install landed there:
+      saas-starter re-rendered 2026-09-04 (night, commits b750941..7b84b45) after the SEO/GEO install landed there:
       subsystems.seogeo detected true, config_hash b6411bcfb93e (was f362bf02fcdf).
       saas-starter commits b750941 (config) / 060c1c5 (CLAUDE.md) / c6920b1 (start) /
       7b84b45 (end); registry row updated @ forgeflow c729db2.
-    status: completed
+    status: completed  # c729db2
     completed_at: 2026-09-05
     evidence: c729db2
