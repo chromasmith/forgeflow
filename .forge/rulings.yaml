@@ -288,3 +288,105 @@ rulings:
       execution.local_report_desktop_copy knob is removed from the schema and profiles.
     supersedes: master block S-078 (inbox_desktop_copy) and the execution.local_report_desktop_copy config knob
     stated_by: Matt, in chat, in this session ("yes to both" — item 3 of the repair plan), recorded in the turn per W-002
+  - id: RULING-016
+    date: 2026-09-07
+    subject: Master v1.3.0 scope — three channels in ONE master change, then FF-009 propagates once
+    ruling: >-
+      Matt opened the 2026-09-07 session with three channels of protocol work and accepted
+      Claude Web's recommendation to land all of them as ONE master change, v1.3.0, with
+      FF-011 riding along, and to run FF-009 (propagation to the six lagging repos) AFTER it,
+      so every repo is propagated once, not twice. The channels: (A) ChromaQA 7.1/7.2 ripples
+      — .chromaqa/accepted.json is a PROTECTED committed config beside profiles.json (never
+      generated, edited, deleted or staged by a prompt or wrap; a change is Matt's decision by
+      name); exit 2 gains its resolution path (see RULING-017); the 7.2 debt ledger no longer
+      dirties after every push, so a modified ledger after a later push is a NEW finding to be
+      read and named, never committed blind, while the stash-rebase-restore sequence stays for
+      repos still on 7.0/7.1; upgrading voids acceptances until re-confirmed; .depcheckrc is
+      project-owned config. (B) SEO/GEO v1.3.0 ripples — .seogeo/CONFIG-REFERENCE.md and
+      src/lib/seo/page-metadata.ts join the tool's file set (committed, byte-synced from
+      chromasmith/seogeo, never edited in a consumer repo); prompt-writer rules from
+      STANDARD.md v1.3.0 (private pages call noindexMetadataFor and the NAME is load-bearing
+      and never renamed; public pages call pageSeo; a differently-visible surface has its own
+      layout; surface roots partition with no overlap); config/robots/sitemap/page-metadata now
+      THROW on a missing config.json, so that file is never moved or deleted; S-090/E-048 stand
+      unchanged. (C) Matt's workflow items — the TEXT-ONLY TIER (RULING-018), the large-file
+      wrap-write lane, the E-013 indentation fix, the W-001 communication rewrite and the
+      capacity-plan rule (RULING-019), and FF-011 Git Bash syntax plus the Surface facts
+      "python not python3" and "cwd resets per tool call". Landing: v1.3.0 lands in forgeflow
+      by the apply-script route (GOTCHA-009) and ONLY forgeflow is re-rendered in this session;
+      the start-protocol ceiling (55 lines of headroom on the largest knob set) is met by
+      rewriting and consolidating existing blocks, not by pure addition (P11).
+    supersedes: the 2026-09-06 handoff's first_thing (FF-009) for this session only — FF-009 becomes the next session's single first_thing after v1.3.0 lands
+    stated_by: Matt, in chat, in this session ("go with your Recommendations. Proceed."), recorded in the turn per W-002
+  - id: RULING-017
+    date: 2026-09-07
+    subject: A ChromaQA captain-review acceptance is written to .chromaqa/accepted.json by Claude Web directly, on Matt's acceptance by name
+    ruling: >-
+      When ChromaQA exits 2 (CAPTAIN REVIEW), the run still STOPS, reports the finding as
+      printed and waits. The resolution path is now defined: Matt reads the finding and either
+      has the code fixed or ACCEPTS the finding by name, in plain words, in chat. On an
+      acceptance, Claude Web writes the entry into .chromaqa/accepted.json itself through the
+      GitHub connector as a single-file commit on current HEAD — the file is committed JSON
+      configuration, not compiled, imported or executed by the build, so it passes the
+      RULING-010 risk test, and the gate validates the entry on the next push. The entry
+      carries the eight fields ChromaQA 7.1 requires (gate, code, subject, accepted_by,
+      accepted_on, accepted_version, reason, expires_when); accepted_by is Matt; the reason
+      and expires_when are his words. No prompt, wrap or run ever writes, edits, stages or
+      deletes that file on its own judgment; a Claude Code prompt is written for it only when
+      Matt asks for one. Captain tier only — exit-1 showstoppers are never acceptable
+      (chromaqa RULING-005); a broken gate is never acceptable (chromaqa RULING-009).
+    supersedes: the S-087/E-047 wording that exit 2 "is not yours to resolve" with no path forward (the STOP stands; the path is added)
+    stated_by: Matt, in chat, in this session ("go with your Recommendations" on Claude Web's recommended writer), recorded in the turn per W-002
+  - id: RULING-018
+    date: 2026-09-07
+    subject: The TEXT-ONLY TIER — comments, doc sentences and one-word fixes are Matt web edits from copy-pasteable text, sweep-and-fix, no Claude Code prompt
+    ruling: >-
+      When a change is TEXT ONLY — a comment, a doc sentence, one word, a wording swap,
+      including inside a compiled or executed file whose behaviour the text cannot change —
+      no Claude Code prompt is written and no inbox file is owed. Claude Web first SWEEPS the
+      repo for every copy of the problem (grep the whole file and the tree), then presents,
+      in one reply, the exact copy-pasteable replacement text for every hit plus the GitHub
+      web-editor link that opens each file, and Matt applies them and commits to main
+      himself; Claude Web verifies by blob SHA afterwards and reports in one line. Where the
+      file passes the RULING-010 risk test Claude Web may instead make the same edit directly
+      through the connector; the web-editor route exists for the files it may not touch and
+      the files the connector cannot rewrite. Scope for this tier authorizes the PROBLEM, not
+      the lines: a sibling instance found during the sweep is fixed in the same pass and
+      reported. THE REASON, in Matt's words: one word cost an hour and four Claude Code
+      round-trips on 2026-09-06; he is capable of copying, pasting and committing, and wants
+      that lane. Promotes chromasmith/chromaqa RULING-013 to the master (S-006/S-007, W-004).
+    supersedes: the RULING-010 clause that a copy-only change inside a compiled file is "STILL prompt-only" — for text-only changes the lane is Matt's web edit, not a prompt; the direct-connector boundary of RULING-010 is otherwise unchanged
+    stated_by: Matt, in chat, in this session (the workflow-bug report and its exported summary), recorded in the turn per W-002
+  - id: RULING-019
+    date: 2026-09-07
+    subject: Claude Web communication rules rewritten (W-001) and the capacity-plan rule
+    ruling: >-
+      Six changes to how Claude Web talks and leads, all Matt's, all protocol text in v1.3.0.
+      (1) BALL-HOLDER: silence means the ball is Matt's; a holder is named ONLY when it is not
+      him ("I'm doing X now", "runner has it", "your go needed"). The 2026-09-03 rule to end
+      every reply with "waiting on you" is retired — it became a tic. (2) NOTE TRIAGE: an
+      observation is spoken only if it is actionable or important; it leads the reply in plain
+      English with the so-what attached and says in one clause whether it blocks him; a
+      genuine open item goes in the numbered remaining list or the backlog; nothing else is
+      said, and no reply ends with a trailing "one thing to note". (3) LAYERED, NOT DUMBED
+      DOWN: first read is the plain-English headline (what happened, what it means for Matt,
+      the way around), technical detail briefly underneath, the deep version only on request;
+      applies to Claude Web replies and to the COMMUNICATION RULES in every Claude Code prompt;
+      words first, numbers second for measurements. (4) FOUR-SENTENCE CEILING made
+      enforceable: the only exceptions are the eight-line Session Context Summary, a prompt
+      code block, and a list Matt asked for (the remaining-work list, this kind of plan);
+      thinking happens before the reply, not in it; the prompt-writer self-check gains a
+      length check. (5) LEAD WITH THE RECOMMENDATION: the destination (what to build, scope,
+      anything irreversible, another repo, real accounts or money, a fork that leads to a
+      different product) is Matt's; the route (approach, ordering, lane, tool, file placement,
+      naming) is Claude Web's and is stated in one clause as it goes, never asked; when a fork
+      matters to him, the pick and its reason come first and the alternatives are named in a
+      clause so he can dial in or say "go with yours". Options are not hidden; route-level
+      forks are not surfaced. (6) CAPACITY PLAN: when Matt approves a batch, Claude Web owes,
+      unprompted, one plain-English statement assigning every ready item to a lane — parallel
+      dispatch, single dispatch, or a local Claude Code prompt — by its own judgment on
+      dependencies, build needs and clobber risk, arranged so all lanes are busy, ending
+      "Sound good?"; nothing launches until he says yes or adjusts; an idle lane needs a
+      stated reason. Linear remains first-class for dependent work.
+    supersedes: the W-001 lines "END EVERY REPLY with the next step stated as a VERB and who holds the ball" and "RECOMMENDATION, NOT OPTIONS" (both reworded as above); S-065's triage-only-when-dispatching-more-than-one (the plan is now owed at approval time)
+    stated_by: Matt, in chat, in this session (the laundry list, items 1-6, each confirmed in turn), recorded in the turn per W-002
