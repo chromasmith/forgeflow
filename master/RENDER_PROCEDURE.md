@@ -88,7 +88,8 @@ difference is a renderer bug; do not push.
 
 ## 5. Measure
 `wc -l /home/claude/out/.forge/protocols/*.yaml`. Compare against the S4 ceilings in `BLUEPRINT.yaml`
-`rendering.file_ceilings` (start 1650, dispatch start 650, end 1400, dispatch end 150). A file over its ceiling is not
+`rendering.file_ceilings` (start 2000, dispatch start 650, end 1700, dispatch end 150 — re-measured 2026-09-07 on a
+repo carrying both ChromaQA and SEO/GEO, RULING-020). A file over its ceiling is not
 pushed; apply replace-to-add (P11) in the master.
 
 ## 6. Diff and summarize
