@@ -1,43 +1,46 @@
 # Session state — overwritten each session with current snapshot
-session_date: 2026-09-06
+session_date: 2026-09-07
 project: forgeflow (ForgeFlow Master — unified start/wrap protocols rendered per repo)
 milestones:
-  - "Session repurposed by Matt from FF-007 to a friction BUG HUNT + REPAIR; scope, internal-only landing and the propagation method recorded as RULING-013, inbox deletion as RULING-014, S-078 retirement as RULING-015 (all @ 6cbdb49)"
-  - "Fifteen findings from three 2026-09-05 friction reports (FF-FRICTION-1..4, FF-101..103, FF-R-001..006) de-duplicated into ten repairs and built as master v1.2.0 — landed @ 54c1293 (both masters, house block, schema, BLUEPRINT v1.6, CHANGELOG v1.2.0, PROPAGATION_PROCEDURE rewrite, tests 54/54)"
-  - "forgeflow re-rendered from v1.2.0 @ 8ec708c (six files + inbox FF-V120-MASTER in one local Claude Code commit; config_hash 7ccf78dfab2f; start 60 blocks / 1373 lines, end 27 / 1095, dispatch=on; S-003 excluded, S-078 gone, W-005 in); all 14 blob SHAs, render.py check and tests 54/54 re-proven from a fresh clone at 8ec708c"
-  - "Registry row for forgeflow updated and master_version_current set to v1.2.0 @ 67a91ee; the other six rows deliberately stay at v1.1.0 / v1.0.0 (RULING-013)"
-  - "Matt's pointer-URL idea (repos hold a link to one master file) evaluated and declined; propagation redesigned as ONE local Claude Code run (PROPAGATION_PROCEDURE.md v1.2.0, BLUEPRINT delivery_rule)"
+  - "RULING-016 (v1.3.0 scope, three channels, FF-009 after), RULING-017 (accepted.json written by Claude Web on Matt's acceptance), RULING-018 (TEXT-ONLY TIER) and RULING-019 (W-001 rewrite + capacity plan) filed @ 9e46780"
+  - "Master v1.3.0 landed @ 8db4ff2 via apply script (blob e2e23c85 on the temporary branch tmp/v130-apply, since deleted by Matt): 40 exact-match replacements across both masters, the house block, CHANGELOG, BLUEPRINT v1.7 and the test suite; tests 60/60; S-018 retired (P11)"
+  - "forgeflow re-rendered from v1.3.0 @ e4466c4 (six files + inbox FF-V130-MASTER in one local Claude Code commit; config_hash 7ccf78dfab2f unchanged; start 59 blocks / 1426 lines, end 27 / 1117); all twelve blob SHAs, render.py check and tests 60/60 re-proven from a fresh clone at e4466c4"
+  - "Registry row for forgeflow updated and master_version_current set to v1.3.0 @ d18d446; the other six rows stay at v1.1.0 / v1.0.0 by design (RULING-016)"
+  - "Recon of chromasmith/chromaqa (7.2, install-ready) and chromasmith/seogeo (v1.3.0, rollout-ready) done read-only; both repos' own handoffs had independently filed the same ForgeFlow frictions the master change repairs"
 decisions:
-  - decision: "The wrap is a NUMBERED SERIES of single-file SHA-guarded commits with the handoff written first (wrap_complete: false) and last (wrap_complete: true); the start protocol ignores the wrap's own commits for staleness and finishes an unfinished wrap before project work"
-    rationale: "The GitHub connector has no patch, no append and no delete inside a multi-file commit, and its multi-file write takes no SHA guard — six of the fifteen findings were this one root cause."
-    impact: "E-002/E-014/E-030 and S-010 rewritten; this session's own wrap is the first run of the method."
-  - decision: "Consumed inbox files are DELETED at the wrap, not archived (RULING-014); S-078 Desktop copy retired (RULING-015)"
-    rationale: "Git history already holds every inbox file; the Desktop copy contradicted the NO MEMORY WRITES clause and was overruled by every run."
-    impact: "Roughly two-thirds fewer wrap operations; nothing is ever written outside the repository tree."
-  - decision: "Large master changes travel to Matt's machine as a self-verifying APPLY SCRIPT on a temporary branch pushed through the connector — never as a base64/gzip blob inside a Claude Web reply (GOTCHA-009)"
-    rationale: "The first v1.2.0 landing attempt arrived corrupted: a token model cannot emit 31 KB of base64 reliably; a Python script of exact-match replacements with blob-SHA checks is prose the connector carries intact."
-    impact: "Route proven end-to-end from a fresh clone before the run; the run fetched blob 82288e6, reproduced all eight SHAs, and landed 54c1293 / 8ec708c first try."
-  - decision: "Propagation of a master change is ONE local Claude Code run over every registered repo, against blob SHAs computed in the sandbox first (RULING-013 @ 6cbdb49); the pointer-URL alternative is parked"
-    rationale: "Matt named rollout slowness as the biggest friction; the slow part was the connector's one-file-per-call landing, not the design."
-    impact: "FF-009 is the first run of the method; the board's PR-per-repo rule is superseded in BLUEPRINT v1.6."
+  - decision: "All three channels (ChromaQA 7.1/7.2 ripples, SEO/GEO v1.3.0 ripples, Matt's workflow items + the one-word bug) land as ONE master change v1.3.0 BEFORE FF-009 (RULING-016)"
+    rationale: "Propagate the six lagging repos once, not twice."
+    impact: "FF-009 is the next session's single first_thing; FF-011 closed inside this change."
+  - decision: "A ChromaQA captain-review acceptance is written to .chromaqa/accepted.json by Claude Web directly on Matt's acceptance by name (RULING-017)"
+    rationale: "Committed JSON config, not compiled — passes the RULING-010 risk test; the gate validates it on the next push."
+    impact: "S-014/S-087/E-036/E-037/E-040/E-047 and the house block name the file as PROTECTED; exit 2 keeps its STOP and gains the path."
+  - decision: "TEXT-ONLY changes anywhere are Matt's web edit from copy-pasteable text after a sweep for every copy — no Claude Code prompt, no inbox (RULING-018)"
+    rationale: "One word cost an hour and four Claude Code round-trips on 2026-09-06; scope must authorize the problem, not the lines."
+    impact: "S-006/S-007/S-017/W-004/W-005 text; promotes chromaqa RULING-013 to the master."
+  - decision: "W-001 rewritten (RULING-019): four-sentence ceiling with named exceptions, layered not dumbed down, lead with the recommendation (destination Matt's, route Claude Web's), note triage, ball-holder named only when it is not Matt; S-019 owes the CAPACITY PLAN at every batch approval"
+    rationale: "Matt's stated friction list; the 'waiting on you' closer had become a tic."
+    impact: "Every Claude Web reply and every Claude Code prompt's COMMUNICATION RULES; S-030 preamble and house block carry the layered rule."
+  - decision: "S-018 prior_ruling_search RETIRED to pay for the additions under the 1650-line start ceiling (P11); its one extra clause moved into S-011"
+    rationale: "Its text duplicated S-011's rulings paragraph and W-001; the sandbox knob set measured 1681 before trimming, 1648 after."
+    impact: "95 start blocks; the start file has TWO lines of headroom — the next start-protocol change must replace or retire before it adds."
 blockers: []
 next_steps:
   - priority: high
-    task: "FF-009 — propagate master v1.2.0 to the other six registered repos by the one-prompt method in master/PROPAGATION_PROCEDURE.md: Claude Web renders all six in the sandbox (private repos from tree skeletons), records blob SHAs, asks the ONE batch concurrency question, then a single local Claude Code run renders, verifies against those SHAs, commits one named-file commit per repo and pushes; synclips-platform, chromasync and dv-captain render dispatch-off (S-092) unless Matt installs claude.yml + protection first; registry rows written last by Claude Web"
+    task: "FF-009 — propagate master v1.3.0 to the other six registered repos by the one-prompt method in master/PROPAGATION_PROCEDURE.md: render all six in the sandbox (private repos from tree skeletons), record blob SHAs, ask the ONE batch concurrency question, one local Claude Code run renders/verifies/commits/pushes each repo, registry rows written LAST; synclips-platform, chromasync and dv-captain render dispatch-off (S-092) unless Matt installs claude.yml + protection first"
 context: |
-  MASTER: v1.2.0 complete on GitHub (54c1293); 96 start blocks (S-078 retired, W-005 new) and 51
-  end blocks; tests 54/54 from a fresh clone. Ceilings on the real sandbox knob set: start
-  1595/1650 (55 lines of headroom — the next start-protocol addition must replace something, P11),
-  dispatch start 588/650, end 1280/1400, dispatch end 95/150. RENDERED: forgeflow only (8ec708c).
-  LAGGING BY DESIGN: seogeo, chromaqa, chromasmith-saas-starter (v1.1.0, harness installed);
-  synclips-platform, chromasync, dv-captain (v1.0.0, secret set, no claude.yml, no protection).
-  convergible-sandbox (FF-007) is still an unrendered first render with its prerequisites unchanged.
-  LANDING ROUTES that work: connector create_or_update_file for files under ~80 KB (retry on an
-  aborted call, prove by blob SHA); apply script on a temporary branch + local Claude Code for
-  anything larger. Matt's Surface 12 has a main-only pre-push guard that also blocks branch
-  deletions — transport branches are deleted in the GitHub browser UI (the connector has no
-  branch-delete tool). Claude Code there runs PowerShell / Git Bash, not cmd — FF-011. First
-  halted Claude Code run (corrupted base64) left no inbox file; its report was pasted into chat
-  and consumed here. Deferred, not next: forgeflow CLAUDE.md above the house block is still the
-  unfilled template; drift_ci; the approval code and canonical paths sit in a PUBLIC repo (Matt
-  has not asked for that to change).
+  MASTER: v1.3.0 complete on GitHub (8db4ff2); 95 start blocks, 51 end blocks; tests 60/60.
+  Ceilings on the real sandbox knob set: start 1648/1650, dispatch start 591/650, end
+  1302/1400, dispatch end 95/150. RENDERED: forgeflow only (e4466c4). LAGGING BY DESIGN:
+  seogeo, chromaqa, chromasmith-saas-starter (v1.1.0, harness installed); synclips-platform,
+  chromasync, dv-captain (v1.0.0, secret set, no claude.yml, no protection). convergible-sandbox
+  (FF-007) is still an unrendered first render. TOOL STATE READ THIS SESSION (not changed):
+  chromaqa is at 7.2 with .chromaqa/accepted.json (eight fields, captain tier only,
+  version-pinned, fail-closed) and a once-per-finding debt ledger; saas-starter runs 7.0 and
+  convergible 7.1; seogeo is at v1.3.0 (CONFIG-REFERENCE.md, src/lib/seo/page-metadata.ts,
+  noindexMetadataFor name load-bearing, emitters throw without config.json) while the template
+  carries v1.2.0 — both propagations are Matt's own named sessions (seogeo RULING-004: ChromaQA
+  7.2 reaches the template and convergible first). LANDING ROUTE proven twice now (54c1293 and 8db4ff2): apply script
+  on a temporary branch through the connector, fetched and run by a local Claude Code session,
+  Matt deletes the branch in the browser. Surface facts from the run: core.autocrlf=false there
+  (a CRLF box would fail the render hash gate — check it first); /tmp maps to the Windows Temp
+  dir; git cat-file with a path argument needs MSYS_NO_PATHCONV=1 under Git Bash.
