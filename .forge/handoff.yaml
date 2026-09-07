@@ -1,59 +1,47 @@
 # .forge/handoff.yaml — chromasmith/forgeflow
 # Pass-the-baton briefing written BY the outgoing Claude Web session TO the next.
 # A WARNING LETTER, not a summary. The other .forge/ files hold state; this holds feel.
-# generated: 2026-09-07T14:50:00Z
-# session: 2026-09-07 (MASTER v1.3.0 THREE-CHANNEL CHANGE; RULING-016..019)
-written_at_commit: 639a810abd3651624c35029273b4326914bb1b7b
-written_at_utc: 2026-09-07T14:50:00Z
-wrap_complete: true
-wrap_parts_total: 7
+# generated: 2026-09-07T17:40:00Z
+# session: 2026-09-07 (FF-009 propagation + master v1.3.1; RULING-020)
+written_at_commit: 11bcd8fe5ba2e3ba865614305b524b9b02b86aa4
+written_at_utc: 2026-09-07T17:40:00Z
+wrap_complete: false
+wrap_parts_total: 9
 
 status: |
-  Master v1.3.0 is landed (8db4ff2) and forgeflow is re-rendered from it (e4466c4; all
-  twelve blob SHAs, render.py check and tests 60/60 re-proven from a fresh clone at e4466c4); registry
-  row updated (d18d446). The other six registered repos still run v1.1.0 (seogeo, chromaqa,
-  chromasmith-saas-starter — harness installed) or v1.0.0 (synclips-platform, chromasync,
-  dv-captain — secret set, no claude.yml, no protection). Nothing is unmerged anywhere; the
-  transport branch tmp/v130-apply is deleted.
-  Overall position: the master is at v1.3.0 and runs on ONE repo; the six others lag by design until FF-009, and every unregistered repo still runs old protocols under RULING-001.
+  Master v1.3.1 (5664d1b) runs on ALL NINE registered repos and the registry says so
+  (11bcd8f) — no row pinned, no row lagging, nothing unmerged anywhere. Dispatch is
+  genuinely available in every one of them: Matt installed the harness on
+  synclips-platform, chromasync and dv-captain today. convergible is linked to Vercel and
+  its deploy knobs are declared. Two Claude Web prompt defects were caught by Claude Code
+  during the day and both are repaired in the master at 5664d1b; one wording gap remains as FF-016.
+  Overall position: the ForgeFlow effort has reached what it was built for — one master,
+  nine repos, self-checking — but it is a living system, not a finished product: every
+  tool install or repo change still costs a re-render, and small master changes will keep
+  arriving from real use.
 
 first_thing: |
-  FF-009 — propagate master v1.3.0 to the other six registered repos by the ONE-PROMPT method
-  in master/PROPAGATION_PROCEDURE.md (steps 1-6). In order: (1) render all six in the sandbox
-  from a fresh forgeflow clone — public repos by shallow clone, private repos from a tree
-  skeleton carrying the REAL claude.yml, CLAUDE.md and protocol-config.yaml, each matched to
-  its GitHub blob SHA — render twice, diff, check ceilings, record every rendered file's blob
-  SHA; (2) ask Matt ONE line: is any Claude Code session or other Claude Web wrap active on ANY
-  of the six, and has he installed claude.yml + protection on synclips-platform / chromasync /
-  dv-captain (if not, those three render dispatch-off with S-092 — say so, do not wait);
-  (3) write ONE local Claude Code prompt (Git Bash syntax; the prompt prints
-  `git config core.autocrlf` first and HALTs on anything but false — GOTCHA-012; W-005
-  self-check) that refreshes each canonical checkout, renders with render.py, HALTS on any SHA
-  mismatch, commits one named-file commit per repo, pushes, writes
-  .forge/inbox/PROPAGATE-v1.3.0.yaml in forgeflow; (4) re-prove every landing through the
-  connector and write the registry rows LAST. Verify when done: registered-repos.yaml shows
-  v1.3.0 on every current row; each repo's start header says master_version: v1.3.0. Do NOT
-  start FF-007 (convergible-sandbox) in the same session.
+  FINISH THIS WRAP — parts 2..9 of the 2026-09-07 series remain: session-state, session-history, backlog, GOTCHAS, the three inbox deletions, then this handoff rewritten with wrap_complete true.
 
 watch_out_for:
-  - "THE START FILE HAS TWO LINES OF HEADROOM (1648/1650 on the real sandbox knob set). Any start-protocol addition, however small, must first name the block it replaces or retires (P11). Do not accept a 'quick line' — measure on config-sandbox-real.yaml before writing."
-  - "The connector's read tool displays the token <name> as <n>. Re-transmitting any file that contains <name> (GOTCHAS.yaml GOTCHA-009, BLUEPRINT.yaml) from what the read tool showed corrupts it silently — part 5 of this wrap did exactly that and needed a 5b. Take such text from a git clone in the sandbox, never from the read tool, and always compare the returned blob SHA."
-  - "The apply-script route is now the standard landing for any master text change (proven 54c1293 and 8db4ff2): script on tmp/<name> through the connector, rehearsed from a fresh clone, fetched and run by Claude Code, branch deleted by Matt in the browser (GOTCHA-009/010)."
-  - "On Surface 12: core.autocrlf is false today and must stay false for render blob SHAs to match; /tmp maps to the Windows Temp dir; git cat-file with a path needs MSYS_NO_PATHCONV=1 (GOTCHA-012)."
-  - "ChromaQA 7.2 and SEO/GEO v1.3.0 are read-only facts in the master now; neither tool is propagated anywhere (saas-starter runs ChromaQA 7.0 + SEO/GEO 1.2.0, convergible 7.1). Those propagations are Matt's own named sessions, not ForgeFlow work — and seogeo's RULING-004 orders ChromaQA 7.2 into the template and convergible BEFORE SEO/GEO v1.3.0."
-  - "Two Claude Web sessions can collide on this repo (GOTCHA-002/004): FF-009 writes forgeflow's registry and docs at its end — ask about other Claude Web sessions before writing here."
+  - "THE THING MOST LIKELY TO COST YOU 30 MINUTES: a render that mismatches its expected SHA is almost never the renderer. Check the CLAUDE.md house block first — if it matches and only the .forge files differ, the cause is a DETECTION difference in the tree (a local-only .venv, a newly added artifact-register, a .seogeo/config.json). Both halts today had exactly that signature. GOTCHA-013 and GOTCHA-014."
+  - "Three signals that look like failures and are not (GOTCHA-016): 'Bypassed rule violations' on a successful push is branch protection letting Matt's own account through; convergible's .chromaqa/CQA-debt.jsonl is dirty immediately after every push because its gate appends after staging; render.py's em-dash prints as a replacement character in the Windows console while the files are correct."
+  - "PROMPT-WRITER PRESSURE POINT: two prompts this session told a run to do something git cannot do — commit then hard reset (which deletes the commit), and rebase a dirty tree (which git refuses). Claude Code caught both and was right both times. When a prompt tells a run to preserve something AND to refresh, work out which git command actually does that before writing it."
+  - "OWED BY MATT, not blocking: branch protection on synclips-platform, chromasync, dv-captain and convergible, and the CLAUDE_CODE_OAUTH_TOKEN secret on convergible. A spawn does not copy secrets, so convergible's rendered protocol currently offers a dispatch lane the repo cannot actually run."
+  - "NOT FORGEFLOW WORK, but do not let it evaporate: convergible's depcheck gate exits 127 and has never actually checked dependencies (DEP-004, reached this wrap as an unanswered needs_ruling from the FF-V131-MASTER run — it belongs to a convergible session, and Matt was told); its debt ledger is dirty again with 10 lines from the last push, to be read and named, never committed blind."
 
 next_up:
-  - "FF-007 (ready, P1, after FF-009): convergible-sandbox FIRST render (RULING-012), prerequisites unchanged — its own session."
-  - "FF-006 / FF-003 / FF-004 (in_progress): all close when FF-009 re-renders the Synclips trio."
-  - "FF-013 (ready, P3, rides the next master change): E-026/E-030 still carry the old 'ends with who holds the ball' sentence that RULING-019 retired — text-only master fix, filed after this wrap's part 7 (639a810)."
-  - "FF-010 (deferred): pointer-URL protocols — revisit only if the one-prompt propagation is still too slow (RULING-013)."
+  - "FF-017 (ready, P3): convergible-sandbox's .forge/repo-rules.yaml was never written, so subsystems.repo_rules_doc is unset and S-005 does not render there. One prompt plus a single-repo re-render."
+  - "FF-010 (deferred): pointer-URL protocols — revisit only if the one-prompt propagation proves too slow. It did not today: two runs covered nine repos."
   - "Deferred, not next: forgeflow's own CLAUDE.md above the house block is still the unfilled template; drift_ci; the approval code and canonical paths sit in a PUBLIC repo — Matt has not asked for a change."
 
 north_star: |
-  Product-better: three channels of real friction — two tool upgrades and Matt's own working day — became protocol text in one master change (8db4ff2), and the master is now truthful about ChromaQA 7.2, SEO/GEO v1.3.0 and how Matt wants to be spoken to; the board moved too, but what a session reads is what changed.
+  Product-better, and measurably: the master went from running on one repo to running on all
+  nine, and it now catches its own ceiling breaches in the test suite instead of on Matt's
+  repos — the board moved too, but what a session reads is what changed.
 
 tone: |
-  A clean landing on the second use of the apply-script route, one wrap slip caught by the
-  hash check. Matt wants the six other repos caught up next, in one trip — bring the rendered
-  SHAs and the prompt, not questions.
+  A long, honest day. Two of Claude Web's own prompts were wrong and Claude Code caught both;
+  Matt's frustration was about discovering defects AFTER a rollout rather than before, and he
+  said plainly that shipping something known-wrong is folly. Take that seriously: fix what is
+  known-wrong before it propagates, and say what is not yet known.
