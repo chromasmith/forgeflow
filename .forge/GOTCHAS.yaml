@@ -147,10 +147,10 @@
     try: write the change as a PYTHON APPLY SCRIPT of exact-match replacements (each asserts its
     target text exists exactly once, so a wrong start state or a transcription slip fails loudly
     before saving) that ends by printing git hash-object of every file it wrote against the expected
-    blob SHA; push that script through the connector to a temporary branch (tmp/<name>; prose
+    blob SHA; push that script through the connector to a temporary branch (tmp/<n>; prose
     survives the connector, and the returned blob SHA proves the landing); have Claude Code
-    `git fetch origin tmp/<name>:refs/remotes/origin/tmp/<name>`, `git restore
-    --source=origin/tmp/<name> -- <script>`, prove the script's blob SHA, run it, delete the scratch
+    `git fetch origin tmp/<n>:refs/remotes/origin/tmp/<n>`, `git restore
+    --source=origin/tmp/<n> -- <script>`, prove the script's blob SHA, run it, delete the scratch
     file, then commit the named files. Prove the whole route from a fresh clone in the sandbox BEFORE
     handing the prompt over. Side lesson from the failed run: when a gzip payload fails its CRC,
     gzip.decompress discards everything; decompressing as raw deflate (skip the 10-byte header and the
@@ -198,3 +198,26 @@
     - master/start-protocol.master.yaml (S-032, S-036, S-043)
     - master/end-protocol.master.yaml (E-021)
     - every local Claude Code prompt written for Surface 12
+- id: GOTCHA-012
+  date: 2026-09-07
+  summary: "Surface 12 render-and-verify facts: core.autocrlf must be false or every render blob SHA fails; /tmp is the Windows Temp dir; git cat-file with a path needs MSYS_NO_PATHCONV=1 under Git Bash"
+  detail: |
+    The FF-V130-MASTER run (8db4ff2 / e4466c4) matched all twelve blob SHAs first try, and its
+    reflections named the one thing that could have broken it silently: git's CRLF conversion.
+    render.py writes LF and the sandbox hashes LF; a checkout with core.autocrlf=true (or unset
+    on a fresh Windows git) would rewrite the six rendered files on checkout/add and every hash
+    gate would fail with no visible cause. This box has core.autocrlf=false, so it passed —
+    any prompt that hashes rendered output on Surface 12 should print `git config core.autocrlf`
+    first and HALT on anything but false. Two smaller facts from the same run: (1) a Git Bash
+    /tmp path in a prompt resolves to C:\Users\chrom\AppData\Local\Temp, so the render banner
+    prints that Windows path — harmless, not a wrong output dir; (2) `git cat-file -p
+    origin/main:.forge/...` fails under Git Bash because MSYS rewrites the path inside the
+    argument — prefix the command with MSYS_NO_PATHCONV=1, or verify the pushed tree with
+    `git ls-tree origin/main <path>` instead. Also confirmed: the apply-script route (GOTCHA-009)
+    is now proven twice (54c1293 and 8db4ff2) and is the standard landing for any master text
+    change the connector cannot carry.
+  source: "FF-V130-MASTER inbox reflections and Claude Code report, 2026-09-07"
+  applies_to:
+    - every local Claude Code prompt that renders or hashes files on Surface 12
+    - master/RENDER_PROCEDURE.md (landing step)
+    - master/PROPAGATION_PROCEDURE.md (step 5 — the FF-009 run hashes six repos' renders)
