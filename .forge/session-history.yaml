@@ -196,3 +196,43 @@ sessions:
       - .forge/backlog.yaml
       - .forge/GOTCHAS.yaml
     blockers_remaining: []
+  - date: 2026-09-07
+    duration: ~3hr
+    completed:  # evidence: 9e46780, 8db4ff2, e4466c4, d18d446
+      - "RULING-016..019 filed in the turn they were made @ 9e46780 (v1.3.0 scope; accepted.json written by Claude Web on Matt's acceptance; TEXT-ONLY TIER; W-001 rewrite + capacity plan)"
+      - "Read-only recon of chromasmith/chromaqa (7.2) and chromasmith/seogeo (v1.3.0) against the master's ChromaQA/SEO-GEO blocks; 15-item change set approved by Matt in one go"
+      - "Master v1.3.0 landed @ 8db4ff2 by a local Claude Code run from apply script blob e2e23c85 on tmp/v130-apply: 40 replacements, 6 files, tests 60/60, S-018 retired; largest knob set measured start 1648/1650"
+      - "forgeflow re-rendered from v1.3.0 @ e4466c4 (six files + inbox FF-V130-MASTER, one commit, config_hash 7ccf78dfab2f); all twelve blob SHAs, render.py check and tests 60/60 re-proven from a fresh clone"
+      - "Registry: forgeflow row + master_version_current v1.3.0 @ d18d446; six other rows lag by design; tmp/v130-apply deleted by Matt in the browser (confirmed absent via ls-remote)"
+    commits:
+      - message: "rulings: RULING-016..019 — v1.3.0 scope; accepted.json written by Claude Web; the TEXT-ONLY tier; W-001 communication rewrite + capacity plan (9e46780)"
+      - message: "master: v1.3.0 - three-channel change (ChromaQA 7.1/7.2 accepted.json + ledger, SEO/GEO v1.3.0, text-only tier, W-001 rewrite, capacity plan, Git Bash STEP 0; RULING-016..019; S-018 retired; FF-011) (8db4ff2, Claude Code run FF-V130-MASTER)"
+      - message: "protocols: re-render forgeflow from master v1.3.0 (config_hash 7ccf78dfab2f) + inbox FF-V130-MASTER (e4466c4, same run)"
+      - message: "registry: forgeflow re-rendered from v1.3.0; master_version_current v1.3.0 (d18d446)"
+      - message: "docs: end session 2026-09-07 (1/7 .. 7/7) — numbered-series wrap (this series)"
+    key_changes:
+      - "Master v1.3.0: ChromaQA 7.1 accepted.json as PROTECTED config with exit 2's resolution path and 7.2 once-per-finding ledger semantics; SEO/GEO v1.3.0 file set and prompt-writer rules (noindexMetadataFor load-bearing); TEXT-ONLY TIER (Matt's web edit, sweep-and-fix); large-file apply lane in S-007/E-002; E-013 indentation fix; W-001 rewritten; CAPACITY PLAN at S-019; Git Bash STEP 0 and remainder (FF-011); S-018 retired"
+      - "No renderer or schema change; config_hash unchanged for every repo; 95 start blocks, 51 end blocks"
+      - "Second use of the apply-script landing route; Claude Code disclosed three harmless deviations (self-hash placeholder in the inbox, no co-author trailer, no branch delete) and one design-working note (protection message on push, RULING-011)"
+    files_modified:
+      - .forge/rulings.yaml
+      - master/start-protocol.master.yaml
+      - master/end-protocol.master.yaml
+      - master/claude-md.house-block.master.md
+      - master/CHANGELOG.yaml
+      - master/BLUEPRINT.yaml
+      - master/tests/test_render.py
+      - .forge/protocol-config.yaml
+      - .forge/protocols/start-protocol.yaml
+      - .forge/protocols/start-protocol.dispatch.yaml
+      - .forge/protocols/end-protocol.yaml
+      - .forge/protocols/end-protocol.dispatch.yaml
+      - CLAUDE.md
+      - .forge/inbox/FF-V130-MASTER.yaml (written by the Claude Code run at e4466c4; consumed and deleted at this wrap)
+      - master/registered-repos.yaml
+      - .forge/handoff.yaml
+      - .forge/session-state.yaml
+      - .forge/session-history.yaml
+      - .forge/backlog.yaml
+      - .forge/GOTCHAS.yaml
+    blockers_remaining: []
