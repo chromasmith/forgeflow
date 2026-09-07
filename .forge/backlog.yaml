@@ -81,10 +81,10 @@ completed:  # evidence per item: 5664d1b, 8db4ff2, 54c1293 + 8ec708c, b421783, 6
     description: |
       Master v1.3.0 (8db4ff2) ran on forgeflow only. Matt named his own order — saas-starter,
       the new convergible repo, convergible-sandbox, then Claude Web's choice — and the pass
-      landed all nine: five in PROPAGATE-v1.3.0, three in PROPAGATE-v1.3.0b after two SHA halts
+      landed all nine: five in PROPAGATE-v1.3.0 (9f50d33), three in PROPAGATE-v1.3.0b (6b08096) after two SHA halts
       and one dirty-checkout skip, and convergible-sandbox and convergible joined the registry as
-      first renders. Every blob SHA was re-proven through the connector before the registry was
-      written last.
+      first renders. Every blob SHA was re-proven through the connector (registry 54feb39) before
+      the registry was written last.
     status: completed  # 54feb39
     completed_at: 2026-09-07
     evidence: 9f50d33 + 6b08096 (v1.3.0 to nine repos), registry 54feb39; v1.3.1 propagation completed the set
@@ -132,7 +132,7 @@ completed:  # evidence per item: 5664d1b, 8db4ff2, 54c1293 + 8ec708c, b421783, 6
     estimate: 1 master change
     spec_ref: master/start-protocol.master.yaml (S-082, S-083)
     description: |
-      The master half landed in v1.1.0 (build.python_interpreter knob, S-083 reworded). Closed
+      The master half landed in v1.1.0 (b421783: build.python_interpreter knob, S-083 reworded). Closed
       here: dv-captain's build.validation is now a DECLARED override, which also cured a real
       divergence — a local-only .venv made the same master render two different files depending
       on which tree it read (GOTCHA-013) — and chromasync was re-rendered on the same pass.
@@ -145,7 +145,7 @@ completed:  # evidence per item: 5664d1b, 8db4ff2, 54c1293 + 8ec708c, b421783, 6
     estimate: 30 min
     spec_ref: master/start-protocol.master.yaml (S-014)
     description: |
-      The master half landed in v1.1.0 (S-014/E-036/E-040 gitignored-telemetry wording). Closed
+      The master half landed in v1.1.0 (b421783: S-014/E-036/E-040 gitignored-telemetry wording). Closed
       here by chromasync's re-render, which carries that wording.
     status: completed  # 502f346
     completed_at: 2026-09-07
