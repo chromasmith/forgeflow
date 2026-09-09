@@ -1,0 +1,156 @@
+# =============================================================================
+# BLUEPRINT STANDARD v1.0
+# How every Chromasmith blueprint is written, amended and kept small.
+# Applies to every strategy, spec and build document in every repo.
+# =============================================================================
+
+meta:
+  doc: blueprint-standard
+  version: "1.0"
+  date: 2026-09-08
+  owner: Matt Fleming / Chromasmith LLC
+  reference_example: convergible/.forge/strategy/cv-showcase-blueprint-v6.yaml
+
+# -----------------------------------------------------------------------------
+# 1. THE ONE TEST
+# -----------------------------------------------------------------------------
+the_test: >-
+  A blueprint line earns its place only if a build session needs it to build
+  correctly. If a line explains WHY a decision was made, WHO made it, WHEN,
+  WHAT it replaced, or HOW the conversation went, it does not belong in the
+  blueprint. It belongs in the history companion (section 4).
+
+what_a_blueprint_is: a build document. Rules, decisions, prohibitions, dependencies, open items.
+what_a_blueprint_is_not: a narrative, a session record, a changelog, a set of reasons, a place for quotes.
+
+# -----------------------------------------------------------------------------
+# 2. THE SEVEN SECTIONS
+# -----------------------------------------------------------------------------
+# Every blueprint has exactly these sections, in this order. A section with
+# nothing in it is present and reads "none". Nothing else is added.
+# -----------------------------------------------------------------------------
+sections:
+  - id: 1
+    name: rules
+    holds: the small set of principles every other section obeys. One sentence each. An unaddressed question is answered FROM the rules, never guessed.
+  - id: 2
+    name: data_model
+    holds: entities, fields, states, relationships. Shapes are binding; names are illustrative.
+  - id: 3
+    name: surfaces
+    holds: every page, screen, endpoint or artifact - what is on it, its states, ratified copy strings.
+  - id: 4
+    name: flows
+    holds: step lists. What happens, in order, when a user or operator does a thing.
+  - id: 5
+    name: build_order
+    holds: numbered steps with dependencies; parallel items; later items; launch gates.
+  - id: 6
+    name: prohibitions_and_triggers
+    holds: "every \"never X\" as a flat one-line list with no reasoning attached; every deferred item with its named trigger."
+  - id: 7
+    name: open_items
+    holds: numbered, each with an owner (Matt / build / legal / shared) and a blocking marker where one applies.
+
+header:
+  required_lines:
+    - title and version
+    - "one line: what this document is and what it supersedes IN FULL"
+    - status legend (section 3 of this standard)
+  forbidden_in_header: [carry-in instructions, read-this-first essays, notes to the next session, authoring history, session shape]
+
+# -----------------------------------------------------------------------------
+# 3. STATUS TAGS
+# -----------------------------------------------------------------------------
+status_tags:
+  DECIDED: build to it. This is the default; untagged lines are DECIDED.
+  PROVISIONAL: true until Matt says it aloud to a real person or spends money on it.
+  DEFERRED: build later; the trigger is named in the same line.
+  OPEN: unresolved; do not guess; listed in section 7.
+forbidden_tags: [RECOMMENDED, ACCEPTED, CLAUDE_RULED, SUPERSEDED, PARKED, VERIFY, "matts_words", "matts_position", "claudes_recommendation"]
+rule: >-
+  A recommendation Matt has not ruled on is an OPEN item with the
+  recommendation noted in one clause. A superseded decision is a prohibition.
+  A parked item is DEFERRED with a trigger. There is no fifth state.
+
+# -----------------------------------------------------------------------------
+# 4. THE HISTORY COMPANION
+# -----------------------------------------------------------------------------
+history_companion:
+  filename: "<blueprint-name>-history.yaml, beside the blueprint"
+  holds:
+    - reasoning and the argument for each decision
+    - Matt's words, Claude's recommendations, who overruled whom
+    - superseded decisions with the path they took
+    - session provenance, dates, what was read, how the interview went
+    - research findings, vendor lists, cost estimates, LLM test results
+    - analogies and worked examples
+  rules:
+    - The blueprint never references the companion. The companion may reference the blueprint.
+    - Nothing in the companion is binding. If it disagrees with the blueprint, the blueprint wins and the companion is wrong.
+    - Nobody is required to read it. Write it so that is true.
+
+# -----------------------------------------------------------------------------
+# 5. AMEND, NEVER APPEND
+# -----------------------------------------------------------------------------
+amendment_rules:
+  - A session that changes a ruling EDITS THE BLUEPRINT IN PLACE. It does not create an amendment file, an addendum, a capture, a notice or a vN+1 beside it.
+  - A reversed decision moves to section 6 as one line beginning "Never". The reasoning for the reversal goes to the companion.
+  - A closed open item is deleted from section 7 and its resolution is written into the section it belongs to.
+  - A new open item is added to section 7 with an owner. It is not written as prose anywhere else.
+  - The version number bumps on every edit. The file name does not carry the version; the header does.
+  - "\"See <other document>\" is forbidden. If a build session needs it, copy it in. If it does not, leave it out."
+  - If the write tooling cannot safely edit the file in place, the session produces the COMPLETE new file and Matt commits it. It never produces a side file to avoid the rewrite.
+
+# -----------------------------------------------------------------------------
+# 6. SIZE
+# -----------------------------------------------------------------------------
+size:
+  smell: 50KB
+  rule: >-
+    A blueprint above roughly 50KB is carrying history. The response is to
+    move content to the companion or split the blueprint by subsystem, never
+    to keep writing. A split produces two blueprints that each pass the test
+    in section 1, not a blueprint and a pile.
+
+# -----------------------------------------------------------------------------
+# 7. WRITING RULES
+# -----------------------------------------------------------------------------
+writing_rules:
+  - Lists over prose. A ruling is one line. A flow is a step list. A screen is a field list.
+  - Behaviour is binding; implementation is not. Say what the thing does and what states it has. Do not name tables, file paths, tokens or spacing unless the structure itself is the ruling (a link table not a column; a gate separate from a tier).
+  - No quotes from anyone.
+  - No "why". If a why is essential to build correctly, it is a rule in section 1 and it is one sentence.
+  - No measured figures unless the build depends on them; when included, one line, dated.
+  - Copy strings that are ratified appear verbatim in section 3, quoted, with the register rules that govern them.
+  - Every OPEN item names who decides it.
+
+# -----------------------------------------------------------------------------
+# 8. THE SESSION PROMPT
+# -----------------------------------------------------------------------------
+# What Matt says to start a documentation session. Short, because the
+# standard carries the weight.
+# -----------------------------------------------------------------------------
+session_prompt: |
+  Read BLUEPRINT_STANDARD.yaml and obey it.
+  Target: <path to the governing blueprint, or "new: <path>">.
+  Sources: <list of files, pasted documents, or "this conversation">.
+  Produce the complete blueprint at the target, edited in place, every section present.
+  Put everything that fails the test in section 1 into <target>-history.yaml.
+  Name every conflict you resolved and how, in one line each, in your reply, not in the document.
+  Stop and ask before writing if a source contradicts a DECIDED line and you cannot tell which is newer.
+
+# -----------------------------------------------------------------------------
+# 9. ACCEPTANCE
+# -----------------------------------------------------------------------------
+acceptance_checks:
+  - Seven sections, in order, nothing else.
+  - No line contains "because", "reasoning", "matts_words", "recommended", "session", "supersedes" outside the header, or "see".
+  - Every OPEN item has an owner.
+  - Every DEFERRED item has a trigger.
+  - Every reversed decision appears as a "Never" line.
+  - Under 50KB, or split.
+  - A build session can start from this file alone, with no other document open.
+# =============================================================================
+# END
+# =============================================================================
