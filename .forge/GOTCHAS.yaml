@@ -147,10 +147,10 @@
     try: write the change as a PYTHON APPLY SCRIPT of exact-match replacements (each asserts its
     target text exists exactly once, so a wrong start state or a transcription slip fails loudly
     before saving) that ends by printing git hash-object of every file it wrote against the expected
-    blob SHA; push that script through the connector to a temporary branch (tmp/<name>; prose
+    blob SHA; push that script through the connector to a temporary branch (tmp/<n>; prose
     survives the connector, and the returned blob SHA proves the landing); have Claude Code
-    `git fetch origin tmp/<name>:refs/remotes/origin/tmp/<name>`, `git restore
-    --source=origin/tmp/<name> -- <script>`, prove the script's blob SHA, run it, delete the scratch
+    `git fetch origin tmp/<n>:refs/remotes/origin/tmp/<n>`, `git restore
+    --source=origin/tmp/<n> -- <script>`, prove the script's blob SHA, run it, delete the scratch
     file, then commit the named files. Prove the whole route from a fresh clone in the sandbox BEFORE
     handing the prompt over. Side lesson from the failed run: when a gzip payload fails its CRC,
     gzip.decompress discards everything; decompressing as raw deflate (skip the 10-byte header and the
@@ -306,3 +306,65 @@
   applies_to:
     - every propagation or render run on Surface 12
     - .forge/handoff.yaml (watch_out_for)
+- id: GOTCHA-017
+  date: 2026-09-09
+  summary: "Onboarding a brand-new repo: check the GitHub name's CASE before rendering, pass the prompt's --date not today's, never copy the echoed protocol-config out of the render output, and expect --claude-md to point at a file that does not exist yet"
+  detail: |
+    Four things the first render of chromasmith/LeadDowser exposed, none of them a
+    renderer bug, all of them capable of costing a round trip.
+    (1) CASE. The repo had been created all-lowercase (chromasmith/leaddowser) while
+    every rendered path said LeadDowser. Pushes still worked because GitHub redirects
+    an old name, printing "remote: This repository moved" — a courtesy, not a
+    contract. Read the repo's real name from the API before writing the config
+    (`html_url` on any contents call, or search_repositories), because repo.name goes
+    into config_hash and into every path in both protocol files. Renaming afterwards
+    is cheap and a re-render is not — but a CASE-ONLY rename NO-OPS SILENTLY in
+    GitHub's Settings page: it needs the two-step, rename to <name>-tmp, then to the
+    final casing.
+    (2) DATE. render.py stamps --date into the header, so a hash table computed by
+    Claude Web is only reproducible with that exact date value. A run that substitutes
+    today's date renders correct content under a different header and misses every
+    expected blob SHA, which reads like non-determinism and is not. Say the date
+    explicitly in the prompt and say why.
+    (3) THE ECHOED CONFIG. render.py writes .forge/protocol-config.yaml into its --out
+    directory as an echo of its input, not as a deliverable. Never copy it back into
+    the repo tree; instead commit the config FIRST through the connector and compare
+    the echoed file's blob SHA to the committed one — that comparison is the
+    determinism proof, and it is stronger than "the render succeeded".
+    (4) NO CLAUDE.md YET. On a first render --claude-md points at a file that does not
+    exist; render.py handles it and creates the block. Creating a stub first changes
+    the detected tree and breaks the CLAUDE.md hash.
+  source: "LeadDowser first render, 2026-09-09 (runs LD-INSTALL-1 and LD-REGISTRY-1; LeadDowser commits 58c2511, a86cfbb)"
+  applies_to:
+    - master/RENDER_PROCEDURE.md (step 0 preconditions and the landing step)
+    - every first render of a repo new to the master
+- id: GOTCHA-018
+  date: 2026-09-09
+  summary: "A Claude Code session may append Co-Authored-By / Claude-Session trailers to every commit message it writes — no forgeflow commit before 2026-09-09 carries them, so say 'no attribution trailers' in the prompt when the history should stay uniform"
+  detail: |
+    The LD-REGISTRY-1 run used the prompt's commit subject verbatim and then added two
+    trailer lines from its own harness instruction, making be3cf47 and 4f1a670 the
+    first commits in this repo to carry them. The run disclosed it rather than letting
+    it pass, which is the system working. Nothing about content, blobs or SHA
+    verification changes — this is house style only. If a repo's history should stay
+    uniform, the prompt must say so explicitly, because the harness instruction is
+    outside the prompt and will otherwise win every time.
+  source: "LD-REGISTRY-1 run report and inbox, 2026-09-09 (forgeflow be3cf47, 4f1a670)"
+  applies_to:
+    - every local Claude Code prompt that commits
+- id: GOTCHA-019
+  date: 2026-09-09
+  summary: "Extends GOTCHA-012: MSYS path conversion also breaks `git rev-parse <ref>:<path>`, and because only paths containing a slash are mangled, a bare CLAUDE.md verifies fine while every .forge/ path errors — which looks exactly like the protocol files are absent from the commit"
+  detail: |
+    GOTCHA-012 recorded that `git cat-file` with a path needs MSYS_NO_PATHCONV=1 under
+    Git Bash. The same applies to `git rev-parse origin/main:.forge/protocols/start-protocol.yaml`,
+    which is rewritten to a Windows path and fails with "ambiguous argument". The
+    asymmetry is the trap: CLAUDE.md has no slash, so it succeeds, and a session
+    verifying a push sees one file confirmed and five apparently missing. Use
+    `git ls-tree -r origin/main` and read the blob column, or prefix with
+    MSYS_NO_PATHCONV=1. Any prompt that asks a run to verify pushed blobs on Surface 12
+    should name the ls-tree form directly rather than leaving the run to discover this.
+  source: "LD-INSTALL-1 run, verifying the pushed blob SHAs, 2026-09-09"
+  applies_to:
+    - every local Claude Code prompt that verifies a push by blob SHA on Surface 12
+    - master/start-protocol.master.yaml (S-036 shell notes)
