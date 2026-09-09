@@ -443,3 +443,28 @@ rulings:
       is installed BEFORE the render so the repo joins dispatch-ON in one trip.
     supersedes: nothing — RULING-001 said Matt names the repo; this is him naming it
     stated_by: Matt, in chat, in this session, recorded in the turn it was made per W-002
+  - id: RULING-022
+    date: 2026-09-09
+    subject: Branch protection is added with "Require a pull request" ON and "Require approvals" UNTICKED
+    ruling: >-
+      RULING-011 established what branch protection is for — guarding main against runners while
+      administrators bypass — but never said what to tick. Installing it on
+      chromasmith/LeadDowser exposed the gap: GitHub pre-ticks "Require approvals" (1) the
+      moment "Require a pull request before merging" is enabled, and that setting deadlocks
+      the whole model, because Matt cannot approve his own pull request and Claude Web opens
+      every runner PR acting as Matt. It is harmless only while the administrator bypass
+      holds; the day "Do not allow bypassing the above settings" is ever ticked, or a second
+      collaborator changes the calculus, no pull request in the repo can be approved by the only person
+      who works in it. THE HOUSE SETTING, for every current and future repo on the master:
+      classic branch protection on the default branch, "Require a pull request before merging"
+      ON, "Require approvals" UNTICKED, "Do not allow bypassing the above settings" UNTICKED.
+      The merge gate is Matt's yes in chat, never a GitHub approval — Claude Web authored the
+      contents, so a GitHub approval would be a signature on its own work. Recorded as a
+      back-fill at the wrap rather than in the turn it was made, which is a W-002 miss; the
+      decision itself was Matt's, taken when he applied the recommended settings. The nine
+      repos protected before today were configured by hand and are NOT known to have been
+      checked against this; auditing them is not filed as work, because the bypass makes it
+      harmless until someone tightens it. master/RENDER_PROCEDURE.md step 0b is amended to
+      carry this as FF-019.
+    supersedes: nothing — RULING-011 stands; this fills in the settings it left unstated
+    stated_by: Matt, in chat, in this session, by applying the recommended protection settings on chromasmith/LeadDowser after Claude Web named the deadlock
