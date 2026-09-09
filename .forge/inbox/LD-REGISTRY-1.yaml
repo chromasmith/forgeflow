@@ -138,6 +138,17 @@ matt_owes:
     still_open_at_end_of_run: true
 
 deviations_from_my_approach: >-
-  None. The prompt's approach was followed exactly, in the order given, with no
-  substitutions and no improvisation. No better pattern was identified that would
-  have required editing anything outside the authorized list.
+  ONE, small, in the commit message only. The prompt's commit command was a single
+  -m with the subject line, and that subject was used verbatim. On top of it I
+  appended two attribution trailer lines (Co-Authored-By: Claude Opus 5 (1M context)
+  and Claude-Session: <session URL>) as a second -m, because this session's harness
+  carries a standing instruction to end every commit message it creates with those
+  lines. Worth flagging because chromasmith/forgeflow's git history has NO
+  attribution trailers on any prior commit — every earlier message is a bare
+  subject plus optional body — so commit be3cf47 is the first in this repo to carry
+  them, and that is a house-style change nobody asked for. If Matt would rather the
+  registry history stay trailer-free, say so and future prompts should state it;
+  the trailers change nothing about the content, the blob, or verification by SHA.
+  Everything else in the run followed the prompt exactly, in the order given, with
+  no substitutions and no improvisation. No better pattern was identified that
+  would have required editing anything outside the authorized list.
