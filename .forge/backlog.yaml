@@ -2,6 +2,25 @@
 # Status vocabulary: ready | blocked | needs-ruling | in_progress | deferred | completed | superseded
 # Migrated from the legacy empty shape at the 2026-09-04 wrap (first wrap on the rendered end protocol).
 prioritized:
+  - id: FF-019
+    name: RENDER_PROCEDURE step 0b is silent on the branch-protection settings, and on two onboarding steps the LeadDowser render proved are missing
+    priority: P2
+    estimate: one edit to master/RENDER_PROCEDURE.md (no re-render — the procedure is not rendered into any repo)
+    spec_ref: master/RENDER_PROCEDURE.md (step 0b); .forge/rulings.yaml RULING-022; .forge/GOTCHAS.yaml GOTCHA-017
+    description: |
+      Step 0b tells Matt to turn protection on with "include administrators" unticked but
+      says nothing about the checkboxes GitHub pre-ticks for him. "Require approvals" is
+      pre-ticked with "Require a pull request" and deadlocks every merge the moment the
+      administrator bypass is tightened, because Matt cannot approve his own PR and Claude
+      Web opens runner PRs as him (RULING-022). Amend step 0b to state the exact house
+      setting, and add the two onboarding steps this install exposed: (1) read the repo's
+      REAL name and casing from the API before writing the config, because repo.name feeds
+      config_hash and every rendered path, and a case-only rename no-ops silently in GitHub
+      Settings; (2) choose the landing lane by rendered size — connector for the config, ONE
+      Claude Code run with a blob-SHA gate for a rendered set past the connector's ~100 KB
+      ceiling — rather than discovering it mid-render.
+    status: ready
+    blocked_by: null
   - id: FF-016
     name: S-033's rebase rule does not cover a checkout that is BOTH dirty and holding local commits
     priority: P3
@@ -47,6 +66,22 @@ prioritized:
 in_progress: []
 
 completed:  # evidence per item: 5664d1b, 8db4ff2, 54c1293 + 8ec708c, b421783, 67031b3, c729db2
+  - id: FF-018
+    name: Onboard chromasmith/LeadDowser — tenth repo on the master, first render on a repo that inherited nothing
+    priority: P1
+    spec_ref: master/RENDER_PROCEDURE.md; .forge/rulings.yaml RULING-021
+    description: |
+      Matt named LeadDowser and it was rendered the same session: standard profile, dispatch
+      ON, config_hash efaceee3fa42, build and deploy overridden to none until the app is
+      scaffolded. Not a template spawn, so nothing was inherited — the config was written
+      from the tree, and Claude Web seeded the whole .forge/ state family afterwards. The
+      harness was installed BEFORE the render, making this the first repo to join the master
+      dispatch-ON on its first pass. Delivery was two-lane: connector for the config, one
+      local Claude Code run (LD-INSTALL-1) for the ~196 KB rendered set, gated on six blob
+      SHAs. The secret and this registry row landed together in a second run, LD-REGISTRY-1 @ be3cf47.
+    status: completed  # be3cf47
+    completed_at: 2026-09-09
+    evidence: LeadDowser 58c2511 (config) + a86cfbb (protocols and CLAUDE.md) + 8a60188 (protection bypass proof); forgeflow 1860bdc (RULING-021) and be3cf47 (registry, ten rows)
   - id: FF-015
     name: Refresh safeguard — the safety check counts AHEAD but not BEHIND, and "commit then hard reset" deletes the commit
     priority: P1
