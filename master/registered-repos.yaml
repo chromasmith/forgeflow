@@ -16,7 +16,7 @@
 # Matt naming the repo; there is no queue here and no implied order.
 # =============================================================================
 
-master_version_current: "v1.3.1"   # landed 2026-09-07 (5664d1b) and PROPAGATED to all nine rows the same day by the local run FF-V131-MASTER: every row below is current at v1.3.1, no repo is pinned or lagging. v1.3.1 repaired FF-013/FF-014/FF-015 — the defects that running v1.3.0 across nine real repos exposed.
+master_version_current: "v1.3.1"   # landed 2026-09-07 (5664d1b) and PROPAGATED to all nine rows then current the same day by the local run FF-V131-MASTER. chromasmith/LeadDowser joined as the TENTH row on 2026-09-09, rendered from this same version, so every row below is current at v1.3.1 and no repo is pinned or lagging. v1.3.1 repaired FF-013/FF-014/FF-015 — the defects that running v1.3.0 across nine real repos exposed.
 
 repos:
   - repo: chromasmith/seogeo
@@ -310,3 +310,38 @@ repos:
       CV-OPEN-4): the CLAUDE_CODE_OAUTH_TOKEN secret and branch protection, neither of which
       copies with a spawn — until the secret is set, the rendered protocol offers a dispatch
       lane the repo cannot actually run.
+  - repo: chromasmith/LeadDowser
+    config: .forge/protocol-config.yaml
+    profile: standard
+    master_version: "v1.3.1"
+    rendered_on: 2026-09-09
+    config_hash: efaceee3fa42e22d2a691a7c98a1035330079390853cc208d8e0ba926ea64840
+    state: current
+    files:
+      - .forge/protocols/start-protocol.yaml
+      - .forge/protocols/start-protocol.dispatch.yaml
+      - .forge/protocols/end-protocol.yaml
+      - .forge/protocols/end-protocol.dispatch.yaml
+      - .forge/protocol-config.yaml
+      - CLAUDE.md
+    landed: "FIRST RENDER 2026-09-09: the config landed first through the Claude Web connector @ 58c2511 (blob 6fa44040dc55d43fa4844c10dbc886a52b282a98) and was then reproduced byte-identically by the local render, which is this repo's determinism proof; the other five files landed as ONE commit a86cfbb by the local Claude Code run LD-INSTALL-1 (start ecd3aa9, start.dispatch 487a7a9, end cd7bf97, end.dispatch e434849, CLAUDE.md 1c3a087), every blob SHA equal to the Claude Web sandbox render and re-proven through the connector after the push."
+    notes: >-
+      TENTH repo rendered (RULING-021), and the first that was NOT spawned from
+      chromasmith-saas-starter and did not inherit a template config — Matt's deliberate
+      choice, recorded as LeadDowser's own RULING-001. Bare repo at render time: README.md
+      plus a documentation-only .forge/ (strategy/leaddowser-blueprint.yaml,
+      specs/, instructions/, scanlab/), no package.json, no CLAUDE.md, no .chromaqa/, no
+      .seogeo/, no vercel.json, and none of the .forge/ state family, which Claude Web
+      seeded through the connector after the render. Harness installed by Matt via the web
+      editor BEFORE the render (blob 4cccfbf = master/assets/claude.yml), so this is the
+      first repo to join the master dispatch-ON on its first pass rather than needing a
+      second render. Private repo: detection ran on a tree skeleton rebuilt from the GitHub
+      listing carrying the real claude.yml. TWO OVERRIDES, both temporary: build.validation
+      and build.deploy are none because nothing is built yet — they revert to the standard
+      profile's npm-build/vercel at the re-render owed once the app is scaffolded and Vercel
+      is linked (LeadDowser backlog LD-003). north_star_doc =
+      .forge/strategy/leaddowser-blueprint.yaml; backlog prefix LD-. The repo was created
+      all-lowercase and renamed to chromasmith/LeadDowser the same day so the GitHub name
+      matches the canonical checkout; a case-only rename no-ops silently in GitHub Settings
+      and needed the two-step. STILL OWED BY MATT at the time of this row: branch protection
+      on main with administrators bypassing (RULING-011).
