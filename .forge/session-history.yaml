@@ -286,3 +286,39 @@ sessions:
       - .forge/GOTCHAS.yaml
       - "eight other repos: .forge/protocol-config.yaml, four .forge/protocols/ files and the CLAUDE.md house block in each"
     blockers_remaining: []
+  - date: 2026-09-09
+    duration: ~3hr
+    completed:  # evidence: LeadDowser a86cfbb / 58c2511 / 8a60188; forgeflow 1860bdc / be3cf47
+      - "Rendered chromasmith/LeadDowser from master v1.3.1 as the TENTH repo (standard profile, dispatch ON, config_hash efaceee3fa42, start 1451 / start-dispatch 475 / end 1118 / end-dispatch 95 lines, all under the S4 ceilings of 2000/650/1700/150)"
+      - "RULING-021 written in the turn Matt named the repo (1860bdc), per W-002"
+      - "LeadDowser config committed through the connector @ 58c2511 (blob 6fa44040) and reproduced byte-identically by the local render — that reproduction is the determinism proof for the repo"
+      - "The four protocol files and the CLAUDE.md house block landed as ONE commit @ LeadDowser a86cfbb by the local Claude Code run LD-INSTALL-1, after all six expected blob SHAs matched (start ecd3aa9, start.dispatch 487a7a9, end cd7bf97, end.dispatch e434849, CLAUDE.md 1c3a087)"
+      - "Matt installed the dispatch harness (blob 4cccfbf verified equal to master/assets/claude.yml) BEFORE the render, so LeadDowser is the first repo ever to join the master dispatch-ON on its first pass"
+      - "CLAUDE_CODE_OAUTH_TOKEN set on LeadDowser from 1Password by the local run LD-REGISTRY-1 — reported by that run and by gh secret list; not verifiable through the connector by design"
+      - "Classic branch protection added on LeadDowser's main by Matt with 'Require approvals' UNTICKED, and the administrator bypass PROVEN by a direct docs push @ LeadDowser 8a60188"
+      - "Registry row written LAST @ be3cf47 — master/registered-repos.yaml now parses to 10 rows with chromasmith/LeadDowser last, every row current at v1.3.1"
+      - "LeadDowser's .forge/ state family seeded by Claude Web (rulings with its own RULING-001..003, backlog LD-000..LD-004, active-bugs, GOTCHAS 001-003, session-state, session-history, handoff, inbox .gitkeep); the LD-INSTALL-1 inbox file was consumed and deleted there"
+      - "Two documentation strings corrected on Matt's word in LeadDowser: the README heading after the rename (8a60188) and the specs file's .yam extension, renamed to .yaml with blob 744cc9b unchanged"
+    commits:
+      - message: "rulings: RULING-021 — chromasmith/LeadDowser named as the tenth repo to render from the master (1860bdc)"
+      - message: "registry: add chromasmith/LeadDowser as the tenth rendered repo (be3cf47, local run LD-REGISTRY-1)"
+      - message: "inbox(LD-REGISTRY-1): disclose the commit-message attribution trailers as a deviation (4f1a670)"
+      - message: "docs: end session 2026-09-09 (1/9 .. 9/9) — this series"
+      - message: "in chromasmith/LeadDowser: 58c2511 (config), a86cfbb (protocols + CLAUDE.md), 573ed78 / a2a3325 / a7b6c27 (inbox appends), 8a60188 (README heading + bypass proof), plus the .forge/ state-family seeding commits"
+    key_changes:
+      - "The master now runs on TEN repos, and the onboarding path was exercised end to end on a repo that inherited nothing — no template spawn, no existing config, no CLAUDE.md, no .forge/ state family"
+      - "Harness-before-render is the right order (evidence: LeadDowser a86cfbb rendered dispatch=on on the first pass): installing claude.yml first saved the second render that every previous repo needed"
+      - "A branch-protection defect was found and ruled on: 'Require approvals' deadlocks merges because Matt cannot approve his own PR (RULING-022, FF-019)"
+      - "Claude Code disclosed two deviations it could have hidden — four commits where the prompt asked for one (three inbox-only, because gotchas surfaced after the protocol's inbox-write point), and attribution trailers on its commit messages, which no prior forgeflow commit carries"
+    files_modified:
+      - master/registered-repos.yaml
+      - .forge/rulings.yaml
+      - .forge/inbox/LD-REGISTRY-1.yaml    # written by the local run, consumed and deleted at this wrap
+      - .forge/inbox/.gitkeep
+      - .forge/handoff.yaml
+      - .forge/session-state.yaml
+      - .forge/session-history.yaml
+      - .forge/backlog.yaml
+      - .forge/GOTCHAS.yaml
+      - "in chromasmith/LeadDowser: .forge/protocol-config.yaml, the four .forge/protocols/ files, CLAUDE.md, README.md, .github/workflows/claude.yml (Matt, web editor), .forge/specs/leaddowser-convergible-interface.yaml (renamed from .yam by Matt), and the whole .forge/ state family"
+    blockers_remaining: []
