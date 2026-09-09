@@ -147,10 +147,10 @@
     try: write the change as a PYTHON APPLY SCRIPT of exact-match replacements (each asserts its
     target text exists exactly once, so a wrong start state or a transcription slip fails loudly
     before saving) that ends by printing git hash-object of every file it wrote against the expected
-    blob SHA; push that script through the connector to a temporary branch (tmp/<n>; prose
+    blob SHA; push that script through the connector to a temporary branch (tmp/<name>; prose
     survives the connector, and the returned blob SHA proves the landing); have Claude Code
-    `git fetch origin tmp/<n>:refs/remotes/origin/tmp/<n>`, `git restore
-    --source=origin/tmp/<n> -- <script>`, prove the script's blob SHA, run it, delete the scratch
+    `git fetch origin tmp/<name>:refs/remotes/origin/tmp/<name>`, `git restore
+    --source=origin/tmp/<name> -- <script>`, prove the script's blob SHA, run it, delete the scratch
     file, then commit the named files. Prove the whole route from a fresh clone in the sandbox BEFORE
     handing the prompt over. Side lesson from the failed run: when a gzip payload fails its CRC,
     gzip.decompress discards everything; decompressing as raw deflate (skip the 10-byte header and the
@@ -319,8 +319,8 @@
     (`html_url` on any contents call, or search_repositories), because repo.name goes
     into config_hash and into every path in both protocol files. Renaming afterwards
     is cheap and a re-render is not — but a CASE-ONLY rename NO-OPS SILENTLY in
-    GitHub's Settings page: it needs the two-step, rename to <name>-tmp, then to the
-    final casing.
+    GitHub's Settings page: it needs the two-step, rename to <reponame>-tmp, then to
+    the final casing.
     (2) DATE. render.py stamps --date into the header, so a hash table computed by
     Claude Web is only reproducible with that exact date value. A run that substitutes
     today's date renders correct content under a different header and misses every
@@ -368,3 +368,23 @@
   applies_to:
     - every local Claude Code prompt that verifies a push by blob SHA on Surface 12
     - master/start-protocol.master.yaml (S-036 shell notes)
+- id: GOTCHA-020
+  date: 2026-09-09
+  summary: "The connector's READ TRUNCATES angle-bracket placeholders — GOTCHA-009's tmp/<reponame> came back as tmp/<n>, and re-transmitting that read corrupted the file; rebuild every whole-file write from a git clone, never from a connector read"
+  detail: |
+    Part 5 of this wrap appended three entries to this file by re-transmitting the whole
+    file, and the write landed 82 bytes larger than the sandbox build with a different blob
+    SHA. The diff was three lines inside GOTCHA-009 where a placeholder had shrunk. The
+    connector's read tool renders such placeholders in a shortened form, so any text taken
+    from a read and written back silently loses characters — and the corruption is invisible
+    in the reply, in the diff view and in a YAML parse, because the result is still valid
+    YAML. It was caught only by comparing the returned blob SHA to git hash-object of the
+    sandbox file, which is why that comparison is mandatory rather than a formality. THE
+    RULE: build every whole-file write from `git clone` content in the sandbox, never from
+    a connector read; and when a write's blob SHA does not match, diff the landed file
+    against the sandbox build before doing anything else, because the mismatch names the
+    damage exactly.
+  source: "the 2026-09-09 wrap, part 5 (landed af35ade wrong, repaired in the part that follows)"
+  applies_to:
+    - every wrap or direct-write that re-transmits an existing file
+    - master/end-protocol.master.yaml (E-002 write discipline)
