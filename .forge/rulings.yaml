@@ -417,3 +417,29 @@ rulings:
       set so the ceilings are never again measured on a config that is not the maximum.
     supersedes: BLUEPRINT.yaml v1.4 rendering.file_ceilings (start 1650, end 1400) and its measurement block naming config-sandbox-real.yaml as the largest render
     stated_by: Matt, in chat, in this session ("Continue" on the recommendation to re-measure rather than retire protocol text), recorded in the turn per W-002
+  - id: RULING-021
+    date: 2026-09-09
+    subject: Tenth repo to render from the ForgeFlow Master — chromasmith/LeadDowser, a first render on a bare repo deliberately NOT spawned from the SaaS starter template
+    ruling: >-
+      chromasmith/LeadDowser is the TENTH repo rendered from the master, in its own session with
+      its own go ("The repo is called LeadDowser"; "You have full access"). It was NOT spawned
+      from chromasmith-saas-starter — Matt states that was a deliberate choice — so it inherits
+      no config, no rendered protocols and no CLAUDE.md house block, and its config is written
+      from what the tree shows (GOTCHA-003), never from the template's baked defaults. Tree at
+      this ruling: README.md plus a documentation-only .forge/ (README.md,
+      strategy/leaddowser-blueprint.yaml, specs/leaddowser-convergible-interface.yam,
+      instructions/README.md, scanlab/README.md); no package.json, no CLAUDE.md, no
+      .github/workflows/, no .chromaqa/, no .seogeo/, no vercel.json, and none of the .forge/
+      state family (handoff, rulings, session-state, backlog, active-bugs, session-history,
+      GOTCHAS, inbox). Profile standard — a product repo whose app is not yet scaffolded, not a
+      docs repo — so build and deploy detect as none today and the repo is re-rendered once the
+      app scaffolding lands; north_star_doc = .forge/strategy/leaddowser-blueprint.yaml; backlog
+      prefix LD-. EXISTING DOCUMENTATION IS PRESERVED: Matt's instruction is that nothing already
+      in the repo is damaged, deleted or overwritten by this install. The render adds files and
+      seeds the missing .forge/ state family beside the existing docs; any relocation or rename
+      of an existing document is a separate named action he approves first, never folded into a
+      render commit. Concurrency (Matt, this session): no Claude Code session on LeadDowser and
+      no other Claude Web session mid-render. The dispatch harness (RENDER_PROCEDURE step 0b)
+      is installed BEFORE the render so the repo joins dispatch-ON in one trip.
+    supersedes: nothing — RULING-001 said Matt names the repo; this is him naming it
+    stated_by: Matt, in chat, in this session, recorded in the turn it was made per W-002
