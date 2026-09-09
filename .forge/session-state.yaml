@@ -1,38 +1,41 @@
 # Session state — overwritten each session with current snapshot
-session_date: 2026-09-07
+session_date: 2026-09-09
 project: forgeflow (ForgeFlow Master — unified start/wrap protocols rendered per repo)
 milestones:
-  - "FF-009 DONE: master v1.3.0 propagated to ALL NINE repos by two local runs — PROPAGATE-v1.3.0 (five) and PROPAGATE-v1.3.0b (three); convergible and convergible-sandbox joined the registry as FIRST renders (registry 54feb39; every blob SHA re-proven through the connector)"
-  - "RULING-020 filed @ ff4eba4: the S4 ceilings were mis-measured on a fixture carrying neither tool; re-measured to start 2000 / end 1700 rather than retiring protocol text. RENDER_PROCEDURE step 5 corrected @ b178e91"
-  - "Master v1.3.1 landed @ 5664d1b via apply script blob 97c304aa on tmp/v131-apply — FF-015 (behind-count + rebase rule), FF-013 (retired ball-holder sentence), FF-014 (re-measured ceilings + maximum-by-construction fixture and check); tests 61/61"
-  - "v1.3.1 propagated to all nine repos in the SAME run (FF-V131-MASTER): forgeflow 7c41e86, saas-starter 84fdc46, convergible 264bd50, convergible-sandbox c66bd07, seogeo 8c91c0d, chromaqa 2611905, synclips-platform 5363d41, chromasync 502f346, dv-captain c22d068; all 54 blob SHAs matched first try"
-  - "Registry written LAST @ 11bcd8f — every one of the nine rows current at v1.3.1, none pinned, none lagging"
-  - "Matt installed the dispatch harness on synclips-platform, chromasync and dv-captain (claude.yml blob 4cccfbf, verified), so those three render dispatch-ON for the first time; convergible was linked to Vercel (project prj_YaDByQ4SmJy8GWgCY6z2mQ1ZLCYZ, team team_t36B0aZYLYFBbYAqNSi37S98, Root Directory apps/web) and its deploy knobs are now declared overrides — CV-OPEN-3 closed"
+  - "chromasmith/LeadDowser RENDERED as the TENTH repo on the master — first render from v1.3.1, standard profile, dispatch ON, config_hash efaceee3fa42; config landed through the connector (LeadDowser 58c2511, blob 6fa44040) and the four protocol files plus CLAUDE.md by the local run LD-INSTALL-1 (LeadDowser a86cfbb), all six blob SHAs equal to the Claude Web sandbox render and re-proven through the connector after the push"
+  - "RULING-021 filed in the turn Matt named the repo (1860bdc): LeadDowser joins the master, was deliberately NOT spawned from the SaaS starter template, and its existing documentation is never damaged, moved or renamed as a side effect of an install"
+  - "Registry updated LAST @ be3cf47 by the local run LD-REGISTRY-1 — ten rows, every one current at v1.3.1, none pinned or lagging; the file parses to 10 rows with chromasmith/LeadDowser last"
+  - "LeadDowser's dispatch harness completed in the same session: claude.yml installed by Matt via the web editor BEFORE the render (blob 4cccfbf = master/assets/claude.yml, verified), CLAUDE_CODE_OAUTH_TOKEN reported set from 1Password by run LD-REGISTRY-1 and confirmed by gh secret list, and classic branch protection added on main with the administrator bypass PROVEN by a direct docs push (LeadDowser 8a60188)"
+  - "This is the FIRST repo to join the master dispatch-ON on its first pass — every earlier repo was rendered dispatch-off and needed a second render (FFD-001, RULING-009)"
+  - "LeadDowser's whole .forge/ state family seeded by Claude Web through the connector (rulings, backlog, active-bugs, GOTCHAS, session-state, session-history, handoff, inbox .gitkeep), and the LD-INSTALL-1 inbox file consumed and deleted there"
 decisions:
-  - decision: "Raise the mis-measured S4 ceilings to 2000 / 1700 rather than retire ~130 lines of protocol text (RULING-020)"
-    rationale: "The ceilings were measured on config-sandbox-real, which carries neither ChromaQA nor SEO/GEO; they never described the real maximum, so they were wrong rather than breached."
-    impact: "P11 replace-to-add is unchanged and still binds every future addition; a new maximum-by-construction fixture plus a test check now fail the suite on a breach."
-  - decision: "Convergible's Vercel knobs are DECLARED overrides, not detection"
-    rationale: "Linking from the Vercel dashboard puts no file in the repo, so detect() can never see the project."
-    impact: "Its config carries subsystems.vercel / build.deploy / build.deploy_verify pinned to the project and team IDs; a future session must not 'fix' them back to detected."
-  - decision: "Land the v1.3.1 master change and its propagation in ONE Claude Code run, with the prompt explicitly authorizing the master edits so PRECEDENCE would not halt it"
-    rationale: "Matt asked for the fewest trips; the SHAs for all nine repos were computable from the rehearsed master before it landed (rehearsal proven from a fresh clone, apply script blob 97c304aa)."
-    impact: "One run did both halves and nothing halted; the pattern is reusable for any master change that must reach every repo the same day."
+  - decision: "Render LeadDowser on the standard profile with build.validation and build.deploy overridden to none, rather than on docs-only"
+    rationale: "It is a product repo whose app is not yet scaffolded, not a documentation repo; the profile stays right and the two overrides are dropped later."
+    impact: "LeadDowser owes one re-render (its LD-003) once package.json exists and Vercel is linked; a docs-only render would have had to be redone wholesale instead."
+  - decision: "Rename the GitHub repo from leaddowser to LeadDowser instead of re-rendering everything to lowercase"
+    rationale: "Zero re-render, and the GitHub name then matches the product name, the ruling and the canonical checkout path C:\\Chromasmith\\LeadDowser."
+    impact: "A case-only rename NO-OPS silently in GitHub Settings and needed the two-step (LeadDowser-tmp, then LeadDowser) — GOTCHA-017."
+  - decision: "Branch protection is added with 'Require a pull request' ON but 'Require approvals' UNTICKED"
+    rationale: "Matt cannot approve his own pull request and Claude Web opens runner PRs as him, so a required approval deadlocks every merge the moment the administrator bypass is tightened."
+    impact: "Filed as RULING-022 and owed into RENDER_PROCEDURE step 0b as FF-019; the nine repos protected before today were configured by hand and are not known to have been checked for this."
+  - decision: "Deliver the ~196 KB rendered file set through ONE local Claude Code run rather than the connector"
+    rationale: "The connector aborts near 100 KB (GOTCHA-008) and LeadDowser's start protocol alone is 86 KB; render.py is deterministic, so the run re-rendered and had to match Claude Web's six blob SHAs before it was allowed to push."
+    impact: "A first render of any repo is now a two-lane job — connector for the small config, one Claude Code run for the rendered set — and the hash table is the gate, not trust."
 blockers: []
 next_steps:
-  - priority: low
-    task: "FF-016 — S-033's rebase rule does not cover a checkout that is both dirty and holding local commits (git refuses to rebase then; merge --ff-only is the answer). Two sentences in S-033 plus one line in W-005, riding the next master change. Nothing is broken today."
+  - priority: medium
+    task: "FF-019 — amend master/RENDER_PROCEDURE.md step 0b so the branch-protection step states that 'Require approvals' must be UNTICKED (RULING-022), and add the two onboarding steps this install proved are missing: rename check before rendering, and the connector-versus-Claude-Code delivery rule by rendered size."
 context: |
-  MASTER: v1.3.1 on GitHub (5664d1b); 95 start blocks, 51 end blocks; tests 61/61 including the
-  new ceiling check. PROPAGATED: all nine repos, registry 11bcd8f. Ceilings after re-measurement:
-  start 2000 (largest real render 1766, convergible), dispatch start 650 (588), end 1700 (1480),
-  dispatch end 150 (95). DISPATCH is now genuinely available in every registered repo — the three
-  Synclips repos gained the harness today. STILL OWED BY MATT, neither blocking: branch protection
-  on synclips-platform, chromasync, dv-captain and convergible, and the CLAUDE_CODE_OAUTH_TOKEN
-  secret on convergible (a spawn does not copy secrets, so its dispatch lane is rendered but not
-  yet runnable). NOT FORGEFLOW WORK, recorded so it is not lost: convergible's depcheck gate exits
-  127 and has never actually checked dependencies (DEP-004), and its .chromaqa/CQA-debt.jsonl is
-  dirty again with 10 lines from the last push — both belong to a convergible session.
-  LANDING ROUTE proven three times now (54c1293, 8db4ff2, 5664d1b): apply script on a temporary
-  branch through the connector, fetched and run by a local Claude Code session, Matt deletes the
-  branch in the browser. tmp/v131-apply was deleted by Matt at the close.
+  MASTER: v1.3.1 on GitHub (5664d1b), unchanged today — no master text was edited, no
+  re-render of any existing repo, so nothing propagated. REGISTRY: ten rows at be3cf47, all
+  current at v1.3.1. The only master-side artifact still unwired is
+  master/blueprint-standard.master.yaml (47f4b55, added 2026-09-08): it is in the master but
+  not referenced by render.py, the profiles or the propagation procedure, so no repo carries a
+  copy of the blueprint standard yet — that remains true after today.
+  OPEN FORGEFLOW ITEMS: FF-019 (step 0b amendment, next), FF-016 (S-033 dirty-plus-commits
+  wording, rides the next master change — do not cut a release for it alone), FF-017
+  (convergible-sandbox repo-rules.yaml still unwritten), FF-010 (pointer-URL idea, parked).
+  Nothing is broken; none of these blocks a session in any repo.
+  STILL OWED BY MATT elsewhere, unchanged today: branch protection on synclips-platform,
+  chromasync, dv-captain and convergible, and the CLAUDE_CODE_OAUTH_TOKEN secret on
+  convergible.
