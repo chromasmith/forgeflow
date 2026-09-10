@@ -171,6 +171,11 @@ with tempfile.TemporaryDirectory() as td:
     # 12c. v1.4.1 (FF-020, RULING-029) — the doc-tightening procedure exists and S-093 points at it
     checks.append(((REAL / "DOC_TIGHTENING_PROCEDURE.md").exists() and "RULE INVENTORY" in read(REAL / "DOC_TIGHTENING_PROCEDURE.md") and "## open_items" in read(REAL / "DOC_TIGHTENING_PROCEDURE.md"), "real master: DOC_TIGHTENING_PROCEDURE.md present, inventory-gated, written to the document standard (RULING-029)", ""))
     checks.append((("DOC_TIGHTENING_PROCEDURE.md" in stext and "forgeflow-session operation" in stext), "real master: S-093 carries the forgeflow-session pointer for document tightening (RULING-029)", ""))
+    # 12d. v1.4.2 (FF-022 + FF-023, RULING-032) — runner clause, forward-slash paths, tightening version rule
+    tpl = read(REAL / "assets" / "doc-tightening.issue.md")
+    checks.append(("a runner receiving one is carrying it out" in stext and "this\n  repo never carries either" not in stext, "real master: S-093 tells a runner receiving a tightening issue it is carrying the operation out (GOTCHA-025)", ""))
+    checks.append(("FORWARD slashes" in stext and "C:/Chromasmith/$R" in stext, "real master: W-005 carries the forward-slash check for variable paths (GOTCHA-015)", ""))
+    checks.append(("RULING-032" in tpl and "patch version" in tpl and "RETIRED prohibition" in tpl and ".original" in tpl and "PARTIAL DELIVERY" in tpl, "real master: tightening template carries the version rule and the FF-023 refinements", ""))
     # 13. FF-014 / RULING-020 — the MAXIMUM knob set (dispatch on, ChromaQA AND SEO/GEO) stays under every S4 ceiling.
     #     Measured on the REAL master, not the fixture master: a ceiling is about what a session actually reads.
     CEIL = {"start-protocol.yaml": 2000, "start-protocol.dispatch.yaml": 650, "end-protocol.yaml": 1700, "end-protocol.dispatch.yaml": 150}

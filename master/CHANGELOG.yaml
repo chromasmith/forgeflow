@@ -2,6 +2,23 @@
 # The top entry's `version` is the master version render.py stamps into every render.
 # Newest first.
 entries:
+  - version: "v1.4.2"
+    date: 2026-09-10
+    status: RELEASED — FF-022 with FF-023; propagates to nine repos in one pass, LeadDowser pinned while Matt works in it
+    changed: >-
+      Text and procedure only — no renderer or schema change, so config_hash moves for no repo.
+      (1) FF-022 / GOTCHA-025: S-093's closing sentence now says the forgeflow session files each
+      tightening issue on the target repo and a runner receiving one is carrying the operation out,
+      not breaching the rule; same line count, so no ceiling moves. (2) GOTCHA-015: W-005 gains the
+      forward-slash check for paths built from a shell variable. (3) FF-023 / RULING-032: the
+      tightening template bumps the document's patch version and date, classifies field-test
+      evidence (history) and standing cautions (open items), turns "ruled out permanently" into a
+      RETIRED prohibition, names the no-pipe scratch-file pattern for runners (GOTCHA-026), adds a
+      partial-delivery fallback for large documents, and states who filed the issue; the procedure
+      carries the version rule, the matching review checks, and a v1.4.2 preflight floor.
+      (4) GOTCHA-027: RENDER_PROCEDURE step 0 opens the north-star document and checks its header.
+      (5) test_render.py: checks for the S-093 runner clause, the W-005 line and the template's
+      version rule.
   - version: "v1.4.1"
     date: 2026-09-10
     status: RELEASED — FF-020, the doc-tightening procedure and the loose ends v1.4.0 left; propagates to all ten repos in one pass

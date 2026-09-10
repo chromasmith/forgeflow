@@ -3,7 +3,7 @@
 Blueprint v1.2, Section 6 and Principle P9. Written so a fresh Claude Web session can execute it cold.
 Claude Web runs `master/render.py` in its own sandbox; GitHub is only ever read and written through the GitHub MCP.
 
-STATUS (2026-09-10, master v1.4.1): ten repos rendered, all dispatch-ON with the harness installed by step 0b.
+STATUS (2026-09-10, master v1.4.2): ten repos rendered, all dispatch-ON with the harness installed by step 0b.
 A repo the sandbox cannot clone (private, no credential) is detected from a tree skeleton rebuilt from the GitHub
 listing — create the exact paths render.py's detect() looks for, nothing else — and the skeleton MUST carry the
 real content of `.github/workflows/claude.yml` when it exists (fetch it through the GitHub MCP), because render.py
@@ -15,6 +15,9 @@ Claude Code run, never the connector (step 0b item 5).
   another Claude Web session is mid-render or about to wrap (GOTCHA-002/004), before step 7.
 - LIST THE TARGET TREE FIRST (GOTCHA-003): `.github/workflows/`, `.chromaqa/`, `.seogeo/`, `package.json`,
   `vercel.json`, `.gitattributes`, `CLAUDE.md`. Write the ruling and the config from what the tree shows.
+- OPEN THE NORTH-STAR DOCUMENT before naming it in the config (GOTCHA-027): read its first 30 lines and confirm its
+  own title or meta names the document its path claims. Two instructional files within a few bytes of each other in
+  size are one document duplicated until their headers are read.
 - The target repo has `.forge/protocol-config.yaml` (repo-facing form: `profile` + `repo` + `overrides`). If it
   does not, write one from the profile that fits (`standard`, `legacy-local`, `docs-only`) and commit it FIRST.
 

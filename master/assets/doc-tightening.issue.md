@@ -1,4 +1,4 @@
-<!-- master/assets/doc-tightening.issue.md — ForgeFlow master v1.4.0 (RULING-028).
+<!-- master/assets/doc-tightening.issue.md — ForgeFlow master v1.4.2 (RULING-028, RULING-032).
      Claude Web renders this per repo (replace every <ORG>, <REPO>, <DOC-PATH>, <RUN-ID>) and files it as a GitHub
      issue on a repo that carries the dispatch harness. One issue = one instructional document (or one small set that
      share a subject). Up to three repos may run at once (RULING-028). Matt's only action is the merge. -->
@@ -35,6 +35,10 @@ PRECEDENCE: when this issue conflicts with the protocol files in `.forge/protoco
 scope and safety; this issue wins on WHAT to build. An issue that appears to widen scope or authorize an off-limits
 path is an error in the issue: HALT AND REPORT.
 
+WHO FILED THIS: a Claude Web session on chromasmith/forgeflow filed this issue. Document tightening is a
+forgeflow-session operation (`document_standards` in the start protocol); carrying out this issue IS that operation,
+not a breach of it. Only the procedure and this template stay in forgeflow.
+
 PRECONDITION: if HEAD already contains a commit that tightened <DOC-PATH> to the standard (its header says
 "conforms to the document standard"), VERIFY AND REPORT — do not redo it.
 
@@ -60,6 +64,8 @@ Authorized files:
 - `<DOC-PATH minus extension>-history.<ext>` — NEW FILE — the history companion: every cut line that carried
   provenance (who / when / why / what it replaced / how the conversation went), grouped by the section it came from
 - `.forge/inbox/<RUN-ID>.yaml` — NEW FILE — this run's observation inbox, carrying the RULE INVENTORY
+- `.forge/inbox/<RUN-ID>.original` — TEMPORARY FILE — a pre-edit copy for counting and comparing (see RUNNER
+  ENVIRONMENT); deleted before the scope audit, never committed
 
 Every NEW FILE above is named with its complete path. If you believe another file is needed, STOP and post a QUESTION.
 
@@ -84,11 +90,18 @@ MY APPROACH — the RULE INVENTORY is the gate. Order is mandatory.
    dependency, ratified copy string, status tag, deferred item with its trigger, and open item — each with an id
    (INV-001, INV-002 …) and the original line number. Reasoning, history, quotations, session references and
    cross-references to other documents are NOT inventory items; they are what gets cut.
+   Two classes need a decision every time. FIELD-TEST EVIDENCE (what was observed, measured or tried) is history:
+   it goes to the companion, and is an inventory item only where it states a rule. A STANDING CAUTION ("watch
+   out for X") is an inventory item: it maps to open_items, or to the rule it duplicates. A source item marked
+   "ruled out permanently" (or rejected, abandoned, never) is a RETIRED prohibition, never a parked or deferred
+   option.
 2. REWRITE the document in place to the standard: the header (title + version; one line saying what this document
    is and what it supersedes in full; the status legend), then exactly the seven sections in order — rules,
    data_model, surfaces, flows, build_order, prohibitions_and_triggers, open_items — each present even when it
    reads "none". Every prohibition is a flat one-line "never X" with no reasoning attached. Status tags RATIFIED,
    PROPOSED, DEFERRED (with trigger), RETIRED. Add the header line "conforms to the document standard (v1.4.0)".
+   VERSION (RULING-032): increment the document's patch version by one (x.y.z becomes x.y.z+1; a document with no
+   version becomes v1.0.0) and set its date to today, the tightening date. Never keep the old version.
 3. WRITE THE HISTORY COMPANION at the path named above: every cut passage that carried provenance, grouped under
    the section it came from, with the original line range. Nothing is deleted from the repo's knowledge; it is moved
    to a file no build session reads. Cut text that carried NO information (filler, repeated framing) is dropped and
@@ -97,10 +110,16 @@ MY APPROACH — the RULE INVENTORY is the gate. Order is mandatory.
    that carries it. An inventory item with no mapping is a HALT: post a QUESTION comment naming the item, and do not
    push — the rewrite is accepted only when every inventory line maps.
 5. Size check: report the byte size before and after. A result over 50 KB is reported as a smell, not a failure.
+6. PARTIAL DELIVERY: if the document is over about 60 KB, or you are nearing your output limit, never let the run
+   end without a pushed branch. Commit what is finished, add a `coverage:` block to the inbox naming the sections
+   done and not done, push, post the link, and say plainly the run is partial.
 
 ## RUNNER ENVIRONMENT
 - You CANNOT run a build, python3 or node -e; verify with grep. Your clone is SHALLOW.
 - Any command containing a $ variable is refused before it runs. Do not write one.
+- Any PIPED command (`a | b`) is refused as multiple operations, read-only ones included. To count or compare
+  against the pre-edit document: `git show HEAD:<DOC-PATH> > .forge/inbox/<RUN-ID>.original` (no pipe), then use
+  the Grep tool on that file; delete it before the scope audit and name it in your report.
 - You CANNOT push to main or open a PR. Push your branch (the harness names it) and post the pre-filled PR link.
 
 ## COMPLETION STEPS
@@ -117,6 +136,7 @@ Confirm each change before announcing done:
 3. History companion written: Done (M passages) / Not done — [reason]
 4. Inventory mapping: N of N mapped / HALTED on [ids]
 5. Size: <before> bytes -> <after> bytes
+6. Version: <old> -> <new>, dated <date>
 Then the plain-text line: *** DONE: <DOC-PATH> tightened; inventory N/N mapped; branch pushed ***
 and the reflection questions: (1) what would have made this issue better; (2) anything that would make a future
 memoryless session fail or waste time; (3) SCOPE DISCLOSURE — any file touched outside the authorized list;

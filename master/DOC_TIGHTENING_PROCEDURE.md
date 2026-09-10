@@ -1,6 +1,6 @@
 # DOC TIGHTENING PROCEDURE — how a forgeflow session brings a legacy document to the document standard
 
-Master v1.4.1 (RULING-028, RULING-029, RULING-030). Conforms to the document standard (v1.4.0). Supersedes in full the
+Master v1.4.2 (RULING-028, RULING-029, RULING-030, RULING-032). Conforms to the document standard (v1.4.0). Supersedes in full the
 "session opened on the target repo" lane of RULING-028 and the inline procedure text of backlog item FF-020.
 Status legend: RATIFIED, PROPOSED, DEFERRED (with trigger), RETIRED.
 
@@ -28,6 +28,8 @@ Status legend: RATIFIED, PROPOSED, DEFERRED (with trigger), RETIRED.
 - RATIFIED — Progress per repo is a DONE / NEXT inventory (RULING-030): every instructional document in the repo is
   listed under its FF-021 entry in forgeflow `.forge/backlog.yaml`, marked done (merge SHA) or next; a resuming
   session states "done / next" from that list, never from a tree scan.
+- RATIFIED — A tightened document's patch version goes up by one and its date becomes the tightening date; the old
+  version is never kept (RULING-032).
 
 ## data_model
 
@@ -58,7 +60,8 @@ Status legend: RATIFIED, PROPOSED, DEFERRED (with trigger), RETIRED.
    in-scope rule) and writes the block at this session's wrap with each marked next until landed; if the block
    exists, Claude Web reads it and states in one line what is done and what is next.
 1. PREFLIGHT, per document, from the connector — every check silent when it passes:
-   - the repo's row in `master/registered-repos.yaml` is `current` at v1.4.0 or later;
+   - the repo's row in `master/registered-repos.yaml` is `current` at v1.4.2 or later — an older render's
+     `document_standards` can halt a cold runner (GOTCHA-025), so a lagging repo is rendered first (RENDER_PROCEDURE);
    - the repo's rendered start protocol header reads `dispatch=on` (else: fallback lane, said in one line);
    - the document exists at the exact path and is instructional (rules list above); a record file is declined;
    - no open PR touches the document; no other issue this session names it;
@@ -77,8 +80,11 @@ Status legend: RATIFIED, PROPOSED, DEFERRED (with trigger), RETIRED.
    - spot-check at least three inventory items — the mapped line in the new document carries the same rule;
    - the new document has the header line "conforms to the document standard (v1.4.0)", the seven sections in
      order, flat one-line prohibitions, status tags, and no session references, quotations or reasoning;
-   - the history companion exists at the named path and holds the cut provenance;
-   - the PR touches only the three authorized paths;
+   - the history companion exists at the named path and holds the cut provenance, field-test evidence included;
+   - every source item "ruled out permanently" (or equivalent) is a RETIRED prohibition, not a parked option;
+   - the version went up by one patch and the date is the tightening date (RULING-032);
+   - the `.forge/inbox/<RUN-ID>.original` scratch file is absent from the PR;
+   - the PR touches only the three committed authorized paths;
    - size before and after read from the inbox; over 50 KB after is named as a smell.
    Any failed check: a comment on the PR naming it, `@claude` to resume the run, no merge recommendation.
 6. RECOMMEND in one plain sentence per PR; Matt's yes in chat; squash-merge through the connector; confirm the

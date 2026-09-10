@@ -1,8 +1,8 @@
 # =============================================================================
 # FORGEFLOW MASTER — UNIFIED SESSION-PROTOCOL SYSTEM
-# Blueprint v1.9 — 2026-09-10 (two board passes; DESIGN CLOSED; master v1.4.1 doc-tightening procedure; rollout order by ruling; S4 ceilings from measured renders)
+# Blueprint v1.10 — 2026-09-10 (two board passes; DESIGN CLOSED; master v1.4.2 runner-clause and tightening refinements; rollout order by ruling; S4 ceilings from measured renders)
 # Author: Claude Web (planning session with Matt Fleming, Chromasmith LLC)
-# Status: DESIGN CLOSED after two committee passes. Master RELEASED (v1.4.1; ten repos on the master, propagated in one pass per change); repos join by Matt naming them (RULING-001).
+# Status: DESIGN CLOSED after two committee passes. Master RELEASED (v1.4.2; ten repos on the master, propagated in one pass per change); repos join by Matt naming them (RULING-001).
 # Home: github.com/chromasmith/forgeflow  master/BLUEPRINT.yaml
 # =============================================================================
 #
@@ -15,9 +15,18 @@
 
 meta:
   name: ForgeFlow Master
-  version: "1.9-blueprint"
+  version: "1.10-blueprint"
   date: 2026-09-10
   revision_history:
+    - version: "1.10"
+      note: >
+        RUNNER CLAUSE AND TIGHTENING REFINEMENTS (master v1.4.2, FF-022 + FF-023, RULING-032).
+        S-093's closing sentence says a runner receiving a tightening issue is carrying the
+        forgeflow-session operation out (GOTCHA-025), at the same line count; W-005 gains the
+        forward-slash check for variable paths. The tightening template bumps the document's patch
+        version and date, sorts field evidence from standing cautions, names the no-pipe scratch
+        pattern and a partial-delivery fallback; RENDER_PROCEDURE step 0 checks the north-star
+        document's header (GOTCHA-027). Section 6 current measurement moved to v1.4.2.
     - version: "1.9"
       note: >
         DOC-TIGHTENING PROCEDURE (master v1.4.1, FF-020, RULING-029). NEW
@@ -723,9 +732,9 @@ rendering:
       headroom: about 15 percent over each measured file, rounded up to the nearest 50
       current_measurement:
         date: 2026-09-10
-        master_version: v1.4.1
+        master_version: v1.4.2
         config: the same maximum knob set (config-tools-max.yaml with tree-tools-max)
-        measured_lines: { start-protocol.yaml: 1854, start-protocol.dispatch.yaml: 640, end-protocol.yaml: 1558, end-protocol.dispatch.yaml: 102 }
+        measured_lines: { start-protocol.yaml: 1857, start-protocol.dispatch.yaml: 640, end-protocol.yaml: 1558, end-protocol.dispatch.yaml: 102 }
         note: >
           start-protocol.dispatch.yaml is within a few lines of its 650 ceiling. The next
           master change that adds text to any block with reader "all" or "cc-dispatch" must
