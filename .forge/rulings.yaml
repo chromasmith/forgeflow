@@ -554,3 +554,29 @@ rulings:
       session (see the E-001 exception fix on this session's list).
     supersedes: nothing — E-002 and E-030 are extended; the "memory is a side channel" wording of S-009/W-002 is reaffirmed with an enforcement step
     stated_by: Matt, in chat, in this session ("This is not okay... Everything must be saved to GitHub"), recorded in the turn it was made per W-002
+  - id: RULING-026
+    date: 2026-09-10
+    subject: Claude Web reply SHAPE — BOTTOM LINE is the first line, Matt's actions live once in a ruled "YOUR MOVE" block, detail only below
+    ruling: >-
+      Matt's chronic friction, in his words: he spends about 30 percent of his interactions
+      asking Claude to "bottom line it"; like an LLM reading a long document he attends to the
+      start and the end and skips the middle, and he wants his actions — his verbs — in a
+      visually identifiable form he can scan for. Claude Web's recommendation, accepted ("let's
+      give it a shot"): a fixed reply SHAPE, because a template the model must fill sticks
+      where a length rule drifts. THE SHAPE, protocol text in W-001 and the CLAUDE.md house
+      block (v1.4.0): (1) every Claude Web reply opens with the line "**BOTTOM LINE:**" in bold
+      caps followed by ONE sentence — what happened, what it means for Matt, the way around;
+      (2) any action Matt must take appears exactly once, in a block set off by horizontal
+      rules above and below, headed "**▶ YOUR MOVE:**" in bold caps, stating one action as an
+      imperative verb and nothing else; actions are never buried in prose; (3) when Matt has no
+      action the block is ABSENT — silence remains the pass state, and an empty block is noise;
+      (4) technical detail, reasoning and alternatives come only BELOW those two elements and
+      stay within the four-sentence ceiling and its named exceptions (W-001); (5) the Session
+      Context Summary keeps its own eight-line shape and the canary on line one — its first
+      line is its bottom line. This is Claude Web's counterpart to Claude Code's mandatory
+      plain-text MATT — YOUR TURN banner (S-049): same purpose, the visual forms the chat can
+      render (bold, caps, rules). The chat renders Markdown only — no colour, no highlight,
+      no font size beyond headers — so bold caps between rules is the strongest signal
+      available and is the house standard.
+    supersedes: nothing — extends W-001 (RULING-019) with a structural shape; the four-sentence ceiling, layering and lead-with-the-recommendation rules are unchanged
+    stated_by: Matt, in chat, in this session ("Great, let's give it a shot"), recorded in the turn it was made per W-002
