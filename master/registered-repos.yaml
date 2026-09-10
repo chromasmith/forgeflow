@@ -16,7 +16,7 @@
 # Matt naming the repo; there is no queue here and no implied order.
 # =============================================================================
 
-master_version_current: "v1.4.2"   # landed 2026-09-10 (fd50094, run FF-V142-MASTER) and propagated to eight other rows in the same run; chromasmith/LeadDowser is PINNED at v1.4.1 (Matt working in it). Registry written last, after every landing was re-proven through the connector. v1.4.2 is FF-022 + FF-023 (RULING-032): S-093 runner clause, W-005 forward-slash paths, tightening template refinements and version rule, RENDER step 0 north-star check — text only, so no config_hash changed.
+master_version_current: "v1.4.2"   # landed 2026-09-10 (fd50094, run FF-V142-MASTER) and propagated to eight other rows in the same run; chromasmith/LeadDowser, pinned during that pass, rendered to v1.4.2 by run PROPAGATE-v1.4.2b (LeadDowser 9fca434), so all ten rows are current. Registry written last, after every landing was re-proven through the connector. v1.4.2 is FF-022 + FF-023 (RULING-032): S-093 runner clause, W-005 forward-slash paths, tightening template refinements and version rule, RENDER step 0 north-star check — text only, so no config_hash changed.
 
 repos:
   - repo: chromasmith/seogeo
@@ -313,11 +313,10 @@ repos:
   - repo: chromasmith/LeadDowser
     config: .forge/protocol-config.yaml
     profile: standard
-    master_version: "v1.4.1"
+    master_version: "v1.4.2"
     rendered_on: 2026-09-10
     config_hash: efaceee3fa42e22d2a691a7c98a1035330079390853cc208d8e0ba926ea64840
-    state: pinned
-    reason: "Matt was working in LeadDowser during the v1.4.2 pass (2026-09-10); no protocol_drift line written because the repo was busy (PROPAGATION step 4). Rendered to v1.4.2 as the FIRST step of the next forgeflow session that tightens a LeadDowser document; DOC_TIGHTENING_PROCEDURE preflight requires v1.4.2."
+    state: current
     files:
       - .forge/protocols/start-protocol.yaml
       - .forge/protocols/start-protocol.dispatch.yaml
@@ -325,7 +324,7 @@ repos:
       - .forge/protocols/end-protocol.dispatch.yaml
       - .forge/protocol-config.yaml
       - CLAUDE.md
-    landed: "v1.4.1 propagation 2026-09-10: ONE commit 64c51ce (six files) by the local Claude Code run FF-V141-MASTER; double render byte-stable, config-hash gate PASS, blobs read back from origin/main, commit and six-file set re-proven through the connector. Previous: v1.4.0 propagation 2026-09-10: ONE commit ad19ff6 (six files + rulings shard 001-020) by the local Claude Code run PROPAGATE-v1.4.0; hash gate PASS, double render byte-stable, six blob SHAs read back from origin/main. Previous: FIRST RENDER 2026-09-09: the config landed first through the Claude Web connector @ 58c2511 (blob 6fa44040dc55d43fa4844c10dbc886a52b282a98) and was then reproduced byte-identically by the local render, which is this repo's determinism proof; the other five files landed as ONE commit a86cfbb by the local Claude Code run LD-INSTALL-1 (start ecd3aa9, start.dispatch 487a7a9, end cd7bf97, end.dispatch e434849, CLAUDE.md 1c3a087), every blob SHA equal to the Claude Web sandbox render and re-proven through the connector after the push."
+    landed: "v1.4.2 catch-up 2026-09-10: ONE commit 9fca434 (six files, +19/-16) by the local Claude Code run PROPAGATE-v1.4.2b after the v1.4.2 pin was lifted; double render byte-stable, config-hash gate PASS, numstat gate PASS, six blobs read back from origin/main and re-proven through the connector; stale runner branch claude/issue-2-20260910-1815 deleted by the run (inbox 6f5e058). Previous: v1.4.1 propagation 2026-09-10: ONE commit 64c51ce (six files) by the local Claude Code run FF-V141-MASTER; double render byte-stable, config-hash gate PASS, blobs read back from origin/main, commit and six-file set re-proven through the connector. Previous: v1.4.0 propagation 2026-09-10: ONE commit ad19ff6 (six files + rulings shard 001-020) by the local Claude Code run PROPAGATE-v1.4.0; hash gate PASS, double render byte-stable, six blob SHAs read back from origin/main. Previous: FIRST RENDER 2026-09-09: the config landed first through the Claude Web connector @ 58c2511 (blob 6fa44040dc55d43fa4844c10dbc886a52b282a98) and was then reproduced byte-identically by the local render, which is this repo's determinism proof; the other five files landed as ONE commit a86cfbb by the local Claude Code run LD-INSTALL-1 (start ecd3aa9, start.dispatch 487a7a9, end cd7bf97, end.dispatch e434849, CLAUDE.md 1c3a087), every blob SHA equal to the Claude Web sandbox render and re-proven through the connector after the push."
     notes: >-
       TENTH repo rendered (RULING-021), and the first that was NOT spawned from
       chromasmith-saas-starter and did not inherit a template config — Matt's deliberate
