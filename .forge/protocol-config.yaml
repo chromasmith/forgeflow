@@ -39,7 +39,7 @@ ids:
 # protected.spec_dirs_off_limits: [".forge/specs/"]
 # protected.tombstone_gotchas: []
 # protocol.config_hash: "7ccf78dfab2fd1a61cc67fe1d8e97cd796b6de197a1a560da45381988267b46d"
-# protocol.master_version: "v1.4.1"
+# protocol.master_version: "v1.4.2"
 # protocol.render_method: "code"
 # protocol.rendered_on: "2026-09-10"
 # repo.alternate_machines: []
