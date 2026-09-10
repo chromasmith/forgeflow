@@ -1,50 +1,49 @@
 # .forge/handoff.yaml — chromasmith/forgeflow
 # Pass-the-baton briefing written BY the outgoing Claude Web session TO the next.
 # A WARNING LETTER, not a summary. The other .forge/ files hold state; this holds feel.
-# generated: 2026-09-10T20:25:36Z
-# session: 2026-09-10 (third session — master v1.4.2, FF-022 + FF-023)
-written_at_commit: ca70fd1bcaf17557e115351cc7f183fcbd22c622
-written_at_utc: 2026-09-10T20:25:36Z
-wrap_complete: true
-wrap_parts_total: 7
+# generated: 2026-09-10T22:23:48Z
+# session: 2026-09-10 (fourth session — FF-021 on chromasmith/convergible)
+written_at_commit: a049f6e3e5f0b1ee695768be712d9b45a05d2463
+written_at_utc: 2026-09-10T22:23:48Z
+wrap_complete: false
+wrap_parts_total: 6
 
 status: |
-  Master v1.4.2 (fd50094) runs on nine repos; registry 2765842 has nine rows current and
-  chromasmith/LeadDowser pinned at v1.4.1 because Matt was working in it. v1.4.2 (fd50094) fixed the S-093
-  sentence that halted a cold tightening runner, added the W-005 forward-slash line, and refined
-  the tightening template with the RULING-032 version rule. No unmerged PR; no transport branch left.
-  OVERALL POSITION: the protocol system is on one version everywhere except one pinned repo, and the
-  legacy-document cleanup (FF-021) is paused at LeadDowser's style kit, which waits on that repo's
-  catch-up render.
+  FF-021 on chromasmith/convergible is finished: .forge/legal/compliance.yaml (PR #4, 356033a) and the
+  Showcase blueprint v6 (PR #5, c82ae59) are at the document standard, each after one review round.
+  Master v1.4.2 runs on nine repos; LeadDowser is still pinned at v1.4.1 and was in active edit. No
+  unmerged PR from this session in forgeflow or convergible.
+  OVERALL POSITION: two of ten repos are into the legacy-document cleanup (convergible done, LeadDowser
+  2 of 3 documents), eight have not started, and the protocol system is on one version everywhere except
+  LeadDowser.
 
 first_thing: |
-  FF-024 — render chromasmith/LeadDowser to master v1.4.2, the only pinned row in
-  master/registered-repos.yaml (2765842). Ask Matt first whether any Claude Code or Claude Web
-  session is active on LeadDowser; it was pinned because he was working there. One local Claude Code
-  run per PROPAGATION_PROCEDURE step 5 for that one repo: refresh the checkout, double render,
-  config-hash gate against its row (efaceee3fa42), expected diff limited to the header stamps, the
-  S-093 closing sentence and the W-005 bullet, push, read back six blobs. Verify: the six blobs
-  through the connector, then the LeadDowser row set to current v1.4.2 LAST.
+  Finish the 2026-09-10 (fourth session) wrap: parts 2-6 in order — .forge/session-state.yaml
+  overwrite, .forge/session-history.yaml append, .forge/backlog.yaml edit (FF-024 blocked, FF-026
+  added, FF-021 convergible block), .forge/GOTCHAS.yaml append GOTCHA-030..035, final handoff with
+  wrap_complete true. Then FF-024 (render LeadDowser to v1.4.2 once it is free).
 
 watch_out_for:
-  - "The v1.4.2 diff checker lived only on the deleted transport branch (blob aae8831b, commit 6cf6e30, now unreachable). For FF-024 either rebuild it — the committed copy with header stamps v1.4.1 to v1.4.2, the S-093 closing sentence swapped and the W-005 bullet inserted must equal the new render byte for byte — or rely on the double render plus the config-hash gate, and say which in the prompt (GOTCHA-029)."
-  - "A ChromaQA summary line reading N new warnings logged does not mean .chromaqa/CQA-debt.jsonl changed (GOTCHA-028). Read the ledger with git diff after a push, never the sentence."
-  - "Dispatch-start is 640/650 on the maximum knob set (BLUEPRINT current_measurement, v1.4.2). Any addition to a block with reader all or cc-dispatch replaces text (P11)."
-  - "LeadDowser loose ends stay in this backlog's FF-021 block: stale runner branch claude/issue-2-20260910-1815, inbox files TIGHTEN-LeadDowser-001/002 await LeadDowser's own wrap, the style kit's code half installs in its P0."
-  - "convergible's ChromaQA gate prints one ACCEPTED captain finding (G-20 / SEO-054, Matt's acceptance of 2026-09-07, expiry in its .chromaqa/accepted.json) and pre-existing soft findings on every push; none blocks and none is forgeflow's to act on."
+  - "Review every tightening PR's diff, not only its inventory count: PR #5 mapped 392/392 while promoting draft copy to RATIFIED, and PR #4 mapped 64/64 while dropping four current facts (GOTCHA-030, GOTCHA-031). FF-026 puts both checks in the template; it lands before the next tightening dispatch."
+  - "Whole-file rewrites of files holding angle-bracket placeholders lose characters even when built from a clone, because the sandbox display shortens them too (GOTCHA-033, 747073a). Compare every returned blob SHA to git hash-object; on a mismatch, diff against the clone first."
+  - "Squash-merge runner PRs with an explicit commit_message; a title alone lets GitHub add a claude[bot] Co-authored-by trailer (GOTCHA-034, convergible 356033a)."
+  - "Claude Web cannot read convergible's check runs or combined status (GitHub connector 403) or list its Vercel deployments (403); Vercel previews showed Error on docs-only PRs #4 and #5. Diagnosis belongs to a convergible session (GOTCHA-035)."
+  - "The v1.4.2 diff checker lived only on a deleted branch (GOTCHA-029): for FF-024 rebuild it or rely on the double render plus the config-hash gate, and say which in the prompt."
+  - "Dispatch-start is 640/650 on the maximum knob set; any addition to a block runners read replaces text (P11)."
+  - "Loose ends live in the FF-021 block: LeadDowser stale runner branch claude/issue-2-20260910-1815 and inbox files TIGHTEN-LeadDowser-001/002; convergible inbox files TIGHTEN-convergible-001/002, branch wrap-apply-2026-09-09 and four accuracy items for a convergible session."
 
 next_up:
-  - "FF-021 — LeadDowser .forge/design/leaddowser-style-kit.yaml is the next document, after FF-024."
-  - "FF-025 (deferred) — the propagation diff check becomes a permanent tool and PROPAGATION step 3 names it; rides the next master change."
+  - "FF-026 (deferred) — tightening template and procedure refinements; after FF-024, before the next FF-021 dispatch."
+  - "FF-021 — LeadDowser .forge/design/leaddowser-style-kit.yaml next; not started: seogeo, chromaqa, chromasmith-saas-starter, synclips-platform, chromasync, dv-captain, convergible-sandbox, forgeflow."
+  - "FF-025 (deferred) — the propagation diff check becomes a permanent tool; rides the next master change."
   - "FF-010 (parked) — pointer-URL protocols."
   - "P11 prune session for the protocol files, after the cleanups."
 
 north_star: |
-  Product-better: the sentence that stopped a cold runner is fixed in nine repos (fd50094), the
-  tightening template carries the version rule and four runner fixes, and a first render now checks
-  the north-star document's header.
+  Product-better in a small way: the Showcase blueprint and the legal record that Convergible's build
+  reads are lean rule documents with nothing lost (356033a, c82ae59), and review stopped draft owner copy
+  from reaching a build as ratified.
 
 tone: |
-  A short repair session that landed first try (fedf262, fd50094, 2765842): one ruling, one master
-  change, one propagation.
-  Matt is working in LeadDowser; the next forgeflow session starts with its catch-up render.
+  A focused cleanup session: one repo named, two runs in parallel, one review round each, two merges.
+  Matt wants the whole remaining list kept in view; the next step waits only on LeadDowser being free.
