@@ -240,3 +240,16 @@ rulings:
       master change).
     supersedes: the target-repo-session lane of RULING-028; FF-020 as an inline-procedure block
     stated_by: Matt, in chat, in this session, recorded in the turn it was made per W-002
+  - id: RULING-030
+    date: 2026-09-10
+    subject: FF-021 progress is tracked per repo as a DONE / NEXT inventory, not a done-list alone
+    ruling: >-
+      At a repo's first tightening session, Claude Web lists every instructional document in that
+      repo (blueprints, specs, plans, guides, READMEs, instructions, procedures) under the repo's
+      FF-021 entry in forgeflow .forge/backlog.yaml, each marked done (with merge SHA) or next.
+      Every later tightening session on that repo updates the same list at its wrap. A forgeflow
+      session resuming a partly cleaned repo reads that list and states "done / next" from it
+      without a tree scan. The inventory is a record file and follows the record standard.
+      master/DOC_TIGHTENING_PROCEDURE.md carries this as a rule and a flow step.
+    supersedes: the done-list-only progress record in DOC_TIGHTENING_PROCEDURE.md data_model and flow step 7 (v1.4.1)
+    stated_by: Matt, in chat, in this session, recorded in the turn it was made per W-002
