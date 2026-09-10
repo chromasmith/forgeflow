@@ -580,3 +580,33 @@ rulings:
       available and is the house standard.
     supersedes: nothing — extends W-001 (RULING-019) with a structural shape; the four-sentence ceiling, layering and lead-with-the-recommendation rules are unchanged
     stated_by: Matt, in chat, in this session ("Great, let's give it a shot"), recorded in the turn it was made per W-002
+  - id: RULING-027
+    date: 2026-09-10
+    subject: The PROPORTIONAL WRAP — a light wrap tier for small sessions; the wrap writes only the .forge/ files that changed, with the handoff and a session-history entry as the floor
+    ruling: >-
+      Matt raised the cost of ceremony at the system level: he believes his methods win in
+      aggregate but worries about the trade-offs, and the wrap is the most expensive act in his
+      day — a nine-part series that a small session does not deserve. He accepted Claude Web's
+      light-wrap concept ("I love the idea... we should move forward with that if you are
+      prepared to conceive it and implement it in the next version"). THE RULING, master text in
+      the end protocol (v1.4.0), Claude Web conceives the exact mechanics: (1) the wrap is
+      PROPORTIONAL — after the residue sweep (RULING-025) Claude Web computes which wrap files
+      hold something new this session and writes ONLY those; (2) the FLOOR is two parts that
+      never drop: .forge/handoff.yaml (rewritten every session — it is the next session's
+      briefing, staleness stamp and wrap_complete flag) and one appended .forge/session-history.yaml
+      entry; (3) session-state, backlog, active-bugs, GOTCHAS, CHANGELOG, rulings (already
+      written when made, W-002), the registry and inbox consumption are written only when they
+      changed, and every skipped file is NAMED as "unchanged" in the wrap report so a skip is
+      visible, never silent; (4) the safety mechanics are identical in both tiers — SHA-guarded
+      single-file commits, handoff first with wrap_complete: false when more than one further
+      part follows (a two-part light wrap writes the handoff once, last, with wrap_complete: true),
+      the evidence counts, the residue sweep and its attestation, the "chat residue: 0" count;
+      (5) Claude Web states the tier and its reason in ONE line before the first write ("Light
+      wrap: one docs commit this session, only handoff and history change" / "Full wrap: N files
+      changed"); the tier is Claude Web's route call, not a question to Matt; (6) a light wrap
+      still closes with the overall project position sentence. Rationale recorded: the friction
+      Matt brings is concentrated in wrap mechanics, not in the ceremony's substance (GitHub as
+      truth, scope lock, handoff, rulings, inbox), so the relief is proportionality, not cutting
+      rules; the P11 prune session remains the instrument for the start protocol's size.
+    supersedes: E-002/E-003's fixed full manifest as the only wrap shape — the manifest becomes conditional with a two-part floor; nothing about write discipline or evidence changes
+    stated_by: Matt, in chat, in this session ("I love the idea of a light wrap... we should move forward with that"), recorded in the turn it was made per W-002
