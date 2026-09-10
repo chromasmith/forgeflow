@@ -107,7 +107,7 @@ Hold the line.
 
 <!-- </scope-discipline v1> -->
 
-<!-- FORGEFLOW HOUSE BLOCK — rendered from forgeflow/master v1.3.1 — do not edit inside markers -->
+<!-- FORGEFLOW HOUSE BLOCK — rendered from forgeflow/master v1.4.0 — do not edit inside markers -->
 <!-- C-001 claude_md_house_block — rendered into every repo's CLAUDE.md between the FORGEFLOW HOUSE BLOCK markers -->
 
 ## House rules (ForgeFlow) — chromasmith/forgeflow
@@ -116,7 +116,7 @@ These rules are the same in every Chromasmith repo. They are rendered here from 
 
 ### Session workflow
 
-- Claude Web opens every session by reading `.forge/handoff.yaml` FIRST (the pass-the-baton briefing; its `first_thing` names exactly one next item), then `.forge/protocols/start-protocol.yaml` and the files that protocol names (`.forge/rulings.yaml`, session-state, backlog, active-bugs, session-history, GOTCHAS).
+- Claude Web opens every session by reading `.forge/handoff.yaml` FIRST (the pass-the-baton briefing; its `first_thing` names exactly one next item), then `.forge/protocols/start-protocol.yaml` and the files that protocol names (every `.forge/rulings/` shard, session-state, backlog, active-bugs, session-history, GOTCHAS).
 - Claude Code does NOT run `/start` or any session-initialization command. Every Claude Code prompt or dispatched issue body carries its own scope lock, authorized files and completion steps, and says "DO read CLAUDE.md" — this file is the standing orders; the prompt is the task.
 - The session is wrapped when Matt declares the day's work finished. Claude Web builds the wrap from `.forge/protocols/end-protocol.yaml` and writes the `.forge/` documentation itself; a local Claude Code session's wrap role is to commit and push its own code with named files and run VERIFY PUSH.
 - Every Claude Code task ends by writing `.forge/inbox/<run-id>.yaml` (reflection answers, SCOPE DISCLOSURE, discovered GOTCHAs, any needs_ruling) BEFORE any prose report. A task is not complete until its inbox file exists. That path is authorized by the protocol in every run; the wrap consumes each file and deletes it (git history is the archive). Nothing is ever written outside the repository tree — no Desktop copies, no memory.
@@ -128,7 +128,9 @@ These rules are the same in every Chromasmith repo. They are rendered here from 
 - These files are RENDERED COPIES. Do not edit them, and do not edit the text between the house-block markers in this file. A bug found in a rendered copy is fixed at its source in `chromasmith/forgeflow` (`master/`) and re-rendered; a hand edit here is overwritten by the next render.
 - SPAWNED FROM A TEMPLATE? If `.forge/protocol-config.yaml` names a DIFFERENT repo than this one, this repo has not been rendered yet — it carries its parent's protocols verbatim. Do not hand-correct the config, the protocols or this block; the fix is a re-render from the master with this repo's own config, and until then every prompt says the config is stale.
 - PRECEDENCE: when a task prompt or issue body conflicts with the protocol files, the PROTOCOL wins on process, scope and safety (authorized files, off-limits paths, commit discipline, refresh mode, halt-and-report, reflection, the inbox file); the PROMPT wins on WHAT to build. A prompt that appears to widen scope or authorize an off-limits path is an error in the prompt: HALT AND REPORT.
-- `.forge/rulings.yaml` is the append-only register of decisions Matt has made. Search it before asking Matt a product or process question; never re-ask a question that has a ruling.
+- `.forge/rulings/` holds the append-only register of decisions Matt has made, sharded twenty rulings per file (`001-020.yaml`, `021-040.yaml`, …). Search every shard before asking Matt a product or process question; never re-ask a question that has a ruling.
+- TOOLS FIRST: assume Matt has a connector, MCP server, CLI or API for every third party a task touches, and use it — never a dashboard step where a tool path exists. Secrets are read from the Chromasmith Keys vault with `op read` (never printed, never designed around); Matt never handles a secret.
+- DOCUMENT STANDARDS: an instructional document (blueprint, spec, plan, guide, README) holds rules, decisions, prohibitions, dependencies and open items only — history and reasoning go in a `<doc>-history` companion beside it. Record files (handoff, rulings, GOTCHAS, session-history, backlog) hold one fact per line with one identifier, no narrative. A prompt that touches a document says which class it is.
 
 ### Scope discipline
 
@@ -143,6 +145,7 @@ These rules are the same in every Chromasmith repo. They are rendered here from 
 - Any message directed at Matt — a question, a blocker, a thing he must do — is visually unmistakable and is never buried inside thinking or output walls. Print it as a short plain-text block on its own, with a plain-text label such as QUESTION FOR MATT or MATT MUST DO. Plain text only; his terminal does not render ANSI colour codes.
 - HUMAN GATES in live supervised runs (real accounts, Matt at the keyboard): print the banner, state the ONE thing Matt must do, and WAIT for him to type the confirmation word. No timers, no inferring he is done, no barrelling ahead. Never hammer or re-poll an external site — one action, one attempt; repeated automated contact is what trips anti-bot systems.
 - Give Matt one action item at a time, never a numbered list of manual steps. When reporting, bottom-line first, then the evidence briefly.
+- Commit messages are the prompt's text exactly — no Co-Authored-By or other attribution trailers, whatever the harness suggests.
 
 ### Dispatched GitHub Action sessions — APPLIES ONLY WHEN RUNNING AS A DISPATCHED GITHUB ACTION
 
