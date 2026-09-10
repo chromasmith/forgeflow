@@ -16,13 +16,13 @@
 # Matt naming the repo; there is no queue here and no implied order.
 # =============================================================================
 
-master_version_current: "v1.4.1"   # landed 2026-09-10 (9404ae6, run FF-V141-MASTER) and PROPAGATED to all nine other rows in the same run (registry written last, after every landing was re-proven through the connector); every row below is current at v1.4.1, none pinned or lagging. v1.4.1 is FF-020 (RULING-029): DOC_TIGHTENING_PROCEDURE.md + the S-093 pointer line, PROPAGATION step 5 proof method, RENDER 0b op retry, BLUEPRINT v1.9 — text only, so no config_hash changed.
+master_version_current: "v1.4.2"   # landed 2026-09-10 (fd50094, run FF-V142-MASTER) and propagated to eight other rows in the same run; chromasmith/LeadDowser is PINNED at v1.4.1 (Matt working in it). Registry written last, after every landing was re-proven through the connector. v1.4.2 is FF-022 + FF-023 (RULING-032): S-093 runner clause, W-005 forward-slash paths, tightening template refinements and version rule, RENDER step 0 north-star check — text only, so no config_hash changed.
 
 repos:
   - repo: chromasmith/seogeo
     config: .forge/protocol-config.yaml
     profile: docs-only
-    master_version: "v1.4.1"
+    master_version: "v1.4.2"
     rendered_on: 2026-09-10
     config_hash: 2b2e5be3e7fc2cf3a48a93a3ef255fc45f441159bfeee92ec1fd219770041412
     state: current
@@ -33,7 +33,7 @@ repos:
       - .forge/protocols/end-protocol.dispatch.yaml
       - .forge/protocol-config.yaml
       - CLAUDE.md
-    landed: "v1.4.1 propagation 2026-09-10: ONE commit 0886daa (six files) by the local Claude Code run FF-V141-MASTER; double render byte-stable, config-hash gate PASS, blobs read back from origin/main, commit and six-file set re-proven through the connector. Previous: v1.4.0 propagation 2026-09-10: ONE commit e061b65 (six files + rulings shard 001-020) by the local Claude Code run PROPAGATE-v1.4.0; hash gate PASS, double render byte-stable, six blob SHAs read back from origin/main. Previous: v1.3.1 propagation 2026-09-07: ONE commit 8c91c0d (six files) by the local Claude Code run FF-V131-MASTER; all six blob SHAs equal to the Claude Web sandbox render and re-proven through the connector after the push. Previous: v1.3.0 propagation 2026-09-07: ONE commit 9b729af (all six files) by the local Claude Code run PROPAGATE-v1.3.0; every blob SHA equal to the Claude Web sandbox render and re-proven through the connector after the push. Previous: v1.1.0 re-render 2026-09-05: commits 1746d6c (config), ff60fc1 (CLAUDE.md), b504fb8 (end.dispatch NEW), 40e9040 (start.dispatch NEW), 30be55b (end), a94d846 (start); blob SHAs equal to the sandbox output. Previous v1.0.0 render: 042427f, 6c792a0, 14f1614 (2026-09-04)"
+    landed: "v1.4.2 propagation 2026-09-10: ONE commit 1397422 (six files) by the local Claude Code run FF-V142-MASTER; double render byte-stable, config-hash gate PASS, diffcheck 6/6 (only the v1.4.2 lines changed), six blobs read back from origin/main; commit stats and the four protocol blobs re-proven through the connector. Previous: v1.4.1 propagation 2026-09-10: ONE commit 0886daa (six files) by the local Claude Code run FF-V141-MASTER; double render byte-stable, config-hash gate PASS, blobs read back from origin/main, commit and six-file set re-proven through the connector. Previous: v1.4.0 propagation 2026-09-10: ONE commit e061b65 (six files + rulings shard 001-020) by the local Claude Code run PROPAGATE-v1.4.0; hash gate PASS, double render byte-stable, six blob SHAs read back from origin/main. Previous: v1.3.1 propagation 2026-09-07: ONE commit 8c91c0d (six files) by the local Claude Code run FF-V131-MASTER; all six blob SHAs equal to the Claude Web sandbox render and re-proven through the connector after the push. Previous: v1.3.0 propagation 2026-09-07: ONE commit 9b729af (all six files) by the local Claude Code run PROPAGATE-v1.3.0; every blob SHA equal to the Claude Web sandbox render and re-proven through the connector after the push. Previous: v1.1.0 re-render 2026-09-05: commits 1746d6c (config), ff60fc1 (CLAUDE.md), b504fb8 (end.dispatch NEW), 40e9040 (start.dispatch NEW), 30be55b (end), a94d846 (start); blob SHAs equal to the sandbox output. Previous v1.0.0 render: 042427f, 6c792a0, 14f1614 (2026-09-04)"
     notes: >-
       First repo ever rendered from the master (RULING-002). THIRD repo re-rendered from
       v1.1.0 with the full harness: claude.yml installed by Matt via the web editor (blob
@@ -48,7 +48,7 @@ repos:
   - repo: chromasmith/chromasmith-saas-starter
     config: .forge/protocol-config.yaml
     profile: standard
-    master_version: "v1.4.1"
+    master_version: "v1.4.2"
     rendered_on: 2026-09-10
     config_hash: b77403904a76c6c81a826eb41713929bc8d37b541bdee09d73f6e48c9015f7c9
     state: current
@@ -59,7 +59,7 @@ repos:
       - .forge/protocols/end-protocol.dispatch.yaml
       - .forge/protocol-config.yaml
       - CLAUDE.md
-    landed: "v1.4.1 propagation 2026-09-10: ONE commit 8b35455 (six files) by the local Claude Code run FF-V141-MASTER; double render byte-stable, config-hash gate PASS, blobs read back from origin/main, commit and six-file set re-proven through the connector. Previous: v1.4.0 propagation 2026-09-10: ONE commit bc45257 (six files + rulings shard 001-020) by the local Claude Code run PROPAGATE-v1.4.0; hash gate PASS, double render byte-stable, six blob SHAs read back from origin/main. Previous: v1.3.1 propagation 2026-09-07: ONE commit 84fdc46 (six files) by the local Claude Code run FF-V131-MASTER; all six blob SHAs equal to the Claude Web sandbox render and re-proven through the connector after the push. Previous: v1.3.0 propagation 2026-09-07: ONE commit 9f50d33 (all six files) by the local Claude Code run PROPAGATE-v1.3.0; every blob SHA equal to the sandbox render and re-proven through the connector after the push. Previous: v1.1.0 re-render 2026-09-05: commits 1f42125 (config), b742dd2 (CLAUDE.md), fda3547 (end.dispatch NEW), 028eea9 (start.dispatch NEW), d96fd69 (end), f3110b0 (start); blob SHAs equal to the sandbox output. Previous renders: v1.0.0 first render a296c13/10bb67e/60c0906/c97a49a, v1.0.0 re-render after SEO/GEO b750941/060c1c5/c6920b1/7b84b45 (2026-09-04)"
+    landed: "v1.4.2 propagation 2026-09-10: ONE commit 5ab6951 (six files) by the local Claude Code run FF-V142-MASTER; double render byte-stable, config-hash gate PASS, diffcheck 6/6 (only the v1.4.2 lines changed), six blobs read back from origin/main; commit stats and the four protocol blobs re-proven through the connector. Previous: v1.4.1 propagation 2026-09-10: ONE commit 8b35455 (six files) by the local Claude Code run FF-V141-MASTER; double render byte-stable, config-hash gate PASS, blobs read back from origin/main, commit and six-file set re-proven through the connector. Previous: v1.4.0 propagation 2026-09-10: ONE commit bc45257 (six files + rulings shard 001-020) by the local Claude Code run PROPAGATE-v1.4.0; hash gate PASS, double render byte-stable, six blob SHAs read back from origin/main. Previous: v1.3.1 propagation 2026-09-07: ONE commit 84fdc46 (six files) by the local Claude Code run FF-V131-MASTER; all six blob SHAs equal to the Claude Web sandbox render and re-proven through the connector after the push. Previous: v1.3.0 propagation 2026-09-07: ONE commit 9f50d33 (all six files) by the local Claude Code run PROPAGATE-v1.3.0; every blob SHA equal to the sandbox render and re-proven through the connector after the push. Previous: v1.1.0 re-render 2026-09-05: commits 1f42125 (config), b742dd2 (CLAUDE.md), fda3547 (end.dispatch NEW), 028eea9 (start.dispatch NEW), d96fd69 (end), f3110b0 (start); blob SHAs equal to the sandbox output. Previous renders: v1.0.0 first render a296c13/10bb67e/60c0906/c97a49a, v1.0.0 re-render after SEO/GEO b750941/060c1c5/c6920b1/7b84b45 (2026-09-04)"
     notes: >-
       Second repo rendered (Matt named it 2026-09-04). This repo IS THE TEMPLATE, so its
       rendered files are inherited by every project spawned from it; a child must re-render
@@ -82,7 +82,7 @@ repos:
   - repo: chromasmith/forgeflow
     config: .forge/protocol-config.yaml
     profile: docs-only
-    master_version: "v1.4.1"
+    master_version: "v1.4.2"
     rendered_on: 2026-09-10
     config_hash: 7ccf78dfab2fd1a61cc67fe1d8e97cd796b6de197a1a560da45381988267b46d
     state: current
@@ -93,7 +93,7 @@ repos:
       - .forge/protocols/end-protocol.dispatch.yaml
       - .forge/protocol-config.yaml
       - CLAUDE.md
-    landed: "v1.4.1 landed 2026-09-10 by the local Claude Code run FF-V141-MASTER: master 9404ae6 (apply script blob b7fdc710 on tmp/v141-apply, deleted by the run via gh api), re-render 0df44b9 (six files, config_hash unchanged 7ccf78dfab2f, all six blob SHAs equal to the Claude Web sandbox render and re-proven through the connector), inbox f381824. Previous: v1.4.0 landed 2026-09-10 by the local Claude Code run FF-V140-MASTER: master 7406789, re-render c64fcd4 (six files, config_hash unchanged 7ccf78dfab2f), rulings register sharded 04ea78b (.forge/rulings/001-020.yaml + 021-040.yaml, 28 entries byte-identical), transport branch tmp/v140-apply deleted by the run via gh api (RULING-023). Previous: v1.3.1 propagation 2026-09-07: ONE commit 7c41e86 (six files) by the local Claude Code run FF-V131-MASTER; all six blob SHAs equal to the Claude Web sandbox render and re-proven through the connector after the push. Previous: v1.3.0 re-render 2026-09-07: ONE commit e4466c4 (all six files + inbox FF-V130-MASTER) by a local Claude Code run, right after the master change 8db4ff2 (both via apply script blob e2e23c85 on tmp/v130-apply); all six blob SHAs equal to the sandbox output; render.py check OK and tests 60/60 from a fresh clone at e4466c4. Previous: v1.2.0 re-render 8ec708c (2026-09-06); v1.1.0 re-render e60eff5 / 94a5247 / 5de80fc / a0aa16a / 173aa3d / f9b8d33 (2026-09-05); v1.0.0 render 0f7ec5e / 5e1f463 / 56f2389 / b9046e2 (2026-09-04)"
+    landed: "v1.4.2 landed 2026-09-10 by the local Claude Code run FF-V142-MASTER: master fd50094 (apply script blob da857391 on tmp/v142-apply, deleted by the run via gh api), re-render 4bc7d21 (six files, config_hash unchanged 7ccf78dfab2f, all six blob SHAs equal to the Claude Web sandbox render and re-proven from a sandbox clone), inbox 40b51b8 + ec8a78d. Previous: v1.4.1 landed 2026-09-10 by the local Claude Code run FF-V141-MASTER: master 9404ae6 (apply script blob b7fdc710 on tmp/v141-apply, deleted by the run via gh api), re-render 0df44b9 (six files, config_hash unchanged 7ccf78dfab2f, all six blob SHAs equal to the Claude Web sandbox render and re-proven through the connector), inbox f381824. Previous: v1.4.0 landed 2026-09-10 by the local Claude Code run FF-V140-MASTER: master 7406789, re-render c64fcd4 (six files, config_hash unchanged 7ccf78dfab2f), rulings register sharded 04ea78b (.forge/rulings/001-020.yaml + 021-040.yaml, 28 entries byte-identical), transport branch tmp/v140-apply deleted by the run via gh api (RULING-023). Previous: v1.3.1 propagation 2026-09-07: ONE commit 7c41e86 (six files) by the local Claude Code run FF-V131-MASTER; all six blob SHAs equal to the Claude Web sandbox render and re-proven through the connector after the push. Previous: v1.3.0 re-render 2026-09-07: ONE commit e4466c4 (all six files + inbox FF-V130-MASTER) by a local Claude Code run, right after the master change 8db4ff2 (both via apply script blob e2e23c85 on tmp/v130-apply); all six blob SHAs equal to the sandbox output; render.py check OK and tests 60/60 from a fresh clone at e4466c4. Previous: v1.2.0 re-render 8ec708c (2026-09-06); v1.1.0 re-render e60eff5 / 94a5247 / 5de80fc / a0aa16a / 173aa3d / f9b8d33 (2026-09-05); v1.0.0 render 0f7ec5e / 5e1f463 / 56f2389 / b9046e2 (2026-09-04)"
     notes: >-
       Third repo rendered (RULING-004) and the master's own home: master/ is the source,
       .forge/protocols/ the output; a render never reads .forge/protocols/, so rendering the
@@ -113,7 +113,7 @@ repos:
   - repo: chromasmith/chromaqa
     config: .forge/protocol-config.yaml
     profile: docs-only
-    master_version: "v1.4.1"
+    master_version: "v1.4.2"
     rendered_on: 2026-09-10
     config_hash: ff50e23e6bcdbe931aa2c0943ddac222fd7f15932982284ffee26ed1270b8221
     state: current
@@ -124,7 +124,7 @@ repos:
       - .forge/protocols/end-protocol.dispatch.yaml
       - .forge/protocol-config.yaml
       - CLAUDE.md
-    landed: "v1.4.1 propagation 2026-09-10: ONE commit ff0201a (six files) by the local Claude Code run FF-V141-MASTER; double render byte-stable, config-hash gate PASS, blobs read back from origin/main, commit and six-file set re-proven through the connector. Previous: v1.4.0 propagation 2026-09-10: ONE commit 6d3bdf5 (six files + rulings shard 001-020) by the local Claude Code run PROPAGATE-v1.4.0; hash gate PASS, double render byte-stable, six blob SHAs read back from origin/main. Previous: v1.3.1 propagation 2026-09-07: ONE commit 2611905 (six files) by the local Claude Code run FF-V131-MASTER; all six blob SHAs equal to the Claude Web sandbox render and re-proven through the connector after the push. Previous: v1.3.0 propagation 2026-09-07: ONE commit e72a6a6 (all six files) by the local Claude Code run PROPAGATE-v1.3.0b; the first pass HALTED here on a config_hash mismatch (b5c5ed08 expected vs ff50e23e actual) because .forge/protocols/artifact-register.yaml was added to the repo after the sandbox snapshot was taken — Claude Web re-rendered against the current tree and the second pass matched every SHA first try. Previous: v1.1.0 re-render 2026-09-05: commits 3fb7e4f (config), ab9364b (end.dispatch NEW), 67031b3 (CLAUDE.md), b9152c4 (start.dispatch NEW), a868ed2 (end), 9263d5b (start); blob SHAs equal to the sandbox output. Previous v1.0.0 render: 2d9980e / ac7faac / de3f45f / 8f52dc8 (2026-09-04)"
+    landed: "v1.4.2 propagation 2026-09-10: ONE commit e6eecaa (six files) by the local Claude Code run FF-V142-MASTER; double render byte-stable, config-hash gate PASS, diffcheck 6/6 (only the v1.4.2 lines changed), six blobs read back from origin/main; commit stats and the four protocol blobs re-proven through the connector. Previous: v1.4.1 propagation 2026-09-10: ONE commit ff0201a (six files) by the local Claude Code run FF-V141-MASTER; double render byte-stable, config-hash gate PASS, blobs read back from origin/main, commit and six-file set re-proven through the connector. Previous: v1.4.0 propagation 2026-09-10: ONE commit 6d3bdf5 (six files + rulings shard 001-020) by the local Claude Code run PROPAGATE-v1.4.0; hash gate PASS, double render byte-stable, six blob SHAs read back from origin/main. Previous: v1.3.1 propagation 2026-09-07: ONE commit 2611905 (six files) by the local Claude Code run FF-V131-MASTER; all six blob SHAs equal to the Claude Web sandbox render and re-proven through the connector after the push. Previous: v1.3.0 propagation 2026-09-07: ONE commit e72a6a6 (all six files) by the local Claude Code run PROPAGATE-v1.3.0b; the first pass HALTED here on a config_hash mismatch (b5c5ed08 expected vs ff50e23e actual) because .forge/protocols/artifact-register.yaml was added to the repo after the sandbox snapshot was taken — Claude Web re-rendered against the current tree and the second pass matched every SHA first try. Previous: v1.1.0 re-render 2026-09-05: commits 3fb7e4f (config), ab9364b (end.dispatch NEW), 67031b3 (CLAUDE.md), b9152c4 (start.dispatch NEW), a868ed2 (end), 9263d5b (start); blob SHAs equal to the sandbox output. Previous v1.0.0 render: 2d9980e / ac7faac / de3f45f / 8f52dc8 (2026-09-04)"
     notes: >-
       Fourth repo rendered (RULING-005/006) — the ChromaQA tool's own repo, which RUNS ChromaQA
       ON ITSELF, so subsystems.chromaqa is detected TRUE and not overridden. SECOND repo
@@ -141,7 +141,7 @@ repos:
   - repo: chromasmith/synclips-platform
     config: .forge/protocol-config.yaml
     profile: standard
-    master_version: "v1.4.1"
+    master_version: "v1.4.2"
     rendered_on: 2026-09-10
     config_hash: 311239e39f25a12459e7f5186f2af3dcca656f5c10bf72c9cffa3564d383eb9b
     state: current
@@ -152,7 +152,7 @@ repos:
       - .forge/protocols/end-protocol.dispatch.yaml
       - .forge/protocol-config.yaml
       - CLAUDE.md
-    landed: "v1.4.1 propagation 2026-09-10: ONE commit 9412382 (six files) by the local Claude Code run FF-V141-MASTER; double render byte-stable, config-hash gate PASS, blobs read back from origin/main, commit and six-file set re-proven through the connector. Previous: v1.4.0 propagation 2026-09-10: ONE commit 25b94bc (six files + rulings shard 001-020) by the local Claude Code run PROPAGATE-v1.4.0; hash gate PASS, double render byte-stable, six blob SHAs read back from origin/main. Previous: v1.3.1 propagation 2026-09-07: ONE commit 5363d41 (six files) by the local Claude Code run FF-V131-MASTER; all six blob SHAs equal to the Claude Web sandbox render and re-proven through the connector after the push. DISPATCH ON for the first time here (Matt installed claude.yml via the web editor 2026-09-07, blob 4cccfbf = the master asset), so the two .dispatch.yaml reader files are NEW in this commit. Previous: v1.3.0 propagation 2026-09-07: ONE commit 73e84a6 (four files; dispatch still OFF, no harness) by the local Claude Code run PROPAGATE-v1.3.0; blob SHAs equal and re-proven through the connector. Previous: commits 814578a (config), c383bd2 (start), 09d6c1e (end), 4c54dd5 (CLAUDE.md), all 2026-09-04; blob SHAs equal; render.py check OK from a fresh forgeflow clone"
+    landed: "v1.4.2 propagation 2026-09-10: ONE commit 7716aed (six files) by the local Claude Code run FF-V142-MASTER; double render byte-stable, config-hash gate PASS, diffcheck 6/6 (only the v1.4.2 lines changed), six blobs read back from origin/main; commit stats and the four protocol blobs re-proven through the connector. Previous: v1.4.1 propagation 2026-09-10: ONE commit 9412382 (six files) by the local Claude Code run FF-V141-MASTER; double render byte-stable, config-hash gate PASS, blobs read back from origin/main, commit and six-file set re-proven through the connector. Previous: v1.4.0 propagation 2026-09-10: ONE commit 25b94bc (six files + rulings shard 001-020) by the local Claude Code run PROPAGATE-v1.4.0; hash gate PASS, double render byte-stable, six blob SHAs read back from origin/main. Previous: v1.3.1 propagation 2026-09-07: ONE commit 5363d41 (six files) by the local Claude Code run FF-V131-MASTER; all six blob SHAs equal to the Claude Web sandbox render and re-proven through the connector after the push. DISPATCH ON for the first time here (Matt installed claude.yml via the web editor 2026-09-07, blob 4cccfbf = the master asset), so the two .dispatch.yaml reader files are NEW in this commit. Previous: v1.3.0 propagation 2026-09-07: ONE commit 73e84a6 (four files; dispatch still OFF, no harness) by the local Claude Code run PROPAGATE-v1.3.0; blob SHAs equal and re-proven through the connector. Previous: commits 814578a (config), c383bd2 (start), 09d6c1e (end), 4c54dd5 (CLAUDE.md), all 2026-09-04; blob SHAs equal; render.py check OK from a fresh forgeflow clone"
     notes: >-
       Fifth repo rendered (Matt named it 2026-09-04, RULING-007) — the first Synclips-system
       repo and the first MONOREPO. companion_repos declares synclips-relay (role relay,
@@ -173,7 +173,7 @@ repos:
   - repo: chromasmith/chromasync
     config: .forge/protocol-config.yaml
     profile: standard
-    master_version: "v1.4.1"
+    master_version: "v1.4.2"
     rendered_on: 2026-09-10
     config_hash: 2bde1ab3c7d3790cc11a9c9883b338d38be8f9da4d844cfe81b89ee420fe24f0
     state: current
@@ -184,7 +184,7 @@ repos:
       - .forge/protocols/end-protocol.dispatch.yaml
       - .forge/protocol-config.yaml
       - CLAUDE.md
-    landed: "v1.4.1 propagation 2026-09-10: ONE commit 385bae3 (six files) by the local Claude Code run FF-V141-MASTER; double render byte-stable, config-hash gate PASS, blobs read back from origin/main, commit and six-file set re-proven through the connector. Previous: v1.4.0 propagation 2026-09-10: ONE commit 8235500 (six files; no rulings register in this repo) by the local Claude Code run PROPAGATE-v1.4.0; hash gate PASS, double render byte-stable, six blob SHAs read back from origin/main. Previous: v1.3.1 propagation 2026-09-07: ONE commit 502f346 (six files) by the local Claude Code run FF-V131-MASTER; all six blob SHAs equal to the Claude Web sandbox render and re-proven through the connector after the push. DISPATCH ON for the first time here (Matt installed claude.yml via the web editor 2026-09-07, blob 4cccfbf = the master asset), so the two .dispatch.yaml reader files are NEW in this commit. Previous: v1.3.0 propagation 2026-09-07: ONE commit 8e53d33 (four files; dispatch still OFF, no harness) by the local Claude Code run PROPAGATE-v1.3.0; blob SHAs equal and re-proven through the connector. Previous: commits 0d5efb3 (config), 3fd099b (start), 6f726cd (end), e4b455e (CLAUDE.md), all 2026-09-04; blob SHAs equal; render.py check OK from a fresh forgeflow clone"
+    landed: "v1.4.2 propagation 2026-09-10: ONE commit aca049c (six files) by the local Claude Code run FF-V142-MASTER; double render byte-stable, config-hash gate PASS, diffcheck 6/6 (only the v1.4.2 lines changed), six blobs read back from origin/main; commit stats and the four protocol blobs re-proven through the connector. Previous: v1.4.1 propagation 2026-09-10: ONE commit 385bae3 (six files) by the local Claude Code run FF-V141-MASTER; double render byte-stable, config-hash gate PASS, blobs read back from origin/main, commit and six-file set re-proven through the connector. Previous: v1.4.0 propagation 2026-09-10: ONE commit 8235500 (six files; no rulings register in this repo) by the local Claude Code run PROPAGATE-v1.4.0; hash gate PASS, double render byte-stable, six blob SHAs read back from origin/main. Previous: v1.3.1 propagation 2026-09-07: ONE commit 502f346 (six files) by the local Claude Code run FF-V131-MASTER; all six blob SHAs equal to the Claude Web sandbox render and re-proven through the connector after the push. DISPATCH ON for the first time here (Matt installed claude.yml via the web editor 2026-09-07, blob 4cccfbf = the master asset), so the two .dispatch.yaml reader files are NEW in this commit. Previous: v1.3.0 propagation 2026-09-07: ONE commit 8e53d33 (four files; dispatch still OFF, no harness) by the local Claude Code run PROPAGATE-v1.3.0; blob SHAs equal and re-proven through the connector. Previous: commits 0d5efb3 (config), 3fd099b (start), 6f726cd (end), e4b455e (CLAUDE.md), all 2026-09-04; blob SHAs equal; render.py check OK from a fresh forgeflow clone"
     notes: >-
       Sixth repo rendered (Matt named it 2026-09-04, RULING-008) — second Synclips-system
       repo, companion synclips-relay. A TWO-LANGUAGE repo: Python desktop agent (src/, built
@@ -205,7 +205,7 @@ repos:
   - repo: chromasmith/dv-captain
     config: .forge/protocol-config.yaml
     profile: docs-only
-    master_version: "v1.4.1"
+    master_version: "v1.4.2"
     rendered_on: 2026-09-10
     config_hash: b25fff229f267700c0bb9ad04c22427778111315a85f4385b9dce72efd1d3b57
     state: current
@@ -216,7 +216,7 @@ repos:
       - .forge/protocols/end-protocol.dispatch.yaml
       - .forge/protocol-config.yaml
       - CLAUDE.md
-    landed: "v1.4.1 propagation 2026-09-10: ONE commit 2d18ef1 (six files) by the local Claude Code run FF-V141-MASTER; double render byte-stable, config-hash gate PASS, blobs read back from origin/main, commit and six-file set re-proven through the connector. Previous: v1.4.0 propagation 2026-09-10: ONE commit 9390cc8 (six files; no rulings register in this repo) by the local Claude Code run PROPAGATE-v1.4.0; hash gate PASS, double render byte-stable, six blob SHAs read back from origin/main. Previous: v1.3.1 propagation 2026-09-07: ONE commit c22d068 (six files) by the local Claude Code run FF-V131-MASTER; all six blob SHAs equal to the Claude Web sandbox render and re-proven through the connector after the push. DISPATCH ON for the first time here (Matt installed claude.yml via the web editor 2026-09-07, blob 4cccfbf = the master asset), so the two .dispatch.yaml reader files are NEW in this commit. Previous: v1.3.0 propagation 2026-09-07: ONE commit 607aeb5 (four files; dispatch still OFF, no harness) by the local Claude Code run PROPAGATE-v1.3.0b; the first pass HALTED here on a config_hash mismatch caused by a local-only .venv flipping build.validation to py-compile, so build.validation is now a DECLARED override and the file renders identically with or without it. Previous: commits eab16f9 (config), 0a03a56 (start), 4444fa6 (end), 4f7a128 (CLAUDE.md), all 2026-09-04; blob SHAs equal; render.py check OK from a fresh forgeflow clone at 5119307"
+    landed: "v1.4.2 propagation 2026-09-10: ONE commit d12edb6 (six files) by the local Claude Code run FF-V142-MASTER; double render byte-stable, config-hash gate PASS, diffcheck 6/6 (only the v1.4.2 lines changed), six blobs read back from origin/main; commit stats and the four protocol blobs re-proven through the connector. Previous: v1.4.1 propagation 2026-09-10: ONE commit 2d18ef1 (six files) by the local Claude Code run FF-V141-MASTER; double render byte-stable, config-hash gate PASS, blobs read back from origin/main, commit and six-file set re-proven through the connector. Previous: v1.4.0 propagation 2026-09-10: ONE commit 9390cc8 (six files; no rulings register in this repo) by the local Claude Code run PROPAGATE-v1.4.0; hash gate PASS, double render byte-stable, six blob SHAs read back from origin/main. Previous: v1.3.1 propagation 2026-09-07: ONE commit c22d068 (six files) by the local Claude Code run FF-V131-MASTER; all six blob SHAs equal to the Claude Web sandbox render and re-proven through the connector after the push. DISPATCH ON for the first time here (Matt installed claude.yml via the web editor 2026-09-07, blob 4cccfbf = the master asset), so the two .dispatch.yaml reader files are NEW in this commit. Previous: v1.3.0 propagation 2026-09-07: ONE commit 607aeb5 (four files; dispatch still OFF, no harness) by the local Claude Code run PROPAGATE-v1.3.0b; the first pass HALTED here on a config_hash mismatch caused by a local-only .venv flipping build.validation to py-compile, so build.validation is now a DECLARED override and the file renders identically with or without it. Previous: commits eab16f9 (config), 0a03a56 (start), 4444fa6 (end), 4f7a128 (CLAUDE.md), all 2026-09-04; blob SHAs equal; render.py check OK from a fresh forgeflow clone at 5119307"
     notes: >-
       Seventh repo rendered (Matt named it 2026-09-04, RULING-008) — third and last of the
       Synclips trio, companion synclips-relay (the relay itself is never rendered). PURE
@@ -240,7 +240,7 @@ repos:
   - repo: chromasmith/convergible-sandbox
     config: .forge/protocol-config.yaml
     profile: standard
-    master_version: "v1.4.1"
+    master_version: "v1.4.2"
     rendered_on: 2026-09-10
     config_hash: f29646f90fe28755ec4097bd99406599487f4e8fe405274c1823fca664efea19
     state: current
@@ -251,7 +251,7 @@ repos:
       - .forge/protocols/end-protocol.dispatch.yaml
       - .forge/protocol-config.yaml
       - CLAUDE.md
-    landed: "v1.4.1 propagation 2026-09-10: ONE commit a389ac9 (six files) by the local Claude Code run FF-V141-MASTER; double render byte-stable, config-hash gate PASS, blobs read back from origin/main, commit and six-file set re-proven through the connector. Previous: v1.4.0 propagation 2026-09-10: ONE commit 85af778 (six files + rulings shards 001-020/021-040/041-060/061-080 + artifact-register R2 entry for repo-rules.yaml) by the local Claude Code run PROPAGATE-v1.4.0; hash gate PASS, double render byte-stable, six blob SHAs read back from origin/main. Previous: v1.3.1 propagation 2026-09-07: ONE commit c66bd07 (six files) by the local Claude Code run FF-V131-MASTER; all six blob SHAs equal to the Claude Web sandbox render and re-proven through the connector after the push. Previous: FIRST RENDER 2026-09-07: ONE commit 2fe1cce by the local Claude Code run PROPAGATE-v1.3.0 — six rendered files, the four hand-written protocol files DELETED (start/end x local/dispatch), and CC-reports/ renamed to .forge/inbox/ with git mv in the same commit; blob SHAs equal to the sandbox render and re-proven through the connector."
+    landed: "v1.4.2 propagation 2026-09-10: ONE commit c5fb3b2 (six files) by the local Claude Code run FF-V142-MASTER; double render byte-stable, config-hash gate PASS, diffcheck 6/6 (only the v1.4.2 lines changed), six blobs read back from origin/main; commit stats and the four protocol blobs re-proven through the connector. Previous: v1.4.1 propagation 2026-09-10: ONE commit a389ac9 (six files) by the local Claude Code run FF-V141-MASTER; double render byte-stable, config-hash gate PASS, blobs read back from origin/main, commit and six-file set re-proven through the connector. Previous: v1.4.0 propagation 2026-09-10: ONE commit 85af778 (six files + rulings shards 001-020/021-040/041-060/061-080 + artifact-register R2 entry for repo-rules.yaml) by the local Claude Code run PROPAGATE-v1.4.0; hash gate PASS, double render byte-stable, six blob SHAs read back from origin/main. Previous: v1.3.1 propagation 2026-09-07: ONE commit c66bd07 (six files) by the local Claude Code run FF-V131-MASTER; all six blob SHAs equal to the Claude Web sandbox render and re-proven through the connector after the push. Previous: FIRST RENDER 2026-09-07: ONE commit 2fe1cce by the local Claude Code run PROPAGATE-v1.3.0 — six rendered files, the four hand-written protocol files DELETED (start/end x local/dispatch), and CC-reports/ renamed to .forge/inbox/ with git mv in the same commit; blob SHAs equal to the sandbox render and re-proven through the connector."
     notes: >-
       EIGHTH repo rendered and the master's own lineage source: the dispatch blocks, the
       artifact register, the rulings register and the one-item agenda were all reconciled
@@ -276,7 +276,7 @@ repos:
   - repo: chromasmith/convergible
     config: .forge/protocol-config.yaml
     profile: standard
-    master_version: "v1.4.1"
+    master_version: "v1.4.2"
     rendered_on: 2026-09-10
     config_hash: 148571eab9cb6f7e34c49cef935a17bdbfe9871369791ae4148e6df511f08bdf
     state: current
@@ -287,7 +287,7 @@ repos:
       - .forge/protocols/end-protocol.dispatch.yaml
       - .forge/protocol-config.yaml
       - CLAUDE.md
-    landed: "v1.4.1 propagation 2026-09-10: ONE commit 98bfad3 (six files) by the local Claude Code run FF-V141-MASTER; double render byte-stable, config-hash gate PASS, blobs read back from origin/main, commit and six-file set re-proven through the connector. Previous: v1.4.0 propagation 2026-09-10: ONE commit 9b8a1b8 (six files + rulings shards 001-020/021-040) by the local Claude Code run PROPAGATE-v1.4.0; hash gate PASS, double render byte-stable, six blob SHAs read back from origin/main. Previous: v1.3.1 propagation 2026-09-07: ONE commit 264bd50 (six files) by the local Claude Code run FF-V131-MASTER; all six blob SHAs equal to the Claude Web sandbox render and re-proven through the connector after the push. Config rewritten in the same commit: subsystems.vercel / build.deploy / build.deploy_verify are now DECLARED (the Vercel link is a dashboard setting and puts no file in the tree), pinned to project prj_YaDByQ4SmJy8GWgCY6z2mQ1ZLCYZ on team team_t36B0aZYLYFBbYAqNSi37S98, Root Directory apps/web — CV-OPEN-3 closed. Previous: FIRST RENDER 2026-09-07: ONE commit 6b08096 (all six files) by the local Claude Code run PROPAGATE-v1.3.0b, on top of 3cb595b which committed the ChromaQA debt ledger the gate had appended locally; blob SHAs equal to the sandbox render and re-proven through the connector. The first pass SKIPPED this repo because that ledger left the checkout dirty."
+    landed: "v1.4.2 propagation 2026-09-10: ONE commit 1644039 (six files) by the local Claude Code run FF-V142-MASTER; double render byte-stable, config-hash gate PASS, diffcheck 6/6 (only the v1.4.2 lines changed), six blobs read back from origin/main; commit stats and the four protocol blobs re-proven through the connector. Previous: v1.4.1 propagation 2026-09-10: ONE commit 98bfad3 (six files) by the local Claude Code run FF-V141-MASTER; double render byte-stable, config-hash gate PASS, blobs read back from origin/main, commit and six-file set re-proven through the connector. Previous: v1.4.0 propagation 2026-09-10: ONE commit 9b8a1b8 (six files + rulings shards 001-020/021-040) by the local Claude Code run PROPAGATE-v1.4.0; hash gate PASS, double render byte-stable, six blob SHAs read back from origin/main. Previous: v1.3.1 propagation 2026-09-07: ONE commit 264bd50 (six files) by the local Claude Code run FF-V131-MASTER; all six blob SHAs equal to the Claude Web sandbox render and re-proven through the connector after the push. Config rewritten in the same commit: subsystems.vercel / build.deploy / build.deploy_verify are now DECLARED (the Vercel link is a dashboard setting and puts no file in the tree), pinned to project prj_YaDByQ4SmJy8GWgCY6z2mQ1ZLCYZ on team team_t36B0aZYLYFBbYAqNSi37S98, Root Directory apps/web — CV-OPEN-3 closed. Previous: FIRST RENDER 2026-09-07: ONE commit 6b08096 (all six files) by the local Claude Code run PROPAGATE-v1.3.0b, on top of 3cb595b which committed the ChromaQA debt ledger the gate had appended locally; blob SHAs equal to the sandbox render and re-proven through the connector. The first pass SKIPPED this repo because that ledger left the checkout dirty."
     notes: >-
       NINTH repo rendered — the production Convergible app, spawned from
       chromasmith-saas-starter on 2026-09-05. Until its first render it carried the
@@ -316,7 +316,8 @@ repos:
     master_version: "v1.4.1"
     rendered_on: 2026-09-10
     config_hash: efaceee3fa42e22d2a691a7c98a1035330079390853cc208d8e0ba926ea64840
-    state: current
+    state: pinned
+    reason: "Matt was working in LeadDowser during the v1.4.2 pass (2026-09-10); no protocol_drift line written because the repo was busy (PROPAGATION step 4). Rendered to v1.4.2 as the FIRST step of the next forgeflow session that tightens a LeadDowser document; DOC_TIGHTENING_PROCEDURE preflight requires v1.4.2."
     files:
       - .forge/protocols/start-protocol.yaml
       - .forge/protocols/start-protocol.dispatch.yaml
