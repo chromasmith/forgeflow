@@ -29,7 +29,7 @@ Status legend: RATIFIED, PROPOSED, DEFERRED (with trigger), RETIRED.
   listed under its FF-021 entry in forgeflow `.forge/backlog.yaml`, marked done (merge SHA) or next; a resuming
   session states "done / next" from that list, never from a tree scan.
 - RATIFIED — A tightened document's patch version goes up by one and its date becomes the tightening date; the old
-  version is never kept (RULING-032).
+  version is never kept (RULING-032). A two-part version x.y is read as x.y.0 and becomes x.y.1.
 
 ## data_model
 
@@ -79,16 +79,22 @@ Status legend: RATIFIED, PROPOSED, DEFERRED (with trigger), RETIRED.
    - fetch `.forge/inbox/<RUN-ID>.yaml` from the branch; every INV-nnn has a mapping line;
    - spot-check at least three inventory items — the mapped line in the new document carries the same rule;
    - the new document has the header line "conforms to the document standard (v1.4.0)", the seven sections in
-     order, flat one-line prohibitions, status tags, and no session references, quotations or reasoning;
+     order (a non-architecture document may read "none" under flows and build_order), flat one-line prohibitions,
+     status tags, and no session references, quotations or reasoning;
    - the history companion exists at the named path and holds the cut provenance, field-test evidence included;
    - every source item "ruled out permanently" (or equivalent) is a RETIRED prohibition, not a parked option;
+   - every status line the diff changes is read; any move toward RATIFIED that the source did not state as decided
+     is a failed check (DRAFT, PROVISIONAL and unconfirmed items map to PROPOSED);
+   - every paragraph the diff cuts is read for statements of what is true today; each one is an inventory item
+     carried in the new document, never only in the history companion;
    - the version went up by one patch and the date is the tightening date (RULING-032);
    - the `.forge/inbox/<RUN-ID>.original` scratch file is absent from the PR;
    - the PR touches only the three committed authorized paths;
    - size before and after read from the inbox; over 50 KB after is named as a smell.
    Any failed check: a comment on the PR naming it, `@claude` to resume the run, no merge recommendation.
-6. RECOMMEND in one plain sentence per PR; Matt's yes in chat; squash-merge through the connector; confirm the
-   head branch is gone.
+6. RECOMMEND in one plain sentence per PR; Matt's yes in chat; squash-merge through the connector with an
+   explicit commit_message (the PR title as subject, no body lines from the branch commits), which keeps runner
+   attribution trailers off main; confirm the head branch is gone.
 7. RECORD at the forgeflow wrap: in the repo's FF-021 inventory block, mark each landed document done with its merge
    SHA and date; the target repo's inbox file is consumed by that repo's own next wrap, not by forgeflow's.
 
@@ -107,6 +113,8 @@ Status legend: RATIFIED, PROPOSED, DEFERRED (with trigger), RETIRED.
 - Never open a tightening issue against a document with an open PR.
 - Never recommend a merge with an unmapped inventory item or a missing inbox file.
 - Never edit the runner's output by hand to make the mapping pass; the fix is a comment and a resumed run.
+- Never map a draft, provisional or unconfirmed source item to RATIFIED.
+- Never squash-merge a runner PR with a title alone; pass an explicit commit_message.
 - Trigger: the repo's header reads `dispatch=off`, or its dispatch is known broken — use the local prompt lane.
 - Trigger: a run posts QUESTION or `needs_ruling` — surface it on the next board advance, never at the wrap.
 

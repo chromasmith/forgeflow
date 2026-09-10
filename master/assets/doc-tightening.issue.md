@@ -89,7 +89,9 @@ MY APPROACH — the RULE INVENTORY is the gate. Order is mandatory.
    `rule_inventory:`, one line per binding item you find — every rule, decision, prohibition ("never X"),
    dependency, ratified copy string, status tag, deferred item with its trigger, and open item — each with an id
    (INV-001, INV-002 …) and the original line number. Reasoning, history, quotations, session references and
-   cross-references to other documents are NOT inventory items; they are what gets cut.
+   cross-references to other documents are NOT inventory items; they are what gets cut. A statement of what
+   is true today that sits inside a reasoning paragraph — a current fact, a declared status, a present-tense
+   condition — IS an inventory item: record it before the paragraph is cut.
    Two classes need a decision every time. FIELD-TEST EVIDENCE (what was observed, measured or tried) is history:
    it goes to the companion, and is an inventory item only where it states a rule. A STANDING CAUTION ("watch
    out for X") is an inventory item: it maps to open_items, or to the rule it duplicates. A source item marked
@@ -98,10 +100,15 @@ MY APPROACH — the RULE INVENTORY is the gate. Order is mandatory.
 2. REWRITE the document in place to the standard: the header (title + version; one line saying what this document
    is and what it supersedes in full; the status legend), then exactly the seven sections in order — rules,
    data_model, surfaces, flows, build_order, prohibitions_and_triggers, open_items — each present even when it
-   reads "none". Every prohibition is a flat one-line "never X" with no reasoning attached. Status tags RATIFIED,
-   PROPOSED, DEFERRED (with trigger), RETIRED. Add the header line "conforms to the document standard (v1.4.0)".
-   VERSION (RULING-032): increment the document's patch version by one (x.y.z becomes x.y.z+1; a document with no
-   version becomes v1.0.0) and set its date to today, the tightening date. Never keep the old version.
+   reads "none". A document that is not an architecture (legal, reference, policy) puts its records under
+   data_model and its build promises under surfaces; its flows and build_order may read "none". Every prohibition
+   is a flat one-line "never X" with no reasoning attached. Status tags RATIFIED, PROPOSED, DEFERRED (with
+   trigger), RETIRED. STATUS NEVER PROMOTES: a source item marked DRAFT, PROVISIONAL, tentative or unconfirmed
+   maps to PROPOSED, never RATIFIED; only an item the source marks decided, ratified or approved maps to
+   RATIFIED. Add the header line "conforms to the document standard (v1.4.0)".
+   VERSION (RULING-032): increment the document's patch version by one (x.y.z becomes x.y.z+1; a two-part x.y is
+   read as x.y.0 and becomes x.y.1; a document with no version becomes v1.0.0) and set its date to today, the
+   tightening date. Never keep the old version.
 3. WRITE THE HISTORY COMPANION at the path named above: every cut passage that carried provenance, grouped under
    the section it came from, with the original line range. Nothing is deleted from the repo's knowledge; it is moved
    to a file no build session reads. Cut text that carried NO information (filler, repeated framing) is dropped and
@@ -120,6 +127,9 @@ MY APPROACH — the RULE INVENTORY is the gate. Order is mandatory.
 - Any PIPED command (`a | b`) is refused as multiple operations, read-only ones included. To count or compare
   against the pre-edit document: `git show HEAD:<DOC-PATH> > .forge/inbox/<RUN-ID>.original` (no pipe), then use
   the Grep tool on that file; delete it before the scope audit and name it in your report.
+  If that redirect is refused, write the same scratch file with the Write tool from the document as you read it,
+  check it is byte-identical to the committed document, use it the same way, and say in your report which route
+  you used.
 - You CANNOT push to main or open a PR. Push your branch (the harness names it) and post the pre-filled PR link.
 
 ## COMPLETION STEPS
