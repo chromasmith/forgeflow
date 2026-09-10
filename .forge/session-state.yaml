@@ -1,41 +1,31 @@
 # Session state — overwritten each session with current snapshot
-session_date: 2026-09-09
+session_date: 2026-09-10
 project: forgeflow (ForgeFlow Master — unified start/wrap protocols rendered per repo)
 milestones:
-  - "chromasmith/LeadDowser RENDERED as the TENTH repo on the master — first render from v1.3.1, standard profile, dispatch ON, config_hash efaceee3fa42; config landed through the connector (LeadDowser 58c2511, blob 6fa44040) and the four protocol files plus CLAUDE.md by the local run LD-INSTALL-1 (LeadDowser a86cfbb), all six blob SHAs equal to the Claude Web sandbox render and re-proven through the connector after the push"
-  - "RULING-021 filed in the turn Matt named the repo (1860bdc): LeadDowser joins the master, was deliberately NOT spawned from the SaaS starter template, and its existing documentation is never damaged, moved or renamed as a side effect of an install"
-  - "Registry updated LAST @ be3cf47 by the local run LD-REGISTRY-1 — ten rows, every one current at v1.3.1, none pinned or lagging; the file parses to 10 rows with chromasmith/LeadDowser last"
-  - "LeadDowser's dispatch harness completed in the same session: claude.yml installed by Matt via the web editor BEFORE the render (blob 4cccfbf = master/assets/claude.yml, verified), CLAUDE_CODE_OAUTH_TOKEN reported set from 1Password by run LD-REGISTRY-1 and confirmed by gh secret list, and classic branch protection added on main with the administrator bypass PROVEN by a direct docs push (LeadDowser 8a60188)"
-  - "This is the FIRST repo to join the master dispatch-ON on its first pass — every earlier repo was rendered dispatch-off and needed a second render (FFD-001, RULING-009)"
-  - "LeadDowser's whole .forge/ state family seeded by Claude Web through the connector (rulings, backlog, active-bugs, GOTCHAS, session-state, session-history, handoff, inbox .gitkeep), and the LD-INSTALL-1 inbox file consumed and deleted there"
+  - "Master v1.4.0 landed @ 7406789 (run FF-V140-MASTER, tests 73/73): RULING-023..028 + FF-016 + FF-019 as one change; forgeflow re-rendered c64fcd4; rulings register sharded into .forge/rulings/001-020.yaml + 021-040.yaml @ 04ea78b; transport branch deleted by the run via gh api"
+  - "v1.4.0 propagated to the nine other repos in ONE run PROPAGATE-v1.4.0 (bc45257, 9b8a1b8, 85af778, e061b65, 6d3bdf5, 25b94bc, 8235500, 9390cc8, ad19ff6): hash gate PASS on all nine, double render byte-stable, seven rulings registers sharded; registry @ 211241f — all ten rows current at v1.4.0"
+  - "Harness uniform on all ten repos (run HARNESS-AUDIT-1, inbox bf0f305): protection at the RULING-022 house setting and the OAUTH secret were already present everywhere; auto-delete-head-branches enabled on nine"
+  - "FF-017 closed: convergible-sandbox .forge/protocols/repo-rules.yaml @ 9f07aa6, knob + north_star_doc repointed @ 769bf23, register R2 entry in 85af778"
+  - "RULING-023..029 filed in the turns they were made (655cd6e, a164b00, 1e5dd9d, acc7361, d662400, 57d79b7, 7ae5ecd)"
 decisions:
-  - decision: "Render LeadDowser on the standard profile with build.validation and build.deploy overridden to none, rather than on docs-only"
-    rationale: "It is a product repo whose app is not yet scaffolded, not a documentation repo; the profile stays right and the two overrides are dropped later."
-    impact: "LeadDowser owes one re-render (its LD-003) once package.json exists and Vercel is linked; a docs-only render would have had to be redone wholesale instead."
-  - decision: "Rename the GitHub repo from leaddowser to LeadDowser instead of re-rendering everything to lowercase"
-    rationale: "Zero re-render, and the GitHub name then matches the product name, the ruling and the canonical checkout path C:\\Chromasmith\\LeadDowser."
-    impact: "A case-only rename NO-OPS silently in GitHub Settings and needed the two-step (LeadDowser-tmp, then LeadDowser) — GOTCHA-017."
-  - decision: "Branch protection is added with 'Require a pull request' ON but 'Require approvals' UNTICKED"
-    rationale: "Matt cannot approve his own pull request and Claude Web opens runner PRs as him, so a required approval deadlocks every merge the moment the administrator bypass is tightened."
-    impact: "Filed as RULING-022 and owed into RENDER_PROCEDURE step 0b as FF-019; the nine repos protected before today were configured by hand and are not known to have been checked for this."
-  - decision: "Deliver the ~196 KB rendered file set through ONE local Claude Code run rather than the connector"
-    rationale: "The connector aborts near 100 KB (GOTCHA-008) and LeadDowser's start protocol alone is 86 KB; render.py is deterministic, so the run re-rendered and had to match Claude Web's six blob SHAs before it was allowed to push."
-    impact: "A first render of any repo is now a two-lane job — connector for the small config, one Claude Code run for the rendered set — and the hash table is the gate, not trust."
+  - decision: "One master change for the whole laundry list, propagated once (v1.4.0)"
+    rationale: "nine items touched the same master files"
+    impact: "every repo moved in one trip; no repo lags"
+  - decision: "Rulings register sharded twenty per file; GOTCHAS and session-history keep their existing caps, now enforced by the E-003 threshold gate"
+    rationale: "rulings never expire, so a cap cannot apply; the other two already had one"
+    impact: "W-002 appends to the newest shard; legacy single files migrate by shard_rulings.py"
+  - decision: "Document tightening runs from a forgeflow session (RULING-029)"
+    rationale: "single source for the template; nothing to propagate"
+    impact: "FF-020 writes the procedure doc and the one-line S-093 pointer in v1.4.1"
 blockers: []
 next_steps:
-  - priority: medium
-    task: "FF-019 — amend master/RENDER_PROCEDURE.md step 0b so the branch-protection step states that 'Require approvals' must be UNTICKED (RULING-022), and add the two onboarding steps this install proved are missing: rename check before rendering, and the connector-versus-Claude-Code delivery rule by rendered size."
+  - priority: high
+    task: "FF-020 — master v1.4.1: DOC_TIGHTENING_PROCEDURE.md + S-093 one-line pointer (RULING-029); PROPAGATION step 5 proof method = config-hash gate + byte-stable double render, and the no-register-at-all case; GOTCHA-005 amendment (retry op vault list once); then one propagation"
 context: |
-  MASTER: v1.3.1 on GitHub (5664d1b), unchanged today — no master text was edited, no
-  re-render of any existing repo, so nothing propagated. REGISTRY: ten rows at be3cf47, all
-  current at v1.3.1. The only master-side artifact still unwired is
-  master/blueprint-standard.master.yaml (47f4b55, added 2026-09-08): it is in the master but
-  not referenced by render.py, the profiles or the propagation procedure, so no repo carries a
-  copy of the blueprint standard yet — that remains true after today.
-  OPEN FORGEFLOW ITEMS: FF-019 (step 0b amendment, next), FF-016 (S-033 dirty-plus-commits
-  wording, rides the next master change — do not cut a release for it alone), FF-017
-  (convergible-sandbox repo-rules.yaml still unwritten), FF-010 (pointer-URL idea, parked).
-  Nothing is broken; none of these blocks a session in any repo.
-  STILL OWED BY MATT elsewhere, unchanged today: branch protection on synclips-platform,
-  chromasync, dv-captain and convergible, and the CLAUDE_CODE_OAUTH_TOKEN secret on
-  convergible.
+  MASTER v1.4.0 (7406789) runs on all ten repos; registry 211241f. Rulings live in
+  .forge/rulings/ shards in forgeflow and in every repo that had a register. Ceilings on
+  the maximum knob set: start 1851/2000, end 1558/1700, dispatch-start 637/650 (thin — the
+  next runner-facing addition replaces something, P11), dispatch-end 102/150.
+  OPEN: FF-020 (v1.4.1, next), FF-021 (legacy document tightening, forgeflow sessions on
+  Matt's schedule, after FF-020), FF-010 (parked). Nothing is broken; nothing blocks a
+  session in any repo.
