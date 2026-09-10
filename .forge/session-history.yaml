@@ -457,3 +457,30 @@ sessions:
       - "eight other repos: six rendered files each (v1.4.2 propagation)"
       - "branch tmp/v142-apply: v142-apply.py and v142-diffcheck.py (transport only; branch deleted)"
     blockers_remaining: []
+  - date: 2026-09-10
+    duration: ~1.5hr (fourth session of the day)
+    completed:  # evidence: 356033a, c82ae59, 747073a, a049f6e
+      - "RULING-033 filed @ 747073a; RULING-023 placeholder restored @ a049f6e (blob 8ecdeec equal to the sandbox build)"
+      - "convergible inventory: 2 documents tightened, 7 left (FF-021 block); blueprint v6 verified never tightened (single commit 3b34a6d)"
+      - "convergible issue #3 / PR #4 (TIGHTEN-convergible-002) merged 356033a after one review round (fix 48571cc): compliance.yaml at the standard, 68/68"
+      - "convergible issue #2 / PR #5 (TIGHTEN-convergible-001) merged c82ae59 after one review round (fix 2271019): blueprint v6 at the standard, 392/392"
+      - "main blobs equal the reviewed heads: compliance.yaml 19366af, cv-showcase-blueprint-v6.yaml b19b3d9"
+    commits:
+      - message: "rulings: RULING-033 (747073a); placeholder repair (a049f6e)"
+      - message: "in convergible: squash merges 356033a (PR #4) and c82ae59 (PR #5)"
+      - message: "docs: end session 2026-09-10 (1/6 .. 6/6) — this series"
+    key_changes:
+      - "Review caught a status promotion (PR #5) and four dropped current facts (PR #4) that the inventory counts did not show (GOTCHA-030, GOTCHA-031); FF-026 files the template fixes"
+      - "Two-component document versions bump x.y to x.y.1 (applied in PR #5; FF-026 item c)"
+      - "Runner branches auto-deleted at merge on convergible (RULING-023 setting)"
+    files_modified:
+      - .forge/rulings/021-040.yaml
+      - .forge/handoff.yaml
+      - .forge/session-state.yaml
+      - .forge/session-history.yaml
+      - .forge/backlog.yaml
+      - .forge/GOTCHAS.yaml
+      - "convergible PR #4 (356033a): .forge/legal/compliance.yaml, .forge/legal/compliance-history.yaml, .forge/inbox/TIGHTEN-convergible-002.yaml"
+      - "convergible PR #5 (c82ae59): .forge/strategy/cv-showcase-blueprint-v6.yaml, .forge/strategy/cv-showcase-blueprint-v6-history.yaml, .forge/inbox/TIGHTEN-convergible-001.yaml"
+    blockers_remaining:
+      - "FF-024 waits on LeadDowser, in active edit (RULING-033)"
