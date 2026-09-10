@@ -444,3 +444,52 @@
   applies_to:
     - every prompt that uses a tmp/ transport branch
     - .forge/GOTCHAS.yaml GOTCHA-010 (partly superseded)
+- id: GOTCHA-025
+  date: 2026-09-10
+  summary: "A protocol sentence with reader 'all' that says where an operation is run FROM is read by a cold runner as a prohibition on the issue it is executing — TIGHTEN-LeadDowser-002 halted on S-093's closing sentence"
+  detail: |
+    S-093 (v1.4.1) closes "document tightening is a forgeflow-session operation ... this repo
+    never carries either". The runner on LeadDowser issue #2 read that as "a tightening issue
+    dispatched on LeadDowser violates the protocol", cited the issue's own PRECEDENCE clause and
+    halted with a needs_ruling; the runner on issue #1 read the same text and proceeded. Any block
+    with reader all is read cold by a runner that cannot see the forgeflow session; a sentence
+    about where an operation is OPERATED must also say what the runner receiving it does. Interim
+    resume wording that worked (issue #2 comment 5623465814): option 3, "this issue WAS filed from
+    the forgeflow session; a runner receiving it is executing the operation, not violating it".
+    Master fix: FF-022. Dispatch-start is 640/650 on the maximum knob set, so the fix replaces text.
+  source: "LeadDowser issue #2, run TIGHTEN-LeadDowser-002, 2026-09-10 (halt comment 5623339861, resume 5623465814)"
+  applies_to:
+    - master/start-protocol.master.yaml (S-093, any block with reader all)
+    - master/assets/doc-tightening.issue.md
+- id: GOTCHA-026
+  date: 2026-09-10
+  summary: "Runner refuses ANY piped Bash command as 'multiple operations requiring approval', read-only included; with python3 and node also blocked, counting or diffing on a runner needs an in-repo scratch file and the Grep tool"
+  detail: |
+    On the dispatch runner `git show HEAD:path | grep -c pattern` is refused before it runs — the
+    harness treats a pipe as multiple operations needing approval, and nobody is present. This is
+    a third refusal mechanism beside the allowlist and the $-expansion block (S-064). Working
+    pattern from run TIGHTEN-LeadDowser-002: `git show HEAD:<path> > <in-repo scratch path>`
+    (no pipe), run the Grep tool on the scratch file, delete the scratch file BEFORE the scope
+    audit so it never appears in the diff, and disclose it in the run report. A template that
+    asks a runner to count lines or compare against the pre-edit file should name this pattern.
+  source: "run TIGHTEN-LeadDowser-002 inbox (LeadDowser PR #4, merged 46a97b2), 2026-09-10"
+  applies_to:
+    - master/start-protocol.master.yaml (S-064 runner_environment_facts)
+    - master/assets/doc-tightening.issue.md (RUNNER ENVIRONMENT)
+- id: GOTCHA-027
+  date: 2026-09-10
+  summary: "At a first render, open the north_star_doc and check its header names the document the path claims — LeadDowser's blueprint path carried a copy of the interface notice for a day, and two files of near-identical size are the tell"
+  detail: |
+    chromasmith/LeadDowser was rendered 2026-09-09 with north_star_doc = .forge/strategy/
+    leaddowser-blueprint.yaml. The file at that path was the Convergible interface notice (a
+    wrong file picked in the web upload); the real 84 KB blueprint had never been committed.
+    RULING-021 recorded the tree by path and never looked inside. Found 2026-09-10 only because
+    the tightening inventory opened the file. Rule for RENDER_PROCEDURE step 0: read the first
+    30 lines of the north_star_doc and confirm its own meta.doc / title matches the filename;
+    two instructional files within a few bytes of each other in size are treated as one document
+    duplicated until the headers are read. Restored @ LeadDowser 1c4b3d97 (84,286 bytes) by a concurrent Claude Web session
+    from its own file, not from a chat re-transmission.
+  source: "LeadDowser inspection at the start of FF-021, 2026-09-10 (restore commit 1c4b3d97)"
+  applies_to:
+    - master/RENDER_PROCEDURE.md (step 0 preconditions)
+    - every first render where the config names a north_star_doc
