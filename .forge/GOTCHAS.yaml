@@ -83,7 +83,7 @@
       (op read "op://Chromasmith Keys/CLAUDE_CODE_OAUTH_TOKEN/credential").Trim() | gh secret set CLAUDE_CODE_OAUTH_TOKEN --repo chromasmith/<repo>
     Never use the vault's ANTHROPIC_API_KEY for the dispatch harness (per-token billing);
     the harness wants the subscription token (sk-ant-oat*) created by `claude setup-token`.
-  source: "secrets install for the v1.1.0 rollout, 2026-09-05 (Claude Code run SETUP-TOKEN; RENDER_PROCEDURE step 0b @ ab19c0e)"
+  source: "secrets install for the v1.1.0 rollout, 2026-09-05 (Claude Code run SETUP-TOKEN; RENDER_PROCEDURE step 0b @ ab19c04)"
   applies_to:
     - master/RENDER_PROCEDURE.md (step 0b)
     - master/PROPAGATION_PROCEDURE.md (step 2b)
@@ -388,3 +388,59 @@
   applies_to:
     - every wrap or direct-write that re-transmits an existing file
     - master/end-protocol.master.yaml (E-002 write discipline)
+- id: GOTCHA-021
+  date: 2026-09-10
+  summary: "A prompt that states the world's condition as fact goes stale between writing and running — brief the run with a hypothesis and let its own audit be the authority"
+  detail: |
+    HARNESS-AUDIT-1 was told four repos lacked branch protection and convergible lacked
+    the OAUTH secret; the run's read-only audit found all ten repos already correct.
+    The claims came from the handoff and the registry, not from the API. Rule: a prompt
+    describes expected state as "expect roughly X; confirm against the audit and report
+    divergence", never as fact; and every apply phase states what to do when zero items
+    qualify. Records that say a setting is "owed" are re-read from the API before being
+    repeated.
+  source: "run HARNESS-AUDIT-1 reflections, 2026-09-10 (inbox bf0f305)"
+  applies_to:
+    - every live-run prompt that applies account or repo settings
+    - .forge/handoff.yaml watch_out_for lines that assert external state
+- id: GOTCHA-022
+  date: 2026-09-10
+  summary: "On Surface 12 the FIRST op command after idle can fail with an authorization timeout — retry the readiness check once before declaring a sign-in gate"
+  detail: |
+    GOTCHA-005 prescribes `op vault list` as the readiness check because `op whoami` lies.
+    The first `op vault list` of HARNESS-AUDIT-1 returned only an authorization timeout;
+    an identical call moments later listed the vault. A prompt that gates on one call
+    stalls a supervised run and asks Matt to sign in to a 1Password that is signed in.
+    Rule: run the check; on a timeout run it exactly once more; only then gate.
+  source: "run HARNESS-AUDIT-1, 2026-09-10 (op CLI 2.34.1)"
+  applies_to:
+    - master/RENDER_PROCEDURE.md (step 0b)
+    - every prompt that reads a secret through the 1Password CLI
+- id: GOTCHA-023
+  date: 2026-09-10
+  summary: "A clean canonical checkout is not a current one — seven of nine were behind origin (one by 14 commits) with empty git status; render.py reads the working tree, so a skipped refresh moves config_hash"
+  detail: |
+    PROPAGATE-v1.4.0 found every checkout clean and on main, and seven behind origin.
+    No safety check fires on a behind-only checkout (S-033 check 2b reports it, that is
+    all). Detection reads the tree, so rendering a stale tree can produce a different
+    config_hash and halt a propagation on a gate that is not really failing. Rule: the
+    refresh runs before every render even when git status is empty; it is what makes the
+    hash gate mean anything.
+  source: "run PROPAGATE-v1.4.0 reflections, 2026-09-10 (inbox bdbbdb0)"
+  applies_to:
+    - master/PROPAGATION_PROCEDURE.md step 5
+    - every render or propagation prompt
+- id: GOTCHA-024
+  date: 2026-09-10
+  summary: "Branch deletion by the run works (RULING-023): `gh api -X DELETE .../git/refs/heads/tmp/<name>` never touches the pre-push guard; the 404 verification exits non-zero, so separate it with a semicolon, not &&"
+  detail: |
+    FF-V140-MASTER deleted tmp/v140-apply via the REST call and confirmed the 404 — the
+    first transport branch Matt did not delete by hand. Supersedes GOTCHA-010's "Matt
+    deletes it in the browser" step; GOTCHA-010's fact about the main-only guard blocking
+    `git push --delete` stands. Trap: `gh api repos/OWNER/REPO/branches/NAME` on a deleted
+    branch returns 404 and exits non-zero, so `delete && verify` reports a successful
+    deletion as a failed command — run the two calls on separate lines.
+  source: "run FF-V140-MASTER reflections, 2026-09-10 (inbox 52dd972)"
+  applies_to:
+    - every prompt that uses a tmp/ transport branch
+    - .forge/GOTCHAS.yaml GOTCHA-010 (partly superseded)
