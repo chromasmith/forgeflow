@@ -2,35 +2,43 @@
 # Status vocabulary: ready | blocked | needs-ruling | in_progress | deferred | completed | superseded
 # Migrated from the legacy empty shape at the 2026-09-04 wrap (first wrap on the rendered end protocol).
 prioritized:
-  - id: FF-020
-    name: Master v1.4.1 — the doc-tightening procedure and the loose ends v1.4.0 left
+  - id: FF-022
+    name: Master v1.4.2 — S-093 closing sentence halts a cold runner; W-005 forward-slash paths
     priority: P1
     estimate: one master change + one propagation
-    spec_ref: .forge/rulings/021-040.yaml RULING-029; master/PROPAGATION_PROCEDURE.md step 5; .forge/GOTCHAS.yaml GOTCHA-021..024
+    spec_ref: master/start-protocol.master.yaml (S-093, W-005); .forge/GOTCHAS.yaml GOTCHA-025, GOTCHA-015
     description: |
-      (1) master/DOC_TIGHTENING_PROCEDURE.md — how a forgeflow session runs a cleanup
-      from master/assets/doc-tightening.issue.md (name the repo and documents, file one
-      issue per document, up to three at once, review the PR against the rule inventory,
-      Matt merges); one line in S-093: document tightening is a forgeflow-session
-      operation, like a render. (2) PROPAGATION_PROCEDURE step 5: the proof method is a
-      byte-stable double render plus the config-hash gate against the registry, as
-      PROPAGATE-v1.4.0 ran it; state the no-register-at-all case for 5b. (3) RENDER 0b:
-      retry `op vault list` once on an authorization timeout (GOTCHA-022). (4) Record in
-      BLUEPRINT that dispatch-start is at 637/650 lines on the maximum knob set.
+      (1) S-093's closing sentence ("document tightening is a forgeflow-session operation ...
+      this repo never carries either") was read by the runner of TIGHTEN-LeadDowser-002 as a
+      prohibition on the very issue it was executing, and it halted. Rewrite so the sentence
+      says what a runner receiving a tightening issue does: it is executing the forgeflow
+      session's operation, not violating it; only the procedure and template stay in forgeflow.
+      S-093 has reader all and dispatch-start sits at 640/650 — REPLACE text, do not add (P11).
+      (2) W-005: a per-repo loop in a local prompt writes paths with forward slashes when the
+      repo name comes from a variable (C:/Chromasmith/$R) — the FF-V141-MASTER prompt wrote
+      backslashes and cost one retry (GOTCHA-015 mechanism). FF-023 rides the same change.
     status: ready
     blocked_by: null
-  - id: FF-021
-    name: Legacy document tightening across the ten repos (RULING-028/029)
+  - id: FF-023
+    name: Doc-tightening template refinements from the LeadDowser maiden voyage
     priority: P2
-    estimate: one forgeflow session per repo, up to three dispatches at a time
-    spec_ref: master/assets/doc-tightening.issue.md; .forge/rulings/021-040.yaml RULING-028, RULING-029
+    estimate: rides FF-022
+    spec_ref: master/assets/doc-tightening.issue.md; master/DOC_TIGHTENING_PROCEDURE.md; LeadDowser inbox TIGHTEN-LeadDowser-001/002
     description: |
-      Bring every existing instructional document (blueprints, specs, plans, guides,
-      READMEs) to the document standard, one repo per forgeflow session on Matt's
-      schedule, inventory-gated. Starts after FF-020 lands the procedure. The P11 prune
-      session for the protocol files follows the cleanups.
-    status: blocked
-    blocked_by: "FF-020 — the procedure doc"
+      Five refinements, one ruling owed: (a) VERSION HANDLING — run 001 kept the blueprint at
+      v1.2.0, run 002 bumped the spec to v1.1.0; the template must say which. Recommendation:
+      bump the patch version and set the date to the tightening date, so consumers of the
+      document (Convergible carries the interface spec) see that it changed. NEEDS MATT'S
+      RULING. (b) classify field-test EVIDENCE and STANDING CAUTIONS explicitly (evidence is
+      history-only; cautions are open_items or duplicates). (c) a source item under
+      "ruled out permanently" or equivalent is a RETIRED prohibition, never a parked option.
+      (d) runner traps: piped Bash is refused as multiple operations, python3/node blocked —
+      recover the original with git show into an in-repo scratch file, use the Grep tool,
+      delete the scratch before the scope audit (GOTCHA-026). (e) a document over ~60 KB gets
+      a partial-delivery fallback line so a run that hits the output ceiling pushes the branch
+      with a coverage block instead of dying silent (S-063).
+    status: needs-ruling
+    blocked_by: "Matt's ruling on version handling (a); the rest is ready and rides FF-022"
   - id: FF-010
     name: Pointer-URL protocols (repos hold a link to one master file) — PARKED
     priority: P3
@@ -46,9 +54,39 @@ prioritized:
     status: deferred
     blocked_by: "FF-009 outcome — answered; revisit only if propagation becomes slow again"
 
-in_progress: []
+in_progress:
+  - id: FF-021
+    name: Legacy document tightening across the ten repos (RULING-028/029/030)
+    priority: P2
+    estimate: one forgeflow session per repo, up to three dispatches at a time
+    spec_ref: master/DOC_TIGHTENING_PROCEDURE.md; master/assets/doc-tightening.issue.md; .forge/rulings/021-040.yaml RULING-028..031
+    description: |
+      Bring every existing instructional document to the document standard, one repo per
+      forgeflow session on Matt's schedule, inventory-gated. Progress is the per-repo
+      DONE / NEXT block below (RULING-030). The P11 prune session for the protocol files
+      follows the cleanups.
+      chromasmith/LeadDowser (RULING-031, first repo, started 2026-09-10):
+        - done .forge/strategy/leaddowser-blueprint.yaml — PR #3 merged bfbf7e7 2026-09-10 (277/277; 66,482 bytes, over the 50 KB smell — named, accepted)
+        - done .forge/specs/leaddowser-convergible-interface.yaml — PR #4 merged 46a97b2 2026-09-10 (100/100; now v1.1.0)
+        - next .forge/design/leaddowser-style-kit.yaml (old blueprint-style status legend; committed 0dc3c1b)
+        - leave README.md, .forge/README.md, .forge/instructions/README.md, .forge/scanlab/README.md (100 B - 1.2 KB, nothing to tighten); CLAUDE.md (standing orders + ForgeFlow house block, off limits)
+        - notes: stale runner branch claude/issue-2-20260910-1815 (the halted run's inbox, no PR) is still on LeadDowser — delete with gh api -X DELETE repos/chromasmith/LeadDowser/git/refs/heads/claude/issue-2-20260910-1815 in its next Claude Code run; inbox files TIGHTEN-LeadDowser-001/002 are consumed by LeadDowser's own next wrap; the style kit's CODE half installs in LeadDowser P0 per the kit's section 14a
+    status: in_progress
+    blocked_by: null
 
 completed:  # evidence per item: 5664d1b, 8db4ff2, 54c1293 + 8ec708c, b421783, 67031b3, c729db2
+  - id: FF-020
+    name: Master v1.4.1 — the doc-tightening procedure and the loose ends v1.4.0 left
+    priority: P1
+    spec_ref: master/DOC_TIGHTENING_PROCEDURE.md; master/CHANGELOG.yaml v1.4.1; .forge/rulings/021-040.yaml RULING-029, RULING-030
+    description: |
+      DOC_TIGHTENING_PROCEDURE.md (new; amended 077c020 for the RULING-030 inventory), S-093
+      pointer line, PROPAGATION step 5 proof method + 5b no-register case, RENDER 0b op retry,
+      BLUEPRINT v1.9, two test checks. Landed 9404ae6 (run FF-V141-MASTER, tests 75/75),
+      forgeflow re-rendered 0df44b9, nine repos propagated in the same run, registry 0343a7e.
+    status: completed  # 9404ae6
+    completed_at: 2026-09-10
+    evidence: 9404ae6 (master), 0df44b9 (forgeflow re-render), 0343a7e (registry, ten rows current at v1.4.1)
   - id: FF-019
     name: RENDER_PROCEDURE step 0b rewritten for API-set harness settings and the onboarding steps
     priority: P2
