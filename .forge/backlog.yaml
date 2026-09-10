@@ -14,8 +14,26 @@ prioritized:
       limited to the header stamps, the S-093 closing sentence and the W-005 bullet, push, read back six
       blobs; the registry row goes to current v1.4.2 LAST. Required before any further LeadDowser
       tightening (DOC_TIGHTENING_PROCEDURE preflight, fd50094).
-    status: ready
-    blocked_by: "Matt confirming no active session on LeadDowser"
+    status: blocked
+    blocked_by: "LeadDowser in active edit (RULING-033); Matt confirms it is free"
+  - id: FF-026
+    name: Doc-tightening template and procedure refinements from the convergible run
+    priority: P2
+    estimate: one small change to two master files; lands before the next tightening dispatch
+    spec_ref: master/assets/doc-tightening.issue.md; master/DOC_TIGHTENING_PROCEDURE.md; .forge/GOTCHAS.yaml GOTCHA-030..034
+    description: |
+      (a) Status mapping never promotes: DRAFT, PROVISIONAL and unconfirmed items map to PROPOSED, and the
+      review reads every changed status line in the diff (GOTCHA-030, convergible PR #5).
+      (b) A statement of what is true today inside a rationale paragraph is an inventory item (GOTCHA-031,
+      convergible PR #4).
+      (c) A two-component version x.y reads as x.y.0 and bumps to x.y.1 (RULING-032 clarified by Claude Web;
+      applied in convergible PR #5).
+      (d) RUNNER ENVIRONMENT names the Write-tool fallback when the redirect is refused (GOTCHA-032).
+      (e) A non-architectural document maps its records to data_model and its build promises to surfaces;
+      flows and build_order may read none (accepted in convergible PR #4).
+      (f) The review squash-merges with an explicit commit_message (GOTCHA-034).
+    status: deferred
+    blocked_by: "runs after FF-024 and before the next FF-021 dispatch"
   - id: FF-010
     name: Pointer-URL protocols (repos hold a link to one master file) — PARKED
     priority: P3
@@ -50,7 +68,7 @@ in_progress:
     name: Legacy document tightening across the ten repos (RULING-028/029/030)
     priority: P2
     estimate: one forgeflow session per repo, up to three dispatches at a time
-    spec_ref: master/DOC_TIGHTENING_PROCEDURE.md; master/assets/doc-tightening.issue.md; .forge/rulings/021-040.yaml RULING-028..031
+    spec_ref: master/DOC_TIGHTENING_PROCEDURE.md; master/assets/doc-tightening.issue.md; .forge/rulings/021-040.yaml RULING-028..033
     description: |
       Bring every existing instructional document to the document standard, one repo per
       forgeflow session on Matt's schedule, inventory-gated. Progress is the per-repo
@@ -62,6 +80,12 @@ in_progress:
         - next .forge/design/leaddowser-style-kit.yaml (old blueprint-style status legend; committed 0dc3c1b)
         - leave README.md, .forge/README.md, .forge/instructions/README.md, .forge/scanlab/README.md (100 B - 1.2 KB, nothing to tighten); CLAUDE.md (standing orders + ForgeFlow house block, off limits)
         - notes: stale runner branch claude/issue-2-20260910-1815 (the halted run's inbox, no PR) is still on LeadDowser — delete with gh api -X DELETE repos/chromasmith/LeadDowser/git/refs/heads/claude/issue-2-20260910-1815 in its next Claude Code run; inbox files TIGHTEN-LeadDowser-001/002 are consumed by LeadDowser's own next wrap; the style kit's CODE half installs in LeadDowser P0 per the kit's section 14a
+      chromasmith/convergible (RULING-033, second repo, 2026-09-10; document list approved by Matt):
+        - done .forge/legal/compliance.yaml — PR #4 merged 356033a 2026-09-10 (68/68; v1.0.0; 16,371 -> 11,052 bytes)
+        - done .forge/strategy/cv-showcase-blueprint-v6.yaml — PR #5 merged c82ae59 2026-09-10 (392/392; v6.0.1; over the 50 KB smell — named, accepted; never tightened before, single commit 3b34a6d)
+        - leave .forge/specs/blueprint.md (lean; build-feature looks up its headings by name); .forge/specs/integrations.yaml, .forge/specs/ui-spec.yaml, .forge/specs/api-spec.yaml (template scaffolds with set keys); .forge/style/tokens.yaml, README.md (lean reference); CLAUDE.md, .seogeo/, .chromaqa/ (off limits)
+        - notes: inbox files TIGHTEN-convergible-001/002 on convergible main await convergible's own wrap; runner branches auto-deleted at merge; branch wrap-apply-2026-09-09 remains on convergible; for a convergible session, not tightening — integrations.yaml wired_at paths omit the apps/web prefix and list Stripe as already wired beside blueprint.md's "Billing does not exist in this repo", and blueprint.md names an absent .forge/specs/schema.yaml and the legacy .forge/rulings.yaml
+      The next tightening dispatch waits for FF-026.
     status: in_progress
     blocked_by: null
 
