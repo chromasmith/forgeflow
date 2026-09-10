@@ -468,3 +468,28 @@ rulings:
       carry this as FF-019.
     supersedes: nothing — RULING-011 stands; this fills in the settings it left unstated
     stated_by: Matt, in chat, in this session, by applying the recommended protection settings on chromasmith/LeadDowser after Claude Web named the deadlock
+  - id: RULING-023
+    date: 2026-09-10
+    subject: Branch deletion is automated — Claude Code deletes transport branches via the GitHub REST API; runner branches auto-delete on merge; Matt never deletes a branch by hand
+    ruling: >-
+      Matt reported constant friction from being asked to delete branches in the browser, a
+      chore that arrived with two new standards: the tmp/ transport branch of the apply-script
+      landing route (GOTCHA-009) and the per-run branches dispatched runners push. Neither
+      Claude could do it — the GitHub connector has no branch-delete tool, and Matt's global
+      pre-push guard on Surface 12 (main-only-guard.sh, GOTCHA-010) rejects a git branch
+      deletion as a push to a non-main branch. Matt asked for a procedure so it never needs to
+      be manual, conditional on his code being at risk in no way; Claude Web confirmed it is
+      safe: a branch delete removes a pointer only, the transport branch is deleted only after
+      the apply run has pushed to main and proven every blob SHA, a runner branch auto-deletes
+      only after its PR is merged, and GitHub refuses to delete the default branch (branch
+      protection blocks it a second time). THE RULING: (1) every prompt that uses a tmp/
+      transport branch ends by having Claude Code delete it with
+      gh api -X DELETE repos/chromasmith/<repo>/git/refs/heads/tmp/<name> — a REST call, not a
+      git push, so the pre-push guard is never touched and never bypassed — and verify the
+      branch is gone; (2) the repository setting "Automatically delete head branches" is
+      enabled on every repo on the master, set through gh api, so runner branches disappear at
+      merge; (3) GOTCHA-010's "Matt deletes it in the browser" instruction is retired, and
+      RENDER_PROCEDURE, PROPAGATION_PROCEDURE and the apply-prompt template carry the new steps.
+      Landing rides the laundry-list plan of this session.
+    supersedes: the "Matt deletes the branch in the browser" step recorded in GOTCHA-010 and in S-007's large-file lane wording
+    stated_by: Matt, in chat, in this session ("If that's a safe thing to do... we should do this for sure"), recorded in the turn it was made per W-002
