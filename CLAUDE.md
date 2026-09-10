@@ -107,7 +107,7 @@ Hold the line.
 
 <!-- </scope-discipline v1> -->
 
-<!-- FORGEFLOW HOUSE BLOCK — rendered from forgeflow/master v1.4.0 — do not edit inside markers -->
+<!-- FORGEFLOW HOUSE BLOCK — rendered from forgeflow/master v1.4.1 — do not edit inside markers -->
 <!-- C-001 claude_md_house_block — rendered into every repo's CLAUDE.md between the FORGEFLOW HOUSE BLOCK markers -->
 
 ## House rules (ForgeFlow) — chromasmith/forgeflow

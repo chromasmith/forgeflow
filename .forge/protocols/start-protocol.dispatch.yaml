@@ -1,7 +1,7 @@
 # =============================================================================
 # START PROTOCOL — chromasmith/forgeflow — reader: cc-dispatch
 # source:         chromasmith/forgeflow master/start-protocol.master.yaml
-# master_version: v1.4.0
+# master_version: v1.4.1
 # rendered_on:    2026-09-10
 # render_method:  code
 # config_hash:    7ccf78dfab2fd1a61cc67fe1d8e97cd796b6de197a1a560da45381988267b46d
@@ -346,8 +346,11 @@ document_standards: |
   A prompt that creates or amends a document names its class and says the
   standard applies; the wrap checks documents touched this session against
   it and names any breach. Existing documents are brought to the standard by
-  their own tightening sessions on Matt's word, never by a build prompt in
-  passing.
+  tightening runs on Matt's word, never by a build prompt in passing; document
+  tightening is a forgeflow-session operation, like a render — Matt names the
+  repo and the documents in a session on chromasmith/forgeflow, which holds the
+  procedure (master/DOC_TIGHTENING_PROCEDURE.md) and the issue template; this
+  repo never carries either.
 
 # --- S-046 done_banner_plain_text -------------------------------------------
 done_banner_plain_text: |
