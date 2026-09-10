@@ -72,7 +72,7 @@ rulings:
       only after its PR is merged, and GitHub refuses to delete the default branch (branch
       protection blocks it a second time). THE RULING: (1) every prompt that uses a tmp/
       transport branch ends by having Claude Code delete it with
-      gh api -X DELETE repos/chromasmith/<repo>/git/refs/heads/tmp/<name> — a REST call, not a
+      gh api -X DELETE repos/chromasmith/<repo>/git/refs/heads/tmp/<n> — a REST call, not a
       git push, so the pre-push guard is never touched and never bypassed — and verify the
       branch is gone; (2) the repository setting "Automatically delete head branches" is
       enabled on every repo on the master, set through gh api, so runner branches disappear at
@@ -275,3 +275,16 @@ rulings:
       and master/DOC_TIGHTENING_PROCEDURE.md (FF-022 with FF-023).
     supersedes: nothing — settles FF-023 item (a), the version-handling question
     stated_by: Matt, in chat, in this session (go on Claude Web's recommendation), recorded in the turn it was made per W-002
+  - id: RULING-033
+    date: 2026-09-10
+    subject: Second FF-021 repo — chromasmith/convergible; FF-024 postponed while LeadDowser is in active edit
+    ruling: >-
+      chromasmith/convergible (not chromasmith/convergible-sandbox) is the second repo tightened under
+      FF-021 (RULING-028/029/030). The documents tightened there are the ones Matt names from Claude Web's
+      inventory of the repo; nothing is filed before he names them. Off limits: the ForgeFlow-rendered
+      files (.forge/protocols/, .forge/protocol-config.yaml), CLAUDE.md, the .forge/ state family,
+      .seogeo/ (byte-synced tool files) and ChromaQA configuration. FF-024 (LeadDowser render to v1.4.2)
+      is postponed because a session is active on LeadDowser; it returns as first_thing once LeadDowser
+      is free, and LeadDowser tightening stays paused behind it.
+    supersedes: the 2026-09-10 handoff first_thing (FF-024), for this session only
+    stated_by: Matt, in chat, in this session; recorded one turn late per W-002 (the naming turn ended before the write)
