@@ -1,31 +1,56 @@
 # .forge/handoff.yaml — chromasmith/forgeflow
 # Pass-the-baton briefing written BY the outgoing Claude Web session TO the next.
 # A WARNING LETTER, not a summary. The other .forge/ files hold state; this holds feel.
-# generated: 2026-09-10T19:00:00Z
-# session: 2026-09-10 (FF-020 + LeadDowser maiden tightening voyage — wrap in progress)
-written_at_commit: 7f5ad0a8759f51a17916f1133fc1090442720db0
-written_at_utc: 2026-09-10T19:00:00Z
-wrap_complete: false
+# generated: 2026-09-10T19:11:31Z
+# session: 2026-09-10 (second session — FF-020 landed and propagated; LeadDowser maiden tightening voyage)
+written_at_commit: 669f891c983b5adf478a53ac2d0dadd6d58c7015
+written_at_utc: 2026-09-10T19:11:31Z
+wrap_complete: true
 wrap_parts_total: 7
 
 status: |
-  Wrap in progress — this handoff is part 1/7 of the 2026-09-10 (second session) wrap.
+  Master v1.4.1 (9404ae6) runs on ALL TEN repos; registry 0343a7e, every row current, no
+  config_hash moved. The cleanup programme is in use: DOC_TIGHTENING_PROCEDURE.md exists (amended
+  077c020 for the done/next inventory, RULING-030) and LeadDowser — the first FF-021 repo,
+  RULING-031 — has its blueprint (PR #3, bfbf7e7) and interface spec (PR #4, 46a97b2) merged;
+  its style-kit yaml is next. No unmerged PR anywhere.
+  OVERALL POSITION: the protocol system is unified at one version and the legacy-document cleanup
+  has started, one repo in, two documents down; one protocol sentence (S-093) needs a rewrite
+  before the next tightening run so cold runners stop halting on it.
 
 first_thing: |
-  FINISH THIS WRAP: parts 2-7 — session-state overwrite, session-history append, backlog
-  edit (FF-020 completed, FF-021 in_progress with the LeadDowser inventory block, FF-022 and
-  FF-023 added), GOTCHAS append (GOTCHA-025..027), delete .forge/inbox/FF-V141-MASTER.yaml,
-  handoff rewrite with wrap_complete: true. Content is in the outgoing session's sandbox only if
-  that chat is still open; otherwise rebuild from the commits since 7251569 and the LeadDowser
-  PRs #3 and #4.
+  FF-022 — master v1.4.2, one change then one propagation: (1) rewrite the CLOSING sentence of
+  S-093 (master/start-protocol.master.yaml) so a runner that receives a tightening issue reads
+  it as executing the forgeflow-session operation — "the forgeflow session files the issue ON
+  the target repo; a runner receiving one carries it out; only the procedure and the template stay
+  in forgeflow" — S-093 has reader all and dispatch-start is 640/650, so REPLACE words, do not
+  add lines (P11); verify with the maximum-knob-set render in the test suite. (2) W-005: one
+  line — per-repo loops in local prompts write C:/Chromasmith/$R, never a backslash path with a
+  variable (GOTCHA-015). (3) FF-023 rides along once Matt rules on version handling (see
+  backlog). Verify: tests green, forgeflow re-rendered, ten repos propagated by the one-prompt
+  method (PROPAGATION step 5: double render + config-hash gate), registry written last.
 
 watch_out_for:
-  - "The wrap stopped early if you are reading this line."
+  - "UNTIL FF-022 LANDS, any dispatched tightening issue may HALT on S-093's closing sentence (GOTCHA-025) — one of two LeadDowser runs did. Resume it with an @claude comment choosing its option 3 in plain words: the issue was filed by the forgeflow session, a runner receiving it is executing the operation; the wording that worked is LeadDowser issue #2 comment 5623465814."
+  - "FF-023 carries a ruling Matt owes: does a tightened document keep its version (run 001 kept v1.2.0) or bump it (run 002 bumped to v1.1.0)? Recommendation in the backlog item: bump the patch version and date. Ask once, in the first reply, then build."
+  - "LeadDowser loose ends are LeadDowser's, recorded in this backlog's FF-021 block: stale runner branch claude/issue-2-20260910-1815 (delete by gh api in its next Claude Code run), inbox files TIGHTEN-LeadDowser-001/002 await its own wrap, the style kit's CODE half installs in its P0 from the Drive zip (RULING-004 there), the tightened blueprint is 66 KB (over the 50 KB smell, accepted)."
+  - "Dispatch-start is 640/650 on the maximum knob set (BLUEPRINT current_measurement). Any addition to a block with reader all or cc-dispatch replaces text."
+  - "A first render must open the north_star_doc and check its header matches its filename (GOTCHA-027) — RENDER_PROCEDURE step 0 does not say so yet; fold it into FF-022's change if it touches RENDER_PROCEDURE, otherwise it is text for the next master change."
+  - "Runner refuses piped Bash outright (GOTCHA-026) — a template step that counts or compares uses git show into an in-repo scratch file plus the Grep tool, deleted before the scope audit."
+  - "chromasmith-saas-starter's ChromaQA pre-push gate PASSED with 1 new warning logged during the v1.4.1 propagation (run FF-V141-MASTER, landing 8b35455) — a saas-starter session reads that ledger line; nothing is owed from forgeflow."
 
-next_up: []
+next_up:
+  - "FF-021 continues one repo per forgeflow session on Matt's word; LeadDowser's remaining next item is .forge/design/leaddowser-style-kit.yaml."
+  - "FF-023 (needs-ruling on version handling; rides FF-022)."
+  - "FF-010 (parked): pointer-URL protocols."
+  - "P11 prune session for the protocol files, after the cleanups."
 
 north_star: |
-  Pending the final handoff write.
+  Product-better for every repo: the master fix reached all ten repos in one trip (0343a7e), the cleanup
+  procedure ran end to end on a real repo, and LeadDowser now reads its real blueprint, tightened
+  — plus one board move, the S-093 sentence, that the voyage was meant to find.
 
 tone: |
-  Mid-wrap.
+  A shipping day with one honest defect found by use, not by review. Matt is heading to the
+  LeadDowser repo to build P0; the next forgeflow session is small — one sentence, one line,
+  one propagation.
