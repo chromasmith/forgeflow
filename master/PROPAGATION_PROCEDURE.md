@@ -89,6 +89,18 @@ The run never edits a master file, never edits a repo's config knobs above the e
 marker (a config that fails validation is a HALT, not a fix), and never `git add -A` (the file set
 is named).
 
+## 5b. Rulings shard migration and branch hygiene (v1.4.0, RULING-023/028)
+For each repo the run touches: if the checkout still holds a single `.forge/rulings.yaml`, the run splits it into
+`.forge/rulings/001-020.yaml`, `021-040.yaml`, … (twenty entries per shard, every entry byte-identical, the header
+comment repeated in each shard), re-parses old and new and asserts the ordered list of ruling ids and texts is
+identical, deletes the old file, and includes the shard files and the deletion in the repo's ONE named-file commit.
+The tool for it is `python master/tools/shard_rulings.py <checkout>/.forge/rulings.yaml` (run from the forgeflow
+checkout): it prints the shard paths and the entry-count proof, and refuses to run on a register that is already a
+directory.
+A repo whose register is already a directory is left alone. Any `tmp/` transport branch the run fetched from is
+deleted by the run with `gh api -X DELETE repos/<org>/<repo>/git/refs/heads/tmp/<name>` and confirmed gone; Matt
+never deletes a branch by hand.
+
 ## 6. Record — registered-repos.yaml LAST (Claude Web)
 Only after the run's report is in hand and every landing is re-proven through the connector (blob
 SHA of each pushed file equals the sandbox SHA; `render.py check --against` on the fetched copies is

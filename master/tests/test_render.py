@@ -154,6 +154,20 @@ with tempfile.TemporaryDirectory() as td:
     checks.append(("noindexMetadataFor" in stext and "CONFIG-REFERENCE.md" in etext, "real master: SEO/GEO v1.3.0 page helper and config reference carried", ""))
     checks.append(("S-018" not in sids, "real master: S-018 prior_ruling_search retired (duplicate of S-011 + W-001, P11)", ""))
     checks.append(("TEXT-ONLY TIER" in stext and "waiting on you" in stext and "is retired" in stext, "real master: text-only tier present; ball-holder rule retires the 'waiting on you' tic", ""))
+    # 12b. v1.4.0 (RULING-023..028) text guards on the real masters
+    htext = read(REAL / "claude-md.house-block.master.md")
+    checks.append(("S-093" in sids and "TWO DOCUMENT STANDARDS" in stext and "document_standard_check" in etext, "real master: S-093 document standards and E-053 wrap check present (RULING-028)", ""))
+    checks.append(("gh api -X DELETE" in stext and "gh api -X DELETE" in etext and "deletes the temporary branch in the GitHub browser" not in etext and "deletes the\n  branch in the browser" not in stext, "real master: transport branches are deleted by the run, never by Matt (RULING-023)", ""))
+    checks.append(("TOOLS FIRST" in stext and "op read" in stext and "TOOLS FIRST" in htext, "real master: TOOLS FIRST in S-039 and the house block (RULING-024)", ""))
+    checks.append(("residue_sweep" in etext and "Chat residue: R" in etext and "I'll remember" in etext, "real master: E-052 residue sweep with the residue count and forbidden phrases (RULING-025)", ""))
+    checks.append(("BOTTOM LINE" in stext and "YOUR MOVE" in stext, "real master: W-001 carries the reply shape (RULING-026)", ""))
+    checks.append(("PROPORTIONAL" in etext and "Light wrap" in etext and "TWO-PART light wrap" in etext, "real master: E-002 proportional wrap with the two-part floor (RULING-027)", ""))
+    checks.append((".forge/rulings/" in stext and ".forge/rulings/" in etext and ".forge/rulings/" in htext and "THRESHOLD GATE" in etext, "real master: sharded rulings register in start, end and house block; threshold gate in E-003", ""))
+    checks.append(("merge --ff-only" in stext and "stash pop" in stext, "real master: S-033 covers the dirty-plus-commits checkout (FF-016)", ""))
+    checks.append(("attribution trailers" in stext and "attribution trailers" in htext, "real master: no-attribution-trailers rule in S-030 and the house block (GOTCHA-018)", ""))
+    checks.append(("ONE delivery" in etext and "never a dead end" in etext, "real master: E-001 names the apply lane as its delivery exception", ""))
+    checks.append(((REAL / "assets" / "doc-tightening.issue.md").exists() and "RULE INVENTORY" in read(REAL / "assets" / "doc-tightening.issue.md"), "real master: dispatched doc-tightening template exists and is inventory-gated (RULING-028)", ""))
+    checks.append(((REAL / "tools" / "shard_rulings.py").exists(), "real master: rulings shard migration tool present (E-003 legacy line)", ""))
     # 13. FF-014 / RULING-020 — the MAXIMUM knob set (dispatch on, ChromaQA AND SEO/GEO) stays under every S4 ceiling.
     #     Measured on the REAL master, not the fixture master: a ceiling is about what a session actually reads.
     CEIL = {"start-protocol.yaml": 2000, "start-protocol.dispatch.yaml": 650, "end-protocol.yaml": 1700, "end-protocol.dispatch.yaml": 150}

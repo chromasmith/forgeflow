@@ -1,8 +1,8 @@
 # =============================================================================
 # FORGEFLOW MASTER — UNIFIED SESSION-PROTOCOL SYSTEM
-# Blueprint v1.7 — 2026-09-07 (two board passes; DESIGN CLOSED; master v1.3.0 three-channel change; rollout order by ruling; S4 ceilings from measured renders)
+# Blueprint v1.8 — 2026-09-10 (two board passes; DESIGN CLOSED; master v1.4.0 laundry-list change; rollout order by ruling; S4 ceilings from measured renders)
 # Author: Claude Web (planning session with Matt Fleming, Chromasmith LLC)
-# Status: DESIGN CLOSED after two committee passes. Master RELEASED (v1.3.0 on forgeflow first; six registered repos lag at v1.1.0/v1.0.0 until FF-009); repos join by Matt naming them (RULING-001).
+# Status: DESIGN CLOSED after two committee passes. Master RELEASED (v1.4.0; ten repos on the master, propagated in one pass per change); repos join by Matt naming them (RULING-001).
 # Home: github.com/chromasmith/forgeflow  master/BLUEPRINT.yaml
 # =============================================================================
 #
@@ -15,9 +15,24 @@
 
 meta:
   name: ForgeFlow Master
-  version: "1.7-blueprint"
-  date: 2026-09-07
+  version: "1.8-blueprint"
+  date: 2026-09-10
   revision_history:
+    - version: "1.8"
+      note: >
+        LAUNDRY-LIST CHANGE (master v1.4.0, RULING-023..028). New blocks S-093 (two
+        document standards), E-052 (residue sweep), E-053 (document standard check).
+        The wrap is PROPORTIONAL (E-002, RULING-027) with a two-part floor; the rulings
+        register is a sharded directory (.forge/rulings/<first>-<last>.yaml, twenty per
+        shard) with a threshold gate in E-003; transport branches are deleted by the run
+        via gh api and runner branches auto-delete (RULING-023); TOOLS FIRST governs every
+        third-party step (S-039, RULING-024); Claude Web replies carry the BOTTOM LINE /
+        YOUR MOVE shape (W-001, RULING-026); nothing is lost in the chat (E-052,
+        RULING-025). Section 8 wrap lines describing a fixed numbered series are
+        superseded by the proportional series. RENDER_PROCEDURE 0b sets branch
+        protection by API with the RULING-022 house setting. The dispatched cleanup
+        template master/assets/doc-tightening.issue.md tightens legacy documents on a rule
+        inventory.
     - version: "1.7"
       note: >
         THREE-CHANNEL CHANGE (master v1.3.0, RULING-016..019), no new block IDs. Tool

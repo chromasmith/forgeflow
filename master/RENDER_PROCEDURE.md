@@ -20,39 +20,51 @@ through the GitHub MCP), because render.py reads the `--allowed-tools` list out 
 - The target repo has `.forge/protocol-config.yaml` (repo-facing form: `profile` + `repo` + `overrides`). If it
   does not, write one from the profile that fits (`standard`, `legacy-local`, `docs-only`) and commit it FIRST.
 
-## 0b. Dispatch harness — INSTALL BEFORE RENDERING (v1.1.0, RULING-009/011)
-Dispatch defaults ON. If the tree has no `.github/workflows/claude.yml`, the render will come out dispatch-OFF with
-a header shout and S-092 — legal, but it is the exact state v1.1.0 exists to end, so install first unless Matt says
-this repo is dispatch-off by choice (then `execution.dispatch.enabled: false` goes in the config, with the reason).
-THIS IS THE STANDARD FOR EVERY REPO THAT JOINS THE MASTER, new or existing: no repo is rendered dispatch-off by
-accident again. Three steps, one at a time, each confirmed before the next. Matt does 1 and 3 himself; step 2 is
-one Claude Code prompt and Matt never handles the token.
+## 0b. Dispatch harness — INSTALL BEFORE RENDERING (v1.1.0 RULING-009/011; v1.4.0 RULING-022/023/024)
+Dispatch defaults ON. If the tree has no `.github/workflows/claude.yml`, the render comes out dispatch-OFF with a
+header shout and S-092 — legal, but the exact state v1.1.0 exists to end, so install first unless Matt says this
+repo is dispatch-off by choice (then `execution.dispatch.enabled: false` goes in the config, with the reason).
+THIS IS THE STANDARD FOR EVERY REPO THAT JOINS THE MASTER. TOOLS FIRST (RULING-024): every step below is done by
+ONE local Claude Code run through `gh api` and `op`, in Git Bash syntax; Matt's only action is the `apply`
+confirmation word after the run shows him what it is about to change. No dashboard clicking.
 
-1. **Workflow file (Matt, GitHub web editor).** Claude Web hands him the pre-filled link
-   `https://github.com/<org>/<repo>/new/main?filename=.github/workflows/claude.yml` and the COMPLETE content of
-   `master/assets/claude.yml` in one copyable block (never "copy from line X"). The connector cannot write workflows.
-   Confirm the commit landed: the file's blob SHA on GitHub must equal `git hash-object master/assets/claude.yml`
-   (an uncompleted web-editor commit dialog is silently lost). A repo needing extra runner tools (database reads)
-   OVERLAYS on the asset at the marked lines; it never forks the generic part.
-2. **Secret — ONE command, from 1Password, in a Claude Code prompt.** The token lives in vault "Chromasmith Keys",
-   item `CLAUDE_CODE_OAUTH_TOKEN`, field `credential` (created 2026-09-05 with `claude setup-token`; a Claude
-   subscription token, NEVER `ANTHROPIC_API_KEY`, which bills per token). The prompt runs, in PowerShell:
-       (op read "op://Chromasmith Keys/CLAUDE_CODE_OAUTH_TOKEN/credential").Trim() | gh secret set CLAUDE_CODE_OAUTH_TOKEN --repo chromasmith/<repo>
-   then proves it with `gh secret list --repo chromasmith/<repo>` (name and UTC date only; values are never shown).
-   Readiness checks: `gh auth status` (signed in as chromasmith, repo scope) and `op vault list` — NEVER `op whoami`,
-   which reports "not signed in" on Surface 12 even when the CLI works. Several repos can be done in one prompt, one
-   attempt each, no retries without Matt's word. The value is never printed, echoed or written into a repo. `chromasmith`
-   is a personal GitHub account: there are no organization-level secrets; every repo needs its own. To ROTATE the token
-   later: `claude setup-token` again, `op item edit CLAUDE_CODE_OAUTH_TOKEN --vault "Chromasmith Keys" credential=<new>`
-   (Matt pastes into the Claude Code prompt, which passes it on without displaying it), then re-run the one command per
-   repo — `gh secret set` overwrites.
-3. **Branch protection (Matt, GitHub web).** On the default branch, with "include administrators" UNTICKED
-   (RULING-011): runners cannot push main; Matt, his local Claude Code and Claude Web's connector (acting as Matt)
-   still can. Claude Web proves the bypass with a one-line docs commit before the first dispatch; a rejection means the
-   box is ticked.
+0. **Name and casing first (GOTCHA-017).** Read the repo's real name from the API — `gh api repos/<org>/<repo> --jq .name` —
+   before writing the config. `repo.name` feeds `config_hash` and every path in both protocol files, and a
+   case-only rename NO-OPS silently in GitHub Settings (it needs the two-step: `<name>-tmp`, then the final casing).
+1. **Workflow file.** `master/assets/claude.yml`, byte-identical (a repo needing extra runner tools OVERLAYS on the
+   asset at the marked lines; it never forks the generic part). Landing lane, in order of preference: the run writes
+   it with `gh api -X PUT repos/<org>/<repo>/contents/.github/workflows/claude.yml` (Matt's `gh` token carries the
+   `workflow` scope; the GitHub App connector does not); if that is refused, Claude Web hands Matt the pre-filled
+   link `https://github.com/<org>/<repo>/new/main?filename=.github/workflows/claude.yml` and the complete file
+   content. Either way prove the landing: the blob SHA on GitHub equals `git hash-object master/assets/claude.yml`.
+2. **Secret — one command, from 1Password.** Vault "Chromasmith Keys", item `CLAUDE_CODE_OAUTH_TOKEN`, field
+   `credential` (a Claude subscription token from `claude setup-token`; NEVER `ANTHROPIC_API_KEY`, which bills per
+   token). Readiness: `gh auth status` and `op vault list` — never `op whoami`, which lies on Surface 12
+   (GOTCHA-005). Git Bash form, one line per repo, no loop:
+       op read "op://Chromasmith Keys/CLAUDE_CODE_OAUTH_TOKEN/credential" | tr -d "\r\n" | gh secret set CLAUDE_CODE_OAUTH_TOKEN --repo <org>/<repo>
+   Prove with `gh secret list --repo <org>/<repo>`. The value is never printed, echoed or written into a repo.
+   `chromasmith` is a personal account: no organization secrets, every repo needs its own. ROTATE: `claude
+   setup-token`, `op item edit CLAUDE_CODE_OAUTH_TOKEN --vault "Chromasmith Keys" credential=<new>`, re-run the line.
+3. **Branch protection — the HOUSE SETTING (RULING-022), set by API.** Classic protection on the default branch:
+   "Require a pull request before merging" ON, "Require approvals" UNTICKED (`required_approving_review_count: 0`
+   — a required approval deadlocks every merge, because Matt cannot approve his own PR and Claude Web opens runner
+   PRs as him), "Do not allow bypassing" UNTICKED (`enforce_admins: false` — administrators bypass, RULING-011).
+       gh api -X PUT repos/<org>/<repo>/branches/main/protection --input protection.json
+   with protection.json = `{"required_status_checks": null, "enforce_admins": false, "required_pull_request_reviews":
+   {"required_approving_review_count": 0, "dismiss_stale_reviews": false, "require_code_owner_reviews": false},
+   "restrictions": null}` written to the Windows temp folder, never into the repo tree. Read it back with
+   `gh api repos/<org>/<repo>/branches/main/protection` and confirm the three values. Claude Web then proves the
+   bypass with a one-line docs commit; a rejection means `enforce_admins` came back true.
+4. **Auto-delete head branches (RULING-023).** `gh api -X PATCH repos/<org>/<repo> -f delete_branch_on_merge=true`
+   so runner branches vanish at merge. Transport branches (`tmp/…`) are deleted by the run that used them with
+   `gh api -X DELETE repos/<org>/<repo>/git/refs/heads/tmp/<name>`. Matt never deletes a branch by hand.
+5. **Landing lane by rendered size (GOTCHA-008/017).** Decide BEFORE rendering: the config (small) lands through the
+   connector; if `wc -c` of any rendered file exceeds ~80 KB, the whole rendered set lands through ONE local Claude
+   Code run gated on a blob-SHA table, with the render `--date` passed explicitly (the date is stamped into the
+   header, so today's date makes every hash miss). Never discover the ceiling mid-render.
 Then re-list the tree, confirm the workflow is there, and continue at step 1.
 FIRST PROOF (2026-09-05): chromasmith/forgeflow — secret set, claude.yml blob 4cccfbf = asset, protection on main with
-admin bypass; this very line landed as a direct docs commit through the connector with protection active.
+admin bypass, proven by a direct docs commit. API-set protection first proven 2026-09-10 (run HARNESS-AUDIT-1).
 
 ## 1. Fetch the master into the sandbox
 ```

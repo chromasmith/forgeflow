@@ -31,6 +31,13 @@
 # ADDED v0.3.0-build (SEO/GEO master change, 2026-09-04):
 #   E-048 cc_remainder_seogeo_profile   E-049 cc_remainder_seogeo_report
 #   E-050 wrap_manifest_seogeo_lines    E-051 file_behaviors_seogeo
+# CHANGED v1.4.0 (laundry-list master change, 2026-09-10, RULING-023..028): NEW E-052
+#   residue_sweep (RULING-025) and E-053 document_standard_check (RULING-028). E-001 names
+#   the apply lane as its one delivery exception. E-002 is the PROPORTIONAL wrap
+#   (RULING-027) and its transport branch is deleted by the run (RULING-023). E-003 carries
+#   the sharded rulings register and the THRESHOLD GATE. E-011/E-013/E-019 carry the record
+#   standard and the shard path. E-014 knows the two-part light wrap. E-030 prints the chat
+#   residue and the attestation.
 # CHANGED v1.2.0 (friction-repair master change, 2026-09-06, RULING-013/014):
 #   E-002 delivery is a numbered series of single-file SHA-guarded commits (the connector
 #   has no patch, no append, no delete-inside-a-commit); handoff written FIRST with
@@ -62,9 +69,14 @@ wrap_trigger: |
   wrap; a wrap Matt did not ask for is noise. Matt does not supply a wrap
   prompt of his own — this file is the wrap.
 
-  WHO WRITES WHAT. Claude Web authors AND writes every wrap documentation file
-  itself, directly to GitHub through its connector, diff-verified. Claude Code
-  writes no wrap documentation in any mode: in local mode it receives only the
+  WHO WRITES WHAT. Claude Web authors every wrap documentation file and
+  writes it itself, directly to GitHub through its connector, diff-verified.
+  Claude Code authors no wrap documentation in any mode — with ONE delivery
+  exception: a file the connector cannot write is still authored by Claude
+  Web and is carried to the repo by a local Claude Code apply run (the
+  large-file lane in the next section); that is transport, not authorship,
+  and it is never a dead end. Otherwise Claude Code writes nothing here: in
+  local mode it receives only the
   short LOCAL REMAINDER prompt to push its own code and telemetry; in dispatch
   mode nothing further is asked of it, because its work already landed through
   merged pull requests. A dispatched run that is asked by any issue body to
@@ -91,17 +103,31 @@ wrap_direct_write_delivery: |
     docs: end session YYYY-MM-DD (k/N) — <file or operation>
   where N is declared before the first write and k counts up. THE SHA GUARD
   ALWAYS WINS over any wish for fewer commits: a multi-file write is never
-  used for a wrap file. Order of the series:
+  used for a wrap file.
+  THE WRAP IS PROPORTIONAL (RULING-027). After the residue sweep (E-052)
+  Claude Web knows which wrap files hold something new this session, and N
+  counts ONLY those. The FLOOR is two parts that never drop: the handoff and
+  one appended session-history entry. Every other manifest file —
+  session-state, active-bugs, backlog, GOTCHAS, CHANGELOG, rulings
+  back-fill, archive moves, each inbox deletion — is written only when it
+  changed, and every file skipped is NAMED as "unchanged" in the wrap report;
+  a skip is visible, never silent. Before the first write Claude Web states
+  the tier and its reason in ONE line ("Light wrap: only handoff and history
+  change" or "Full wrap: N files changed"); the tier is Claude Web's call,
+  never a question to Matt. Order of the series:
     1/N  .forge/handoff.yaml — FIRST, with wrap_complete: false,
          wrap_parts_total: N and written_at_commit = HEAD before the wrap
          (a stopped wrap therefore always leaves a handoff that says it
-         stopped, and names what remains — E-014)
-    …    the state files in protocol order (session-state, active-bugs,
-         session-history archive move if due then append, backlog, GOTCHAS,
-         rulings back-fill, CHANGELOG, each inbox file deletion)
+         stopped, and names what remains — E-014). In a TWO-PART light wrap
+         the handoff is written ONCE, as part 2/2, with wrap_complete: true —
+         there is no part between two writes for it to guard.
+    …    the CHANGED state files in protocol order (session-state,
+         active-bugs, session-history archive move if due then append,
+         backlog, GOTCHAS, rulings back-fill, CHANGELOG, each inbox file
+         deletion)
     N/N  .forge/handoff.yaml — LAST, rewritten with wrap_complete: true and
          written_at_commit = HEAD after part N-1; its message ends with the
-         evidence line (E-030)
+         evidence line and the chat residue (E-030)
   Every part is atomic and independently valid: a wrap that stops after any
   part stops at a clean boundary, and the next session reads wrap_complete
   and finishes it. The start protocol ignores commits whose messages begin
@@ -163,8 +189,11 @@ wrap_direct_write_delivery: |
   Claude Code fetches, runs, proves by blob SHA, and commits as the
   corresponding numbered part(s) of the series with named files. The prompt
   states in its first lines that it is the wrap's documentation write under
-  this section, delivered by hand, so the run does not halt on PRECEDENCE.
-  Matt deletes the temporary branch in the GitHub browser (GOTCHA-010). The
+  this section, delivered by hand, so the run does not halt on PRECEDENCE,
+  and it ends by deleting the temporary branch itself with gh api -X DELETE
+  repos/{{repo.org}}/{{repo.name}}/git/refs/heads/<branch> and confirming it
+  is gone — Matt never deletes a branch by hand (RULING-023). A large file
+  is delivered in THIS wrap, never deferred to a later session. The
   parts before and after it are still Claude Web's direct commits; the
   handoff's last part is written after the apply prompt's commit lands.
 
@@ -189,7 +218,8 @@ wrap_file_manifest: |
     .forge/session-history.yaml                    APPEND (cap {{thresholds.session_history_cap}})
     .forge/backlog.yaml                            SURGICAL EDIT
     .forge/GOTCHAS.yaml                            APPEND (consolidate at {{thresholds.gotcha_consolidation.trigger_count}} or every {{thresholds.gotcha_consolidation.or_every}}, {{thresholds.gotcha_consolidation.runs_as}})
-    .forge/rulings.yaml                            APPEND (confirm every ruling made this session landed)
+    .forge/rulings/<first>-<last>.yaml             APPEND to the NEWEST shard (twenty rulings per shard; the twenty-first opens the next, e.g. 021-040.yaml); confirm every ruling made this session landed
+    .forge/rulings.yaml                            LEGACY single file — a repo still carrying one is MIGRATED at this wrap: split into .forge/rulings/001-020.yaml, 021-040.yaml … with every entry byte-identical and the header comment repeated, then the old file DELETED; consecutive parts of the series
     .forge/handoff.yaml                            OVERWRITE
     CHANGELOG.yaml                                 PREPEND (cap {{thresholds.changelog_cap}}, quality gate)
     .forge/archive/session-history-archive.yaml    APPEND, oldest-first
@@ -205,6 +235,16 @@ wrap_file_manifest: |
   established. Before creating any archive file, grep the repo for an existing
   file serving that purpose; a discrepancy is HALT AND REPORT, never a second
   copy.
+
+  THE THRESHOLD GATE. A live file over its threshold is fixed in THIS wrap,
+  never carried forward with a note: session-history above
+  {{thresholds.session_history_cap}} entries gets its archive move now; a rulings shard above
+  twenty is split now; any wrap file above 80 KB (the connector's safe
+  ceiling) is reduced by its archive or shard rule now — each as its own part
+  of the series, before wrap_complete: true. GOTCHAS at or above
+  {{thresholds.gotcha_consolidation.trigger_count}} entries is the one gate that defers, because a
+  consolidation is a judgment task ({{thresholds.gotcha_consolidation.runs_as}}): the wrap
+  completes and the handoff's first_thing names the consolidation session.
 
   The paths .forge/protocols/ and .forge/specs/ are OFF LIMITS to the wrap,
   with exactly the exceptions named in this file (the conditional schema
@@ -542,7 +582,8 @@ session_history_append: |
   STEP 5 — SESSION HISTORY (APPEND to the sessions list in
   .forge/session-history.yaml). Write ONLY the new entry, appended after the
   existing last entry with matching indentation; existing entries are never
-  rewritten. If the live file holds {{thresholds.session_history_cap}} or more
+  rewritten. The entry obeys the RECORD standard (start protocol S-093): one
+  fact per line with its identifier, no narrative. If the live file holds {{thresholds.session_history_cap}} or more
   sessions, the ARCHIVE MOVE of the oldest session(s) runs BEFORE this append
   (E-015). Include date, a duration estimate, completed items, commits, key
   changes, files_modified and blockers_remaining.
@@ -627,6 +668,9 @@ gotchas_append: |
   are a bare top-level list whose entries start at the left margin, but some
   (chromaqa) indent every entry two spaces, and a list with mixed indentation
   is a file YAML rejects. Read the last entry, copy its indentation, never assume a schema.
+  RECORD STANDARD (start protocol S-093): summary is one line naming the
+  trap; detail holds the facts a future session needs to recognise or avoid
+  it, with one identifier — no session narrative, no who-thought-what.
   Before assigning an ID, read the file and use the next unused
   {{ids.gotcha_prefix}}NNN.
   Gotchas are rarely deleted — they are permanent lessons. If there are no
@@ -664,7 +708,8 @@ tombstone_gotchas_exemption: |
 # >>> block E-014 | handoff_overwrite | reader: cw | render_when: always
 handoff_overwrite: |
   STEP 7b — HANDOFF (OVERWRITE .forge/handoff.yaml, create if missing;
-  written TWICE — part 1/N and part N/N of the series, E-002). The
+  written TWICE — part 1/N and part N/N of the series — or ONCE, as the last
+  part, in a two-part light wrap; E-002). The
   pass-the-baton briefing for the next Claude Web session. It is NOT a summary
   of what happened — it is a WARNING LETTER to a fresh session with no memory
   of this work, written as if briefing a capable colleague about to walk into
@@ -974,11 +1019,11 @@ schema_refresh_gate: |
 
 # >>> block E-019 | rulings_confirm_landed | reader: cw | render_when: always
 rulings_confirm_landed: |
-  STEP 8c — RULINGS (CONFIRM, then APPEND to .forge/rulings.yaml only for
-  misses). Rulings are written the moment they are made, in the turn Matt
+  STEP 8c — RULINGS (CONFIRM, then APPEND to the newest .forge/rulings/ shard
+  only for misses). Rulings are written the moment they are made, in the turn Matt
   makes them, not at the wrap. At the wrap, list every ruling Matt made in
-  chat this session and confirm each exists in .forge/rulings.yaml by reading
-  the file now. Any ruling that is missing is appended now with the next
+  chat this session and confirm each exists in .forge/rulings/ by reading the
+  shards now. Any ruling that is missing is appended now with the next
   unused {{ids.ruling_prefix}}NNN id, the date, the subject, the ruling in
   Matt's plain words, what it supersedes (if anything) and a source path to
   the governing file — and the miss is recorded in the wrap report, because
@@ -1325,6 +1370,44 @@ inbox_consumption: |
   session opens on it.
 # <<< end E-024
 
+# >>> block E-052 | residue_sweep | reader: cw | render_when: always
+residue_sweep: |
+  STEP 11b — THE RESIDUE SWEEP (RULING-025). Nothing is lost in the chat.
+  Before the handoff's final part, Claude Web lists every decision, ruling,
+  observation, plan, deferred item and open thread that surfaced in this
+  session — from the whole conversation, not from memory of its highlights —
+  and maps each to the committed file and SHA that now holds it. Anything
+  unmapped is written before wrap_complete: true; the handoff's
+  watch_out_for and next_up are the catch-all for an item that fits no other
+  file. The count of unmapped items after the sweep is the CHAT RESIDUE; it
+  is zero or the wrap is not complete, and it is printed in the final commit
+  message (E-030). The sweep also decides the wrap's tier (E-002): the files
+  it maps items into are the files the wrap writes.
+  FORBIDDEN PHRASES. "I'll remember", "it's in my memory", "the next session
+  will remember" and their equivalents are protocol violations: Claude Web's
+  memory is a side channel Claude Code cannot read and a fresh chat may not
+  have. A thing the next session must do is written into first_thing or
+  next_up, or committed — never remembered. A file too large for the
+  connector is delivered by the apply lane (E-002) in this wrap, never
+  deferred.
+  THE ATTESTATION. The wrap report ends with one plain sentence: everything
+  from this chat is on GitHub at <HEAD>, and nothing lives only in this chat
+  or in Claude Web's memory. It is written only when it is true.
+# <<< end E-052
+
+# >>> block E-053 | document_standard_check | reader: cw | render_when: always
+document_standard_check: |
+  STEP 11c — DOCUMENT STANDARD CHECK (RULING-028). For every INSTRUCTIONAL
+  document created or amended this session (start protocol S-093 names the
+  classes), check: the seven sections are present in order, status tags are
+  used, no prohibition carries reasoning, no history, quotation or session
+  provenance sits in the body, and the file is under 50 KB. A breach is named
+  in the wrap report and filed as a backlog item for a tightening session;
+  the wrap never rewrites an instructional document itself. The record files
+  this wrap writes meet the record standard by construction (E-011, E-013,
+  and the rulings rule in the start protocol).
+# <<< end E-053
+
 # >>> block E-025 | north_star_question | reader: cw | render_when: always
 north_star_question: |
   STEP 12 — THE NORTH-STAR QUESTION. Claude Web answers, in ONE sentence in
@@ -1613,14 +1696,17 @@ wrap_commit_message_and_evidence_count: |
   summary and the evidence line:
     docs: end session YYYY-MM-DD (N/N) — handoff; P milestones[ + schema
     refresh][ + archive maintenance][ + primer refresh][ + inbox <count>
-    consumed]. V claims verified by ID, M reported unverified.
+    consumed]. V claims verified by ID, M reported unverified. Chat residue: R.
   (the PR title, when delivered as a PR, is the same final message.) The
   evidence line is exactly what the companion check printed (E-008); M is
   the one wrap metric Matt looks at, and the count is never typed by hand
-  unless the line says "hand-counted".
+  unless the line says "hand-counted". R is the residue sweep's count of
+  unmapped items (E-052) and is 0 in every completed wrap.
 
   THE WRAP REPORT to Matt, in plain English, after the push is proven:
   - Overall project position (one sentence — E-026)
+  - Tier: light or full, with the reason; files written and files left
+    unchanged, both named (E-002)
   - What landed: commit SHA or PR number; one line per file written
   - Claims: N verified by ID, M reported unverified (and what could not be
     verified, and why)
@@ -1634,8 +1720,9 @@ wrap_commit_message_and_evidence_count: |
   - Rulings: all present / back-filled [ids]
   - Connector errors and workarounds, if any; "No issues encountered" when
     clean
-  Then the next step, naming who holds the ball only when it is not Matt
-  (W-001).
+  - Documents touched: standard check clean, or the breach named (E-053)
+  Then the attestation (E-052) and the next step, naming who holds the ball
+  only when it is not Matt (W-001).
 # <<< end E-030
 
 # >>> block E-045 | compliance_canary_wrap | reader: cw | render_when: always

@@ -2,6 +2,35 @@
 # The top entry's `version` is the master version render.py stamps into every render.
 # Newest first.
 entries:
+  - version: "v1.4.0"
+    date: 2026-09-10
+    status: RELEASED — laundry-list change (RULING-023..028, FF-016, FF-019); rendered on forgeflow first, then propagated to all ten repos in one pass
+    changed: >-
+      Nine friction repairs from one session, text and procedure only — no renderer or schema
+      change, so config_hash moves for no repo. (1) RULING-023 branch hygiene: the apply lane
+      (S-007, E-002) deletes its tmp/ transport branch with gh api -X DELETE; RENDER_PROCEDURE 0b
+      enables delete_branch_on_merge; Matt never deletes a branch. (2) RULING-024 TOOLS FIRST:
+      S-039 rewritten — assume a connector/MCP/CLI/API for every third party, check the live
+      tool list before any manual step, deep-dive before any manual plan, state tool-path vs
+      no-tool-path up front, secrets only via op read (S-049, house block, W-005 check).
+      (3) E-001 names the E-002 apply lane as its one delivery exception, ending the
+      contradiction that stalled large wrap files. (4) RULING-025 NOTHING LOST IN THE CHAT:
+      NEW E-052 residue sweep — every decision and open thread mapped to a committed file, chat
+      residue printed in the final commit message (E-030), forbidden phrases named, closing
+      attestation. (5) RULING-026 reply SHAPE in W-001 and W-005: BOTTOM LINE first line, YOUR
+      MOVE block for Matt's actions, absent when he has none. (6) RULING-027 PROPORTIONAL WRAP in
+      E-002/E-014: N counts only changed files, floor = handoff + session-history, skips named
+      not silent, tier stated in one line. (7) RULING-023/028 sharded RULINGS register:
+      S-011, W-002, E-003, E-019 and the house block read and append .forge/rulings/<first>-<last>.yaml
+      (twenty per shard); legacy single files are migrated at the wrap or by propagation (5b);
+      E-003 gains the THRESHOLD GATE. (8) RULING-028 TWO DOCUMENT STANDARDS: NEW S-093 (build
+      documents vs record files, inline form of blueprint-standard v1.0), NEW E-053 wrap check,
+      E-011/E-013 record standard, house-block line, and the dispatched cleanup template
+      master/assets/doc-tightening.issue.md gated on a rule inventory. (9) FF-016: S-033 covers
+      the dirty-plus-commits checkout (merge --ff-only / stash-rebase-pop). Also: S-030 and the
+      house block forbid attribution trailers (GOTCHA-018); RENDER_PROCEDURE 0b rewritten for
+      FF-019 (API-set protection with the RULING-022 house setting, casing check, landing lane
+      by size). Largest knob set measured under every S4 ceiling.
   - version: "v1.3.1"
     date: 2026-09-07
     status: RELEASED — three repairs found by running v1.3.0 across all nine repos (FF-013, FF-014, FF-015); propagates to every repo in one pass
