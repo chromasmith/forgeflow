@@ -1,35 +1,50 @@
 # .forge/handoff.yaml — chromasmith/forgeflow
 # Pass-the-baton briefing written BY the outgoing Claude Web session TO the next.
 # A WARNING LETTER, not a summary. The other .forge/ files hold state; this holds feel.
-# generated: 2026-09-10T16:20:00Z
+# generated: 2026-09-10T16:55:00Z
 # session: 2026-09-10 (laundry-list session — master v1.4.0 built, landed and propagated to all ten repos)
-written_at_commit: 7ae5ecd3f98c60e83acea8606b51ba098ab9858c
-written_at_utc: 2026-09-10T16:20:00Z
-wrap_complete: false
+written_at_commit: 9df4a66d611879d13ea3793d15fab1d857c54654
+written_at_utc: 2026-09-10T16:55:00Z
+wrap_complete: true
 wrap_parts_total: 9
 
 status: |
-  WRAP IN PROGRESS (full wrap, 9 parts). Master v1.4.0 runs on all ten repos (registry
-  211241f). If you are reading this with wrap_complete false, finish the wrap first.
+  Master v1.4.0 (7406789) runs on ALL TEN repos; registry 211241f says so and nothing is
+  pinned, lagging or unmerged. The harness is uniform on all ten (protection at the
+  RULING-022 setting, OAUTH secret, auto-delete head branches). forgeflow's rulings are
+  sharded (.forge/rulings/001-020.yaml, 021-040.yaml); seven other repos are sharded too.
+  OVERALL POSITION: the protocol system is unified at one version and now carries Matt's
+  whole laundry list as text — but the doc-tightening PROCEDURE is not yet written (FF-020),
+  so the cleanup programme (FF-021) cannot start until it is.
 
 first_thing: |
-  FINISH THE 2026-09-10 WRAP: remaining parts in order — 2 session-state overwrite,
-  3 session-history append, 4 backlog edit, 5 GOTCHAS append (021-024), 6-8 delete the
-  consumed inbox files HARNESS-AUDIT-1 / FF-V140-MASTER / PROPAGATE-v1.4.0, 9 this handoff
-  rewritten with wrap_complete: true. Prepared content exists only in the outgoing
-  session's sandbox; rebuild each part from the inbox files and the commits named in the
-  status above.
+  FF-020 — master v1.4.1, one change then one propagation: (1) master/DOC_TIGHTENING_PROCEDURE.md
+  (RULING-029: a forgeflow session names the target repo and documents, files one dispatch
+  issue per document from master/assets/doc-tightening.issue.md, up to three at once,
+  reviews the PR against the rule inventory, Matt merges) plus ONE line in S-093 saying
+  document tightening is a forgeflow-session operation, like a render; (2) PROPAGATION step 5:
+  the proof method is a byte-stable double render plus the config-hash gate against the
+  registry (as PROPAGATE-v1.4.0 ran it), and 5b states the no-register-at-all case; (3) RENDER
+  0b: retry `op vault list` once on an authorization timeout (GOTCHA-022); (4) BLUEPRINT: note
+  dispatch-start at 637/650 on the maximum knob set. Verify: tests green, forgeflow re-rendered,
+  ten repos propagated, registry written last.
 
 watch_out_for:
-  - "Rulings now live in .forge/rulings/ shards (001-020.yaml, 021-040.yaml); .forge/rulings.yaml is gone. Append to the newest shard."
+  - "RULINGS ARE SHARDED. Append to .forge/rulings/021-040.yaml (newest); the twenty-first entry there opens 041-060.yaml. .forge/rulings.yaml no longer exists in forgeflow or in seven other repos; chromasync and dv-captain never had a register."
+  - "THE WRAP IS PROPORTIONAL NOW (E-002). State the tier in one line before the first write; skipped files are named, never silent; the residue sweep (E-052) decides the tier."
+  - "GOTCHAS.yaml and session-history.yaml carry angle-bracket placeholders (tmp/<name>, <script>, <path>) — a connector READ shows them shortened (GOTCHA-020). Build every re-transmission from a git clone; today's part 5 still needed a 5b for a one-character SHA slip typed by hand."
+  - "DISPATCH-START CEILING IS THIN: 637 of 650 lines on the maximum knob set. The next block with reader 'all' or 'cc-dispatch' must replace something (P11)."
+  - "render.py evidence flags 'applies' as a state-change verb: an applies_to path line reading 'prompt that applies ...' shows as unmarked. False positive — reword such lines or note it."
+  - "convergible-sandbox's dispatch is DOWN (its BUG-027, floating @v1 tag) — a tightening run there uses the local prompt fallback until that repo fixes it."
 
 next_up:
-  - "FF-020 — master v1.4.1 (doc-tightening procedure, step 5 proof text, op retry, ceiling note)."
+  - "FF-021 (blocked on FF-020): legacy document tightening, one repo per forgeflow session, on Matt's schedule; the P11 prune session for the protocol files follows it."
+  - "FF-010 (parked): pointer-URL protocols."
 
 north_star: |
-  Board-only for ForgeFlow itself; product-better for every repo, which now reads leaner
-  rules and loses no ceremony to branch chores.
+  Board-only for ForgeFlow itself; product-better for every repo — each now reads leaner
+  rules, keeps its branches clean without Matt, and will write lean documents from here on.
 
 tone: |
-  A long, decisive day. Matt ruled fast and trusted the sequencing; two runs corrected
-  prompt defects on the record. Finish the bookkeeping before anything else.
+  A long, decisive day: Matt ruled seven times, trusted the sequencing, and every run came
+  back clean. Next session is small and precise — write the procedure, not more rules.
