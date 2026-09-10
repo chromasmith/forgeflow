@@ -371,3 +371,46 @@ sessions:
       - .forge/GOTCHAS.yaml
       - "nine other repos: six rendered files each, rulings shards where a register existed; convergible-sandbox also .forge/protocols/repo-rules.yaml, .forge/protocol-config.yaml knobs, artifact-register.yaml"
     blockers_remaining: []
+  - date: 2026-09-10
+    duration: ~4hr (second session of the day)
+    completed:  # evidence: 9404ae6, 0df44b9, 0343a7e, f3b4185, 7f5ad0a, 077c020; LeadDowser bfbf7e7, 46a97b2, dd33ace, 0dc3c1b, 9480833
+      - "FF-020: master v1.4.1 landed @ 9404ae6 (run FF-V141-MASTER, tests 75/75) — DOC_TIGHTENING_PROCEDURE.md new, S-093 pointer line, PROPAGATION step 5 proof method + 5b no-register case, RENDER 0b op retry, BLUEPRINT v1.9, two test checks"
+      - "forgeflow re-rendered @ 0df44b9 (six files, config_hash 7ccf78dfab2f unchanged); nine repos propagated in the same run (8b35455, 98bfad3, a389ac9, 0886daa, ff0201a, 9412382, 385bae3, 2d18ef1, 64c51ce), every landing re-checked through the connector (six files each); registry @ 0343a7e"
+      - "RULING-030 @ f3b4185 (per-repo done/next inventory) and RULING-031 @ 7f5ad0a (LeadDowser first FF-021 repo) filed when made; procedure amended @ 077c020"
+      - "LeadDowser tightening runs: issue #1 -> PR #3 merged @ bfbf7e7 (blueprint 84,286 -> 66,482 bytes, inventory 277/277, INV-267/268 restored as RETIRED prohibitions on review); issue #2 -> PR #4 merged @ 46a97b2 (interface spec 21,111 -> 18,436 bytes, inventory 100/100); run 002 halted once on S-093 wording, resumed on Matt's option-3 ruling"
+      - "LeadDowser: blueprint restored @ 1c4b3d97 (concurrent Claude Web session, 84,286 bytes); style kit yaml @ 0dc3c1b (blob cf827155, byte-exact to the Drive zip) and board minutes @ 9480833 committed; RULING-004 @ dd33ace"
+    commits:
+      - message: "master: v1.4.1 — FF-020 (9404ae6, run FF-V141-MASTER); protocols: re-render forgeflow (0df44b9); inbox FF-V141-MASTER (f381824)"
+      - message: "registry: master v1.4.1 on all ten repos (0343a7e)"
+      - message: "rulings: RULING-030 (f3b4185), RULING-031 (7f5ad0a); docs: DOC_TIGHTENING_PROCEDURE done/next inventory (077c020)"
+      - message: "in chromasmith/LeadDowser: PR #3 squash bfbf7e7, PR #4 squash 46a97b2, rulings dd33ace, design docs 0dc3c1b + 9480833"
+      - message: "docs: end session 2026-09-10 (1/7 .. 7/7) — this series"
+    key_changes:
+      - "The legacy-document cleanup programme (FF-021) is in use: procedure (9404ae6, 077c020), template and inventory tracking exist and the first repo has two documents merged (bfbf7e7, 46a97b2)"
+      - "Master v1.4.1 changed no knob, so no config_hash moved; the propagation proof method is now the documented one (double render + config-hash gate)"
+      - "One protocol defect found by the maiden voyage: the S-093 closing sentence halts a cold runner (FF-022); one process defect found by inspection: LeadDowser's north-star path had carried the wrong document since its first render (GOTCHA-027)"
+    files_modified:
+      - master/start-protocol.master.yaml
+      - master/PROPAGATION_PROCEDURE.md
+      - master/RENDER_PROCEDURE.md
+      - master/BLUEPRINT.yaml
+      - master/CHANGELOG.yaml
+      - master/tests/test_render.py
+      - master/DOC_TIGHTENING_PROCEDURE.md    # new @ 9404ae6, amended @ 077c020
+      - master/registered-repos.yaml
+      - .forge/protocol-config.yaml
+      - .forge/protocols/start-protocol.yaml
+      - .forge/protocols/start-protocol.dispatch.yaml
+      - .forge/protocols/end-protocol.yaml
+      - .forge/protocols/end-protocol.dispatch.yaml
+      - CLAUDE.md
+      - .forge/rulings/021-040.yaml
+      - .forge/inbox/FF-V141-MASTER.yaml    # written by the run; consumed and deleted at this wrap
+      - .forge/handoff.yaml
+      - .forge/session-state.yaml
+      - .forge/session-history.yaml
+      - .forge/backlog.yaml
+      - .forge/GOTCHAS.yaml
+      - "nine other repos: six rendered files each (v1.4.1 propagation)"
+      - "in chromasmith/LeadDowser: .forge/strategy/leaddowser-blueprint.yaml (+ -history.yaml), .forge/specs/leaddowser-convergible-interface.yaml (+ -history.yaml), .forge/inbox/TIGHTEN-LeadDowser-001.yaml and -002.yaml (consumed by LeadDowser's own next wrap), .forge/design/leaddowser-style-kit.yaml, .forge/design/board-minutes-2026-09-10.md, .forge/rulings/001-020.yaml"
+    blockers_remaining: []
