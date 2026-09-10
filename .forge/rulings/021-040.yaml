@@ -225,3 +225,18 @@ rulings:
       larger read and is the prune session's job, not this one's.
     supersedes: nothing — extends BLUEPRINT STANDARD v1.0 (47f4b55, unwired) into rendered protocol text and adds the record standard
     stated_by: Matt, in chat, in this session ("We are perfectly aligned... institute the standard now in ForgeFlow"; cleanup by reusable focused prompt, separate sessions on his schedule), recorded in the turn it was made per W-002
+  - id: RULING-029
+    date: 2026-09-10
+    subject: Document tightening runs from a FORGEFLOW session, not a session on the target repo
+    ruling: >-
+      Legacy-document cleanup (RULING-028) is operated from a Claude Web session opened on
+      chromasmith/forgeflow: Matt names the target repo and the document(s); Claude Web files
+      the dispatch issue from master/assets/doc-tightening.issue.md, reviews the PR against
+      the rule inventory, and Matt merges. The template and its procedure live in forgeflow
+      only and are never propagated; a rendered start protocol carries one line — document
+      tightening is a forgeflow-session operation, like a render. Supersedes the
+      "session opened on the target repo" lane of RULING-028 and replaces FF-020's inline
+      procedure with master/DOC_TIGHTENING_PROCEDURE.md plus that one line in S-093 (next
+      master change).
+    supersedes: the target-repo-session lane of RULING-028; FF-020 as an inline-procedure block
+    stated_by: Matt, in chat, in this session, recorded in the turn it was made per W-002
