@@ -2,27 +2,23 @@
 session_date: 2026-09-10
 project: forgeflow (ForgeFlow Master — unified start/wrap protocols rendered per repo)
 milestones:
-  - "RULING-032 filed @ fedf262 — a tightened document bumps its patch version and date (FF-023 item a)"
-  - "FF-022 + FF-023 completed: master v1.4.2 @ fd50094 (run FF-V142-MASTER, apply script blob da857391 on tmp/v142-apply, tests 78/78); forgeflow re-rendered @ 4bc7d21 (config_hash 7ccf78dfab2f unchanged); inbox 40b51b8 + ec8a78d"
-  - "v1.4.2 propagated to eight repos in the same run — 1397422 seogeo, e6eecaa chromaqa, d12edb6 dv-captain, aca049c chromasync, 7716aed synclips-platform, 5ab6951 saas-starter, c5fb3b2 convergible-sandbox, 1644039 convergible; no config_hash moved; transport branch deleted by the run"
-  - "Registry @ 2765842 — master_version_current v1.4.2, nine rows current, LeadDowser pinned at v1.4.1"
+  - "RULING-033 filed @ 747073a (placeholder repaired @ a049f6e) — chromasmith/convergible is the second FF-021 repo; FF-024 postponed while LeadDowser is in active edit"
+  - "FF-021 convergible: .forge/legal/compliance.yaml at the document standard — convergible PR #4 merged 356033a (68/68, v1.0.0)"
+  - "FF-021 convergible: .forge/strategy/cv-showcase-blueprint-v6.yaml at the document standard — convergible PR #5 merged c82ae59 (392/392, v6.0.1)"
 decisions:
-  - decision: "LeadDowser pinned for the v1.4.2 pass, not waited on (2765842)"
-    rationale: "Matt was working in LeadDowser; a busy repo is pinned (PROPAGATION step 4)"
-    impact: "FF-024 renders it first in the next forgeflow session; the tightening preflight now requires v1.4.2 (fd50094)"
-  - decision: "Per-repo sandbox renders of the eight private repos replaced by a diff-check gate inside the run"
-    rationale: "text-only change; the gate proves each new render equals the committed copy plus only the intended lines"
-    impact: "all eight passed 6/6 (inbox 40b51b8); FF-025 carries the permanent tool and the procedure text"
-  - decision: "Tightened documents bump their patch version and date (RULING-032, fedf262)"
-    rationale: "anything that consumes a document can see it changed"
-    impact: "template and procedure carry the rule from v1.4.2 (fd50094)"
-blockers: []
+  - decision: "Convergible scope: tighten blueprint v6 and compliance.yaml, leave the other seven instructional files (Matt's go on Claude Web's list, RULING-033)"
+    rationale: "blueprint v6 was never tightened (single commit 3b34a6d) and compliance.yaml kept rationale inline; the rest are lean or fixed-shape build-feature files"
+    impact: "FF-021 convergible block records done and leave"
+  - decision: "A two-component document version x.y reads as x.y.0 and bumps to x.y.1"
+    rationale: "RULING-032 names x.y.z only; the runner asked (convergible PR #5)"
+    impact: "FF-026 item c carries it into the template and procedure"
+blockers:
+  - "FF-024 waits on LeadDowser, in active edit (RULING-033)"
 next_steps:
   - priority: high
-    task: "FF-024 — render chromasmith/LeadDowser to master v1.4.2 (the only pinned registry row) once Matt confirms no session is active there; registry row to current LAST"
+    task: "FF-024 — render chromasmith/LeadDowser to master v1.4.2 once Matt confirms no session is active there; registry row to current LAST"
 context: |
   MASTER v1.4.2 (fd50094) on nine repos; LeadDowser pinned at v1.4.1 (registry 2765842). Rulings
-  newest shard 021-040.yaml holds RULING-021..032. Ceilings on the maximum knob set: start 1857/2000,
-  end 1558/1700, dispatch-start 640/650 (thin), dispatch-end 102/150.
-  OPEN: FF-024 (next), FF-021 (LeadDowser style kit after FF-024), FF-025 (deferred), FF-010
-  (parked). Nothing is broken; nothing blocks a session in any repo.
+  newest shard 021-040.yaml holds RULING-021..033. FF-021: convergible done (356033a, c82ae59),
+  LeadDowser 2 of 3 documents, eight repos not started. FF-026 lands before the next tightening
+  dispatch. Dispatch-start 640/650 on the maximum knob set.
