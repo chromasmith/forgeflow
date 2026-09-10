@@ -2,52 +2,35 @@
 # Status vocabulary: ready | blocked | needs-ruling | in_progress | deferred | completed | superseded
 # Migrated from the legacy empty shape at the 2026-09-04 wrap (first wrap on the rendered end protocol).
 prioritized:
-  - id: FF-019
-    name: RENDER_PROCEDURE step 0b is silent on the branch-protection settings, and on two onboarding steps the LeadDowser render proved are missing
+  - id: FF-020
+    name: Master v1.4.1 — the doc-tightening procedure and the loose ends v1.4.0 left
+    priority: P1
+    estimate: one master change + one propagation
+    spec_ref: .forge/rulings/021-040.yaml RULING-029; master/PROPAGATION_PROCEDURE.md step 5; .forge/GOTCHAS.yaml GOTCHA-021..024
+    description: |
+      (1) master/DOC_TIGHTENING_PROCEDURE.md — how a forgeflow session runs a cleanup
+      from master/assets/doc-tightening.issue.md (name the repo and documents, file one
+      issue per document, up to three at once, review the PR against the rule inventory,
+      Matt merges); one line in S-093: document tightening is a forgeflow-session
+      operation, like a render. (2) PROPAGATION_PROCEDURE step 5: the proof method is a
+      byte-stable double render plus the config-hash gate against the registry, as
+      PROPAGATE-v1.4.0 ran it; state the no-register-at-all case for 5b. (3) RENDER 0b:
+      retry `op vault list` once on an authorization timeout (GOTCHA-022). (4) Record in
+      BLUEPRINT that dispatch-start is at 637/650 lines on the maximum knob set.
+    status: ready
+    blocked_by: null
+  - id: FF-021
+    name: Legacy document tightening across the ten repos (RULING-028/029)
     priority: P2
-    estimate: one edit to master/RENDER_PROCEDURE.md (no re-render — the procedure is not rendered into any repo)
-    spec_ref: master/RENDER_PROCEDURE.md (step 0b); .forge/rulings.yaml RULING-022; .forge/GOTCHAS.yaml GOTCHA-017
+    estimate: one forgeflow session per repo, up to three dispatches at a time
+    spec_ref: master/assets/doc-tightening.issue.md; .forge/rulings/021-040.yaml RULING-028, RULING-029
     description: |
-      Step 0b tells Matt to turn protection on with "include administrators" unticked but
-      says nothing about the checkboxes GitHub pre-ticks for him. "Require approvals" is
-      pre-ticked with "Require a pull request" and deadlocks every merge the moment the
-      administrator bypass is tightened, because Matt cannot approve his own PR and Claude
-      Web opens runner PRs as him (RULING-022). Amend step 0b to state the exact house
-      setting, and add the two onboarding steps this install exposed: (1) read the repo's
-      REAL name and casing from the API before writing the config, because repo.name feeds
-      config_hash and every rendered path, and a case-only rename no-ops silently in GitHub
-      Settings; (2) choose the landing lane by rendered size — connector for the config, ONE
-      Claude Code run with a blob-SHA gate for a rendered set past the connector's ~100 KB
-      ceiling — rather than discovering it mid-render.
-    status: ready
-    blocked_by: null
-  - id: FF-016
-    name: S-033's rebase rule does not cover a checkout that is BOTH dirty and holding local commits
-    priority: P3
-    estimate: text-only master fix (rides the next master change)
-    spec_ref: master/start-protocol.master.yaml (S-033); .forge/GOTCHAS.yaml GOTCHA-015
-    description: |
-      v1.3.1 added "a checkout that has committed anything since its last push is refreshed
-      with git rebase, never git reset --hard". True but incomplete: git refuses to rebase
-      while the tree is dirty, and convergible is ALWAYS dirty after a push (its ChromaQA
-      gate appends to .chromaqa/CQA-debt.jsonl). The wording needs the third case — no local
-      commits plus a dirty tree means git merge --ff-only, which is what Claude Code used on
-      convergible, correctly and unprompted. Two sentences in S-033, one line in W-005.
-    status: ready
-    blocked_by: "next master change — this is wording, not behaviour; nothing is broken today"
-  - id: FF-017
-    name: convergible-sandbox .forge/repo-rules.yaml unwritten, so subsystems.repo_rules_doc stays unset
-    priority: P3
-    estimate: 1 prompt + a single-repo re-render
-    spec_ref: master/registered-repos.yaml (convergible-sandbox row); RULING-012
-    description: |
-      The sandbox's first render (2fe1cce) landed without the DOC-FOLD-1 repo-rules file its
-      step-4 prerequisites named, so the knob is unset and S-005 does not render there. Write
-      .forge/repo-rules.yaml from the DOC-FOLD-1 items in that repo's own handoff, set
-      subsystems.repo_rules_doc in its config, and re-render that ONE repo. Not urgent: the
-      rendered protocol is correct, it simply carries no repo-rules pointer.
-    status: ready
-    blocked_by: null
+      Bring every existing instructional document (blueprints, specs, plans, guides,
+      READMEs) to the document standard, one repo per forgeflow session on Matt's
+      schedule, inventory-gated. Starts after FF-020 lands the procedure. The P11 prune
+      session for the protocol files follows the cleanups.
+    status: blocked
+    blocked_by: "FF-020 — the procedure doc"
   - id: FF-010
     name: Pointer-URL protocols (repos hold a link to one master file) — PARKED
     priority: P3
@@ -66,6 +49,38 @@ prioritized:
 in_progress: []
 
 completed:  # evidence per item: 5664d1b, 8db4ff2, 54c1293 + 8ec708c, b421783, 67031b3, c729db2
+  - id: FF-019
+    name: RENDER_PROCEDURE step 0b rewritten for API-set harness settings and the onboarding steps
+    priority: P2
+    spec_ref: master/RENDER_PROCEDURE.md (step 0b); RULING-022/023/024
+    description: |
+      Step 0b now names the RULING-022 house setting and sets it by gh api, installs the
+      secret in Git Bash form, enables auto-delete-head-branches, checks repo name casing
+      first and picks the landing lane by rendered size.
+    status: completed  # 7406789
+    completed_at: 2026-09-10
+    evidence: 7406789 (master v1.4.0)
+  - id: FF-016
+    name: S-033 covers a checkout that is both dirty and holding local commits
+    priority: P3
+    spec_ref: master/start-protocol.master.yaml (S-033)
+    description: |
+      Dirty tree with no local commits refreshes by merge --ff-only; dirty tree with local
+      commits by stash, rebase, stash pop; a conflicting pop is a STOP.
+    status: completed  # 7406789
+    completed_at: 2026-09-10
+    evidence: 7406789 (master v1.4.0)
+  - id: FF-017
+    name: convergible-sandbox repo-rules.yaml written, knob set, S-005 renders
+    priority: P3
+    spec_ref: convergible-sandbox .forge/protocols/repo-rules.yaml; RULING-012
+    description: |
+      The five LR-163 / DOC-FOLD-1 rules recovered from the protocol files the first
+      render deleted, written to the document standard; north_star_doc repointed to
+      .forge/specs/blueprint.md; registered under R2 in the propagation commit.
+    status: completed  # 85af778
+    completed_at: 2026-09-10
+    evidence: convergible-sandbox 9f07aa6 (repo-rules), 769bf23 (config), 85af778 (render + register)
   - id: FF-018
     name: Onboard chromasmith/LeadDowser — tenth repo on the master, first render on a repo that inherited nothing
     priority: P1
