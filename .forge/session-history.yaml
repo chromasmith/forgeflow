@@ -414,3 +414,46 @@ sessions:
       - "nine other repos: six rendered files each (v1.4.1 propagation)"
       - "in chromasmith/LeadDowser: .forge/strategy/leaddowser-blueprint.yaml (+ -history.yaml), .forge/specs/leaddowser-convergible-interface.yaml (+ -history.yaml), .forge/inbox/TIGHTEN-LeadDowser-001.yaml and -002.yaml (consumed by LeadDowser's own next wrap), .forge/design/leaddowser-style-kit.yaml, .forge/design/board-minutes-2026-09-10.md, .forge/rulings/001-020.yaml"
     blockers_remaining: []
+  - date: 2026-09-10
+    duration: ~1.5hr (third session of the day)
+    completed:  # evidence: fedf262, fd50094, 4bc7d21, 40b51b8, ec8a78d, 2765842
+      - "RULING-032 filed @ fedf262 — a tightened document bumps its patch version and date"
+      - "Master v1.4.2 landed @ fd50094 (run FF-V142-MASTER, apply script blob da857391 and diff checker blob aae8831b on tmp/v142-apply, tests 78/78): S-093 runner clause, W-005 forward-slash line, tightening template and procedure refinements, RENDER step 0 north-star check, BLUEPRINT v1.10, CHANGELOG v1.4.2"
+      - "forgeflow re-rendered @ 4bc7d21; six blob SHAs equal to the sandbox render, re-proven from a sandbox clone"
+      - "Propagated to eight repos (1397422, e6eecaa, d12edb6, aca049c, 7716aed, 5ab6951, c5fb3b2, 1644039); each commit six files +19/-16 and four protocol blobs re-proven through the connector"
+      - "Registry @ 2765842 — nine rows current at v1.4.2, LeadDowser pinned; transport branch deleted by the run (404 confirmed in inbox 40b51b8)"
+    commits:
+      - message: "rulings: RULING-032 (fedf262)"
+      - message: "master: v1.4.2 (fd50094, run FF-V142-MASTER); protocols: re-render forgeflow (4bc7d21); inbox FF-V142-MASTER (40b51b8, correction ec8a78d)"
+      - message: "registry: master v1.4.2 on nine repos, LeadDowser pinned (2765842)"
+      - message: "docs: end session 2026-09-10 (1/7 .. 7/7) — this series"
+      - message: "in eight other repos: protocols: render from forgeflow master v1.4.2 — one commit each (1397422, e6eecaa, d12edb6, aca049c, 7716aed, 5ab6951, c5fb3b2, 1644039)"
+    key_changes:
+      - "v1.4.2 is text only: no renderer or schema change, no config_hash moved (inbox 40b51b8)"
+      - "A diff-check gate proved each private repo's new render equals its committed copy plus only the intended lines, in place of per-repo sandbox renders (GOTCHA-029, FF-025)"
+      - "First propagation to leave a repo pinned: LeadDowser, Matt working in it (registry 2765842); FF-024 renders it next"
+    files_modified:
+      - master/BLUEPRINT.yaml
+      - master/CHANGELOG.yaml
+      - master/DOC_TIGHTENING_PROCEDURE.md
+      - master/RENDER_PROCEDURE.md
+      - master/assets/doc-tightening.issue.md
+      - master/start-protocol.master.yaml
+      - master/tests/test_render.py
+      - master/registered-repos.yaml
+      - .forge/protocol-config.yaml
+      - .forge/protocols/start-protocol.yaml
+      - .forge/protocols/start-protocol.dispatch.yaml
+      - .forge/protocols/end-protocol.yaml
+      - .forge/protocols/end-protocol.dispatch.yaml
+      - CLAUDE.md
+      - .forge/rulings/021-040.yaml
+      - .forge/inbox/FF-V142-MASTER.yaml    # written by the run; consumed and deleted at this wrap
+      - .forge/handoff.yaml
+      - .forge/session-state.yaml
+      - .forge/session-history.yaml
+      - .forge/backlog.yaml
+      - .forge/GOTCHAS.yaml
+      - "eight other repos: six rendered files each (v1.4.2 propagation)"
+      - "branch tmp/v142-apply: v142-apply.py and v142-diffcheck.py (transport only; branch deleted)"
+    blockers_remaining: []
