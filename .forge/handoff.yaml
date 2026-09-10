@@ -1,11 +1,11 @@
 # .forge/handoff.yaml — chromasmith/forgeflow
 # Pass-the-baton briefing written BY the outgoing Claude Web session TO the next.
 # A WARNING LETTER, not a summary. The other .forge/ files hold state; this holds feel.
-# generated: 2026-09-10T22:23:48Z
+# generated: 2026-09-10T22:33:04Z
 # session: 2026-09-10 (fourth session — FF-021 on chromasmith/convergible)
-written_at_commit: a049f6e3e5f0b1ee695768be712d9b45a05d2463
-written_at_utc: 2026-09-10T22:23:48Z
-wrap_complete: false
+written_at_commit: 536c21c67464af636639bc8683a16f54f09eeeac
+written_at_utc: 2026-09-10T22:33:04Z
+wrap_complete: true
 wrap_parts_total: 6
 
 status: |
@@ -18,10 +18,13 @@ status: |
   LeadDowser.
 
 first_thing: |
-  Finish the 2026-09-10 (fourth session) wrap: parts 2-6 in order — .forge/session-state.yaml
-  overwrite, .forge/session-history.yaml append, .forge/backlog.yaml edit (FF-024 blocked, FF-026
-  added, FF-021 convergible block), .forge/GOTCHAS.yaml append GOTCHA-030..035, final handoff with
-  wrap_complete true. Then FF-024 (render LeadDowser to v1.4.2 once it is free).
+  FF-024 — render chromasmith/LeadDowser to master v1.4.2, the only pinned row in
+  master/registered-repos.yaml (2765842). Ask Matt first whether any Claude Code or Claude Web
+  session is active on LeadDowser; it was in active edit on 2026-09-10 (RULING-033). One local Claude
+  Code run per PROPAGATION_PROCEDURE step 5: refresh the checkout, double render, config-hash gate
+  against its row (efaceee3fa42), expected diff limited to the header stamps, the S-093 closing
+  sentence and the W-005 bullet, push, read back six blobs. Verify: the six blobs through the
+  connector, then the LeadDowser row set to current v1.4.2 LAST.
 
 watch_out_for:
   - "Review every tightening PR's diff, not only its inventory count: PR #5 mapped 392/392 while promoting draft copy to RATIFIED, and PR #4 mapped 64/64 while dropping four current facts (GOTCHA-030, GOTCHA-031). FF-026 puts both checks in the template; it lands before the next tightening dispatch."
