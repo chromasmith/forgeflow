@@ -264,3 +264,14 @@ rulings:
       FF-021 in forgeflow .forge/backlog.yaml at this session's wrap.
     supersedes: nothing — RULING-028 said Matt names the repo; this is him naming it
     stated_by: Matt, in chat, in this session, recorded in the turn it was made per W-002
+  - id: RULING-032
+    date: 2026-09-10
+    subject: A tightened document bumps its patch version and sets its date to the tightening date
+    ruling: >-
+      Every document tightening run (FF-021) increments the document's patch version and sets the
+      document's date to the tightening date; it never keeps the old version, so anything that
+      consumes the document can see it changed. Applies to runs filed from master v1.4.2 on;
+      documents already tightened stay as landed. Carried in master/assets/doc-tightening.issue.md
+      and master/DOC_TIGHTENING_PROCEDURE.md (FF-022 with FF-023).
+    supersedes: nothing — settles FF-023 item (a), the version-handling question
+    stated_by: Matt, in chat, in this session (go on Claude Web's recommendation), recorded in the turn it was made per W-002
