@@ -523,3 +523,34 @@ rulings:
       Landing rides the laundry-list plan of this session (master v1.4.0).
     supersedes: nothing — S-039 (tool_capabilities) is expanded, not replaced; the live-run secrets clause of S-049 is reaffirmed and generalized
     stated_by: Matt, in chat, in this session ("I just want this to be part of the standard operating procedure where Claude Web reaches for these tools and doesn't forget about them"), recorded in the turn it was made per W-002
+  - id: RULING-025
+    date: 2026-09-10
+    subject: NOTHING IS LOST IN THE CHAT — the wrap ends with a RESIDUE SWEEP that maps every decision, observation and open thread from the session to a committed file, and "I'll remember" is a forbidden phrase
+    ruling: >-
+      Matt's requirement, in his words: "I am adamant that when I finish a session that
+      nothing be lost in the ephemeral chat. Everything must be saved to GitHub, which must
+      always be the single source of truth." The friction: wraps report done, and when he
+      asks whether everything is saved, roughly half the time the session admits items exist
+      only "in my memory" or says the next session "will remember" to do something. Claude
+      Web's diagnosis, accepted: "memory" there is Claude Web's private side channel, which
+      this protocol already calls no source of truth and which Claude Code can never read;
+      the wrap has no final step asking what surfaced in the chat that is not yet in a
+      committed file; oversized files get deferred instead of taking the E-002 apply lane;
+      and "done" is declared when the last numbered part lands rather than when the chat has
+      been emptied into the repo. THE RULING, master text in the end protocol (v1.4.0):
+      (1) RESIDUE SWEEP — before the handoff's final part, Claude Web enumerates every
+      decision, ruling, observation, plan, deferred item and open thread that surfaced in the
+      session and maps each to the committed file and SHA that now holds it; anything unmapped
+      is written before wrap_complete: true, with the handoff's watch_out_for and next_up as
+      the catch-all for items that fit no other file; (2) the wrap closes with a specific
+      attestation, in plain English, that everything from this chat is on GitHub at the named
+      HEAD and nothing lives only in this chat or in Claude Web's memory; (3) a
+      "chat residue: 0" count joins the verified/unverified evidence counts in the final wrap
+      commit message, and a nonzero residue means the wrap is not complete; (4) the phrases
+      "I'll remember", "it's in my memory" and "the next session will remember" are named as
+      protocol violations — a thing the next session must do is written into the handoff's
+      first_thing or next_up, or committed, never remembered; (5) a file the connector cannot
+      write is delivered by the E-002 apply lane in the same wrap, never deferred to a later
+      session (see the E-001 exception fix on this session's list).
+    supersedes: nothing — E-002 and E-030 are extended; the "memory is a side channel" wording of S-009/W-002 is reaffirmed with an enforcement step
+    stated_by: Matt, in chat, in this session ("This is not okay... Everything must be saved to GitHub"), recorded in the turn it was made per W-002
