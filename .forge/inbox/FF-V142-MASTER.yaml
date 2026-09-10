@@ -180,7 +180,7 @@ part_c_results:
       .forge/protocol-config.yaml: d59953d4e5b069e066acc0f2170eb8ce45989b48
       CLAUDE.md: 10ba6ff023c7c5a0a55f88d68f0798783a1c7ecb
 
-leaddowser: pinned by prompt — Matt is working in it. Not opened, refreshed, rendered, committed or pushed this run; it stays on v1.4.1. No protocol_drift line was written by this run; Claude Web records the pin in the registry.
+leaddowser: pinned by prompt — Matt is working in it. Not refreshed, rendered, committed or pushed this run; it stays on v1.4.1 (last commit 64c51ce, config_hash efaceee3fa42). The ONLY contact was a read-only `git log -1` in the final sweep, to confirm it had not been touched; nothing was fetched, reset or written. No protocol_drift line was written by this run; Claude Web records the pin in the registry.
 
 registry: not touched by this run — master/registered-repos.yaml is Claude Web's to write LAST, after re-proving these landings.
 
@@ -207,7 +207,7 @@ reflection:
     forgeflow, six rendered files in each of the eight target repos, this inbox file, and the two transport
     scripts restored from origin/tmp/v142-apply and moved straight out of the tree to /tmp before any commit
     (never committed; deleted at the end). No unauthorized file was modified, created or deleted in any of the
-    nine repos. LeadDowser was not opened at all.
+    nine repos. LeadDowser was not modified — the only contact was a read-only `git log -1` in the final sweep to confirm it was untouched.
   q4_artifact_paths: >-
     No. Every file written is at a path this prompt named explicitly. The only paths written outside the nine
     repos were /tmp/v142-apply.py, /tmp/v142-diffcheck.py and the scratch render directories under /tmp/v142,
@@ -237,7 +237,7 @@ scope_disclosure:
     - .forge/protocols/end-protocol.dispatch.yaml
     - .forge/protocol-config.yaml
     - CLAUDE.md
-  leaddowser: not touched
+  leaddowser: not modified — read-only `git log -1` in the final sweep only
   outside_repos: /tmp/v142-apply.py, /tmp/v142-diffcheck.py and /tmp/v142/ scratch renders only, as the prompt's commands name; all deleted at the end
 
 gotcha_candidates:
