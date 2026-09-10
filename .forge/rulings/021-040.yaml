@@ -72,7 +72,7 @@ rulings:
       only after its PR is merged, and GitHub refuses to delete the default branch (branch
       protection blocks it a second time). THE RULING: (1) every prompt that uses a tmp/
       transport branch ends by having Claude Code delete it with
-      gh api -X DELETE repos/chromasmith/<repo>/git/refs/heads/tmp/<n> — a REST call, not a
+      gh api -X DELETE repos/chromasmith/<repo>/git/refs/heads/tmp/<name> — a REST call, not a
       git push, so the pre-push guard is never touched and never bypassed — and verify the
       branch is gone; (2) the repository setting "Automatically delete head branches" is
       enabled on every repo on the master, set through gh api, so runner branches disappear at
