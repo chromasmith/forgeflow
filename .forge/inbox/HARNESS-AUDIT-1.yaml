@@ -1,0 +1,121 @@
+run_id: HARNESS-AUDIT-1
+date: 2026-09-10
+summary: >-
+  Audited harness settings on all ten master repos. Branch protection and the
+  CLAUDE_CODE_OAUTH_TOKEN secret were already correct everywhere (the prompt's
+  premise was stale); the only real work was enabling auto-delete head branches
+  on nine repos per RULING-023.
+
+before_table: |
+  repo                       | protection | require PR | approvals | enforce_admins | auto-delete | OAUTH secret
+  ---------------------------+------------+------------+-----------+----------------+-------------+-------------
+  forgeflow                  | yes        | yes        | 0         | false          | false       | yes
+  chromasmith-saas-starter   | yes        | yes        | 0         | false          | false       | yes
+  convergible                | yes        | yes        | 0         | false          | false       | yes
+  convergible-sandbox        | yes        | yes        | 0         | false          | true        | yes
+  seogeo                     | yes        | yes        | 0         | false          | false       | yes
+  chromaqa                   | yes        | yes        | 0         | false          | false       | yes
+  synclips-platform          | yes        | yes        | 0         | false          | false       | yes
+  chromasync                 | yes        | yes        | 0         | false          | false       | yes
+  dv-captain                 | yes        | yes        | 0         | false          | false       | yes
+  LeadDowser                 | yes        | yes        | 0         | false          | false       | yes
+
+after_table: |
+  repo                       | protection | require PR | approvals | enforce_admins | auto-delete | OAUTH secret
+  ---------------------------+------------+------------+-----------+----------------+-------------+-------------
+  forgeflow                  | yes        | yes        | 0         | false          | true        | yes
+  chromasmith-saas-starter   | yes        | yes        | 0         | false          | true        | yes
+  convergible                | yes        | yes        | 0         | false          | true        | yes
+  convergible-sandbox        | yes        | yes        | 0         | false          | true        | yes
+  seogeo                     | yes        | yes        | 0         | false          | true        | yes
+  chromaqa                   | yes        | yes        | 0         | false          | true        | yes
+  synclips-platform          | yes        | yes        | 0         | false          | true        | yes
+  chromasync                 | yes        | yes        | 0         | false          | true        | yes
+  dv-captain                 | yes        | yes        | 0         | false          | true        | yes
+  LeadDowser                 | yes        | yes        | 0         | false          | true        | yes
+
+changes_applied:
+  - "forgeflow: delete_branch_on_merge false to true (PATCH repos/chromasmith/forgeflow)"
+  - "chromasmith-saas-starter: delete_branch_on_merge false to true"
+  - "convergible: delete_branch_on_merge false to true"
+  - "seogeo: delete_branch_on_merge false to true"
+  - "chromaqa: delete_branch_on_merge false to true"
+  - "synclips-platform: delete_branch_on_merge false to true"
+  - "chromasync: delete_branch_on_merge false to true"
+  - "dv-captain: delete_branch_on_merge false to true"
+  - "LeadDowser: delete_branch_on_merge false to true"
+
+already_correct:
+  - "Branch protection on all ten repos. Every repo already carried the exact RULING-022 house setting (required_pull_request_reviews present, required_approving_review_count 0, enforce_admins false). No PUT was issued anywhere; protection.json was never written."
+  - "CLAUDE_CODE_OAUTH_TOKEN on all ten repos. Present everywhere including convergible (set 2026-09-07). No op read and no gh secret set was issued."
+  - "convergible-sandbox delete_branch_on_merge. Already true before this run."
+
+surprises:
+  - "PROMPT PREMISE STALE. The task brief said four repos still have no branch protection and that convergible has no CLAUDE_CODE_OAUTH_TOKEN. Neither was true at run time: all ten repos were already protected at house settings and all ten already carried the secret. Something (a prior run or Matt) closed both gaps between the prompt being written and this run executing. Two of the three apply phases had nothing to do."
+  - "NO PRE-TICKED APPROVALS DEFECT FOUND. RULING-022 anticipated that the six hand-protected repos might carry GitHub's pre-ticked Require approvals value of 1. Every one of the ten read back required_approving_review_count 0. The defect the ruling was written to catch did not exist in any repo."
+  - "op vault list TIMED OUT ON FIRST CALL. The first invocation returned an authorization timeout error and no vault list. An identical second invocation succeeded and listed Chromasmith Keys. This is NOT the GOTCHA-005 whoami lie; it is a separate cold-start behaviour where the first op data command after an idle period waits on desktop-app authorization and gives up. A run that treats the first timeout as the readiness gate will stop for nothing."
+
+reflections:
+  q1_prompt_improvement: >-
+    The prompt was structurally excellent: scope lock, literal commands, an
+    explicit human gate, and a verify phase that re-reads rather than trusting
+    the write. Two improvements. First, the WHY section stated the world's
+    condition as fact ("four repos still have no branch protection",
+    "convergible has no CLAUDE_CODE_OAUTH_TOKEN") rather than as an expectation
+    to be tested. Both statements were false by the time the run executed, and a
+    prompt that asserts state instead of predicting it invites a run to apply
+    changes it does not need. Phrasing it as "we EXPECT to find roughly four
+    repos unprotected, confirm against the audit and report any divergence"
+    would make the audit the authority and the brief the hypothesis. Second,
+    Phase 3a says "for every repo whose row is not already exactly the house
+    setting" but the temp-file instruction assumes at least one repo will need
+    it; the prompt never says what to do when the answer is zero repos. I
+    inferred the right thing (write no protection.json, issue no PUT, and
+    disclose it) but "if no repo needs 3a, skip it, do not write the temp file,
+    and say so" would remove the inference.
+  q2_future_session_traps: >-
+    Yes, one. The 1Password CLI's FIRST data command after an idle period on
+    Surface 12 can fail with an authorization timeout and return nothing, while
+    the very next identical call succeeds. This is distinct from GOTCHA-005 (op
+    whoami lying) and it defeats the fix GOTCHA-005 prescribes, because the
+    recommended readiness check is itself the command that times out. A future
+    session that gates on a single op vault list will halt and hand Matt a
+    "sign in to 1Password" instruction he does not need. Retry once before
+    treating it as a gate. Logged as a gotcha candidate below.
+  q3_scope_disclosure: >-
+    No, all changes stayed within the authorized scope. The only file created,
+    modified or deleted in the repository is .forge/inbox/HARNESS-AUDIT-1.yaml,
+    which is the single entry on the AUTHORIZED FILES list and is additionally
+    authorized by the protocol for every run. Everything else this run changed
+    lives in GitHub account settings, not in any repository. The scope audit
+    (git status --porcelain --untracked-files=all) was empty immediately before
+    this file was written.
+  q4_artifact_paths: >-
+    No. Every path this run was asked to write was stated explicitly. The one
+    temp path the prompt named, under the Windows Temp folder as
+    protection.json, was never created because Phase 3a had no work; the
+    prompt's deletion step was run anyway as a no-op. No file was created at any
+    path this prompt did not name.
+
+scope_disclosure:
+  - ".forge/inbox/HARNESS-AUDIT-1.yaml (new file, the only file touched, on the authorized list)"
+
+gotcha_candidates:
+  - id: GOTCHA-CANDIDATE-op-cold-start-timeout
+    summary: "On Surface 12 the FIRST op data command after an idle period can fail with an authorization timeout and return nothing. Retry once before treating it as a sign-in gate; the second identical call succeeds."
+    detail: |
+      GOTCHA-005 already records that `op whoami` lies on this machine and
+      prescribes `op vault list` as the readiness check. This run found that the
+      prescribed check ITSELF has a cold-start failure: the first
+      `op vault list` returned only an authorization timeout error with no vault
+      rows. An identical second call, run moments later with no intervening
+      action, printed the full list including "Chromasmith Keys". The op CLI is
+      waiting on desktop-app authorization and abandons the wait rather than
+      blocking. Any prompt that gates on a single `op vault list` will stall a
+      supervised run and ask Matt to sign in to a 1Password that is already
+      signed in. THE RULE: run the readiness check, and if it times out, run it
+      exactly once more before declaring a gate.
+    source: "Claude Code run HARNESS-AUDIT-1, 2026-09-10 (op CLI 2.34.1, Surface 12)"
+    applies_to: "every prompt that reads a secret through the 1Password CLI"
+
+needs_ruling: []
