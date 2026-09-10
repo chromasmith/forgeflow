@@ -1,56 +1,35 @@
 # .forge/handoff.yaml — chromasmith/forgeflow
 # Pass-the-baton briefing written BY the outgoing Claude Web session TO the next.
 # A WARNING LETTER, not a summary. The other .forge/ files hold state; this holds feel.
-# generated: 2026-09-09T20:30:00Z
-# session: 2026-09-09 (LeadDowser onboarding — tenth repo rendered from master v1.3.1)
-written_at_commit: 8907c13504efdd28b8ced76660e4ea8fd00c6234
-written_at_utc: 2026-09-09T20:30:00Z
-wrap_complete: true
+# generated: 2026-09-10T16:20:00Z
+# session: 2026-09-10 (laundry-list session — master v1.4.0 built, landed and propagated to all ten repos)
+written_at_commit: 7ae5ecd3f98c60e83acea8606b51ba098ab9858c
+written_at_utc: 2026-09-10T16:20:00Z
+wrap_complete: false
 wrap_parts_total: 9
 
 status: |
-  Master v1.3.1 (5664d1b) is unchanged and now runs on TEN repos — chromasmith/LeadDowser
-  joined today as a first render, dispatch-ON from its first pass, and the registry says so
-  (be3cf47): ten rows, none pinned, none lagging. No master text was edited, so nothing
-  propagated and no other repo moved. Nothing is unmerged anywhere. Overall position: the
-  ForgeFlow system is doing the job it was built for and onboarding is now a proven path
-  rather than a theory — but it is still a living system, and today's onboarding produced
-  four new lessons and one real settings defect, which is the normal rate.
+  WRAP IN PROGRESS (full wrap, 9 parts). Master v1.4.0 runs on all ten repos (registry
+  211241f). If you are reading this with wrap_complete false, finish the wrap first.
 
 first_thing: |
-  FF-019 — amend master/RENDER_PROCEDURE.md step 0b. It tells Matt to turn branch protection
-  on but says nothing about the boxes GitHub pre-ticks, and "Require approvals" deadlocks
-  every merge the moment the administrator bypass is tightened, because Matt cannot approve
-  his own pull request and Claude Web opens runner PRs as him (RULING-022). Write the exact
-  house setting into step 0b — "Require a pull request" ON, "Require approvals" UNTICKED,
-  "Do not allow bypassing" UNTICKED — and add the two onboarding steps this install exposed
-  (GOTCHA-017): read the repo's real NAME AND CASING from the API before writing the config,
-  and choose the landing lane by rendered size rather than discovering the connector ceiling
-  mid-render. This is a procedure file, not rendered into any repo, so no re-render is owed.
-  Verify by reading step 0b back and confirming a fresh session could follow it without
-  asking a question.
+  FINISH THE 2026-09-10 WRAP: remaining parts in order — 2 session-state overwrite,
+  3 session-history append, 4 backlog edit, 5 GOTCHAS append (021-024), 6-8 delete the
+  consumed inbox files HARNESS-AUDIT-1 / FF-V140-MASTER / PROPAGATE-v1.4.0, 9 this handoff
+  rewritten with wrap_complete: true. Prepared content exists only in the outgoing
+  session's sandbox; rebuild each part from the inbox files and the commits named in the
+  status above.
 
 watch_out_for:
-  - "THE THING MOST LIKELY TO COST YOU 30 MINUTES: never rebuild a whole-file write from a connector READ. Part 5 of this wrap did exactly that and silently truncated a placeholder inside GOTCHA-009 — valid YAML, plausible diff, wrong file. It was caught only because the returned blob SHA did not equal git hash-object of the sandbox build. Clone the repo, edit in the sandbox, compare hashes. GOTCHA-020."
-  - "A FIRST RENDER IS TWO LANES, not one: the small config lands through the connector, and the rendered set (LeadDowser's was ~196 KB) goes through ONE local Claude Code run gated on a blob-SHA table. Passing the prompt's exact --date is not optional — the date is stamped into the header, so today's date makes all six hashes miss for no visible reason (GOTCHA-017)."
-  - "REPO NAME CASING is load-bearing and cannot be fixed cheaply after the fact: repo.name feeds config_hash and every path in both protocol files. Read the real name from the API first. A case-only rename NO-OPS silently in GitHub Settings and needs the two-step."
-  - "Claude Code may add Co-Authored-By / Claude-Session trailers to commit messages from its own harness instruction, outside your prompt. forgeflow's history had none before be3cf47. If uniformity matters, the prompt must say 'no attribution trailers' explicitly (GOTCHA-018)."
-  - "STILL OWED BY MATT, not blocking and unchanged today: branch protection on synclips-platform, chromasync, dv-captain and convergible, and the CLAUDE_CODE_OAUTH_TOKEN secret on convergible — until that secret is set, convergible's rendered protocol offers a dispatch lane the repo cannot run."
-  - "master/blueprint-standard.master.yaml (47f4b55) has been in the master since 2026-09-08 but is not referenced by render.py, the profiles or the propagation procedure, so no repo carries the blueprint standard yet. That is a real gap nobody has filed as work; decide with Matt before assuming it is wired."
+  - "Rulings now live in .forge/rulings/ shards (001-020.yaml, 021-040.yaml); .forge/rulings.yaml is gone. Append to the newest shard."
 
 next_up:
-  - "FF-016 (ready, P3): S-033's refresh rule does not cover a checkout that is both dirty and holding local commits; rides the NEXT master change — do not cut a release for it alone."
-  - "FF-017 (ready, P3): convergible-sandbox's .forge/repo-rules.yaml is still unwritten, so subsystems.repo_rules_doc stays unset and S-005 does not render there."
-  - "FF-010 (deferred): the pointer-URL idea, parked; revisit only if propagation becomes slow again."
+  - "FF-020 — master v1.4.1 (doc-tightening procedure, step 5 proof text, op retry, ceiling note)."
 
 north_star: |
-  Product-better for LeadDowser, board-only for ForgeFlow itself: a repo that had nothing but
-  documentation this morning can now be worked on the same way as every other, while the
-  master gained lessons and one queued fix rather than any new capability.
+  Board-only for ForgeFlow itself; product-better for every repo, which now reads leaner
+  rules and loses no ceremony to branch chores.
 
 tone: |
-  A methodical session that went right until the bookkeeping, where a whole-file write
-  corrupted a line and the hash check caught it. Take that as the lesson of the day rather
-  than an embarrassment: the checks exist because this failure mode is invisible without
-  them. Matt is onboarding new projects at pace right now — expect the next session to be
-  another repo, and have the onboarding path in step 0b tightened before it arrives.
+  A long, decisive day. Matt ruled fast and trusted the sequencing; two runs corrected
+  prompt defects on the record. Finish the bookkeeping before anything else.
