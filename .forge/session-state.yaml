@@ -2,30 +2,27 @@
 session_date: 2026-09-10
 project: forgeflow (ForgeFlow Master — unified start/wrap protocols rendered per repo)
 milestones:
-  - "FF-020 completed: master v1.4.1 @ 9404ae6 (run FF-V141-MASTER, apply script blob b7fdc710 on tmp/v141-apply, tests 75/75); forgeflow re-rendered 0df44b9 (config_hash unchanged 7ccf78dfab2f); nine repos propagated in the same run — 8b35455 saas-starter, 98bfad3 convergible, a389ac9 convergible-sandbox, 0886daa seogeo, ff0201a chromaqa, 9412382 synclips-platform, 385bae3 chromasync, 2d18ef1 dv-captain, 64c51ce LeadDowser — every config_hash unchanged; inbox f381824; registry @ 0343a7e with all ten rows current at v1.4.1"
-  - "RULING-030 (f3b4185) and RULING-031 (7f5ad0a) filed in the turns they were made; master/DOC_TIGHTENING_PROCEDURE.md amended for the done/next inventory @ 077c020"
-  - "FF-021 started on chromasmith/LeadDowser: PR #3 merged @ bfbf7e7 (blueprint, inventory 277/277, two RETIRED prohibitions restored after review) and PR #4 merged @ 46a97b2 (interface spec, inventory 100/100); the run for #2 halted once on the S-093 wording and was resumed on Matt's option-3 ruling"
-  - "LeadDowser repairs alongside: the real Master Blueprint v1.2.0 restored @ 1c4b3d97 by a concurrent Claude Web session (the path had held a copy of the interface notice since 2026-09-09); style kit documents committed from the Drive zip — .forge/design/leaddowser-style-kit.yaml @ 0dc3c1b (blob cf827155) and board-minutes @ 9480833; LeadDowser RULING-004 @ dd33ace (R1-R48 and DS-R1-R19 migrate into its register in P0)"
+  - "RULING-032 filed @ fedf262 — a tightened document bumps its patch version and date (FF-023 item a)"
+  - "FF-022 + FF-023 completed: master v1.4.2 @ fd50094 (run FF-V142-MASTER, apply script blob da857391 on tmp/v142-apply, tests 78/78); forgeflow re-rendered @ 4bc7d21 (config_hash 7ccf78dfab2f unchanged); inbox 40b51b8 + ec8a78d"
+  - "v1.4.2 propagated to eight repos in the same run — 1397422 seogeo, e6eecaa chromaqa, d12edb6 dv-captain, aca049c chromasync, 7716aed synclips-platform, 5ab6951 saas-starter, c5fb3b2 convergible-sandbox, 1644039 convergible; no config_hash moved; transport branch deleted by the run"
+  - "Registry @ 2765842 — master_version_current v1.4.2, nine rows current, LeadDowser pinned at v1.4.1"
 decisions:
-  - decision: "FF-020 delivered as one master change plus one propagation in a single local Claude Code run (9404ae6, 0df44b9, registry 0343a7e)"
-    rationale: "the propagation depends on the master; nothing else was parallelizable"
-    impact: "the one-prompt method has run four times (v1.3.0 9f50d33/6b08096, v1.3.1 5664d1b, v1.4.0 7406789, v1.4.1 9404ae6); PROPAGATION step 5 documents its proof method"
-  - decision: "LeadDowser is the first FF-021 repo (RULING-031); progress is a per-repo done/next inventory in this backlog (RULING-030)"
-    rationale: "Matt named it; he wants to resume a partly cleaned repo without a tree scan"
-    impact: "FF-021 carries one inventory block per repo; the style-kit yaml is LeadDowser's remaining next item"
-  - decision: "Run TIGHTEN-LeadDowser-002's halt was resolved by Matt's option 3 (proceed as written), not by a master change first"
-    rationale: "the procedure is right; only the S-093 sentence is ambiguous to a cold runner"
-    impact: "FF-022 fixes the sentence in master v1.4.2; until it lands any tightening issue may halt the same way and is resumed with the same wording"
+  - decision: "LeadDowser pinned for the v1.4.2 pass, not waited on (2765842)"
+    rationale: "Matt was working in LeadDowser; a busy repo is pinned (PROPAGATION step 4)"
+    impact: "FF-024 renders it first in the next forgeflow session; the tightening preflight now requires v1.4.2 (fd50094)"
+  - decision: "Per-repo sandbox renders of the eight private repos replaced by a diff-check gate inside the run"
+    rationale: "text-only change; the gate proves each new render equals the committed copy plus only the intended lines"
+    impact: "all eight passed 6/6 (inbox 40b51b8); FF-025 carries the permanent tool and the procedure text"
+  - decision: "Tightened documents bump their patch version and date (RULING-032, fedf262)"
+    rationale: "anything that consumes a document can see it changed"
+    impact: "template and procedure carry the rule from v1.4.2 (fd50094)"
 blockers: []
 next_steps:
   - priority: high
-    task: "FF-022 — master v1.4.2: rewrite the S-093 closing sentence so a runner receiving a tightening issue reads it as executing the forgeflow-session operation, not violating it (dispatch-start is 640/650 — replace text, do not add); W-005 gains the forward-slash-paths-with-variables line; FF-023 template refinements ride along; then one propagation to all ten repos"
+    task: "FF-024 — render chromasmith/LeadDowser to master v1.4.2 (the only pinned registry row) once Matt confirms no session is active there; registry row to current LAST"
 context: |
-  MASTER v1.4.1 (9404ae6) runs on all ten repos; registry 0343a7e. Rulings sharded; newest
-  shard 021-040.yaml holds RULING-021..031. FF-021 IN PROGRESS: LeadDowser blueprint and
-  interface spec tightened and merged (bfbf7e7, 46a97b2); its style-kit yaml is next; the four READMEs and
-  CLAUDE.md are left as-is. Ceilings on the maximum knob set: start 1854/2000, end 1558/1700,
-  dispatch-start 640/650 (thin), dispatch-end 102/150.
-  OPEN: FF-022 (v1.4.2 S-093 fix, next), FF-023 (template refinements, one ruling owed on
-  version handling), FF-021 (continues per repo on Matt's word), FF-010 (parked). Nothing
-  is broken; nothing blocks a session in any repo.
+  MASTER v1.4.2 (fd50094) on nine repos; LeadDowser pinned at v1.4.1 (registry 2765842). Rulings
+  newest shard 021-040.yaml holds RULING-021..032. Ceilings on the maximum knob set: start 1857/2000,
+  end 1558/1700, dispatch-start 640/650 (thin), dispatch-end 102/150.
+  OPEN: FF-024 (next), FF-021 (LeadDowser style kit after FF-024), FF-025 (deferred), FF-010
+  (parked). Nothing is broken; nothing blocks a session in any repo.
