@@ -1,0 +1,230 @@
+run_id: FF-V141-MASTER
+date: 2026-09-10
+task: FF-020 — land ForgeFlow master v1.4.1, re-render forgeflow, propagate to nine registered repos
+machine: Surface 12 (Git Bash)
+
+master_sha: 9404ae6ba7dcae0930112c229a4ad06cdf9df412
+forgeflow_render_sha: 0df44b9d00dd3f006a206ccdfa3228e85aa8cce4
+tests: "75/75"
+branch_deleted: true
+transport_branch: tmp/v141-apply — deleted by REST, GET returned 404
+apply_script_blob: b7fdc710e2d4b70bc1412d683f5c481f328326e0 — matched expected
+start_state_head: 7251569 — matched the prompt's expectation
+core_autocrlf: false
+
+part1_master_blobs_on_origin_main:
+  master/BLUEPRINT.yaml: 219fe938cb2e3d28a459d2dedbe1b407b92ff7bd
+  master/CHANGELOG.yaml: b76ac9050bb973445259feda9ae7ac4e3552f9d0
+  master/DOC_TIGHTENING_PROCEDURE.md: 7763bc25c54c094c5053c53a7226dacfcb9d6f3a
+  master/PROPAGATION_PROCEDURE.md: 19953ebba137f50688ee023a727c1c622f3f3e06
+  master/RENDER_PROCEDURE.md: 7897b7971e41d67ea8f64f9ee276f9104f7f1492
+  master/start-protocol.master.yaml: c6bde06a3ebbd1a4e949c591f6f88bf8134cf1ae
+  master/tests/test_render.py: 556b36c7d0581475565b71c30dde53660073af36
+part1_all_seven_blobs_matched_expected: true
+
+part2_forgeflow:
+  config_hash: 7ccf78dfab2f
+  hash_gate: PASS
+  byte_stable: true
+  all_six_blobs_matched_expected: true
+  blobs:
+    .forge/protocol-config.yaml: 33d11d2fd96cda2fc6b8aaf7cddf78daf90d7847
+    .forge/protocols/start-protocol.yaml: 506f8e8b3b9a2055739392a98eb0b043a7f8898e
+    .forge/protocols/start-protocol.dispatch.yaml: 959130b124605eca34a77da7c62042ae42f26424
+    .forge/protocols/end-protocol.yaml: 98763c4d0181a05b477383ac1e9f929cc4509a38
+    .forge/protocols/end-protocol.dispatch.yaml: 58414c0e00934954986d67c4efb25c92a3e2f10e
+    CLAUDE.md: 9466bda0ca86675cc8834f2c39c97d30c8373a3c
+
+part3_repos_propagated: 9
+part3_repos_halted: 0
+part3_repos_skipped: 0
+part3_all_checkouts_clean_on_main_ahead0_behind0: true
+part3_no_chromaqa_debt_ledger_dirt_encountered: true
+
+part3_results:
+  - repo: chromasmith/chromasmith-saas-starter
+    landing_sha: 8b35455fdacabde32384e1bcd1244bbf08300b9e
+    prior_sha: bc45257
+    config_hash: b77403904a76
+    hash_gate: PASS
+    dispatch: "on"
+    byte_stable: true
+    chromaqa_pre_push: PASSED with 1 new warning logged
+    blobs:
+      .forge/protocol-config.yaml: d3bd92e7a607475e26f96e4eeca0fc538a01651a
+      .forge/protocols/start-protocol.yaml: 23192d959b03112eb3ae40032b3be6f60d60a21a
+      .forge/protocols/start-protocol.dispatch.yaml: 1298ee0108881560e0daa35bb9d73c5746daa5cb
+      .forge/protocols/end-protocol.yaml: 2a3c303c51ded646a5dafe71f78dca72176f0746
+      .forge/protocols/end-protocol.dispatch.yaml: 7c02a646169d7795c7d25ba930e58f4a726663de
+      CLAUDE.md: 2612267c7dd3a7efa2eeec186e5b2b6de3ffc910
+  - repo: chromasmith/convergible
+    landing_sha: 98bfad3ec1da257d3fad733eb0be20a411abcd12
+    prior_sha: 9b8a1b8
+    config_hash: 148571eab9cb
+    hash_gate: PASS
+    dispatch: "on"
+    byte_stable: true
+    chromaqa_pre_push: PASSED with 4 new soft warnings logged
+    blobs:
+      .forge/protocol-config.yaml: 05d0e4069510122bb723ffbfdc0c065b019c1b4c
+      .forge/protocols/start-protocol.yaml: b05145441e81ec2916be2a1a8f55dd5cecdfd75c
+      .forge/protocols/start-protocol.dispatch.yaml: 98de3d3624ffe176abae87cd98ad9ddd4165d522
+      .forge/protocols/end-protocol.yaml: c5b02b13ff81bb0f77554912cf75a23493545682
+      .forge/protocols/end-protocol.dispatch.yaml: c8a222e9b237769fc2cb3d8208c8caddef3fd987
+      CLAUDE.md: 4a0c894c464aa86bf0884d69ace9d17c938e062f
+  - repo: chromasmith/convergible-sandbox
+    landing_sha: a389ac90a8521ec97db37001c7038ab481e5e763
+    prior_sha: 85af778
+    config_hash: f29646f90fe2
+    hash_gate: PASS
+    dispatch: "on"
+    byte_stable: true
+    chromaqa_pre_push: no gate output on push
+    blobs:
+      .forge/protocol-config.yaml: e62e7a4a28f7a341c9036c58a653e74d64afd7ef
+      .forge/protocols/start-protocol.yaml: 5c3317ee85cf4a825b4f431ed0d7590f285dd503
+      .forge/protocols/start-protocol.dispatch.yaml: 1a8874591f18881ad133f890b2433bd39539d84e
+      .forge/protocols/end-protocol.yaml: 2b8cc987af1488b7ad71a11e6d09c970beaab3f6
+      .forge/protocols/end-protocol.dispatch.yaml: cdae1aa57d599ca17ff6fcaced5a1ee3f10ac384
+      CLAUDE.md: 981fdcd83b6cb009b1701079933aeee6edfc9e17
+  - repo: chromasmith/seogeo
+    landing_sha: 0886daa7e54c60cc2113c21f7360e0d6df17fdb3
+    prior_sha: e061b65
+    config_hash: 2b2e5be3e7fc
+    hash_gate: PASS
+    dispatch: "on"
+    byte_stable: true
+    blobs:
+      .forge/protocol-config.yaml: 1d7f29c95d3525781bcc6811af9c18da278aa353
+      .forge/protocols/start-protocol.yaml: ee243fd095f75bf6e48a890d9b64e58a25e3137c
+      .forge/protocols/start-protocol.dispatch.yaml: c0df529c7ec97e45342316591a880ff70d827d91
+      .forge/protocols/end-protocol.yaml: 10e929e40209fc5b6fe6bace272d758fd89b718f
+      .forge/protocols/end-protocol.dispatch.yaml: 02136c0572f86f9b779ff95783eb18dc1a0c8d42
+      CLAUDE.md: 9b3f42ad6ef23b73c99979635110e610be4c83c4
+  - repo: chromasmith/chromaqa
+    landing_sha: ff0201a5479e462236366c1f2e1826db4e35efb7
+    prior_sha: 6d3bdf5
+    config_hash: ff50e23e6bcd
+    hash_gate: PASS
+    dispatch: "on"
+    byte_stable: true
+    chromaqa_pre_push: PASSED, skipped G-01 G-03 G-16 G-02 G-05
+    blobs:
+      .forge/protocol-config.yaml: 2f622918a3b69694f353a078f548b29b434afc8d
+      .forge/protocols/start-protocol.yaml: 1a01d12b9660cc0af1283353ca07d26c2d8a8054
+      .forge/protocols/start-protocol.dispatch.yaml: 83358862c4ad62e8dbb9236bb8813ea465f33324
+      .forge/protocols/end-protocol.yaml: f19340bd1f696d934d5afea19b457c61314ae822
+      .forge/protocols/end-protocol.dispatch.yaml: d67cf26d0ab27c779d934233727c4d4eb9ea415e
+      CLAUDE.md: 5d7a78ce28ca7774b0eff211bfaf1dfd5f0617d1
+  - repo: chromasmith/synclips-platform
+    landing_sha: 9412382db85eb69581d395dc6ee7ae4dc5e08994
+    prior_sha: 25b94bc
+    config_hash: 311239e39f25
+    hash_gate: PASS
+    dispatch: "on"
+    byte_stable: true
+    chromaqa_pre_push: PASSED, depcheck skipped (monorepo)
+    blobs:
+      .forge/protocol-config.yaml: 90f2314fe22eeb6502281c9c221cc33ee13335fc
+      .forge/protocols/start-protocol.yaml: 1967386ed94c3bec20b1fc8edce9c2344c7a50f1
+      .forge/protocols/start-protocol.dispatch.yaml: 32709adbe061edec822e56bfc2d370c658ce5849
+      .forge/protocols/end-protocol.yaml: 54ac26a3219259e83c7914d0d3663137167acdaf
+      .forge/protocols/end-protocol.dispatch.yaml: 8b3654ce51970c60f0ef244173d7f5210b52c4c3
+      CLAUDE.md: e849379230ea04aaa7a6ead61d316580155ec625
+  - repo: chromasmith/chromasync
+    landing_sha: 385bae3639ae8818f7f7702f3c173a03df1f15f6
+    prior_sha: 8235500
+    config_hash: 2bde1ab3c7d3
+    hash_gate: PASS
+    dispatch: "on"
+    byte_stable: true
+    chromaqa_pre_push: PASSED
+    blobs:
+      .forge/protocol-config.yaml: f3a3a0387b16eb89d1dcee74514ab6bac59380ea
+      .forge/protocols/start-protocol.yaml: 76ce2352125a0f2d81c5d99c886c8014d38426b7
+      .forge/protocols/start-protocol.dispatch.yaml: 8e6081eaec059859fe9da82df0d8ea69c1adb615
+      .forge/protocols/end-protocol.yaml: bd1438eb85ff378aa0e5a1e92e1118faca4b3bb0
+      .forge/protocols/end-protocol.dispatch.yaml: 020ef352a366afa5f195251b292b83428295b42c
+      CLAUDE.md: f41c1e6f2a94b0ac9ae13d02b3801e163c8aff21
+  - repo: chromasmith/dv-captain
+    landing_sha: 2d18ef13a996679d75dcec099bb5c45d9231c82d
+    prior_sha: 9390cc8
+    config_hash: b25fff229f26
+    hash_gate: PASS
+    dispatch: "on"
+    byte_stable: true
+    blobs:
+      .forge/protocol-config.yaml: 443a46607f8bc697fde42724fd8c3f1224ac5f22
+      .forge/protocols/start-protocol.yaml: 89fe5e719fdf28ddf9d853ab307ba8b4d7ca77a4
+      .forge/protocols/start-protocol.dispatch.yaml: 85e8fe946c2932c68b022b115b7a098e7317ee15
+      .forge/protocols/end-protocol.yaml: 76a0be09b3294be6f76a2862390efefafb293d46
+      .forge/protocols/end-protocol.dispatch.yaml: 536ecd66aabcf019450a3763c8b4afab07bfd6d2
+      CLAUDE.md: 6307d375c65e5c90d28a3250e825d02558780dd9
+  - repo: chromasmith/LeadDowser
+    landing_sha: 64c51ceac97b72ae6e5eb5e6d043fd49dba5c85d
+    prior_sha: ad19ff6
+    config_hash: efaceee3fa42
+    hash_gate: PASS
+    dispatch: "on"
+    byte_stable: true
+    blobs:
+      .forge/protocol-config.yaml: 5dd392f7c3fbe096807c288a5c8e4c47f889c525
+      .forge/protocols/start-protocol.yaml: fc6fd932997ca07d9c373781a05e6d5f571d4d4b
+      .forge/protocols/start-protocol.dispatch.yaml: 8ba1c9e054d2cd49d124a4abef05d9cb45e88ab5
+      .forge/protocols/end-protocol.yaml: 46f86067ab3a04b6fb89467272fb207bdc7bb537
+      .forge/protocols/end-protocol.dispatch.yaml: 5375f4f123fd70644b5e3e068144f489fb771465
+      CLAUDE.md: 0270064769cec3515d953ede3fb61dae0c6455f8
+
+rulings_registers: no register created or changed in any repo; chromasync and dv-captain still have none
+
+reflection:
+  q1_prompt_improvement: >-
+    Nothing material was missing. One line would help the next propagation prompt: the PART 3 commands are
+    written with Windows backslash paths, and the shell note forbids building a path from a variable inside a
+    backslash string. A per-repo loop written as C:\Chromasmith\$REPO fails with "No such file or directory";
+    C:/Chromasmith/$REPO works. Stating the forward-slash form in the PART 3 command block would remove the
+    one retry this run needed.
+  q2_future_session_traps: >-
+    Nothing new beyond the gotchas the prompt already carried. GOTCHA-023 did NOT reproduce this pass: all nine
+    checkouts were clean, on main, ahead 0 and behind 0 before the reset, so no repo was stale. GOTCHA-016 did
+    not fire either — no .chromaqa/CQA-debt.jsonl dirt was present before any push, and every working tree read
+    clean after its push.
+  q3_scope_disclosure: >-
+    No — all changes stayed within the authorized scope. Seven master files plus six rendered files in forgeflow,
+    six rendered files in each of nine repos, this inbox file, and v141-apply.py restored and deleted before any
+    commit. No unauthorized file was modified, created or deleted in any of the ten repos.
+  q4_artifact_paths: >-
+    No. Every file written is at a path this prompt named explicitly. The only paths written outside the ten
+    repos were the render comparison directories under C:/Users/chrom/AppData/Local/Temp, which the prompt's
+    PART 2 and PART 3 commands name directly.
+
+scope_disclosure:
+  forgeflow:
+    - master/start-protocol.master.yaml
+    - master/PROPAGATION_PROCEDURE.md
+    - master/RENDER_PROCEDURE.md
+    - master/BLUEPRINT.yaml
+    - master/CHANGELOG.yaml
+    - master/tests/test_render.py
+    - master/DOC_TIGHTENING_PROCEDURE.md
+    - v141-apply.py (restored from origin/tmp/v141-apply, run, deleted before any commit — never committed)
+    - .forge/protocol-config.yaml
+    - .forge/protocols/start-protocol.yaml
+    - .forge/protocols/start-protocol.dispatch.yaml
+    - .forge/protocols/end-protocol.yaml
+    - .forge/protocols/end-protocol.dispatch.yaml
+    - CLAUDE.md
+    - .forge/inbox/FF-V141-MASTER.yaml
+  each_of_nine_repos:
+    - .forge/protocol-config.yaml
+    - .forge/protocols/start-protocol.yaml
+    - .forge/protocols/start-protocol.dispatch.yaml
+    - .forge/protocols/end-protocol.yaml
+    - .forge/protocols/end-protocol.dispatch.yaml
+    - CLAUDE.md
+  outside_repos: render output dirs under C:/Users/chrom/AppData/Local/Temp only, as the prompt's commands name
+
+gotcha_candidates:
+  - A repo path built as "C:\Chromasmith\$REPO" inside a Git Bash double-quoted string is not a path — bash eats the backslash and cd fails with "C:\Chromasmith$REPO: No such file or directory". Use forward slashes whenever a repo name comes from a variable.
+
+needs_ruling: []
