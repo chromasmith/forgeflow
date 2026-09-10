@@ -493,3 +493,31 @@
   applies_to:
     - master/RENDER_PROCEDURE.md (step 0 preconditions)
     - every first render where the config names a north_star_doc
+- id: GOTCHA-028
+  date: 2026-09-10
+  summary: "A ChromaQA summary line reading 'N new warning(s) logged' does not mean .chromaqa/CQA-debt.jsonl changed — read the file with git diff, never the sentence"
+  detail: |
+    The counter counts findings raised by the push; the ledger gains a line only for a finding it has
+    not already recorded. In run FF-V142-MASTER chromasmith-saas-starter reported 1 new warning and
+    convergible reported 4, and in both repos the tracked ledger was byte-identical to HEAD and the
+    working tree clean. A session that trusts the sentence hunts for ledger changes that do not exist,
+    or stashes a file that never changed. After a push, check the ledger with git status or git diff.
+  source: "run FF-V142-MASTER inbox (40b51b8), 2026-09-10"
+  applies_to:
+    - every local run that pushes to a repo with a ChromaQA pre-push gate
+    - .forge/GOTCHAS.yaml GOTCHA-016 (ledger dirt after a push)
+- id: GOTCHA-029
+  date: 2026-09-10
+  summary: "The sandbox cannot clone the private repos, so PROPAGATION step 3's per-repo sandbox render needs a tree skeleton each; for a text-only master change a diff-check gate inside the run proves more with less"
+  detail: |
+    Eight of the ten registered repos are private. For v1.4.2 the run executed a checker per repo that
+    takes the committed rendered copy, applies only the intended changes (header stamps v1.4.1 to
+    v1.4.2, the S-093 closing sentence, the W-005 bullet) and requires the new render to equal the
+    result byte for byte; any other difference fails that repo. All eight passed 6 of 6, and every
+    landing commit showed the same six-file +19/-16 signature through the connector. The checker was
+    proven on forgeflow's real render and on a deliberately damaged copy before use (4bc7d21). It lived only on
+    the transport branch (blob aae8831b); FF-025 makes it a permanent tool.
+  source: "run FF-V142-MASTER (v142-diffcheck.py blob aae8831b; inbox 40b51b8), 2026-09-10"
+  applies_to:
+    - master/PROPAGATION_PROCEDURE.md (step 3)
+    - every propagation prompt for a text-only master change
