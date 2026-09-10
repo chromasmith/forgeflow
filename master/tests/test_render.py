@@ -168,6 +168,9 @@ with tempfile.TemporaryDirectory() as td:
     checks.append(("ONE delivery" in etext and "never a dead end" in etext, "real master: E-001 names the apply lane as its delivery exception", ""))
     checks.append(((REAL / "assets" / "doc-tightening.issue.md").exists() and "RULE INVENTORY" in read(REAL / "assets" / "doc-tightening.issue.md"), "real master: dispatched doc-tightening template exists and is inventory-gated (RULING-028)", ""))
     checks.append(((REAL / "tools" / "shard_rulings.py").exists(), "real master: rulings shard migration tool present (E-003 legacy line)", ""))
+    # 12c. v1.4.1 (FF-020, RULING-029) — the doc-tightening procedure exists and S-093 points at it
+    checks.append(((REAL / "DOC_TIGHTENING_PROCEDURE.md").exists() and "RULE INVENTORY" in read(REAL / "DOC_TIGHTENING_PROCEDURE.md") and "## open_items" in read(REAL / "DOC_TIGHTENING_PROCEDURE.md"), "real master: DOC_TIGHTENING_PROCEDURE.md present, inventory-gated, written to the document standard (RULING-029)", ""))
+    checks.append((("DOC_TIGHTENING_PROCEDURE.md" in stext and "forgeflow-session operation" in stext), "real master: S-093 carries the forgeflow-session pointer for document tightening (RULING-029)", ""))
     # 13. FF-014 / RULING-020 — the MAXIMUM knob set (dispatch on, ChromaQA AND SEO/GEO) stays under every S4 ceiling.
     #     Measured on the REAL master, not the fixture master: a ceiling is about what a session actually reads.
     CEIL = {"start-protocol.yaml": 2000, "start-protocol.dispatch.yaml": 650, "end-protocol.yaml": 1700, "end-protocol.dispatch.yaml": 150}

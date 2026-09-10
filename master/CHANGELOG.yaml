@@ -2,6 +2,25 @@
 # The top entry's `version` is the master version render.py stamps into every render.
 # Newest first.
 entries:
+  - version: "v1.4.1"
+    date: 2026-09-10
+    status: RELEASED — FF-020, the doc-tightening procedure and the loose ends v1.4.0 left; propagates to all ten repos in one pass
+    changed: >-
+      Text and procedure only — no renderer or schema change, so config_hash moves for no repo.
+      (1) RULING-029: NEW master/DOC_TIGHTENING_PROCEDURE.md — legacy-document tightening is a
+      forgeflow-session operation (Matt names the repo and documents; one dispatched issue per
+      document from master/assets/doc-tightening.issue.md, up to three at once; Claude Web
+      reviews the PR against the rule inventory; Matt merges); S-093 closes with the one pointer
+      line and no repo ever carries the template. (2) PROPAGATION_PROCEDURE step 5: the run's
+      proof is a byte-stable double render plus the config-hash gate against the registry, as
+      PROPAGATE-v1.4.0 ran it; sandbox blob SHAs are expected values reported against, not the
+      gate; pushed blobs are read back from origin/main; 5b states the no-register-at-all case
+      (nothing created; the register is born at the repo's first ruling). (3) RENDER_PROCEDURE
+      0b: retry `op vault list` once on an authorization timeout (GOTCHA-022); both procedure
+      STATUS paragraphs brought current. (4) BLUEPRINT v1.9 records the current measured lines
+      on the maximum knob set — dispatch-start within a few lines of its 650 ceiling — and lists
+      the two tightening artifacts. (5) test_render.py: two new checks — the procedure exists and
+      S-093 points at it.
   - version: "v1.4.0"
     date: 2026-09-10
     status: RELEASED — laundry-list change (RULING-023..028, FF-016, FF-019); rendered on forgeflow first, then propagated to all ten repos in one pass

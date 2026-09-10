@@ -3,14 +3,12 @@
 Blueprint v1.2, Section 6 and Principle P9. Written so a fresh Claude Web session can execute it cold.
 Claude Web runs `master/render.py` in its own sandbox; GitHub is only ever read and written through the GitHub MCP.
 
-STATUS (2026-09-05, master v1.1.0): the master is REPAIRED (RULING-009/010/011 — see CHANGELOG v1.1.0). The seven
-repos rendered from v1.0.0 (seogeo, chromasmith-saas-starter, forgeflow, chromaqa, synclips-platform, chromasync,
-dv-captain) all came up dispatch-OFF because no harness was installed and nothing said so; each RE-RENDERS from
-v1.1.0 on Matt's go, AFTER its harness is installed (step 0b). Fixture test 47/47. Lesson from the first render,
-kept here because it will recur: a repo the sandbox cannot clone (private, no credential) is detected from a tree
-skeleton rebuilt from the GitHub listing — create the exact paths render.py's detect() looks for, nothing else —
-and since v1.1.0 the skeleton MUST carry the real content of `.github/workflows/claude.yml` when it exists (fetch it
-through the GitHub MCP), because render.py reads the `--allowed-tools` list out of it; the report says so.
+STATUS (2026-09-10, master v1.4.1): ten repos rendered, all dispatch-ON with the harness installed by step 0b.
+A repo the sandbox cannot clone (private, no credential) is detected from a tree skeleton rebuilt from the GitHub
+listing — create the exact paths render.py's detect() looks for, nothing else — and the skeleton MUST carry the
+real content of `.github/workflows/claude.yml` when it exists (fetch it through the GitHub MCP), because render.py
+reads the `--allowed-tools` list out of it; the report says so. A rendered set over ~80 KB lands through ONE local
+Claude Code run, never the connector (step 0b item 5).
 
 ## 0. Preconditions
 - The GitHub MCP is connected. Ask Matt whether a Claude Code session is active on the TARGET repo, and whether
@@ -40,7 +38,8 @@ confirmation word after the run shows him what it is about to change. No dashboa
 2. **Secret — one command, from 1Password.** Vault "Chromasmith Keys", item `CLAUDE_CODE_OAUTH_TOKEN`, field
    `credential` (a Claude subscription token from `claude setup-token`; NEVER `ANTHROPIC_API_KEY`, which bills per
    token). Readiness: `gh auth status` and `op vault list` — never `op whoami`, which lies on Surface 12
-   (GOTCHA-005). Git Bash form, one line per repo, no loop:
+   (GOTCHA-005). The first `op` call after idle can return an authorization timeout (GOTCHA-022): on a timeout run
+   `op vault list` exactly once more before treating it as a sign-in gate. Git Bash form, one line per repo, no loop:
        op read "op://Chromasmith Keys/CLAUDE_CODE_OAUTH_TOKEN/credential" | tr -d "\r\n" | gh secret set CLAUDE_CODE_OAUTH_TOKEN --repo <org>/<repo>
    Prove with `gh secret list --repo <org>/<repo>`. The value is never printed, echoed or written into a repo.
    `chromasmith` is a personal account: no organization secrets, every repo needs its own. ROTATE: `claude

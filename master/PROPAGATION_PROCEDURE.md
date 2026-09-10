@@ -5,11 +5,10 @@ delivery_rule as amended by RULING-013) and Board N5. Written so a fresh Claude 
 execute it cold. A render of ONE repo follows RENDER_PROCEDURE.md; this file is for the pass that
 follows a master change and touches EVERY registered repo.
 
-STATUS (2026-09-06): master v1.2.0 is landed and rendered on forgeflow only (RULING-013 —
-internal-only session). The v1.2.0 propagation to the other six registered repos is the FIRST run
-of the one-prompt method below and is the next forgeflow session's single first_thing. Three of
-those six (synclips-platform, chromasync, dv-captain) are still on v1.0.0 without a harness; their
-step 2b must be finished by Matt before the pass renders them, or they are pinned for that pass.
+STATUS (2026-09-10, master v1.4.1): ten registered repos, every row current, all with the dispatch
+harness. The one-prompt method below has run four times (v1.3.0, v1.3.1, v1.4.0, v1.4.1); its proof
+method is the one in step 5 — a byte-stable double render plus the config-hash gate against the
+registry — as PROPAGATE-v1.4.0 ran it.
 
 ## 0. What a propagation is, and is not
 - A propagation is the act of taking every repo in `master/registered-repos.yaml` from the master
@@ -50,7 +49,9 @@ for this pass: fetch the repo's `.forge/protocol-config.yaml`, current `.forge/p
 from the GitHub listing when it is private — say which in the report), render twice, diff for
 byte-stability, measure against the S4 ceilings, diff against the repo's current copies and
 summarize the change in plain English. Record, per repo, the `git hash-object` blob SHA of every
-rendered file — these SHAs are what the run in step 5 must reproduce.
+rendered file and the origin/main SHA the sandbox rendered against — these are EXPECTED values the run
+reports against, not the gate (GOTCHA-013/014: a sandbox SHA table is valid only for the snapshot it was
+rendered from; the gate is step 5's byte-stable double render plus the config-hash check).
 
 Do not dispatch the run until every repo has rendered cleanly in the sandbox. A renderer failure on
 ANY repo stops the pass before anything is pushed anywhere (atomic_propagation).
@@ -73,13 +74,22 @@ file set by literal path, the PRECEDENCE paragraph, W-005 self-check applied). T
 2. For each repo in the prompt's list, in the order given: refresh its canonical checkout to
    origin/main (pre-refresh safety check; a dirty or unpushed checkout is a STOP for that repo,
    reported and skipped, never discarded); run `python master/render.py render` from the forgeflow
-   checkout with `--tree` pointing at the repo and `--claude-md` at its CLAUDE.md; compare the
-   `git hash-object` SHA of every rendered file with the SHA Claude Web supplied in the prompt —
-   ANY mismatch is a HALT for that repo (render non-determinism is a master bug, reported as such);
-   copy the rendered set into the checkout; commit the named files as ONE commit
+   checkout with `--tree` pointing at the repo and `--claude-md` at its CLAUDE.md — TWICE, into two output
+   directories with the same `--date`, and `diff -r` them: any difference is render
+   non-determinism, a master bug, HALT for the pass. Then the CONFIG-HASH GATE: read `config_hash`
+   from the rendered start-protocol header and compare it to the repo's row in
+   `master/registered-repos.yaml` (the forgeflow checkout). Equal = PASS. Different = HALT for that
+   repo unless the prompt names the new hash and the knob change that causes it; the usual cause is a
+   detection input the tree gained or lost (GOTCHA-013/014, GOTCHA-023 — a stale checkout), which is
+   reported, never overridden in the config by the run. Print the `git hash-object` SHA of every
+   rendered file beside the expected value from the prompt; a difference there with the gate passing
+   is reported (Claude Web's snapshot was older than the tree), not a halt. Copy the rendered set
+   into the checkout; commit the named files as ONE commit
    `protocols: render from forgeflow master <version> (config_hash <12 chars>)`; `git fetch`, push
    to the default branch (administrators bypass protection — a rejection means the rule has
-   "include administrators" ticked and is a STOP with the repo named); VERIFY PUSH.
+   "include administrators" ticked and is a STOP with the repo named); VERIFY PUSH, then print
+   the blob SHA of every pushed file read back from origin/main (`git ls-tree -r origin/main`,
+   GOTCHA-019) — these are what step 6 re-proves through the connector.
 3. For each pinned repo the prompt names: write the drift line into `.forge/handoff.yaml` as a
    single-line commit and VERIFY PUSH.
 4. Writes `.forge/inbox/PROPAGATE-<version>.yaml` in forgeflow (the run id is the version) and
@@ -97,7 +107,10 @@ identical, deletes the old file, and includes the shard files and the deletion i
 The tool for it is `python master/tools/shard_rulings.py <checkout>/.forge/rulings.yaml` (run from the forgeflow
 checkout): it prints the shard paths and the entry-count proof, and refuses to run on a register that is already a
 directory.
-A repo whose register is already a directory is left alone. Any `tmp/` transport branch the run fetched from is
+A repo whose register is already a directory is left alone. A repo with NO register at all — neither
+`.forge/rulings.yaml` nor `.forge/rulings/` — is also left alone: the run creates nothing there; the register is
+born as a shard directory (`.forge/rulings/001-020.yaml`) at that repo's first wrap that files a ruling (W-002),
+never by a propagation. Any `tmp/` transport branch the run fetched from is
 deleted by the run with `gh api -X DELETE repos/<org>/<repo>/git/refs/heads/tmp/<name>` and confirmed gone; Matt
 never deletes a branch by hand.
 

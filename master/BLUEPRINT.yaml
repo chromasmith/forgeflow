@@ -1,8 +1,8 @@
 # =============================================================================
 # FORGEFLOW MASTER — UNIFIED SESSION-PROTOCOL SYSTEM
-# Blueprint v1.8 — 2026-09-10 (two board passes; DESIGN CLOSED; master v1.4.0 laundry-list change; rollout order by ruling; S4 ceilings from measured renders)
+# Blueprint v1.9 — 2026-09-10 (two board passes; DESIGN CLOSED; master v1.4.1 doc-tightening procedure; rollout order by ruling; S4 ceilings from measured renders)
 # Author: Claude Web (planning session with Matt Fleming, Chromasmith LLC)
-# Status: DESIGN CLOSED after two committee passes. Master RELEASED (v1.4.0; ten repos on the master, propagated in one pass per change); repos join by Matt naming them (RULING-001).
+# Status: DESIGN CLOSED after two committee passes. Master RELEASED (v1.4.1; ten repos on the master, propagated in one pass per change); repos join by Matt naming them (RULING-001).
 # Home: github.com/chromasmith/forgeflow  master/BLUEPRINT.yaml
 # =============================================================================
 #
@@ -15,9 +15,22 @@
 
 meta:
   name: ForgeFlow Master
-  version: "1.8-blueprint"
+  version: "1.9-blueprint"
   date: 2026-09-10
   revision_history:
+    - version: "1.9"
+      note: >
+        DOC-TIGHTENING PROCEDURE (master v1.4.1, FF-020, RULING-029). NEW
+        master/DOC_TIGHTENING_PROCEDURE.md: legacy-document cleanup is operated from a
+        forgeflow session — Matt names the repo and documents, Claude Web files one dispatched
+        issue per document from master/assets/doc-tightening.issue.md (up to three at once),
+        reviews the PR against the rule inventory, Matt merges; the template is never
+        propagated and S-093 carries the one pointer line. PROPAGATION step 5's proof method is
+        now the byte-stable double render plus the config-hash gate against the registry (as
+        PROPAGATE-v1.4.0 ran it), with sandbox blob SHAs as expected values, not the gate; 5b
+        states the no-register case. RENDER 0b retries `op vault list` once on an authorization
+        timeout (GOTCHA-022). Section 6 records the current measured lines on the maximum knob
+        set: dispatch-start sits within a few lines of its 650 ceiling.
     - version: "1.8"
       note: >
         LAUNDRY-LIST CHANGE (master v1.4.0, RULING-023..028). New blocks S-093 (two
@@ -419,6 +432,15 @@ artifacts:
       purpose: How a master change ripples out — bump version, iterate
         registered-repos, render each, open PR or direct commit per the size rule,
         verify, update registered-repos.
+    - path: master/DOC_TIGHTENING_PROCEDURE.md
+      purpose: >
+        How a forgeflow session tightens a legacy instructional document in any
+        registered repo (RULING-028/029): one dispatched issue per document from
+        master/assets/doc-tightening.issue.md, inventory-gated review, Matt merges.
+        Lives here only; never propagated.
+    - path: master/assets/doc-tightening.issue.md
+      purpose: The dispatched issue body for a tightening run, rendered per repo and
+        document by replacing its placeholders. Never committed into a target repo.
     - path: master/CHANGELOG.yaml
       purpose: Version history of the master itself (what changed in v1 → v2 → ...).
     - path: master/render.py
@@ -699,6 +721,16 @@ rendering:
       method: wc -l on render.py output in the Claude Web sandbox, two renders byte-identical
       measured_lines: { start-protocol.yaml: 1734, start-protocol.dispatch.yaml: 588, end-protocol.yaml: 1479, end-protocol.dispatch.yaml: 95 }
       headroom: about 15 percent over each measured file, rounded up to the nearest 50
+      current_measurement:
+        date: 2026-09-10
+        master_version: v1.4.1
+        config: the same maximum knob set (config-tools-max.yaml with tree-tools-max)
+        measured_lines: { start-protocol.yaml: 1854, start-protocol.dispatch.yaml: 640, end-protocol.yaml: 1558, end-protocol.dispatch.yaml: 102 }
+        note: >
+          start-protocol.dispatch.yaml is within a few lines of its 650 ceiling. The next
+          master change that adds text to any block with reader "all" or "cc-dispatch" must
+          name the runner-facing text it replaces or retires (P11); the test suite fails on a
+          breach before any repo sees it.
       superseded_measurement:
         date: 2026-09-04
         master_commit: ecf77e5

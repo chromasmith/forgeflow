@@ -34,6 +34,9 @@
 #   RULES and W-005 carry the layered plain-English rule. RETIRED v1.3.0: S-018
 #   prior_ruling_search (P11 — its text duplicated S-011's rulings paragraph and W-001;
 #   the ID is never reused).
+# CHANGED v1.4.1 (FF-020, 2026-09-10, RULING-029): S-093 closes with the pointer line —
+#   document tightening is a forgeflow-session operation (master/DOC_TIGHTENING_PROCEDURE.md).
+#   No other block changes; no renderer or schema change.
 # CHANGED v1.4.0 (laundry-list master change, 2026-09-10, RULING-023..028): NEW S-093
 #   document_standards (RULING-028). S-011/W-002 read and append a SHARDED rulings
 #   register (.forge/rulings/<first>-<last>.yaml, twenty per shard). S-007 deletes its
@@ -1247,8 +1250,11 @@ document_standards: |
   A prompt that creates or amends a document names its class and says the
   standard applies; the wrap checks documents touched this session against
   it and names any breach. Existing documents are brought to the standard by
-  their own tightening sessions on Matt's word, never by a build prompt in
-  passing.
+  tightening runs on Matt's word, never by a build prompt in passing; document
+  tightening is a forgeflow-session operation, like a render — Matt names the
+  repo and the documents in a session on chromasmith/forgeflow, which holds the
+  procedure (master/DOC_TIGHTENING_PROCEDURE.md) and the issue template; this
+  repo never carries either.
 # <<< end S-093
 
 # >>> block S-057 | tool_capabilities_supabase | reader: cw+cc-local | render_when: subsystems.supabase
