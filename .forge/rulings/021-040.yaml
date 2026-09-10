@@ -253,3 +253,14 @@ rulings:
       master/DOC_TIGHTENING_PROCEDURE.md carries this as a rule and a flow step.
     supersedes: the done-list-only progress record in DOC_TIGHTENING_PROCEDURE.md data_model and flow step 7 (v1.4.1)
     stated_by: Matt, in chat, in this session, recorded in the turn it was made per W-002
+  - id: RULING-031
+    date: 2026-09-10
+    subject: First FF-021 repo — chromasmith/LeadDowser, every instructional document, ForgeFlow files off limits
+    ruling: >-
+      chromasmith/LeadDowser is the first repo tightened under FF-021 (RULING-028/029/030). Scope: every
+      instructional document in the repo. Off limits: the ForgeFlow-rendered files (.forge/protocols/,
+      .forge/protocol-config.yaml, the CLAUDE.md house block) and the .forge/ state family. A document
+      already carrying the standard's header is verified, not rewritten. Inventory block written under
+      FF-021 in forgeflow .forge/backlog.yaml at this session's wrap.
+    supersedes: nothing — RULING-028 said Matt names the repo; this is him naming it
+    stated_by: Matt, in chat, in this session, recorded in the turn it was made per W-002
