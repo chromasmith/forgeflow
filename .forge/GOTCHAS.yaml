@@ -521,3 +521,77 @@
   applies_to:
     - master/PROPAGATION_PROCEDURE.md (step 3)
     - every propagation prompt for a text-only master change
+- id: GOTCHA-030
+  date: 2026-09-10
+  summary: "A tightening runner mapping a legacy status legend PROMOTED draft copy to RATIFIED; the rule inventory still mapped, because it tracks where an item lands, not its status"
+  detail: |
+    Run TIGHTEN-convergible-001 mapped DECIDED / PROVISIONAL / DEFERRED / OPEN to the house tags and set
+    the Showcase blueprint's surfaces > editor > modal_copy from "DRAFT copy" to "RATIFIED".
+    Inventory 392/392 still mapped (PR #5). A build session would have shipped unapproved owner-facing
+    copy. Review reads every changed status line in the diff and rejects any move toward RATIFIED; DRAFT, PROVISIONAL and
+    unconfirmed items map to PROPOSED. Fixed in 2271019 before merge.
+  source: "convergible PR #5 review (merged c82ae59), 2026-09-10"
+  applies_to:
+    - master/assets/doc-tightening.issue.md (status mapping)
+    - master/DOC_TIGHTENING_PROCEDURE.md (review checks)
+- id: GOTCHA-031
+  date: 2026-09-10
+  summary: "A tightening runner dropped current declarations that sat inside rationale paragraphs; the inventory classed each paragraph as reasoning and lost the facts in it"
+  detail: |
+    Run TIGHTEN-convergible-002 on .forge/legal/compliance.yaml lost four statements of what is true
+    today: the personalization inputs, the DMCA agent status (none declared, notification clause present),
+    the Article 27 representative declared neither, and that the trademark alone does not permit a d/b/a.
+    Three were in neither the new document nor the history companion. Inventory 64/64 mapped, so the count
+    did not show it. Review reads each cut paragraph for present-tense facts and requires each as an
+    inventory item. Restored in 48571cc (68/68) before merge.
+  source: "convergible PR #4 review (merged 356033a), 2026-09-10"
+  applies_to:
+    - master/assets/doc-tightening.issue.md (inventory rule)
+    - master/DOC_TIGHTENING_PROCEDURE.md (review checks)
+- id: GOTCHA-032
+  date: 2026-09-10
+  summary: "On one dispatch runner the plain redirect GOTCHA-026 prescribes (git show HEAD:path > scratch file) was refused as requiring approval, while a runner started a second later ran it"
+  detail: |
+    Actions run 34528481822 (TIGHTEN-convergible-001) had the redirect refused twice; run 34528536240
+    (TIGHTEN-convergible-002) ran it. The first run wrote the HEAD content to the authorized scratch path
+    with the Write tool, checked it byte-identical to HEAD (53821 bytes), used it and deleted it before the
+    scope audit. A template that names the redirect names the Write-tool fallback beside it.
+  source: "TIGHTEN-convergible-001 run report (convergible issue #2), 2026-09-10"
+  applies_to:
+    - master/assets/doc-tightening.issue.md (RUNNER ENVIRONMENT)
+    - .forge/GOTCHAS.yaml GOTCHA-026
+- id: GOTCHA-033
+  date: 2026-09-10
+  summary: "GOTCHA-020 recurred on a file rebuilt from a git clone: the sandbox terminal display shortens angle-bracket placeholders too, so a whole-file write retyped from any display can drop characters"
+  detail: |
+    The RULING-033 write (747073a) landed 3 bytes short: the placeholder after tmp/ in RULING-023 was
+    shortened in transit although the file had been rebuilt from a clone, because the write is retyped
+    from what the sandbox displays. The returned blob SHA differed from git hash-object, a diff against
+    the clone named the line, and a049f6e restored it (blob 8ecdeec). Before a whole-file write, list the
+    file's angle-bracket tokens with od -c; after it, the blob SHA comparison is the only proof.
+  source: "747073a, repair a049f6e, 2026-09-10"
+  applies_to:
+    - every whole-file connector write of a file containing angle-bracket placeholders
+    - .forge/GOTCHAS.yaml GOTCHA-020
+- id: GOTCHA-034
+  date: 2026-09-10
+  summary: "A connector squash merge given only a title gets GitHub's default body, which lists the branch commits and adds a claude[bot] Co-authored-by trailer; pass commit_message explicitly"
+  detail: |
+    convergible 356033a (PR #4, title only) carries the trailer the issue's no-attribution rule forbids;
+    c82ae59 (PR #5, explicit commit_message) does not. Runner commits can carry Co-Authored-By trailers
+    despite the rule (2271019); an explicit squash message keeps them off main.
+  source: "convergible 356033a and c82ae59, 2026-09-10"
+  applies_to:
+    - every merge_pull_request call that squashes a runner PR
+- id: GOTCHA-035
+  date: 2026-09-10
+  summary: "Claude Web cannot read convergible's PR check runs or combined status (GitHub connector 403) or list its Vercel deployments (403), so a red check on a PR cannot be diagnosed from chat"
+  detail: |
+    Vercel previews reported Error on convergible PRs #4 and #5, which changed only .forge/ YAML files
+    outside the apps/web build root. get_check_runs and get_status returned 403 Resource not accessible by
+    integration; Vercel list_deployments returned 403 and build-log lookups returned not found. A failing
+    preview never replaces what production serves. Diagnosis belongs to a convergible session with
+    Vercel CLI access.
+  source: "convergible PRs #4 and #5, 2026-09-10"
+  applies_to:
+    - reviewing dispatched PRs on chromasmith/convergible
