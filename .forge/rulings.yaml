@@ -493,3 +493,33 @@ rulings:
       Landing rides the laundry-list plan of this session.
     supersedes: the "Matt deletes the branch in the browser" step recorded in GOTCHA-010 and in S-007's large-file lane wording
     stated_by: Matt, in chat, in this session ("If that's a safe thing to do... we should do this for sure"), recorded in the turn it was made per W-002
+  - id: RULING-024
+    date: 2026-09-10
+    subject: TOOLS FIRST — Claude Web assumes an autonomous tool path exists for every third party and reaches for it before designing any manual step; secrets come from the 1Password CLI, never from a hand-built pipeline
+    ruling: >-
+      Matt's friction, in his words: when a build needs env vars or secrets, Claude "immediately
+      starts designing an elaborate system to get my passwords into whatever build we're working
+      on", and he does not find out until significant planning has happened; he has to remember
+      to say he has a 1Password CLI. Likewise he repeatedly has to remind sessions that he has an
+      extensive set of MCP, CLI and API tools for the parties he works with (a Cloudflare session
+      spent a long argument before conceding the tools existed, and then became easy). THE
+      STANDING ORDER, protocol text in the start master and the CLAUDE.md house block so Claude
+      Code inherits it: (1) it is ALWAYS assumed that Matt has a third-party connection — a
+      connector, MCP server, CLI or management API — for any service a task touches; working
+      through autonomous tools is his default and the first line of work; (2) before proposing
+      any manual step, dashboard click, or hand-built mechanism, Claude Web checks the live tool
+      list of its own session and Claude Code's known CLIs, and names the tool it will use; (3)
+      SECRETS: every key, token and credential is sourced from the Chromasmith Keys vault via the
+      1Password CLI (op read) by Claude Code, or from where it already lives (a neighbouring
+      service's .env); Claude Web never designs a secret-transfer mechanism and Matt never
+      handles a secret; (4) if no tool path is known, the deep dive to find one (docs, MCP
+      registry, vendor CLI) happens BEFORE any manual plan is written; (5) every live-run
+      proposal states up front which steps have a tool path and which do not, so Matt can weigh
+      the manual friction before saying go; (6) the inventory floor named in the protocol is
+      1Password CLI, GitHub (MCP + gh), Cloudflare, Vercel, Supabase, Google Workspace (Gmail,
+      Drive, Calendar), PostHog and Todoist — not exhaustive, and the session's own connector
+      list is authoritative because the landscape changes daily. Promotes Matt's 2026-09-09
+      "automate before hand-holding" rule from Claude Web's memory into repo text (P8).
+      Landing rides the laundry-list plan of this session (master v1.4.0).
+    supersedes: nothing — S-039 (tool_capabilities) is expanded, not replaced; the live-run secrets clause of S-049 is reaffirmed and generalized
+    stated_by: Matt, in chat, in this session ("I just want this to be part of the standard operating procedure where Claude Web reaches for these tools and doesn't forget about them"), recorded in the turn it was made per W-002
