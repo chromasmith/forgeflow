@@ -610,3 +610,30 @@ rulings:
       rules; the P11 prune session remains the instrument for the start protocol's size.
     supersedes: E-002/E-003's fixed full manifest as the only wrap shape — the manifest becomes conditional with a two-part floor; nothing about write discipline or evidence changes
     stated_by: Matt, in chat, in this session ("I love the idea of a light wrap... we should move forward with that"), recorded in the turn it was made per W-002
+  - id: RULING-028
+    date: 2026-09-10
+    subject: TWO DOCUMENT STANDARDS in the master — the blueprint standard for every instructional document, a lean RECORD standard for the .forge/ state files — and legacy repos are tightened afterwards by dispatched cleanup runs gated on a rule inventory
+    ruling: >-
+      Standards (master v1.4.0, rendered into every repo): (1) INSTRUCTIONAL documents —
+      blueprints, specs, plans, guides, READMEs, instructions, procedures — obey
+      master/blueprint-standard.master.yaml (rules, decisions, prohibitions, dependencies, open
+      items only; history in a companion file; 50 KB smell); (2) RECORD files — handoff, rulings,
+      GOTCHAS, session-history, backlog — obey a RECORD standard: one fact per line, one
+      identifier and one date, the why only when it is itself a rule or a trap, no narrative,
+      no who-thought-what, no quotations. Both standards are protocol text (start rule for any
+      prompt that creates or amends a document, wrap check that flags provenance prose or a
+      size smell, one house-block line so Claude Code inherits them). Legacy cleanup: after
+      v1.4.0 propagates, each repo's existing documents are tightened by a DISPATCHED run from a
+      master template (master/assets/doc-tightening.issue.md rendered per repo), up to three
+      repos in parallel, on Matt's schedule; the run first inventories every rule, decision,
+      prohibition and open item in the original and the rewrite is accepted only when every
+      inventory line maps to the new document; cut narrative moves to a companion history file;
+      Claude Web reviews the PR against the inventory; Matt's only action is the merge. A local
+      Claude Code prompt is the fallback lane. EXCEPTION: existing rulings entries are never
+      rewritten (append-only register); they are sharded (item 7 of this session) and the record
+      standard applies from RULING-028 onward. Order: standards first, propagation, then
+      cleanups; the P11 prune session for the protocol files follows the cleanups. Expectation
+      recorded: leaner records speed every session start; the protocol file itself is the
+      larger read and is the prune session's job, not this one's.
+    supersedes: nothing — extends BLUEPRINT STANDARD v1.0 (47f4b55, unwired) into rendered protocol text and adds the record standard
+    stated_by: Matt, in chat, in this session ("We are perfectly aligned... institute the standard now in ForgeFlow"; cleanup by reusable focused prompt, separate sessions on his schedule), recorded in the turn it was made per W-002
