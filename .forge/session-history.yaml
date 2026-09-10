@@ -322,3 +322,52 @@ sessions:
       - .forge/GOTCHAS.yaml
       - "in chromasmith/LeadDowser: .forge/protocol-config.yaml, the four .forge/protocols/ files, CLAUDE.md, README.md, .github/workflows/claude.yml (Matt, web editor), .forge/specs/leaddowser-convergible-interface.yaml (renamed from .yam by Matt), and the whole .forge/ state family"
     blockers_remaining: []
+  - date: 2026-09-10
+    duration: ~6hr
+    completed:  # evidence: 7406789, c64fcd4, 04ea78b, 52dd972, bdbbdb0, 211241f, 7ae5ecd
+      - "Laundry-list session: nine friction items ruled (RULING-023..029) and landed as master v1.4.0 @ 7406789 (run FF-V140-MASTER, apply script blob 765c387 on tmp/v140-apply, tests 73/73)"
+      - "forgeflow re-rendered from v1.4.0 @ c64fcd4 (six files, config_hash 7ccf78dfab2f unchanged); rulings register sharded @ 04ea78b; tmp branch deleted by the run via gh api (RULING-023, first use)"
+      - "v1.4.0 propagated to nine repos in one run PROPAGATE-v1.4.0 (inbox bdbbdb0): bc45257 saas-starter, 9b8a1b8 convergible, 85af778 convergible-sandbox (hash changed to f29646f90fe2 by FF-017), e061b65 seogeo, 6d3bdf5 chromaqa, 25b94bc synclips-platform, 8235500 chromasync, 9390cc8 dv-captain, ad19ff6 LeadDowser; seven rulings registers sharded"
+      - "Registry @ 211241f: master_version_current v1.4.0, all ten rows current; three stale 'owed' notes corrected from the API read"
+      - "HARNESS-AUDIT-1 (inbox bf0f305): protection and OAUTH secret already correct on all ten repos; auto-delete-head-branches enabled on nine"
+      - "FF-017 closed in convergible-sandbox: repo-rules.yaml 9f07aa6, config 769bf23, register entry in 85af778"
+    commits:
+      - message: "rulings: RULING-023..029 (655cd6e, a164b00, 1e5dd9d, acc7361, d662400, 57d79b7, 7ae5ecd)"
+      - message: "master: v1.4.0 (7406789, run FF-V140-MASTER); protocols: re-render forgeflow (c64fcd4); docs: shard the rulings register (04ea78b); inbox FF-V140-MASTER (52dd972)"
+      - message: "inbox(HARNESS-AUDIT-1) bf0f305; inbox(PROPAGATE-v1.4.0) bdbbdb0; registry 211241f"
+      - message: "docs: end session 2026-09-10 (1/9 .. 9/9) — this series"
+    key_changes:
+      - "v1.4.0: tools first (S-039), reply shape (W-001), residue sweep (E-052), proportional wrap (E-002), sharded rulings + threshold gate (E-003), two document standards (S-093/E-053), branch hygiene by gh api, FF-016 dirty-tree refresh, FF-019 step 0b by API"
+      - "First wrap run under the proportional wrap and residue sweep is this one"
+      - "Claude Code corrected two prompt defects on the record: a prompt that asserted stale world state as fact (HARNESS-AUDIT-1) and a proof method that differed from PROPAGATION_PROCEDURE step 5 (PROPAGATE-v1.4.0) — both filed (GOTCHA-021, FF-020)"
+    files_modified:
+      - master/start-protocol.master.yaml
+      - master/end-protocol.master.yaml
+      - master/claude-md.house-block.master.md
+      - master/RENDER_PROCEDURE.md
+      - master/PROPAGATION_PROCEDURE.md
+      - master/CHANGELOG.yaml
+      - master/BLUEPRINT.yaml
+      - master/tests/test_render.py
+      - master/assets/doc-tightening.issue.md
+      - master/tools/shard_rulings.py
+      - master/registered-repos.yaml
+      - .forge/protocol-config.yaml
+      - .forge/protocols/start-protocol.yaml
+      - .forge/protocols/start-protocol.dispatch.yaml
+      - .forge/protocols/end-protocol.yaml
+      - .forge/protocols/end-protocol.dispatch.yaml
+      - CLAUDE.md
+      - .forge/rulings/001-020.yaml
+      - .forge/rulings/021-040.yaml
+      - .forge/rulings.yaml    # deleted (sharded)
+      - .forge/inbox/HARNESS-AUDIT-1.yaml    # consumed and deleted at this wrap
+      - .forge/inbox/FF-V140-MASTER.yaml    # consumed and deleted at this wrap
+      - .forge/inbox/PROPAGATE-v1.4.0.yaml    # consumed and deleted at this wrap
+      - .forge/handoff.yaml
+      - .forge/session-state.yaml
+      - .forge/session-history.yaml
+      - .forge/backlog.yaml
+      - .forge/GOTCHAS.yaml
+      - "nine other repos: six rendered files each, rulings shards where a register existed; convergible-sandbox also .forge/protocols/repo-rules.yaml, .forge/protocol-config.yaml knobs, artifact-register.yaml"
+    blockers_remaining: []
