@@ -665,3 +665,29 @@
   source: "convergible c3316c6 and PR #7 (7c4fb77), 2026-09-11"
   applies_to:
     - cross-repo observations raised in a forgeflow session
+- id: GOTCHA-042
+  date: 2026-09-11
+  summary: "Grepping a rendered protocol file for a block ID does not prove the block rendered; the BLOCK MANIFEST header names every excluded block by ID too"
+  detail: |
+    Run CV-RERENDER-UI-1 had to prove S-027, S-056, S-077 and E-032 now render in chromasmith/convergible.
+    Each ID also appeared in the old render, on the manifest's excluded lines. Proof is the manifest's
+    included line or the block's own section header line ("# --- S-027 ui_conformance ..."). A block with
+    reader cw is excluded from the dispatch files by reader, which is correct.
+  source: "run CV-RERENDER-UI-1 inbox (forgeflow fdfc842), 2026-09-11"
+  applies_to:
+    - every prompt or review that checks which blocks a render includes
+- id: GOTCHA-043
+  date: 2026-09-11
+  summary: "The ceiling fixture called the maximum knob set is not the maximum, and render.py does not enforce file ceilings; the first ui_inventory repo breached the dispatch-start ceiling with the suite green"
+  detail: |
+    master/tests/fixtures/config-tools-max.yaml carries no ui_inventory, artifact register, database-access
+    doc, repo-rules doc or companion repo. At master v1.4.2 it renders start-protocol.dispatch.yaml at 640
+    lines; chromasmith/convergible with ui_inventory renders 659; every subsystem on renders 710 (Claude Web
+    sandbox, 2026-09-11). render.py writes an over-ceiling file without complaint; only test_render.py
+    (against the fixture) and RENDER_PROCEDURE step 5 (by hand) check. Every render session runs wc -l on its
+    own output against the current ceilings. Ceiling raised to 850 by RULING-034 (17050d6); fixture fix FF-035.
+  source: "convergible ui_inventory re-render, 2026-09-11 (RULING-034 17050d6)"
+  applies_to:
+    - master/tests/fixtures/config-tools-max.yaml
+    - master/tests/test_render.py
+    - master/RENDER_PROCEDURE.md (step 5)
