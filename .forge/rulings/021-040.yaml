@@ -288,3 +288,20 @@ rulings:
       is free, and LeadDowser tightening stays paused behind it.
     supersedes: the 2026-09-10 handoff first_thing (FF-024), for this session only
     stated_by: Matt, in chat, in this session; recorded one turn late per W-002 (the naming turn ended before the write)
+  - id: RULING-034
+    date: 2026-09-11
+    subject: The dispatch-start file ceiling was mis-measured a second time; re-measured to 850 on the true maximum knob set
+    ruling: >-
+      The S4 ceiling for start-protocol.dispatch.yaml is raised from 650 to 850 lines. The 650 figure was
+      measured on master/tests/fixtures/config-tools-max.yaml, which carries neither ui_inventory,
+      artifact_register, database_access_doc, repo_rules_doc nor a companion repo, so it never described
+      the real maximum. Re-rendering chromasmith/convergible with ui_inventory detected renders that file at
+      659 lines; the true maximum knob set (every subsystem on) renders it at 710 at master v1.4.2. Method as
+      RULING-020: about 15 percent over the measured maximum, rounded up to the nearest 50. The other three
+      ceilings are unchanged (true maximum start 1959 of 2000, end 1605 of 1700, dispatch end 102 of 150).
+      P11 replace-to-add is unchanged and binds every future addition. The 650 in
+      master/RENDER_PROCEDURE.md step 5, master/BLUEPRINT.yaml rendering.file_ceilings and
+      master/tests/test_render.py is superseded by this ruling and is corrected, with a true-maximum fixture,
+      in the next master change. Nothing rendered into any repo reads the number, so no re-render is owed.
+    supersedes: the 650 dispatch-start ceiling of RULING-020 and BLUEPRINT rendering.file_ceilings
+    stated_by: Matt, in chat, in this session (go on the recommended re-measurement), recorded in the turn it was made per W-002
