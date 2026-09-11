@@ -1,52 +1,51 @@
 # .forge/handoff.yaml — chromasmith/forgeflow
 # Pass-the-baton briefing written BY the outgoing Claude Web session TO the next.
 # A WARNING LETTER, not a summary. The other .forge/ files hold state; this holds feel.
-# generated: 2026-09-10T22:33:04Z
-# session: 2026-09-10 (fourth session — FF-021 on chromasmith/convergible)
-written_at_commit: 536c21c67464af636639bc8683a16f54f09eeeac
-written_at_utc: 2026-09-10T22:33:04Z
-wrap_complete: true
-wrap_parts_total: 6
+# generated: 2026-09-11T13:05:00Z
+# session: 2026-09-11 (fifth session, began 2026-09-10 — FF-026, FF-024, FF-021 on three repos)
+written_at_commit: 4231623bbe7bab2f2ff6ed5449989b6472e7ecfd
+written_at_utc: 2026-09-11T13:05:00Z
+wrap_complete: false
+wrap_parts_total: 8
 
 status: |
-  FF-021 on chromasmith/convergible is finished: .forge/legal/compliance.yaml (PR #4, 356033a) and the
-  Showcase blueprint v6 (PR #5, c82ae59) are at the document standard, each after one review round.
-  Master v1.4.2 runs on nine repos; LeadDowser is still pinned at v1.4.1 and was in active edit. No
-  unmerged PR from this session in forgeflow or convergible.
-  OVERALL POSITION: two of ten repos are into the legacy-document cleanup (convergible done, LeadDowser
-  2 of 3 documents), eight have not started, and the protocol system is on one version everywhere except
-  LeadDowser.
+  FF-026 (4e872f6) and FF-024 (LeadDowser 9fca434, registry 4231623) are done: master v1.4.2 runs on all
+  ten repos. FF-021 finished LeadDowser (style kit, 4317af2) and tightened seogeo's .forge/BLUEPRINT.yaml
+  (a6c88a7) and chromasmith-saas-starter's START_HERE.md (0c4e0a8), each after one review round.
+  convergible's spec accuracy items are closed (7c4fb77). No unmerged PR from this session in any repo.
+  OVERALL POSITION: four of ten repos are into the legacy-document cleanup (LeadDowser and convergible
+  done, seogeo and the template each with their main document done), six have not started, and the
+  protocol system is on one version everywhere.
 
 first_thing: |
-  FF-024 — render chromasmith/LeadDowser to master v1.4.2, the only pinned row in
-  master/registered-repos.yaml (2765842). Ask Matt first whether any Claude Code or Claude Web
-  session is active on LeadDowser; it was in active edit on 2026-09-10 (RULING-033). One local Claude
-  Code run per PROPAGATION_PROCEDURE step 5: refresh the checkout, double render, config-hash gate
-  against its row (efaceee3fa42), expected diff limited to the header stamps, the S-093 closing
-  sentence and the W-005 bullet, push, read back six blobs. Verify: the six blobs through the
-  connector, then the LeadDowser row set to current v1.4.2 LAST.
+  FF-027 — the second round of doc-tightening template refinements, items (a) to (i) in the backlog
+  (GOTCHA-037..040). One dispatched run on forgeflow making exact-text edits to
+  master/assets/doc-tightening.issue.md and master/DOC_TIGHTENING_PROCEDURE.md, as FF-026 did (issue #2);
+  keep every string master/tests/test_render.py asserts; no version bump. Verify: clone the branch in
+  the sandbox, run master/tests/test_render.py, read the diff, squash-merge with an explicit
+  commit_message.
 
 watch_out_for:
-  - "Review every tightening PR's diff, not only its inventory count: PR #5 mapped 392/392 while promoting draft copy to RATIFIED, and PR #4 mapped 64/64 while dropping four current facts (GOTCHA-030, GOTCHA-031). FF-026 puts both checks in the template; it lands before the next tightening dispatch."
-  - "Whole-file rewrites of files holding angle-bracket placeholders lose characters even when built from a clone, because the sandbox display shortens them too (GOTCHA-033, 747073a). Compare every returned blob SHA to git hash-object; on a mismatch, diff against the clone first."
-  - "Squash-merge runner PRs with an explicit commit_message; a title alone lets GitHub add a claude[bot] Co-authored-by trailer (GOTCHA-034, convergible 356033a)."
-  - "Claude Web cannot read convergible's check runs or combined status (GitHub connector 403) or list its Vercel deployments (403); Vercel previews showed Error on docs-only PRs #4 and #5. Diagnosis belongs to a convergible session (GOTCHA-035)."
-  - "The v1.4.2 diff checker lived only on a deleted branch (GOTCHA-029): for FF-024 rebuild it or rely on the double render plus the config-hash gate, and say which in the prompt."
+  - "Review every tightening PR's diff, not its inventory count: this session's three reviews found altered wireframes, a range-mapped rule that was gone, dropped rule ids, instructions rewritten as claims, invented triggers, a lost friction channel and a demoted ruling behind counts of 208/208, 112/112 and 158/158 (GOTCHA-038..040)."
+  - "Parallel dispatches can all fail at once and push nothing (GOTCHA-036): list the branches before trusting a run's comment, and restart with an @claude comment on the issue."
+  - "Stale branches wait for a local Claude Code run with gh: chromasmith-saas-starter claude/issue-11-20260905-2042 and claude/issue-14-20260905-2205 (PRs #12 and #15, closed), and seogeo chromasmith-patch-1 (220b018, check it holds nothing unmerged first). Fold them into the next local prompt on those repos."
+  - "Cross-repo observations go into that repo's .forge/inbox as a new file, never into its backlog mid-session (GOTCHA-041)."
+  - "Whole-file rewrites of files holding angle-bracket placeholders lose characters (GOTCHA-033); compare every returned blob SHA to git hash-object."
+  - "Squash-merge runner PRs with an explicit commit_message (GOTCHA-034)."
   - "Dispatch-start is 640/650 on the maximum knob set; any addition to a block runners read replaces text (P11)."
-  - "Loose ends live in the FF-021 block: LeadDowser stale runner branch claude/issue-2-20260910-1815 and inbox files TIGHTEN-LeadDowser-001/002; convergible inbox files TIGHTEN-convergible-001/002, branch wrap-apply-2026-09-09 and four accuracy items for a convergible session."
 
 next_up:
-  - "FF-026 (deferred) — tightening template and procedure refinements; after FF-024, before the next FF-021 dispatch."
-  - "FF-021 — LeadDowser .forge/design/leaddowser-style-kit.yaml next; not started: seogeo, chromaqa, chromasmith-saas-starter, synclips-platform, chromasync, dv-captain, convergible-sandbox, forgeflow."
+  - "FF-021 — six repos not started (chromaqa, synclips-platform, chromasync, dv-captain, convergible-sandbox, forgeflow); seogeo and chromasmith-saas-starter have further documents Matt has not named. Each waits for Matt to name repo and documents (RULING-029). chromaqa's .forge/BLUEPRINT.yaml is 435 KB and needs a multi-run plan."
   - "FF-025 (deferred) — the propagation diff check becomes a permanent tool; rides the next master change."
   - "FF-010 (parked) — pointer-URL protocols."
   - "P11 prune session for the protocol files, after the cleanups."
 
 north_star: |
-  Product-better in a small way: the Showcase blueprint and the legal record that Convergible's build
-  reads are lean rule documents with nothing lost (356033a, c82ae59), and review stopped draft owner copy
-  from reaching a build as ratified.
+  Product-better in a small way: the documents that every spawned product copies (START_HERE.md), that
+  govern the SEO/GEO tool and LeadDowser's look are lean rule documents with nothing lost (0c4e0a8,
+  a6c88a7, 4317af2), and Convergible's specs now describe the repo as it is (7c4fb77).
 
 tone: |
-  A focused cleanup session: one repo named, two runs in parallel, one review round each, two merges.
-  Matt wants the whole remaining list kept in view; the next step waits only on LeadDowser being free.
+  A long, productive session run in parallel: four dispatched jobs and one local run, one simultaneous
+  crash recovered, three review rounds, five merges. Matt wants leftovers closed in the session that finds
+  them, not carried as debt, and the whole remaining list in view.
