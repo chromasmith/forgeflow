@@ -1,24 +1,28 @@
 # Session state — overwritten each session with current snapshot
-session_date: 2026-09-10
+session_date: 2026-09-11
 project: forgeflow (ForgeFlow Master — unified start/wrap protocols rendered per repo)
 milestones:
-  - "RULING-033 filed @ 747073a (placeholder repaired @ a049f6e) — chromasmith/convergible is the second FF-021 repo; FF-024 postponed while LeadDowser is in active edit"
-  - "FF-021 convergible: .forge/legal/compliance.yaml at the document standard — convergible PR #4 merged 356033a (68/68, v1.0.0)"
-  - "FF-021 convergible: .forge/strategy/cv-showcase-blueprint-v6.yaml at the document standard — convergible PR #5 merged c82ae59 (392/392, v6.0.1)"
+  - "FF-026 landed: doc-tightening template and procedure refinements, forgeflow PR #3 merged 4e872f6 (tests 78/78 on eb9e747, no version bump)"
+  - "FF-024 landed: chromasmith/LeadDowser rendered to master v1.4.2 at LeadDowser 9fca434 (run PROPAGATE-v1.4.2b); registry 4231623 — all ten rows current"
+  - "FF-021: LeadDowser complete (style kit PR #6 merged 4317af2); seogeo .forge/BLUEPRINT.yaml (PR #3, a6c88a7) and chromasmith-saas-starter START_HERE.md (PR #17, 0c4e0a8) at the document standard"
+  - "convergible FORGEFLOW-FIX-1 merged 7c4fb77: forgeflow notes FN-1..FN-6 closed, FN-7 carried in convergible's inbox"
 decisions:
-  - decision: "Convergible scope: tighten blueprint v6 and compliance.yaml, leave the other seven instructional files (Matt's go on Claude Web's list, RULING-033)"
-    rationale: "blueprint v6 was never tightened (single commit 3b34a6d) and compliance.yaml kept rationale inline; the rest are lean or fixed-shape build-feature files"
-    impact: "FF-021 convergible block records done and leave"
-  - decision: "A two-component document version x.y reads as x.y.0 and bumps to x.y.1"
-    rationale: "RULING-032 names x.y.z only; the runner asked (convergible PR #5)"
-    impact: "FF-026 item c carries it into the template and procedure"
-blockers:
-  - "FF-024 waits on LeadDowser, in active edit (RULING-033)"
+  - decision: "FF-026 ran ahead of FF-024 while LeadDowser was believed busy; FF-024 ran as soon as Matt confirmed no session was open"
+    rationale: "FF-026 touches only forgeflow and had to land before the next tightening dispatch"
+    impact: "both landed in this session (4e872f6, 9fca434)"
+  - decision: "Matt named seogeo .forge/BLUEPRINT.yaml and chromasmith-saas-starter START_HERE.md for FF-021 (his go on Claude Web's pick)"
+    rationale: "START_HERE.md is copied into every spawned product; BLUEPRINT.yaml governs the SEO/GEO tool"
+    impact: "three tightening runs in parallel across three repos"
+  - decision: "Claude Web hands another repo's next session its observations as a new .forge/inbox file, never by rewriting that repo's backlog mid-session"
+    rationale: "backlog is wrap-only and a whole-file rewrite risks placeholder corruption (GOTCHA-033)"
+    impact: "convergible c3316c6, closed by FORGEFLOW-FIX-1 (7c4fb77); GOTCHA-041"
+blockers: []
 next_steps:
   - priority: high
-    task: "FF-024 — render chromasmith/LeadDowser to master v1.4.2 once Matt confirms no session is active there; registry row to current LAST"
+    task: "FF-027 — second round of doc-tightening template refinements from the three reviews, before the next FF-021 dispatch"
 context: |
-  MASTER v1.4.2 (fd50094) on nine repos; LeadDowser pinned at v1.4.1 (registry 2765842). Rulings
-  newest shard 021-040.yaml holds RULING-021..033. FF-021: convergible done (356033a, c82ae59),
-  LeadDowser 2 of 3 documents, eight repos not started. FF-026 lands before the next tightening
-  dispatch. Dispatch-start 640/650 on the maximum knob set.
+  MASTER v1.4.2 on all ten repos (registry 4231623). Rulings newest shard 021-040.yaml holds
+  RULING-021..033; none added this session. FF-021: LeadDowser and convergible done; seogeo and
+  chromasmith-saas-starter have their main document done; six repos not started. Stale branches in
+  chromasmith-saas-starter (claude/issue-11-20260905-2042, claude/issue-14-20260905-2205) and seogeo
+  (chromasmith-patch-1) await a local Claude Code run with gh.
