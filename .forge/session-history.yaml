@@ -514,3 +514,30 @@ sessions:
       - "deleted: .forge/inbox/FF-026.yaml, .forge/inbox/PROPAGATE-v1.4.2b.yaml"
       - "LeadDowser 9fca434 (six rendered files) and PR #6; seogeo PR #3; chromasmith-saas-starter PR #17; convergible c3316c6 and PR #7"
     blockers_remaining: []
+  - date: 2026-09-11
+    duration: ~1.5hr (sixth session)
+    completed:  # evidence: 17050d6, 590e6b3, fdfc842
+      - "RULING-034 filed @ 17050d6: dispatch-start ceiling raised from 650 to 850 lines; the true maximum knob set renders that file at 710"
+      - "chromasmith/convergible re-rendered with ui_inventory detected @ convergible 590e6b3 (run CV-RERENDER-UI-1): five files, S-027, S-056, S-077 and E-032 now render, config_hash 470896d1bd66, start-protocol.dispatch.yaml 659 lines; four protocol blobs re-proven through the connector; CLAUDE.md unchanged at 10ba6ff"
+      - "Registry row for convergible updated @ fdfc842 (three lines); inbox CV-RERENDER-UI-1 consumed and deleted at this wrap"
+      - "Instruction-sheet findings FF-A to FF-G filed as FF-028 to FF-034 and the RULING-034 follow-up as FF-035, all deferred to Matt's forgeflow session next week"
+    commits:
+      - message: "rulings: RULING-034 — dispatch-start ceiling re-measured to 850 on the true maximum knob set (17050d6)"
+      - message: "in convergible: protocols: re-render from forgeflow master v1.4.2 with ui_inventory detected (590e6b3, run CV-RERENDER-UI-1)"
+      - message: "registry: chromasmith/convergible re-rendered with ui_inventory on + inbox (fdfc842, run CV-RERENDER-UI-1)"
+      - message: "docs: end session 2026-09-11 (1/7 .. 7/7) — this series"
+    key_changes:
+      - "Master unchanged at v1.4.2; convergible was the only repo whose protocols changed (590e6b3)"
+      - "The private-repo tree skeleton was proven by reproducing convergible's committed 2026-09-10 render byte for byte (five blobs equal, 1644039 set) before the new render"
+      - "The ceiling fixture lacks five subsystems, so the dispatch-start ceiling was mis-measured a second time (RULING-034, GOTCHA-043)"
+    files_modified:
+      - .forge/rulings/021-040.yaml
+      - master/registered-repos.yaml
+      - .forge/inbox/CV-RERENDER-UI-1.yaml    # written by the run at fdfc842; consumed and deleted at this wrap
+      - .forge/handoff.yaml
+      - .forge/session-state.yaml
+      - .forge/session-history.yaml
+      - .forge/backlog.yaml
+      - .forge/GOTCHAS.yaml
+      - "in chromasmith/convergible: 590e6b3 (.forge/protocol-config.yaml and the four .forge/protocols/ files) and .forge/inbox/FORGEFLOW-CV-RERENDER-UI-1.yaml (observation for convergible's next session)"
+    blockers_remaining: []
