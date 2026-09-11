@@ -2,27 +2,27 @@
 session_date: 2026-09-11
 project: forgeflow (ForgeFlow Master — unified start/wrap protocols rendered per repo)
 milestones:
-  - "FF-026 landed: doc-tightening template and procedure refinements, forgeflow PR #3 merged 4e872f6 (tests 78/78 on eb9e747, no version bump)"
-  - "FF-024 landed: chromasmith/LeadDowser rendered to master v1.4.2 at LeadDowser 9fca434 (run PROPAGATE-v1.4.2b); registry 4231623 — all ten rows current"
-  - "FF-021: LeadDowser complete (style kit PR #6 merged 4317af2); seogeo .forge/BLUEPRINT.yaml (PR #3, a6c88a7) and chromasmith-saas-starter START_HERE.md (PR #17, 0c4e0a8) at the document standard"
-  - "convergible FORGEFLOW-FIX-1 merged 7c4fb77: forgeflow notes FN-1..FN-6 closed, FN-7 carried in convergible's inbox"
+  - "RULING-034 filed @ 17050d6: dispatch-start ceiling raised from 650 to 850 on the true maximum knob set (710 lines at v1.4.2)"
+  - "chromasmith/convergible re-rendered with ui_inventory detected @ convergible 590e6b3 (run CV-RERENDER-UI-1): five files, config_hash 470896d1bd66, CLAUDE.md unchanged"
+  - "Registry row for convergible updated @ fdfc842; observation note for convergible's next session @ convergible 7efb098"
 decisions:
-  - decision: "FF-026 ran ahead of FF-024 while LeadDowser was believed busy; FF-024 ran as soon as Matt confirmed no session was open"
-    rationale: "FF-026 touches only forgeflow and had to land before the next tightening dispatch"
-    impact: "both landed in this session (4e872f6, 9fca434)"
-  - decision: "Matt named seogeo .forge/BLUEPRINT.yaml and chromasmith-saas-starter START_HERE.md for FF-021 (his go on Claude Web's pick)"
-    rationale: "START_HERE.md is copied into every spawned product; BLUEPRINT.yaml governs the SEO/GEO tool"
-    impact: "three tightening runs in parallel across three repos"
-  - decision: "Claude Web hands another repo's next session its observations as a new .forge/inbox file, never by rewriting that repo's backlog mid-session"
-    rationale: "backlog is wrap-only and a whole-file rewrite risks placeholder corruption (GOTCHA-033)"
-    impact: "convergible c3316c6, closed by FORGEFLOW-FIX-1 (7c4fb77); GOTCHA-041"
+  - decision: "Today's scope is the convergible ui_inventory re-render only; every master fix from the instruction sheet waits for Matt's forgeflow session next week"
+    rationale: "Matt asked for only what the planned task needs"
+    impact: "FF-028 to FF-035 filed deferred; master unchanged at v1.4.2"
+  - decision: "No subsystems.ui_inventory override in convergible's config; detection turned it on"
+    rationale: "an override would hide a future deletion of the inventory"
+    impact: "config_hash 470896d1bd66 at 590e6b3"
+  - decision: "FF-G prefix overrides left out of the re-render"
+    rationale: "not needed for the switch; minimum scope"
+    impact: "filed as FF-034, deferred"
 blockers: []
 next_steps:
   - priority: high
-    task: "FF-027 — second round of doc-tightening template refinements from the three reviews, before the next FF-021 dispatch"
+    task: "FF-027 — second round of doc-tightening template refinements, items (a) to (i), before the next FF-021 dispatch"
 context: |
-  MASTER v1.4.2 on all ten repos (registry 4231623). Rulings newest shard 021-040.yaml holds
-  RULING-021..033; none added this session. FF-021: LeadDowser and convergible done; seogeo and
-  chromasmith-saas-starter have their main document done; six repos not started. Stale branches in
-  chromasmith-saas-starter (claude/issue-11-20260905-2042, claude/issue-14-20260905-2205) and seogeo
-  (chromasmith-patch-1) await a local Claude Code run with gh.
+  MASTER v1.4.2 on all ten repos (registry fdfc842). Rulings newest shard 021-040.yaml holds RULING-021..034.
+  The dispatch-start ceiling is 850 by RULING-034; RENDER_PROCEDURE step 5, BLUEPRINT and test_render.py still
+  say 650 until FF-035 lands. FF-021: LeadDowser and convergible done; seogeo and chromasmith-saas-starter have
+  their main document done; six repos not started. Stale branches in chromasmith-saas-starter
+  (claude/issue-11-20260905-2042, claude/issue-14-20260905-2205) and seogeo (chromasmith-patch-1) await a
+  local Claude Code run with gh.
