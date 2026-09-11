@@ -484,3 +484,33 @@ sessions:
       - "convergible PR #5 (c82ae59): .forge/strategy/cv-showcase-blueprint-v6.yaml, .forge/strategy/cv-showcase-blueprint-v6-history.yaml, .forge/inbox/TIGHTEN-convergible-001.yaml"
     blockers_remaining:
       - "FF-024 waits on LeadDowser, in active edit (RULING-033)"
+  - date: 2026-09-11
+    duration: ~6hr (fifth session, began 2026-09-10)
+    completed:  # evidence: 4e872f6, 9fca434, 4231623, 4317af2, a6c88a7, 0c4e0a8, 7c4fb77, c3316c6
+      - "FF-026 merged 4e872f6 (forgeflow PR #3, run from issue #2): nine exact-text edits to the tightening template and procedure; tests 78/78 on eb9e747; main blobs equal the reviewed head"
+      - "FF-024: LeadDowser rendered to master v1.4.2 at 9fca434 (run PROPAGATE-v1.4.2b, inbox 6f5e058); six blobs equal the sandbox render, re-proven through the connector; stale branch claude/issue-2-20260910-1815 deleted; registry row current @ 4231623 (blob 91562b7 equal to the sandbox build)"
+      - "FF-021 LeadDowser: .forge/design/leaddowser-style-kit.yaml at the standard, PR #6 merged 4317af2 after review fixes 5603aa8 and db00690 (208/208, v1.0.1)"
+      - "FF-021 seogeo: .forge/BLUEPRINT.yaml at the standard, PR #3 merged a6c88a7 after review fixes a6c52d5 (112/112, v3.0.1; BL-011 and BL-012 recorded done from seogeo's backlog)"
+      - "FF-021 chromasmith-saas-starter: START_HERE.md at the standard, PR #17 merged 0c4e0a8 after review fixes 7319dae (175 items mapped, v1.0.0)"
+      - "convergible: notes file c3316c6 filed; FORGEFLOW-FIX-1 PR #7 merged 7c4fb77 (FN-1..FN-6 closed incl. branch wrap-apply-2026-09-09 deleted; FN-7 carried in convergible .forge/inbox/FORGEFLOW-FIX-1.yaml)"
+    commits:
+      - message: "master: FF-026 — doc-tightening template and procedure refinements (#3) (4e872f6)"
+      - message: "registry: chromasmith/LeadDowser current at master v1.4.2 (4231623)"
+      - message: "squash merges: LeadDowser 4317af2, seogeo a6c88a7, chromasmith-saas-starter 0c4e0a8, convergible 7c4fb77"
+      - message: "docs: end session 2026-09-11 (1/8 .. 8/8) — this series"
+    key_changes:
+      - "Three tightening runs on three repos failed within about 70 seconds of each other and pushed nothing; an @claude restart comment on each issue (LeadDowser #5, seogeo #2, saas-starter #16) completed all three (GOTCHA-036)"
+      - "Review rounds caught altered wireframes, range-mapped dropped rules, dropped rule ids, instructions rewritten as claims, invented triggers, a lost friction channel and a demoted ruling before merge (GOTCHA-038..040); FF-027 files the template fixes"
+      - "Every merge squashed with an explicit commit_message; every runner branch auto-deleted at merge"
+    files_modified:
+      - master/assets/doc-tightening.issue.md
+      - master/DOC_TIGHTENING_PROCEDURE.md
+      - master/registered-repos.yaml
+      - .forge/handoff.yaml
+      - .forge/session-state.yaml
+      - .forge/session-history.yaml
+      - .forge/backlog.yaml
+      - .forge/GOTCHAS.yaml
+      - "deleted: .forge/inbox/FF-026.yaml, .forge/inbox/PROPAGATE-v1.4.2b.yaml"
+      - "LeadDowser 9fca434 (six rendered files) and PR #6; seogeo PR #3; chromasmith-saas-starter PR #17; convergible c3316c6 and PR #7"
+    blockers_remaining: []
