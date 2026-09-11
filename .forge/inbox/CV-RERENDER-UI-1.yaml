@@ -1,0 +1,102 @@
+run_id: CV-RERENDER-UI-1
+mode: local
+machine: Surface 12
+preflight:
+  core_autocrlf: "false"
+  convergible:
+    path: C:\Chromasmith\convergible
+    clean_before_refresh: true
+    ahead_before_refresh: 0
+    behind_before_refresh: 19
+    head_after_refresh: dd44d92
+    matches_expected: true
+  forgeflow:
+    path: C:\Chromasmith\forgeflow
+    clean_before_refresh: true
+    ahead_before_refresh: 0
+    behind_before_refresh: 10
+    head_after_refresh: 17050d6
+    matches_expected: true
+  precondition_already_ui_inventory_true: false
+  ignored_local_only_in_convergible: "apps/web/.vercel/, apps/web/.env.local, apps/web/.next/, supabase/.temp/, .seogeo/.report/, .chromaqa/CQA-runs.jsonl (none perturbed the render; all blobs matched the sandbox)"
+required_context:
+  ui_inventory_yaml: "exists and is tracked on convergible main (13159 bytes)"
+  start_protocol_line_11_before: "ui_inventory=False"
+  registry_row_before: "rendered_on 2026-09-10, config_hash 148571eab9cb6f7e34c49cef935a17bdbfe9871369791ae4148e6df511f08bdf"
+gate_double_render:
+  result: PASS
+  evidence: "diff -r /tmp/cvui-a /tmp/cvui-b printed nothing; both runs: rendered 6 files, master v1.4.2, config_hash 470896d1bd66"
+  line_counts: "start/cw 1891, start/cc-dispatch 659 (under the 850 ceiling of RULING-034), end/cw 1565, end/cc-dispatch 102"
+gate_blob_sha:
+  result: PASS
+  rows:
+    - ".forge/protocol-config.yaml 37bd7c06df7e634ecf9920560b1283914bc51c6d match"
+    - ".forge/protocols/start-protocol.yaml 7e4849c3eb1dfd9bc93ce4501775bdec87f418e0 match"
+    - ".forge/protocols/start-protocol.dispatch.yaml beb19b5733e9b30e752ef8fe246fffb1d5aee529 match"
+    - ".forge/protocols/end-protocol.yaml 8f35cb0d2378d9abecfd43d4a5b56316b0cc4a98 match"
+    - ".forge/protocols/end-protocol.dispatch.yaml a7bb484b5465c90c7090ce052ba7e815c070746c match"
+    - "CLAUDE.md 10ba6ff023c7c5a0a55f88d68f0798783a1c7ecb match (unchanged, not copied, not committed)"
+  line_11_after: "dispatch=on ... ui_inventory=True"
+blocks_now_rendered:
+  start_protocol_yaml: "BLOCK MANIFEST included 75 -> 78, excluded 21 -> 18; S-056, S-027, S-077 moved to included with full section bodies"
+  end_protocol_yaml: "BLOCK MANIFEST included 45 -> 46, excluded 8 -> 7; E-032 moved to included with full section body"
+  dispatch_files: "S-027 and S-077 present in start-protocol.dispatch.yaml; S-056 and E-032 are excluded there by reader (cc-dispatch does not read cw blocks), which is correct"
+convergible_commit:
+  sha: 590e6b3
+  message: "protocols: re-render from forgeflow master v1.4.2 with ui_inventory detected (CV-OPEN-36, CV-R35; run CV-RERENDER-UI-1)"
+  files: 5
+  numstat_total: "82 insertions, 29 deletions"
+  verify_push: "HEAD == origin/main == 590e6b34a03b62af71a1e3a92fb1a1a38ad262b1; git ls-tree -r origin/main shows all five blobs equal to the gate table; working tree clean"
+  remote_notice: "push printed 'Bypassed rule violations for refs/heads/main: Changes must be made through a pull request' and succeeded"
+  deploy: "none; YAML under .forge/, outside the apps/web build root"
+chromaqa:
+  version: "7.2 full mode"
+  result: "PASSED (exit 0) with 1 accepted captain review finding"
+  accepted_finding: "G-20 / SEO-054 / empty set: no link was extracted from any indexable page module (accepted by Matt Fleming 2026-09-07 at 7.2; expires when the home page ships any slash-href internal link; this run still extracted 0 links, so not yet expired)"
+  soft_findings_printed: "G-21 SEO-021 x4 (/account, /auth/update-password, /login, /signup not disallowed in robots.ts); G-19 SEO-013 empty sitemap.ts; G-18 SEO-042 x2 no JSON-LD on (main)/page.tsx and (main)/pricing/page.tsx"
+  ledger_result: "gate printed 'Also logged: 3 new soft warning(s)' but git diff .chromaqa/CQA-debt.jsonl was EMPTY after the push; no new ledger lines, nothing to commit (GOTCHA-028 reconfirmed)"
+forgeflow_registry:
+  file: master/registered-repos.yaml
+  numstat: "3 3"
+  changed_lines: "rendered_on (280), config_hash (281), landed (290); all inside the chromasmith/convergible row"
+  temp_script: "/tmp/cv_registry.py created, run with 590e6b3, deleted"
+reflection:
+  q1_prompt_improvements: |
+    Almost nothing; the prompt had everything I needed. One small improvement:
+    it would help to say HOW to prove the four blocks now render. A plain grep
+    for S-027 / S-056 / S-077 / E-032 hits the OLD render too, because the BLOCK
+    MANIFEST header lists excluded blocks by ID. The reliable check is the
+    manifest's "included" line or the "# --- <ID>" section header. Also, the
+    registry note says the four blocks "now render"; that is exact for the two
+    Claude Web files, but S-056 and E-032 stay excluded from the dispatch files
+    by design (Claude Web only), which the note does not say.
+  q2_future_session_traps: |
+    One new trap: grepping a rendered protocol file for a block ID does not
+    prove the block rendered, because the manifest header names excluded blocks
+    too. Reconfirmed, not new: ChromaQA's printed "3 new soft warning(s)" did
+    not match the debt ledger, whose git diff was empty (GOTCHA-028). Also
+    observed: a direct push to convergible main prints a GitHub "Bypassed rule
+    violations ... must be made through a pull request" notice and still
+    succeeds. That is expected for an admin push, but a future session could
+    read it as a failure.
+  q3_scope_disclosure: |
+    No — all changes stayed within the authorized scope.
+    convergible (commit 590e6b3): .forge/protocol-config.yaml,
+    .forge/protocols/start-protocol.yaml,
+    .forge/protocols/start-protocol.dispatch.yaml,
+    .forge/protocols/end-protocol.yaml,
+    .forge/protocols/end-protocol.dispatch.yaml.
+    forgeflow: master/registered-repos.yaml (convergible row only, 3 lines),
+    .forge/inbox/CV-RERENDER-UI-1.yaml (new).
+    Outside both trees, at prompt-named paths only: /tmp/cvui-a and /tmp/cvui-b
+    (render outputs, left in the Windows Temp folder) and /tmp/cv_registry.py
+    (created, used, deleted). convergible CLAUDE.md untouched. No memory writes.
+    Harness-suggested commit attribution trailers were omitted per CLAUDE.md
+    and the prompt.
+  q4_artifact_paths: |
+    No. Every file written was at a path the prompt named.
+  q6_ui_conformance: |
+    Not applicable. No .tsx or UI file was touched.
+discovered_gotchas:
+  - "Grepping a rendered protocol file for a block ID does not prove the block rendered: the BLOCK MANIFEST header names every EXCLUDED block by ID too; check the manifest's included line or the '# --- <ID>' section header instead."
+needs_ruling: []
