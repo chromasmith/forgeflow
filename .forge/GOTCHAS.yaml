@@ -595,3 +595,73 @@
   source: "convergible PRs #4 and #5, 2026-09-10"
   applies_to:
     - reviewing dispatched PRs on chromasmith/convergible
+- id: GOTCHA-036
+  date: 2026-09-11
+  summary: "Concurrently dispatched runs on different repos can all fail at the same moment and push nothing; check for the branch, then restart each with an @claude comment"
+  detail: |
+    Three tightening runs (LeadDowser #5, seogeo #2, chromasmith-saas-starter #16), started minutes apart,
+    each ended in error within about 70 seconds of each other, 8 to 11 minutes in, with no branch on the
+    remote. The workflow sets no timeout, and a fourth run started just after (convergible #6) finished normally, so the
+    cause was shared and outside the documents. Claude Web cannot read Actions job logs through the
+    connector. A comment "@claude ... carry out the task in the issue body from the beginning" restarted each
+    run and all three finished (LeadDowser PR #6, seogeo PR #3, chromasmith-saas-starter PR #17). A run's own
+    "working" comment is not proof of progress: list the repo's branches before trusting it.
+  source: "LeadDowser issue #5, seogeo issue #2, chromasmith-saas-starter issue #16, 2026-09-10"
+  applies_to:
+    - reading the board after parallel dispatches
+- id: GOTCHA-037
+  date: 2026-09-11
+  summary: "A verification step that greps for a phrase must use one that sits on a single line of the text being checked; the issue's own line wrapping can split it"
+  detail: |
+    The FF-026 issue asked the runner to confirm "What is true today" was present, but the issue's own
+    replacement text wrapped that phrase across two lines, so a single-line grep could never match. The
+    runner flagged the false failure and verified the phrase line by line. Pick verification phrases from
+    inside one line of the new text.
+  source: "forgeflow issue #2 (run FF-026), 2026-09-10"
+  applies_to:
+    - every dispatched issue or prompt that names grep checks for inserted text
+- id: GOTCHA-038
+  date: 2026-09-11
+  summary: "A tightening run can redraw box-drawing diagrams and hide a dropped rule behind a line-range mapping, while its inventory still reads N/N"
+  detail: |
+    LeadDowser PR #6 mapped 208/208, yet every wireframe border changed width, an annotation was dropped, and
+    INV-054 ("one scale for every screen size") was mapped to rules.type:75-87 and appeared nowhere. Review
+    compares every diagram line to the original with indentation stripped, and treats any range mapping as
+    unverified until the item's exact text is found. Fixed in 5603aa8; FF-027 items (a) and (b).
+  source: "LeadDowser PR #6 (F1, F2), fix 5603aa8"
+  applies_to:
+    - reviewing tightening PRs
+- id: GOTCHA-039
+  date: 2026-09-11
+  summary: "Tightening drops rule ids on conversion to prohibitions, rewrites instructions as claims, and invents triggers or tags for undecided items; the count shows none of it"
+  detail: |
+    LeadDowser PR #6 dropped ids and names (EN3 LINT-TOKENS and nine more), turned "ALSO go to the rulings
+    register" into "are also filed", and set undecided DS-U4 to DEFERRED with a trigger no source stated.
+    seogeo PR #3 used a non-standard OPEN tag. saas-starter PR #17 turned the ROUTES "must be" rule into a
+    description and reframed a single-app ruling as an open question. Review reads every status line, every
+    converted prohibition and every "is" that used to be a "must". FF-027 items (c) to (e).
+  source: "LeadDowser PR #6, seogeo PR #3, chromasmith-saas-starter PR #17"
+  applies_to:
+    - reviewing tightening PRs
+- id: GOTCHA-040
+  date: 2026-09-11
+  summary: "Moving a document's append-only log to the history companion removes the channel it provided; the tightened document needs a rule naming where new entries go"
+  detail: |
+    START_HERE.md's Friction Log was the template team's inbox for new friction. The tightening moved it to
+    START_HERE-history.md and left a line pointing at a log that no longer existed. Fix 7319dae names
+    .forge/template-friction.yaml as the place new template friction is appended. FF-027 item (h).
+  source: "chromasmith-saas-starter PR #17 (T1), fix 7319dae"
+  applies_to:
+    - tightening any document that carries a log or inbox section
+- id: GOTCHA-041
+  date: 2026-09-11
+  summary: "To hand another repo's next session a list of observations mid-session, commit a new .forge/inbox file there; never rewrite that repo's backlog"
+  detail: |
+    A repo's backlog and handoff are wrap-only, and rewriting them whole through the connector risks the
+    placeholder loss in GOTCHA-033 (convergible's backlog carries angle-bracket tokens). A small new inbox
+    file is listed by that repo's next start and consumed by its wrap. Used for convergible c3316c6; the six
+    fixable items were then closed by a dispatched run in the same session (FORGEFLOW-FIX-1, 7c4fb77) and
+    the one needing a local machine was carried in that run's own inbox file.
+  source: "convergible c3316c6 and PR #7 (7c4fb77), 2026-09-11"
+  applies_to:
+    - cross-repo observations raised in a forgeflow session
