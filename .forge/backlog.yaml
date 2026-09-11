@@ -54,6 +54,95 @@ prioritized:
       repo.
     status: deferred
     blocked_by: "the next master change"
+  - id: FF-028
+    name: S-027 names a house_idioms block that convergible's inventory does not carry (instruction sheet FF-A)
+    priority: P2
+    estimate: one-line master text change; rides the next master change and its propagation
+    spec_ref: master/start-protocol.master.yaml (S-027); convergible .forge/specs/ui-inventory.yaml (blob e0171d9)
+    description: |
+      S-027 tells a session to read the inventory's house_idioms block. convergible's ui-inventory.yaml has no
+      such block; its rules section is the equivalent. house_idioms is the convergible-sandbox inventory shape.
+      Reword to "its rules section (the house_idioms block, in an inventory that carries one)". Rendered into
+      convergible at 590e6b3 with the old wording; convergible's handoff already points sessions at the rules section.
+    status: deferred
+    blocked_by: "Matt's forgeflow session next week (ruled 2026-09-11)"
+  - id: FF-029
+    name: End master still points at the legacy single-file .forge/rulings.yaml (instruction sheet FF-B)
+    priority: P2
+    estimate: text change in end-protocol.master.yaml; rides the next master change and its propagation
+    spec_ref: master/end-protocol.master.yaml (E-007, E-008, E-012, file_behaviors rulings, rulings_init)
+    description: |
+      Registered repos keep rulings as shards under .forge/rulings/. The E-007 read list, the E-008 and E-012
+      needs-ruling checks, the file_behaviors rulings path and rulings_init still name .forge/rulings.yaml
+      (seen in forgeflow's rendered end-protocol.yaml, blob d0dbb48). Point each at the newest shard. Keep the
+      E-003 legacy-migration line and the start protocol's legacy-file sentence in S-011 as they are.
+    status: deferred
+    blocked_by: "Matt's forgeflow session next week (ruled 2026-09-11)"
+  - id: FF-030
+    name: E-047 treats a modified debt ledger as the new-finding signal, but ChromaQA's printed count disagrees with the ledger (instruction sheet FF-C)
+    priority: P3
+    estimate: one master text change plus one issue filed on chromasmith/chromaqa
+    spec_ref: master/end-protocol.master.yaml (E-047); .forge/GOTCHAS.yaml GOTCHA-028; convergible CV-G-054
+    description: |
+      ChromaQA printed new soft warnings while .chromaqa/CQA-debt.jsonl stayed unchanged (convergible CV-G-054;
+      again on the 590e6b3 push, run CV-RERENDER-UI-1). The remainder reports both the printed count and the
+      ledger diff, and the diff is the record. File the counter mismatch as an issue on chromasmith/chromaqa.
+    status: deferred
+    blocked_by: "Matt's forgeflow session next week (ruled 2026-09-11)"
+  - id: FF-031
+    name: A record-like document may read none under data_model and surfaces (instruction sheet FF-D)
+    priority: P3
+    estimate: one line in each of the two tightening files; same files as FF-027
+    spec_ref: master/DOC_TIGHTENING_PROCEDURE.md; master/assets/doc-tightening.issue.md; convergible TIGHTEN-convergible-002 reflection q2 (history at 8558fc5)
+    description: |
+      The procedure lets a non-architecture document read none under flows and build_order but is silent on
+      data_model and surfaces. Add: a record-like document reads none under data_model and surfaces, or uses
+      them for its records and its required surfaces.
+    status: deferred
+    blocked_by: "Matt's forgeflow session next week (ruled 2026-09-11)"
+  - id: FF-032
+    name: A document already at the standard gets an empty history companion, never a padded one (instruction sheet FF-E)
+    priority: P3
+    estimate: one line in master/assets/doc-tightening.issue.md; same file as FF-027
+    spec_ref: master/assets/doc-tightening.issue.md; convergible TIGHTEN-convergible-001 reflection (history at 8558fc5)
+    description: |
+      A document already close to the standard produced a near-empty companion and the run second-guessed itself.
+      Add: a document that already reads clean says so plainly; an empty companion is correct.
+    status: deferred
+    blocked_by: "Matt's forgeflow session next week (ruled 2026-09-11)"
+  - id: FF-033
+    name: Every expected-result line in a prompt says whether it is a hint to verify or a floor to enforce (instruction sheet FF-F)
+    priority: P3
+    estimate: one prompt-authoring line (W-005 candidate); rides the next master change
+    spec_ref: master/start-protocol.master.yaml (W-005); convergible FORGEFLOW-FIX-1 reflection q1 (history at 8558fc5)
+    description: |
+      A prompt line "expected to be empty" was read both ways; the run found two surviving paths and had to choose.
+    status: deferred
+    blocked_by: "Matt's forgeflow session next week (ruled 2026-09-11)"
+  - id: FF-034
+    name: convergible config overrides ids.gotcha_prefix CV-G- and ids.ruling_prefix CV-R (instruction sheet FF-G)
+    priority: P3
+    estimate: two override lines in convergible .forge/protocol-config.yaml plus one convergible re-render
+    spec_ref: convergible .forge/protocol-config.yaml (blob 37bd7c0 at 590e6b3)
+    description: |
+      convergible numbers gotchas CV-G-NNN and rulings CV-RNN, but its rendered protocols say GOTCHA-NNN and
+      RULING-NNN because the config leaves both prefixes at the default. Left out of the 590e6b3 re-render
+      (minimum scope, Matt 2026-09-11).
+    status: deferred
+    blocked_by: "Matt's forgeflow session next week (ruled 2026-09-11)"
+  - id: FF-035
+    name: RULING-034 follow-up — ceiling numbers updated to 850 and a true-maximum fixture enforced by the suite
+    priority: P2
+    estimate: rides the next master change; no re-render (nothing rendered reads the ceilings)
+    spec_ref: .forge/rulings/021-040.yaml RULING-034; master/RENDER_PROCEDURE.md step 5; master/BLUEPRINT.yaml rendering.file_ceilings; master/tests/test_render.py; .forge/GOTCHAS.yaml GOTCHA-043
+    description: |
+      Replace 650 with 850 for start-protocol.dispatch.yaml in RENDER_PROCEDURE step 5, BLUEPRINT
+      rendering.file_ceilings and the CEIL table in test_render.py. Add a fixture with every subsystem on
+      (ui_inventory, artifact_register, database_access_doc, repo_rules_doc, a companion repo, both tools,
+      dispatch on) and assert it stays under every ceiling. At v1.4.2 that knob set renders start 1959 of 2000,
+      dispatch start 710, end 1605, dispatch end 102.
+    status: deferred
+    blocked_by: "Matt's forgeflow session next week (ruled 2026-09-11)"
 
 in_progress:
   - id: FF-021
