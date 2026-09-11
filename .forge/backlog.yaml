@@ -2,38 +2,30 @@
 # Status vocabulary: ready | blocked | needs-ruling | in_progress | deferred | completed | superseded
 # Migrated from the legacy empty shape at the 2026-09-04 wrap (first wrap on the rendered end protocol).
 prioritized:
-  - id: FF-024
-    name: Render chromasmith/LeadDowser to master v1.4.2 — the one pinned registry row
-    priority: P1
-    estimate: one local Claude Code run
-    spec_ref: master/PROPAGATION_PROCEDURE.md step 5; master/registered-repos.yaml (LeadDowser row and its reason)
-    description: |
-      LeadDowser was pinned at v1.4.1 in the v1.4.2 pass (registry 2765842) because Matt was working in
-      it. Matt first confirms no Claude Code or Claude Web session is active on LeadDowser. One local run:
-      refresh the checkout, double render, config-hash gate against its row (efaceee3fa42), expected diff
-      limited to the header stamps, the S-093 closing sentence and the W-005 bullet, push, read back six
-      blobs; the registry row goes to current v1.4.2 LAST. Required before any further LeadDowser
-      tightening (DOC_TIGHTENING_PROCEDURE preflight, fd50094).
-    status: blocked
-    blocked_by: "LeadDowser in active edit (RULING-033); Matt confirms it is free"
-  - id: FF-026
-    name: Doc-tightening template and procedure refinements from the convergible run
+  - id: FF-027
+    name: Doc-tightening template refinements, round two — lessons from the LeadDowser, seogeo and saas-starter reviews
     priority: P2
-    estimate: one small change to two master files; lands before the next tightening dispatch
-    spec_ref: master/assets/doc-tightening.issue.md; master/DOC_TIGHTENING_PROCEDURE.md; .forge/GOTCHAS.yaml GOTCHA-030..034
+    estimate: one small change to two master files, like FF-026; lands before the next FF-021 dispatch
+    spec_ref: master/assets/doc-tightening.issue.md; master/DOC_TIGHTENING_PROCEDURE.md; .forge/GOTCHAS.yaml GOTCHA-037..040
     description: |
-      (a) Status mapping never promotes: DRAFT, PROVISIONAL and unconfirmed items map to PROPOSED, and the
-      review reads every changed status line in the diff (GOTCHA-030, convergible PR #5).
-      (b) A statement of what is true today inside a rationale paragraph is an inventory item (GOTCHA-031,
-      convergible PR #4).
-      (c) A two-component version x.y reads as x.y.0 and bumps to x.y.1 (RULING-032 clarified by Claude Web;
-      applied in convergible PR #5).
-      (d) RUNNER ENVIRONMENT names the Write-tool fallback when the redirect is refused (GOTCHA-032).
-      (e) A non-architectural document maps its records to data_model and its build promises to surfaces;
-      flows and build_order may read none (accepted in convergible PR #4).
-      (f) The review squash-merges with an explicit commit_message (GOTCHA-034).
-    status: deferred
-    blocked_by: "runs after FF-024 and before the next FF-021 dispatch"
+      (a) ASCII and box-drawing diagrams (wireframes) are carried byte-for-byte apart from indentation, and
+      the review compares every diagram line to the original (GOTCHA-038, LeadDowser PR #6 F1).
+      (b) Every inventory mapping names one line; a line-range mapping is unverified until its exact text
+      is found (GOTCHA-038, LeadDowser INV-054).
+      (c) A rule converted into a prohibition keeps its id and name (GOTCHA-039, LeadDowser F4).
+      (d) An instruction is never rewritten as a present-tense claim, and a "must" rule never as a
+      description (GOTCHA-039: LeadDowser F6, saas-starter T7).
+      (e) UNDECIDED and open items map to PROPOSED with no invented trigger; OPEN is not a status tag
+      (GOTCHA-039: LeadDowser F7, seogeo S2).
+      (f) The history companion receives cut reasoning and citations as well as provenance (LeadDowser F8).
+      (g) Content absent from the source document is added only where a ruling states it, and the
+      mapping cites that ruling (saas-starter T12, RULING-009).
+      (h) A document's inbox mechanism (an append-only log) moved to the companion is replaced by a rule
+      naming where new entries go (GOTCHA-040, saas-starter T1).
+      (i) Claude Web's own issue text: a verification phrase sits on one line of the new text
+      (GOTCHA-037).
+    status: ready
+    blocked_by: null
   - id: FF-010
     name: Pointer-URL protocols (repos hold a link to one master file) — PARKED
     priority: P3
@@ -77,19 +69,49 @@ in_progress:
       chromasmith/LeadDowser (RULING-031, first repo, started 2026-09-10):
         - done .forge/strategy/leaddowser-blueprint.yaml — PR #3 merged bfbf7e7 2026-09-10 (277/277; 66,482 bytes, over the 50 KB smell — named, accepted)
         - done .forge/specs/leaddowser-convergible-interface.yaml — PR #4 merged 46a97b2 2026-09-10 (100/100; now v1.1.0)
-        - next .forge/design/leaddowser-style-kit.yaml (old blueprint-style status legend; committed 0dc3c1b)
+        - done .forge/design/leaddowser-style-kit.yaml — PR #6 merged 4317af2 2026-09-10 (208/208; v1.0.1; review fixes 5603aa8, db00690)
         - leave README.md, .forge/README.md, .forge/instructions/README.md, .forge/scanlab/README.md (100 B - 1.2 KB, nothing to tighten); CLAUDE.md (standing orders + ForgeFlow house block, off limits)
-        - notes: stale runner branch claude/issue-2-20260910-1815 (the halted run's inbox, no PR) is still on LeadDowser — delete with gh api -X DELETE repos/chromasmith/LeadDowser/git/refs/heads/claude/issue-2-20260910-1815 in its next Claude Code run; inbox files TIGHTEN-LeadDowser-001/002 are consumed by LeadDowser's own next wrap; the style kit's CODE half installs in LeadDowser P0 per the kit's section 14a
+        - notes: LeadDowser complete; stale branch claude/issue-2-20260910-1815 deleted by run PROPAGATE-v1.4.2b; inbox files TIGHTEN-LeadDowser-001/002/003 are consumed by LeadDowser's own next wrap; the style kit's CODE half installs in LeadDowser P0 per the kit's section 14a
       chromasmith/convergible (RULING-033, second repo, 2026-09-10; document list approved by Matt):
         - done .forge/legal/compliance.yaml — PR #4 merged 356033a 2026-09-10 (68/68; v1.0.0; 16,371 -> 11,052 bytes)
         - done .forge/strategy/cv-showcase-blueprint-v6.yaml — PR #5 merged c82ae59 2026-09-10 (392/392; v6.0.1; over the 50 KB smell — named, accepted; never tightened before, single commit 3b34a6d)
         - leave .forge/specs/blueprint.md (lean; build-feature looks up its headings by name); .forge/specs/integrations.yaml, .forge/specs/ui-spec.yaml, .forge/specs/api-spec.yaml (template scaffolds with set keys); .forge/style/tokens.yaml, README.md (lean reference); CLAUDE.md, .seogeo/, .chromaqa/ (off limits)
-        - notes: inbox files TIGHTEN-convergible-001/002 on convergible main await convergible's own wrap; runner branches auto-deleted at merge; branch wrap-apply-2026-09-09 remains on convergible; for a convergible session, not tightening — integrations.yaml wired_at paths omit the apps/web prefix and list Stripe as already wired beside blueprint.md's "Billing does not exist in this repo", and blueprint.md names an absent .forge/specs/schema.yaml and the legacy .forge/rulings.yaml
-      The next tightening dispatch waits for FF-026.
+        - notes: FORGEFLOW-FIX-1 (convergible PR #7, merged 7c4fb77) closed the accuracy items in integrations.yaml and blueprint.md and deleted branch wrap-apply-2026-09-09; the Vercel preview errors on docs-only PRs are carried in convergible .forge/inbox/FORGEFLOW-FIX-1.yaml for a convergible session; inbox files TIGHTEN-convergible-001/002 and FORGEFLOW-FIX-1 await convergible's own wrap
+      chromasmith/seogeo (third repo, 2026-09-10; Matt named the document):
+        - done .forge/BLUEPRINT.yaml — PR #3 merged a6c88a7 2026-09-10 (112/112; v3.0.1; review fixes a6c52d5)
+        - not yet named RATIONALE.md, README.md, INSTALL.md, .forge/protocol-pointer.md; template/ is the vendored payload and is off limits
+        - notes: branch chromasmith-patch-1 (220b018) remains, for a local Claude Code run to check and delete; inbox file TIGHTEN-seogeo-001 awaits seogeo's own wrap
+      chromasmith/chromasmith-saas-starter (fourth repo, 2026-09-10; Matt named the document):
+        - done START_HERE.md — PR #17 merged 0c4e0a8 2026-09-11 (175 items mapped; v1.0.0; review fixes 7319dae)
+        - not yet named README.md, KNOWN-ISSUES.md, .forge/plans/chromaqa-install-plan.yaml, .forge/specs/ (template scaffolds)
+        - notes: runner branches claude/issue-11-20260905-2042 and claude/issue-14-20260905-2205 (PRs #12 and #15, closed) remain, for a local Claude Code run to delete; inbox file TIGHTEN-chromasmith-saas-starter-001 awaits the repo's own wrap
+      The next tightening dispatch waits for FF-027.
     status: in_progress
     blocked_by: null
 
 completed:  # evidence per item: 5664d1b, 8db4ff2, 54c1293 + 8ec708c, b421783, 67031b3, c729db2
+  - id: FF-026
+    name: Doc-tightening template and procedure refinements from the convergible run
+    priority: P2
+    spec_ref: master/assets/doc-tightening.issue.md; master/DOC_TIGHTENING_PROCEDURE.md; .forge/GOTCHAS.yaml GOTCHA-030..034
+    description: |
+      Six refinements (status never promotes; buried current facts are inventory items; two-part versions;
+      Write-tool fallback; non-architecture sections; explicit squash message) as nine exact-text edits by
+      dispatched run FF-026 (issue #2). Tests 78/78 on eb9e747; no version bump; nothing re-rendered.
+    status: completed  # 4e872f6
+    completed_at: 2026-09-10
+    evidence: 4e872f6 (forgeflow PR #3)
+  - id: FF-024
+    name: Render chromasmith/LeadDowser to master v1.4.2 — the one pinned registry row
+    priority: P1
+    spec_ref: master/PROPAGATION_PROCEDURE.md step 5; master/registered-repos.yaml (LeadDowser row)
+    description: |
+      Local run PROPAGATE-v1.4.2b: double render byte-stable, config-hash gate PASS, numstat +19/-16 on six
+      files, six blobs read back and re-proven through the connector (9fca434); stale branch
+      claude/issue-2-20260910-1815 deleted; registry row set to current v1.4.2 last.
+    status: completed  # 9fca434
+    completed_at: 2026-09-10
+    evidence: 9fca434 (LeadDowser), 6f5e058 (inbox), 4231623 (registry)
   - id: FF-022
     name: Master v1.4.2 — S-093 closing sentence halts a cold runner; W-005 forward-slash paths
     priority: P1
