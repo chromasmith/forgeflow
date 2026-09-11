@@ -1,21 +1,19 @@
 # .forge/handoff.yaml — chromasmith/forgeflow
 # Pass-the-baton briefing written BY the outgoing Claude Web session TO the next.
 # A WARNING LETTER, not a summary. The other .forge/ files hold state; this holds feel.
-# generated: 2026-09-11T13:12:30Z
-# session: 2026-09-11 (fifth session, began 2026-09-10 — FF-026, FF-024, FF-021 on three repos)
-written_at_commit: 347c6d93fbf631fe1ecee9e2edcfc8ff7dd1dff9
-written_at_utc: 2026-09-11T13:12:30Z
-wrap_complete: true
-wrap_parts_total: 8
+# generated: 2026-09-11T19:20:56Z
+# session: 2026-09-11 (sixth session — convergible ui_inventory re-render)
+written_at_commit: fdfc84214b1c686539dbe52d2d01dac7affba857
+written_at_utc: 2026-09-11T19:20:56Z
+wrap_complete: false
+wrap_parts_total: 7
 
 status: |
-  FF-026 (4e872f6) and FF-024 (LeadDowser 9fca434, registry 4231623) are done: master v1.4.2 runs on all
-  ten repos. FF-021 finished LeadDowser (style kit, 4317af2) and tightened seogeo's .forge/BLUEPRINT.yaml
-  (a6c88a7) and chromasmith-saas-starter's START_HERE.md (0c4e0a8), each after one review round.
-  convergible's spec accuracy items are closed (7c4fb77). No unmerged PR from this session in any repo.
-  OVERALL POSITION: four of ten repos are into the legacy-document cleanup (LeadDowser and convergible
-  done, seogeo and the template each with their main document done), six have not started, and the
-  protocol system is on one version everywhere.
+  convergible re-rendered with ui_inventory on at 590e6b3 (run CV-RERENDER-UI-1) and its registry row updated at
+  fdfc842; no other repo's protocols changed and the master is unchanged at v1.4.2. RULING-034 (17050d6) raised the
+  dispatch-start ceiling to 850. No unmerged PR in any repo.
+  OVERALL POSITION: the protocol system is on one version everywhere; the legacy-document cleanup is four of ten
+  repos in; FF-027 is next, then Matt's batch of master fixes (FF-028 to FF-035) in a session he sets next week.
 
 first_thing: |
   FF-027 — the second round of doc-tightening template refinements, items (a) to (i) in the backlog
@@ -26,26 +24,26 @@ first_thing: |
   commit_message.
 
 watch_out_for:
-  - "Review every tightening PR's diff, not its inventory count: this session's three reviews found altered wireframes, a range-mapped rule that was gone, dropped rule ids, instructions rewritten as claims, invented triggers, a lost friction channel and a demoted ruling behind counts of 208/208, 112/112 and 158/158 (GOTCHA-038..040)."
+  - "The dispatch-start ceiling is 850 (RULING-034), but RENDER_PROCEDURE step 5, BLUEPRINT and test_render.py still say 650 until FF-035 lands; the rulings register wins. render.py does not enforce ceilings, so wc -l every render (GOTCHA-043)."
+  - "To prove a block rendered, read the manifest's included line or the block's section header, never a grep for its ID (GOTCHA-042)."
+  - "Review every tightening PR's diff, not its inventory count (GOTCHA-038..040)."
   - "Parallel dispatches can all fail at once and push nothing (GOTCHA-036): list the branches before trusting a run's comment, and restart with an @claude comment on the issue."
   - "Stale branches wait for a local Claude Code run with gh: chromasmith-saas-starter claude/issue-11-20260905-2042 and claude/issue-14-20260905-2205 (PRs #12 and #15, closed), and seogeo chromasmith-patch-1 (220b018, check it holds nothing unmerged first). Fold them into the next local prompt on those repos."
-  - "Cross-repo observations go into that repo's .forge/inbox as a new file, never into its backlog mid-session (GOTCHA-041)."
+  - "Cross-repo observations go into that repo's .forge/inbox as a new file, never into its backlog mid-session (GOTCHA-041); convergible holds FORGEFLOW-CV-RERENDER-UI-1.yaml (7efb098) for its next wrap."
   - "Whole-file rewrites of files holding angle-bracket placeholders lose characters (GOTCHA-033); compare every returned blob SHA to git hash-object."
   - "Squash-merge runner PRs with an explicit commit_message (GOTCHA-034)."
-  - "Dispatch-start is 640/650 on the maximum knob set; any addition to a block runners read replaces text (P11)."
 
 next_up:
+  - "FF-028 to FF-035 (deferred) — the instruction-sheet master fixes and the RULING-034 follow-up, for Matt's forgeflow session next week; FF-031 and FF-032 touch the same two files as FF-027."
   - "FF-021 — six repos not started (chromaqa, synclips-platform, chromasync, dv-captain, convergible-sandbox, forgeflow); seogeo and chromasmith-saas-starter have further documents Matt has not named. Each waits for Matt to name repo and documents (RULING-029). chromaqa's .forge/BLUEPRINT.yaml is 435 KB and needs a multi-run plan."
   - "FF-025 (deferred) — the propagation diff check becomes a permanent tool; rides the next master change."
   - "FF-010 (parked) — pointer-URL protocols."
   - "P11 prune session for the protocol files, after the cleanups."
 
 north_star: |
-  Product-better in a small way: the documents that every spawned product copies (START_HERE.md), that
-  govern the SEO/GEO tool and LeadDowser's look are lean rule documents with nothing lost (0c4e0a8,
-  a6c88a7, 4317af2), and Convergible's specs now describe the repo as it is (7c4fb77).
+  Product-better in a small way: convergible's sessions now receive the UI-inventory rules its SHELL-2 work
+  needs (590e6b3); the rest was recording.
 
 tone: |
-  A long, productive session run in parallel: four dispatched jobs and one local run, one simultaneous
-  crash recovered, three review rounds, five merges. Matt wants leftovers closed in the session that finds
-  them, not carried as debt, and the whole remaining list in view.
+  A short, tightly scoped session. Matt wanted to understand the request before anything moved, chose the minimum,
+  and put every master fix in a session he will set next week.
